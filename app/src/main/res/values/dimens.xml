@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="salat">85dp</dimen>
+    <dimen name="thumb">25dp</dimen>
+    <dimen name="seventeen">18dp</dimen>
+    <dimen name="padder">6dp</dimen>
+    <dimen name="sidesoftable">35dp</dimen>
+    <dimen name="topnbottomoftable">10dp</dimen>
+    <dimen name="regulartextsize">16sp</dimen>
+    <dimen name="sidesoftablepaddings">7dp</dimen>
+</resources>

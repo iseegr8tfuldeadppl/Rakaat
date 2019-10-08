@@ -1,0 +1,110 @@
+<resources>
+
+    <!-- English -->
+    <string name="app_name">Raka\'at | عدد الركعات</string>
+    <string name="kibla">Kibla\'h</string>
+    <string name="prayer">Prayer</string>
+    <string name="privacy" translatable="false">● PRIVACY POLICY ●</string>
+    <string name="instagram" translatable="false">● @SCUFFEDBOTS ●</string>
+    <string name="back">Go back</string>
+    <string name="betterquality">Improve accuracy</string>
+    <string name="kiblatitle">The compass gets brighter when facing Kibla\'h</string>
+    <string name="howtouse">Tutorial</string>
+    <string name="sajadat">Sajadat</string>
+    <string name="noshow">Don\'t show again</string>
+    <string name="ok">Okay</string>
+    <string name="d">then press Start.</string>
+    <string name="f">Sajda for example under your chest for accuracy</string>
+    <string name="crd" translatable="false"><![CDATA[● Credits to brushez.com for the font.]]></string>
+    <string name="crds" translatable="false"><![CDATA[● This app does not save any of your data, information disappears when the app is closed.]]></string>
+    <string name="crds2" translatable="false"><![CDATA[● Credits for the background go to Mouh The Philosopher on Youtube.]]></string>
+    <string name="ff">(dark environments are not recommended)</string>
+    <string name="lmfao">Improve accuracy</string>
+    <string name="lol">Move your phone around in the shape of 8 three times</string>
+    <string name="yesoyes">(away from computers and magnetic stuff)</string>
+    <string name="cbon">then press on Done.</string>
+    <string name="done">Done</string>
+    <string name="one">One Raka\'a</string>
+    <string name="two">Two raka\'at</string>
+    <string name="three">Three raka\'at</string>
+    <string name="four">Four Raka\'at</string>
+    <string name="stop">Stop</string>
+    <string name="start">Start</string>
+    <string name="back2">Go back</string>
+    <string name="force">Prayer Cop</string>
+    <string name="fajrtitle">Fajr</string>
+    <string name="dohrtitle">Dhuhr</string>
+    <string name="asrtitle">A\'sr</string>
+    <string name="maghrebtitle">Maghrib</string>
+    <string name="ishatitle">Isha</string>
+    <string name="five" translatable="false">5</string>
+    <string name="setting1">Brightness of numbers</string>
+    <string name="zero" translatable="false">0</string>
+    <string name="save">Save</string>
+    <string name="saved">Saved</string>
+    <string name="tahia">Tahia</string>
+    <string name="pressbackagainenglish">Press back again to exit</string>
+    <string name="todo" translatable="false">TODO</string>
+    <string name="delaybeforecounting">Count down</string>
+    <string name="threeer" translatable="false">3</string>
+    <string name="rise">Rise</string>
+    <string name="low_light">It\'s too dark!</string>
+    <string name="threeseconds">Three seconds</string>
+    <string name="fiveseconds">Five seconds</string>
+    <string name="zeroseconds">None</string>
+    <string name="a">Your phone must be covered from light during a</string>
+    <string name="rakaat">Raka\'at</string>
+
+    <!-- Arabic -->
+    <string name="app_name_arabe">Raka\'at | عدد الركعات</string>
+    <string name="app_name2_arabe">Raka\'at\nعدد الركعات</string>
+    <string name="app_name2">Raka\'at\nعدد الركعات</string>
+    <string name="yesoyes_arabe">(بعيدا عن الحواسيب و أي حقل مغناطيسي قوي)</string>
+    <string name="ff_arabe">(لا يُنْصح الإستِخْدام في اللأماكِن شديدة الظُلْمة)</string>
+    <string name="pressbackagainenglish_arabe">إضغط مرّة أُخرى للخروج</string>
+    <string name="four_arabe">أرْبعةْ ركعاتْ</string>
+    <string name="start_arabe">إبدئ</string>
+    <string name="setting1_arabe">إضاءة الأرقام</string>
+    <string name="low_light_arabe">الإضاءة خافِتة جِدا</string>
+    <string name="tahia_arabe">التحية</string>
+    <string name="back_arabe">الرجوع</string>
+    <string name="sajadat_arabe">السجدات</string>
+    <string name="f_arabe">السجود، مثلا تحت الصدر لكي يعمل التطبيق بدقة</string>
+    <string name="rise_arabe">الشروق</string>
+    <string name="prayer_arabe">الصلاة</string>
+    <string name="dohrtitle_arabe">الظهر</string>
+    <string name="delaybeforecounting_arabe">العد التنازُلي</string>
+    <string name="ishatitle_arabe">العشاء</string>
+    <string name="asrtitle_arabe">العصر</string>
+    <string name="fajrtitle_arabe">الفجر</string>
+    <string name="kibla_arabe">القبلة</string>
+    <string name="maghrebtitle_arabe">المغرب</string>
+    <string name="betterquality_arabe">تحسين الدقة</string>
+    <string name="lmfao_arabe">تحسين الدِّقة</string>
+    <string name="done_arabe">تم</string>
+    <string name="saved_arabe">تمَّ الحِفظ</string>
+    <string name="stop_arabe">توقف</string>
+    <string name="kiblatitle_arabe">تُضيئ البوصلة عند مُقابلتِكَ للقبلة</string>
+    <string name="threeseconds_arabe">ثلاث ثواني</string>
+    <string name="three_arabe">ثلاث ركعاتْ</string>
+    <string name="d_arabe">ثم إضغط على إبدئ.</string>
+    <string name="cbon_arabe">ثم إضغط على تم.</string>
+    <string name="ok_arabe">حسنا</string>
+    <string name="save_arabe">حِفظ</string>
+    <string name="fiveseconds_arabe">خمس ثواني</string>
+    <string name="one_arabe">ركْعة واحِدة</string>
+    <string name="two_arabe">ركْعتيْن</string>
+    <string name="force_arabe">شُرطي الصّلاة</string>
+    <string name="a_arabe">ضع الهاتف في مكان حيث تحجب عنه الضوء عند</string>
+    <string name="back2_arabe">عُدْ</string>
+    <string name="lol_arabe">قم بتحريك الهاتف على شكل الرقم 8 ثلاث مرات</string>
+    <string name="howtouse_arabe">كيفية الإستعمال</string>
+    <string name="zeroseconds_arabe">لا أحتاج</string>
+    <string name="noshow_arabe">لا تظهر مجددا</string>
+    <string name="rakaat_arabe">الركعات</string>
+    <string name="pm">م</string>
+    <string name="am">ص</string>
+    <string name="joinprayer">صلّي</string>
+
+
+</resources>

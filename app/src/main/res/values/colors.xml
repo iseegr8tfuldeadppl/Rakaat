@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#000</color>
+    <color name="privacy">#000</color>
+    <color name="black">#000</color>
+    <color name="transparentblack">#7f555555</color>
+    <color name="white">#e6e6e6</color>
+    <color name="transparentwhite">#7fFFFFFF</color>
+    <color name="darkbackgroundcolor">#1a1a1a</color>
+    <color name="transparentt">#00000000</color>
+    <color name="transparentblacker">#7F000000</color>
+    <color name="transparentgrey">#CC555555</color>
+    <color name="dark">#999999</color>
+    <color name="darkest">#737373</color>
+    <color name="typicallightbuttoncolors">#555555</color>
+
+    <color name="dimmest">#555555</color>
+    <color name="dimmer">#8c8c8c</color>
+    <color name="dimm">#b3b3b3</color>
+
+    <color name="lighterred">#ff3333</color>
+    <color name="lighterlighterred">#ff4d4d</color>
+</resources>
