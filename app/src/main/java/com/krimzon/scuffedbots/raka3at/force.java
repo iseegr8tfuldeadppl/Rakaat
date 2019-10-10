@@ -399,12 +399,22 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
             maghribtime.setText(tmaghrib);
             ishatime.setText(tisha);
         }
-        fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0])*60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
-        //Integer risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0])*60 + Integer.valueOf(rise.split(" ")[0].split(":")[1]);
-        dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])*60 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]);
-        asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0])*60 + Integer.valueOf(asr.split(" ")[0].split(":")[1]);
-        maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0])*60 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1]);
-        ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0])*60 + Integer.valueOf(isha.split(" ")[0].split(":")[1]);
+        fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(fajr.split(" ")[0].split(":")[1])*60;
+        if(fajr.split(" ")[1].equals("PM"))
+            fajrtemp += 12*3600;
+        //Integer risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(rise.split(" ")[0].split(":")[1])*60;
+        dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1])*60;
+        if(dhuhr.split(" ")[1].equals("PM"))
+            dhuhrtemp += 12*3600;
+        asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(asr.split(" ")[0].split(":")[1])*60;
+        if(asr.split(" ")[1].equals("PM"))
+            asrtemp += 12*3600;
+        maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1])*60;
+        if(maghrib.split(" ")[1].equals("PM"))
+            maghribtemp += 12*3600;
+        ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(isha.split(" ")[0].split(":")[1])*60;
+        if(isha.split(" ")[1].equals("PM"))
+            ishatemp += 12*3600;
         prayers.add(fajrtemp);
         /*prayers.add(risetemp);*/
         prayers.add(dhuhrtemp);
@@ -530,6 +540,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
 
 
     private void fill_up_prayed() {
+        prayed = "";
         for(int i=0; i<forces.size(); i++)
             prayed += forces.get(i);
     }
@@ -557,6 +568,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     private void retrieveAndy(){
         forces = new ArrayList<>();
         praybuttons = new ArrayList<>();
+        praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
         forces.add("0");forces.add("0");forces.add("0");forces.add("0");forces.add("0");
         sql("force2");
 
@@ -574,7 +586,6 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
             }
 
             // color pray buttons
-            praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
             for(int i=0; i<forces.size(); i++){
                 if(forces.get(i).equals("0")) {
                     praybuttons.get(i).setTextColor(getResources().getColor(R.color.lighterred));
@@ -592,6 +603,10 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
                 }
             }
 
+        } else {
+            praybuttons.get(0).setTextColor(getResources().getColor(R.color.lighterred));
+            fill_up_prayed();
+            SQLSharing.mydb.insertPrayed(todaycomparable, prayed);
         }
 
         // what is soon adan
@@ -606,12 +621,13 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     protected int previous_adan = 0;
     private void what_is_soon_adan_and_one_before_it() {
         temptime = String.valueOf(new Date()).split(" ")[3];
-        rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
+        rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
         for(int i=0;i<prayers.size();i++){
             if(rightnowcomparable>=prayers.get(i))
-                temp_next_adan = i;
+                temp_next_adan = i+1;
         }
         if(temp_next_adan!=next_adan) {
+            new_adan = true;
             next_adan = temp_next_adan;
             if (next_adan != 0) // so we don't assign -1 to previous_adan
                 previous_adan = next_adan - 1;
@@ -624,8 +640,8 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
                     prayerdisplayviews2.get(i).setTextSize(16);
                     prayerdisplayviews.get(i).setTextSize(16);
                 } else {
-                    prayerdisplayviews2.get(i).setTextSize(18);
-                    prayerdisplayviews.get(i).setTextSize(18);
+                    prayerdisplayviews2.get(i).setTextSize(23);
+                    prayerdisplayviews.get(i).setTextSize(23);
                 }
             }
         }
