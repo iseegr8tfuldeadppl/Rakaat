@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
@@ -26,6 +28,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,12 +42,17 @@ import com.batoulapps.adhan.data.DateComponents;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.vision.Frame;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static android.util.TypedValue.COMPLEX_UNIT_PX;
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -100,6 +109,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     protected TextView title;
 
     protected Animation zoom_in, zoom_out, zoom_in2, zoom_out2; // for next adan
+    protected TextView citydisplay, datedisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,12 +128,11 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         load_data_from_slat_sql();
         languageshet();
         sql("force");
+        use(30, 30, true);
         location_shit();
         fontAndy();
         low_light_alert();
 
-        use(33, 20, true);
-        InitialDelayForNextAdanAnimation();
     }
 
     protected List<TextView> prayerdisplayviews, prayerdisplayviews2;
@@ -200,6 +209,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
 
 
     private void location_shit() {
+        sql("force");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if(SQLSharing.mycursor.getCount()>0)
             if_theres_previous_info_load_it_n_display();
@@ -239,6 +249,8 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
 
     private void variables_setup() {
         fajrtitle = findViewById(R.id.fajrtitle);
+        datedisplay = findViewById(R.id.date);
+        citydisplay = findViewById(R.id.city);
         title = findViewById(R.id.title);
         full = findViewById(R.id.full);
         dohrtitle = findViewById(R.id.dohrtitle);
@@ -270,6 +282,8 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         zoom_out = loadAnimation(this, R.anim.zoom_out);
         zoom_in2 = loadAnimation(this, R.anim.zoom_in);
         zoom_out2 = loadAnimation(this, R.anim.zoom_out);
+
+        InitialDelayForNextAdanAnimation();
     }
 
     protected float next_adan_pop_out_large, next_adan_pop_out_shrink, next_adan_size, twelve;
@@ -375,6 +389,12 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     protected Integer maghribtemp;
     protected Integer ishatemp;
     protected String tfajr, trise, tdhuhr, tasr, tmaghrib, tisha;
+    protected String[] temptoday;
+    protected String address = "";
+    protected String city = "";
+    protected String state = "";
+    protected String country = "";
+    protected String knownName = "";
     public void use(double longitude, double latitude, boolean new_coordinates) {
         prayers = new ArrayList<>();
         if(new_coordinates)
@@ -383,7 +403,8 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
             SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
         }
         today = new Date();
-        todaycomparable = today.toString().split(" ")[1] + " " + today.toString().split(" ")[2];
+        temptoday = today.toString().split(" ");
+        todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
         coordinates = new Coordinates(latitude, longitude);
         date = DateComponents.from(today);
         prayerTimes = new PrayerTimes(coordinates, date, params);
@@ -419,43 +440,176 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
             ishatime.setText(tisha);
         }
         fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(fajr.split(" ")[0].split(":")[1])*60;
-        if(fajr.split(" ")[1].equals("PM"))
-            fajrtemp += 12*3600;
+        if(fajr.split(" ")[1].equals(resources.getString(R.string.pmer)))
+            fajrtemp += 43200; //12*3600
         //Integer risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(rise.split(" ")[0].split(":")[1])*60;
         dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1])*60;
-        if(dhuhr.split(" ")[1].equals("PM"))
-            dhuhrtemp += 12*3600;
+        if(dhuhr.split(" ")[1].equals(resources.getString(R.string.pmer)) && !dhuhr.split(":")[0].equals("12"))
+            dhuhrtemp += 43200; //12*3600
         asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(asr.split(" ")[0].split(":")[1])*60;
-        if(asr.split(" ")[1].equals("PM"))
-            asrtemp += 12*3600;
+        if(asr.split(" ")[1].equals(resources.getString(R.string.pmer)))
+            asrtemp += 43200; //12*3600
         maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1])*60;
-        if(maghrib.split(" ")[1].equals("PM"))
-            maghribtemp += 12*3600;
+        if(maghrib.split(" ")[1].equals(resources.getString(R.string.pmer)))
+            maghribtemp += 43200; //12*3600
         ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(isha.split(" ")[0].split(":")[1])*60;
-        if(isha.split(" ")[1].equals("PM"))
-            ishatemp += 12*3600;
+        if(isha.split(" ")[1].equals(resources.getString(R.string.pmer)))
+            ishatemp += 43200; //12*3600
         prayers.add(fajrtemp);
         /*prayers.add(risetemp);*/
         prayers.add(dhuhrtemp);
         prayers.add(asrtemp);
         prayers.add(maghribtemp);
         prayers.add(ishatemp);
-        /*Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(this, Locale.US);
-        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-        String city = addresses.get(0).getLocality();
-        String state = addresses.get(0).getAdminArea();
-        String country = addresses.get(0).getCountryName();
-        String postalCode = addresses.get(0).getPostalCode();
-        String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        formatter.setTimeZone(TimeZone.getTimeZone(country + "/" + state));
-        String lol = formatter.format(prayerTimes.fajr.getTime());*/
 
+        Geocoder geocoder;
+        List<Address> addresses = null;
+        Locale ar = new Locale(resources.getString(R.string.ar));
+        if(language.equals("en"))
+            geocoder = new Geocoder(this, Locale.US);
+        else
+            geocoder = new Geocoder(this, ar);
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(addresses!=null) {
+            address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            city = addresses.get(0).getLocality();
+            state = addresses.get(0).getAdminArea();
+            country = addresses.get(0).getCountryName();
+            knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+            citydisplay.setText(city);
+        }
+
+        work_on_date_n_display_it();
+        datedisplay.setText(datin);
 
         retrieveAndy();
+    }
+
+    protected String datin = "";
+    protected String tempdatin = "";
+
+    private void work_on_date_n_display_it() {
+        datin = "";
+        tempdatin = "";
+        if(language.equals("en")) {
+            tempdatin = temptoday[0];
+            if (tempdatin.equals(resources.getString(R.string.satu)))
+                datin += resources.getString(R.string.sat);
+            else if (tempdatin.equals(resources.getString(R.string.sunu)))
+                datin += resources.getString(R.string.sun);
+            else if (tempdatin.equals(resources.getString(R.string.monu)))
+                datin += resources.getString(R.string.mon);
+            else if (tempdatin.equals(resources.getString(R.string.tueu)))
+                datin += resources.getString(R.string.tue);
+            else if (tempdatin.equals(resources.getString(R.string.wedu)))
+                datin += resources.getString(R.string.wed);
+            else if (tempdatin.equals(resources.getString(R.string.thuru)))
+                datin += resources.getString(R.string.thu);
+            else if (tempdatin.equals(resources.getString(R.string.fridu)))
+                datin += resources.getString(R.string.fri);
+
+            datin += " ";
+            tempdatin = temptoday[1];
+            if (tempdatin.equals(resources.getString(R.string.jan)))
+                datin += "January";
+            else if (tempdatin.equals(resources.getString(R.string.feb)))
+                datin += "February";
+            else if (tempdatin.equals(resources.getString(R.string.mar)))
+                datin += "March";
+            else if (tempdatin.equals(resources.getString(R.string.apr)))
+                datin += "April";
+            else if (tempdatin.contains(resources.getString(R.string.mao)))
+                datin += "May";
+            else if (tempdatin.contains(resources.getString(R.string.june)))
+                datin += "June";
+            else if (tempdatin.contains(resources.getString(R.string.july)))
+                datin += "July";
+            else if (tempdatin.equals(resources.getString(R.string.aug)))
+                datin += "August";
+            else if (tempdatin.equals("Sep"))
+                datin += "September";
+            else if (tempdatin.equals("Oct"))
+                datin += "October";
+            else if (tempdatin.equals("Nov"))
+                datin += "November";
+            else if (tempdatin.equals("Dec"))
+                datin += "December";
+
+            tempdatin = temptoday[2];
+            datin += " " + tempdatin;
+            if (tempdatin.equals("2") || tempdatin.equals("22"))
+                datin += "nd";
+            else if (tempdatin.equals("3") || tempdatin.equals("23"))
+                datin += "rd";
+            else if (tempdatin.equals("1") || tempdatin.equals("21"))
+                datin += "st";
+            else
+                datin += "th";
+
+        } else if(language.equals("ar")){
+            tempdatin = temptoday[0];
+            switch (tempdatin) {
+                case "Sat":
+                    datin += resources.getString(R.string.satarabe);
+                    break;
+                case "Sun":
+                    datin += resources.getString(R.string.sunarabe);
+                    break;
+                case "Mon":
+                    datin += resources.getString(R.string.monarabe);
+                    break;
+                case "Tue":
+                    datin += resources.getString(R.string.tuearabe);
+                    break;
+                case "Wed":
+                    datin += resources.getString(R.string.wedarabe);
+                    break;
+                case "Thu":
+                    datin += resources.getString(R.string.thurarabe);
+                    break;
+                case "Fri":
+                    datin += resources.getString(R.string.friarabe);
+                    break;
+            }
+
+            tempdatin = temptoday[2];
+            datin += " " + tempdatin;
+
+            datin += " ";
+            tempdatin = temptoday[1];
+            if (tempdatin.equals("Jan"))
+                datin += resources.getString(R.string.janarabe);
+            else if (tempdatin.equals("Feb"))
+                datin += resources.getString(R.string.febarabe);
+            else if (tempdatin.equals("Mar"))
+                datin += resources.getString(R.string.mararabe);
+            else if (tempdatin.equals("Apr"))
+                datin += resources.getString(R.string.aprarabe);
+            else if (tempdatin.contains("Ma"))
+                datin += resources.getString(R.string.maarabe);
+            else if (tempdatin.contains("Jun"))
+                datin += resources.getString(R.string.junarabe);
+            else if (tempdatin.contains("Jul"))
+                datin += resources.getString(R.string.jularabe);
+            else if (tempdatin.equals("Aug"))
+                datin += resources.getString(R.string.augusarabe);
+            else if (tempdatin.equals("Sep"))
+                datin += resources.getString(R.string.separabe);
+            else if (tempdatin.equals("Oct"))
+                datin += resources.getString(R.string.octarabe);
+            else if (tempdatin.equals("Nov"))
+                datin += resources.getString(R.string.novarabe);
+            else if (tempdatin.equals("Dec"))
+                datin += resources.getString(R.string.decarabe);
+
+        }
+        datin += " " + temptoday[5];
+
     }
 
 
@@ -473,7 +627,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     protected boolean one_of_previous_is_zero = false;
     protected String tempo;
     public void resetClicked(View view) {
-        sql("force2");
+        /*sql("force2");
         if(SQLSharing.mycursor.getCount()>0) {
             while(SQLSharing.mycursor.moveToNext()) {
                 if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
@@ -487,7 +641,32 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
             SQLSharing.mydb.close();
         }
 
-        back_to_main();
+        back_to_main();*/
+
+        Animation fromfajrtochorok = loadAnimation(this, R.anim.fromfajrtochorok);
+
+        TextView slider = findViewById(R.id.slider);
+        RelativeLayout slideholder = findViewById(R.id.slideholder);
+        print(fajrtitle.getHeight() + " " + slider.getHeight());
+        slider.setHeight(fajrtitle.getHeight() - 30);
+
+        /*LinearLayout slideholder = findViewById(R.id.slideholder);
+        LinearLayout tablesampler = findViewById(R.id.tablesampler);
+        LinearLayout.LayoutParams paramsT2score = (FrameLayout.LayoutParams)tablesampler.getLayoutParams();
+        slideholder.setLayoutParams(paramsT2score);*/
+
+
+        slideholder.startAnimation(fromfajrtochorok);
+        fromfajrtochorok.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override public void onAnimationRepeat(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+        });
     }
 
 
@@ -584,7 +763,6 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     }
 
 
-    protected int next_prayer = 0;
     protected String temper;
     protected List<Button> praybuttons;
     private void retrieveAndy(){
@@ -607,26 +785,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
                 }
             }
 
-            // color pray buttons
-            for(int i=0; i<forces.size(); i++){
-                if(forces.get(i).equals("0")) {
-                    praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
-                    break;
-                } else {
-                    praybuttons.get(i).setTextColor(Color.GREEN);
-                }
-            }
-
-            // find next prayer
-            for(int i=0; i<forces.size(); i++){
-                if(forces.get(i).equals("0")){
-                    next_prayer = i;
-                    break;
-                }
-            }
-
         } else {
-            praybuttons.get(0).setTextColor(resources.getColor(R.color.lighterred));
             fill_up_prayed();
             SQLSharing.mydb.insertPrayed(todaycomparable, prayed);
         }
@@ -634,6 +793,15 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         // what is soon adan
         what_is_soon_adan_and_one_before_it();
 
+        // color pray buttons
+        color_pray_buttons();
+
+    }
+
+    private void color_pray_buttons() {
+        for(int i=0; i<next_adan; i++)
+            if(forces.get(i).equals("0"))
+                praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
     }
 
 
@@ -648,9 +816,11 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         temptime = String.valueOf(new Date()).split(" ")[3];
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
         for(int i=0;i<prayers.size();i++){
-            if(rightnowcomparable>=prayers.get(i))
+            if(rightnowcomparable>prayers.get(i))
                 temp_next_adan = i+1;
         }
+        if(temp_next_adan==5)
+            temp_next_adan = 0;
         if(temp_next_adan!=next_adan) {
             new_adan = true;
             next_adan = temp_next_adan;
@@ -659,16 +829,9 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         }
 
         // apply vision onto all prayers only if changed
-        if(new_adan) { new_adan = false;
-            for (int i = 0; i < prayerdisplayviews.size(); i += 1) {
-                if (i != next_adan) {
-                    prayerdisplayviews2.get(i).setTextSize(normal_text_size-difference_in_scale); // 16
-                    prayerdisplayviews.get(i).setTextSize(normal_text_size-difference_in_scale);
-                } else {
-                    prayerdisplayviews2.get(i).setTextSize(normal_text_size); // 23
-                    prayerdisplayviews.get(i).setTextSize(normal_text_size);  // to prepare for animation
-                }
-            }
+        for (int i = 0; i < prayerdisplayviews.size(); i += 1) {
+                prayerdisplayviews2.get(i).setTextSize(normal_text_size-difference_in_scale); // 16
+                prayerdisplayviews.get(i).setTextSize(normal_text_size-difference_in_scale);
         }
         // don't forget mi
         risetitle.setTextSize(normal_text_size-difference_in_scale); // 16
@@ -733,6 +896,8 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     private void animatenextadan() {
         temp_next_adan_textview = prayerdisplayviews.get(next_adan);
         temp_next_adan_textview2 = prayerdisplayviews2.get(next_adan);
+        temp_next_adan_textview2.setTextSize(normal_text_size); // 23
+        temp_next_adan_textview.setTextSize(normal_text_size);  // to prepare for animation
         temp_next_adan_textview.startAnimation(zoom_in);
         zoom_in.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
             temp_next_adan_textview.setTextSize((float) (normal_text_size*1.3));

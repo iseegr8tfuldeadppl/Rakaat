@@ -14,5 +14,6 @@
     <dimen name="next_adan_pop_out_shrink">16sp</dimen>
     <dimen name="next_adan_size">23sp</dimen>
     <dimen name="twelve">12sp</dimen>
+    <dimen name="yes">3dp</dimen>
 
 </resources>
