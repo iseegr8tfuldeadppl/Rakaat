@@ -15,7 +15,6 @@ import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
@@ -24,12 +23,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,22 +38,17 @@ import com.batoulapps.adhan.data.DateComponents;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.vision.Frame;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
-
-import static android.util.TypedValue.COMPLEX_UNIT_PX;
 import static android.view.animation.AnimationUtils.loadAnimation;
 
-public class force extends AppCompatActivity /*implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener */{
+public class force extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1000;
     protected LocationManager mLocationManager;
@@ -128,7 +119,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         load_data_from_slat_sql();
         languageshet();
         sql("force");
-        use(30, 30, true);
+        //use(30, 30, true);
         location_shit();
         fontAndy();
         low_light_alert();
@@ -141,8 +132,6 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         arabic_typeface = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
         arabic_typeface2 = Typeface.createFromAsset(getAssets(),  "Tajawal-Regular.ttf");
 
-        risetime.setTypeface(arabic_typeface);
-        risetitle.setTypeface(arabic_typeface);
 
         title.setTypeface(arabic_typeface);
 
@@ -151,11 +140,16 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         prayasr.setTypeface(arabic_typeface);
         praymaghrib.setTypeface(arabic_typeface);
         prayisha.setTypeface(arabic_typeface);
+        slider.setTypeface(arabic_typeface);
+        datedisplay.setTypeface(arabic_typeface);
+        citydisplay.setTypeface(arabic_typeface);
 
         for(int i=0; i<prayerdisplayviews.size();i++){
             prayerdisplayviews.get(i).setTypeface(arabic_typeface2);
             prayerdisplayviews2.get(i).setTypeface(arabic_typeface2);
         }
+        risetime.setTypeface(arabic_typeface2);
+        risetitle.setTypeface(arabic_typeface2);
 
     }
 
@@ -247,7 +241,10 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     }
 
 
+    protected TextView slider;
     private void variables_setup() {
+        slideholder = findViewById(R.id.slideholder);
+        slider = findViewById(R.id.slider);
         fajrtitle = findViewById(R.id.fajrtitle);
         datedisplay = findViewById(R.id.date);
         citydisplay = findViewById(R.id.city);
@@ -283,7 +280,6 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         zoom_in2 = loadAnimation(this, R.anim.zoom_in);
         zoom_out2 = loadAnimation(this, R.anim.zoom_out);
 
-        InitialDelayForNextAdanAnimation();
     }
 
     protected float next_adan_pop_out_large, next_adan_pop_out_shrink, next_adan_size, twelve;
@@ -642,31 +638,6 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         }
 
         back_to_main();*/
-
-        Animation fromfajrtochorok = loadAnimation(this, R.anim.fromfajrtochorok);
-
-        TextView slider = findViewById(R.id.slider);
-        RelativeLayout slideholder = findViewById(R.id.slideholder);
-        print(fajrtitle.getHeight() + " " + slider.getHeight());
-        slider.setHeight(fajrtitle.getHeight() - 30);
-
-        /*LinearLayout slideholder = findViewById(R.id.slideholder);
-        LinearLayout tablesampler = findViewById(R.id.tablesampler);
-        LinearLayout.LayoutParams paramsT2score = (FrameLayout.LayoutParams)tablesampler.getLayoutParams();
-        slideholder.setLayoutParams(paramsT2score);*/
-
-
-        slideholder.startAnimation(fromfajrtochorok);
-        fromfajrtochorok.setAnimationListener(new Animation.AnimationListener() {
-            @Override public void onAnimationStart(Animation animation) {}
-            @Override public void onAnimationRepeat(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-            }
-        });
     }
 
 
@@ -678,52 +649,62 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
 
 
     public void ishaClicked(View view) {
-        process_prayed_request(4);
+        if(prayisha.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+            process_prayed_request(4);
 
-        if(allow_pray)
-            send(4);
-        else
-            clean_up();
+            if (allow_pray)
+                send(4);
+            else
+                clean_up();
+        }
     }
 
 
     public void maghribClicked(View view) {
-        process_prayed_request(3);
+        if(praymaghrib.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+            process_prayed_request(3);
 
-        if(allow_pray)
-            send(3);
-        else
-            clean_up();
+            if (allow_pray)
+                send(3);
+            else
+                clean_up();
+        }
     }
 
 
     public void asrClicked(View view) {
-        process_prayed_request(2);
+        if(prayasr.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+            process_prayed_request(2);
 
-        if(allow_pray)
-            send(2);
-        else
-            clean_up();
+            if (allow_pray)
+                send(2);
+            else
+                clean_up();
+        }
     }
 
 
     public void dhuhrClicked(View view) {
-        process_prayed_request(1);
+        if(praydhuhr.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+            process_prayed_request(1);
 
-        if(allow_pray)
-            send(1);
-        else
-            clean_up();
+            if (allow_pray)
+                send(1);
+            else
+                clean_up();
+        }
     }
 
 
     public void fajrClicked(View view) {
-        process_prayed_request(0);
+        if(prayfajr.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+            process_prayed_request(0);
 
-        if(allow_pray)
-            send(0);
-        else
-            clean_up();
+            if (allow_pray)
+                send(0);
+            else
+                clean_up();
+        }
     }
 
 
@@ -796,12 +777,21 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         // color pray buttons
         color_pray_buttons();
 
+        if(!end_of_day)
+            InitialDelayForNextAdanAnimation();
+
     }
 
     private void color_pray_buttons() {
-        for(int i=0; i<next_adan; i++)
-            if(forces.get(i).equals("0"))
-                praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+        if(end_of_day){
+            for(int i=0; i<5; i++)
+                if(forces.get(i).equals("0"))
+                    praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+        } else {
+            for (int i = 0; i < next_adan; i++)
+                if (forces.get(i).equals("0"))
+                    praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+        }
     }
 
 
@@ -812,6 +802,7 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
     protected int temp_next_adan = 0;
     protected boolean new_adan = false;
     protected int previous_adan = 0;
+    protected boolean end_of_day = false;
     private void what_is_soon_adan_and_one_before_it() {
         temptime = String.valueOf(new Date()).split(" ")[3];
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
@@ -819,8 +810,13 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
             if(rightnowcomparable>prayers.get(i))
                 temp_next_adan = i+1;
         }
-        if(temp_next_adan==5)
+
+        if(temp_next_adan==5) {
+            end_of_day = true;
             temp_next_adan = 0;
+        } else
+            end_of_day = false;
+
         if(temp_next_adan!=next_adan) {
             new_adan = true;
             next_adan = temp_next_adan;
@@ -893,6 +889,14 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
         }
     };
 
+    Handler handler2 = new Handler(){
+        //alt+enter for function below
+        @Override
+        public void handleMessage(Message msg) {
+            slide_in_dem_dpz();
+        }
+    };
+
     private void animatenextadan() {
         temp_next_adan_textview = prayerdisplayviews.get(next_adan);
         temp_next_adan_textview2 = prayerdisplayviews2.get(next_adan);
@@ -914,8 +918,35 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
             temp_next_adan_textview2.startAnimation(zoom_out2);
             zoom_out2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                 temp_next_adan_textview2.setTextSize(normal_text_size);
+
+                slide_in_dem_dpz();
             }});
         }});
+    }
+
+    protected Animation fromfajrtolol;
+    protected RelativeLayout slideholder;
+    private void slide_in_dem_dpz() {
+        if(next_adan==0) {
+            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
+            slideholder.startAnimation(fromfajrtolol);
+        } else if(next_adan==1) {
+            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtodhuhr);
+            slideholder.startAnimation(fromfajrtolol);
+        } else if(next_adan==2) {
+            fromfajrtolol = loadAnimation(this, R.anim.frofajrtoasr);
+            slideholder.startAnimation(fromfajrtolol);
+        } else if(next_adan==3) {
+            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtomaghrib);
+            slideholder.startAnimation(fromfajrtolol);
+        } else if(next_adan==4) {
+            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtoisha);
+            slideholder.startAnimation(fromfajrtolol);
+        }
+        fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+            slideholder.setVisibility(View.VISIBLE);
+        }});
+
     }
 
     public void InitialDelayForNextAdanAnimation(){
@@ -937,6 +968,33 @@ public class force extends AppCompatActivity /*implements GoogleApiClient.Connec
 
                 //run the handler
                 handler.sendEmptyMessage(0);
+            }
+        };
+
+        //anti lag
+        Thread mythread = new Thread(r); //to thread the runnable object we launched
+        mythread.start();
+    }
+
+    public void SecondaryDelayForDelayDisplay(){
+
+        //runs in the background
+        Runnable r=new Runnable() {
+            @Override
+            public void run() {
+                long futuretime = System.currentTimeMillis() + 1500;
+
+                while (System.currentTimeMillis() < futuretime){
+                    //prevents multiple threads from crashing into each other
+                    synchronized (this){
+                        try{
+                            wait(futuretime - System.currentTimeMillis());
+                        } catch( Exception ignored){}
+                    }
+                }
+
+                //run the handler
+                handler2.sendEmptyMessage(0);
             }
         };
 

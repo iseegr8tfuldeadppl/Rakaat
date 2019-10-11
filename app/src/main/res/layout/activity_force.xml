@@ -7,7 +7,7 @@
     android:background="@color/black"
     android:id="@+id/full">
 
-    <Button
+    <!--<Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/darksimpelbackground"
@@ -17,7 +17,7 @@
         android:textAllCaps="false"
         android:textSize="20sp"
         android:textColor="#FFF"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"/>-->
 
 
     <!-- Main Layout Holder -->
@@ -90,9 +90,9 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight=".4"
-                    android:weightSum="1">
+                    android:weightSum="2">
                     <TextView
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:id="@+id/fajrtitle"
                         android:text="@string/fajrtitle_arabe"
                         android:layout_width="match_parent"
@@ -103,7 +103,7 @@
                     <Button
                         android:id="@+id/prayfajr"
                         android:background="@drawable/darkbuttons"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:onClick="fajrClicked"
@@ -134,17 +134,30 @@
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:textSize="@dimen/regulartextsize"/>
-                <TextView
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:id="@+id/risetitle"
-                    android:text="@string/rise_arabe"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="horizontal"
                     android:layout_weight=".4"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/regulartextsize"/>
+                    android:weightSum="2">
+                    <TextView
+                        android:layout_weight="1"
+                        android:id="@+id/risetitle"
+                        android:text="@string/rise_arabe"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textSize="@dimen/regulartextsize"/>
+                    <Button
+                        android:visibility="invisible"
+                        android:background="@drawable/darkbuttons"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/joinprayer"
+                        android:textSize="@dimen/regulartextsize"/>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -173,11 +186,11 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight=".4"
-                    android:weightSum="1">
+                    android:weightSum="2">
                     <TextView
                         android:id="@+id/dohrtitle"
                         android:text="@string/dohrtitle_arabe"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textColor="@color/white"
@@ -186,7 +199,7 @@
                     <Button
                         android:id="@+id/praydhuhr"
                         android:background="@drawable/darkbuttons"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:onClick="dhuhrClicked"
@@ -222,20 +235,20 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight=".4"
-                    android:weightSum="1">
+                    android:weightSum="2">
                     <TextView
                         android:id="@+id/asrtitle"
                         android:text="@string/asrtitle_arabe"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:textColor="@color/white"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
                     <Button
                         android:id="@+id/prayasr"
                         android:background="@drawable/darkbuttons"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:onClick="asrClicked"
@@ -271,12 +284,12 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight=".4"
-                    android:weightSum="1">
+                    android:weightSum="2">
                     <TextView
                         android:id="@+id/maghrebtitle"
                         android:text="@string/maghrebtitle_arabe"
                         android:layout_width="match_parent"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:layout_height="match_parent"
                         android:textColor="@color/white"
                         android:gravity="center"
@@ -284,7 +297,7 @@
                     <Button
                         android:id="@+id/praymaghrib"
                         android:background="@drawable/darkbuttons"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:onClick="maghribClicked"
@@ -320,20 +333,20 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight=".4"
-                    android:weightSum="1">
+                    android:weightSum="2">
                     <TextView
                         android:id="@+id/ishatitle"
                         android:text="@string/ishatitle_arabe"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textColor="@color/white"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
                     <Button
                         android:id="@+id/prayisha"
                         android:background="@drawable/darkbuttons"
-                        android:layout_weight=".5"
+                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:onClick="ishaClicked"
@@ -348,28 +361,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <RelativeLayout
+                android:visibility="invisible"
                 android:id="@+id/slideholder"
                 android:layout_gravity="start|top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="17dp"
                 android:paddingBottom="12dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp">
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp">
                 <TextView
                     android:id="@+id/slider"
                     android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:textColor="@color/white"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
                     android:text="-10"
                     android:background="@drawable/delaydisplay"
-                    android:textSize="18sp"/>
+                    android:textSize="26sp"/>
             </RelativeLayout>
         </FrameLayout>
 
