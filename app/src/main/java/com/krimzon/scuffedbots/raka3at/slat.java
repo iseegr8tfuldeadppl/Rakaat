@@ -179,13 +179,15 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     protected Intent sender;
     private void check_if_sent_from_force() {
         receiveandy = getIntent().getStringExtra("sender");
-        if(receiveandy.equals("force")){
-            sender = getIntent();
-            prayer = Integer.valueOf(sender.getStringExtra("prayer"));
-            todaycomparable = sender.getStringExtra("todaycomparable");
-            todaycomparable = sender.getStringExtra("todaycomparable");
-            prayed = sender.getStringExtra("prayed");
-            forceAndy();
+        if(receiveandy!=null) {
+            if (receiveandy.equals("force")) {
+                sender = getIntent();
+                prayer = Integer.valueOf(sender.getStringExtra("prayer"));
+                todaycomparable = sender.getStringExtra("todaycomparable");
+                todaycomparable = sender.getStringExtra("todaycomparable");
+                prayed = sender.getStringExtra("prayed");
+                forceAndy();
+            }
         }
     }
 
@@ -397,9 +399,12 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     @Override
     public void onBackPressed() {
-        if(receiveandy.equals("force"))
-            back_to_force("no");
-        else
+        if(receiveandy!=null) {
+            if (receiveandy.equals("force"))
+                back_to_force("no");
+            else
+                exit();
+        } else
             exit();
     }
 
@@ -433,11 +438,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
     private void show_raka3at_selections(){
-        if(receiveandy.equals("force")) {
-            one.setEnabled(false);
-            two.setEnabled(false);
-            three.setEnabled(false);
-            four.setEnabled(false);
+        if(receiveandy!=null) {
+            if (receiveandy.equals("force")) {
+                one.setEnabled(false);
+                two.setEnabled(false);
+                three.setEnabled(false);
+                four.setEnabled(false);
+            }
         }
         blackground.setVisibility(GONE);
         prepare_selection_and_countdown_things();
@@ -461,18 +468,20 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                     four.startAnimation(slide_in_from_right4);
                     slide_in_from_right4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
                         four.setVisibility(View.VISIBLE);
-                        if(receiveandy.equals("force")){
-                            if(prayer==0)
-                                limit = 2;
-                            else if(prayer==1)
-                                limit = 4;
-                            else if(prayer==2)
-                                limit = 4;
-                            else if(prayer==3)
-                                limit = 3;
-                            else if(prayer==4)
-                                limit = 4;
-                            hide_raka3at_selections();
+                        if(receiveandy!=null) {
+                            if (receiveandy.equals("force")) {
+                                if (prayer == 0)
+                                    limit = 2;
+                                else if (prayer == 1)
+                                    limit = 4;
+                                else if (prayer == 2)
+                                    limit = 4;
+                                else if (prayer == 3)
+                                    limit = 3;
+                                else if (prayer == 4)
+                                    limit = 4;
+                                hide_raka3at_selections();
+                            }
                         }
                     }});
                 }});
@@ -567,8 +576,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
             if (start_was_just_clicked) { start_was_just_clicked = false;
                 if (event.values[0] < minimum_light) {
-                    if(receiveandy.equals("force"))
-                        back_to_force("yes");
+                    if(receiveandy!=null) {
+                        if (receiveandy.equals("force"))
+                            back_to_force("yes");
+                    }
                     if(language.equals("en"))
                         Snackbar.make(full, getString(R.string.low_light), BaseTransientBottomBar.LENGTH_LONG).show();
                     else
@@ -592,11 +603,14 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void click_on_start() {
-        if(!receiveandy.equals("force2")) {
-            if (!startclicked)
-                start_was_just_clicked = true;
-            else
-                reset();
+        if(receiveandy!=null) {
+            if (!receiveandy.equals("force2")) {
+                if (!startclicked)
+                    start_was_just_clicked = true;
+                else
+                    reset();
+            } else
+                back_to_force("no");
         } else
             back_to_force("no");
     }
@@ -711,19 +725,21 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void warn_tahia() {
         if(!tahia_fading_started){
-            if((num_of_raka3at==2 || num_of_raka3at==4) && tahia.getVisibility()== View.INVISIBLE){
+            if(( (num_of_raka3at==2 && num_of_sajadat==0)
+                    || (num_of_raka3at==4 && num_of_sajadat==0)
+                    || (limit==3 && num_of_raka3at==3 && num_of_sajadat==0))
+                    && tahia.getVisibility()== View.INVISIBLE){
                 tahia_fading_started = true;
                 tahia.startAnimation(fade_in_tahia);
                 fade_in_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     tahia.setVisibility(VISIBLE);
                     tahia_fading_started = false;
                 }});
-            } else
-            if(tahia.getVisibility()== VISIBLE) {
+            } else if(tahia.getVisibility()== VISIBLE) {
                 tahia_fading_started = true;
                 tahia.startAnimation(fade_out_tahia);
                 fade_out_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
-                    tahia.setVisibility(GONE);
+                    tahia.setVisibility(View.INVISIBLE);
                     tahia_fading_started = false;
                 }});
             }
@@ -1125,9 +1141,14 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     protected Intent forceIntent;
     public void tamClicked(View view) {
-        if(receiveandy.equals("force"))
-            back_to_force("no");
-        else {
+        if(receiveandy!=null) {
+            if (receiveandy.equals("force"))
+                back_to_force("no");
+            else {
+                donecover.setVisibility(GONE);
+                reset();
+            }
+        } else {
             donecover.setVisibility(GONE);
             reset();
         }

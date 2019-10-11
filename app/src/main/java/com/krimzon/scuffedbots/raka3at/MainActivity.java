@@ -133,13 +133,15 @@ public class MainActivity extends AppCompatActivity {
     private void sql_work() {
 
 
-        SQLSharing.TABLE_NAME_INPUTER = "force";
+        /*SQLSharing.TABLE_NAME_INPUTER = "force";
         SQLSharing.mydb = new SQL(this);
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
         if(SQLSharing.mycursor.getCount()!=1) // TODO always update this
             SQLSharing.mydb.delete(this);
-        SQLSharing.mydb.close();
-        SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null && SQLSharing.mycursor!=null) {
+            SQLSharing.mydb.close();
+            SQLSharing.mycursor.close();
+        }*/
 
         // this is to avoid issues with added rows with google play updates to avoid crashing users
         SQLSharing.TABLE_NAME_INPUTER = "slat";
@@ -147,7 +149,10 @@ public class MainActivity extends AppCompatActivity {
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
         if(SQLSharing.mycursor.getCount()<7)  // TODO always update this
             SQLSharing.mydb.delete(this);
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        if(SQLSharing.mydb!=null && SQLSharing.mycursor!=null){
+            SQLSharing.mycursor.close();
+            SQLSharing.mydb.close();
+        }
         SQLSharing.mydb = new SQL(this);
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
         if (SQLSharing.mycursor.getCount() <= 0) {

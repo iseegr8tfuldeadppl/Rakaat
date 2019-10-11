@@ -35,7 +35,7 @@ public class CustomDialogClass extends Dialog implements
         fixsmall2 = findViewById(R.id.fixsmall2);
         fixsmall3 = findViewById(R.id.fixsmall3);
 
-        Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),  "arabe.otf");
+        Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),  "Tajawal-Light.ttf");
         yes.setTypeface(custom_font);
         //fixbig.setTypeface(custom_font);
         fixsmall1.setTypeface(custom_font);

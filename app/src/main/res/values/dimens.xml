@@ -8,4 +8,11 @@
     <dimen name="topnbottomoftable">10dp</dimen>
     <dimen name="regulartextsize">16sp</dimen>
     <dimen name="sidesoftablepaddings">7dp</dimen>
+
+    <!-- next adan -->
+    <dimen name="next_adan_pop_out_large">25sp</dimen>
+    <dimen name="next_adan_pop_out_shrink">16sp</dimen>
+    <dimen name="next_adan_size">23sp</dimen>
+    <dimen name="twelve">12sp</dimen>
+
 </resources>
