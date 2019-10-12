@@ -117,6 +117,7 @@ public class force extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_force);
 
+
         params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
@@ -134,12 +135,16 @@ public class force extends AppCompatActivity {
         location_shit();
         low_light_alert();
 
+        use(30, 30, true);
     }
 
     public static String hijri = "";
     protected int hijri_month = 0, hijri_year = 0, hijri_day = 0;
+    protected String[] lel;
+    protected int miladi_month = 0;
     private void hijri_date_setup() {
-        String[] t = PlainDate.of(2019, 10, 12)
+        lel = todaycomparable.split(" ");
+        String[] t = PlainDate.of(Integer.valueOf(temptoday[5]), miladi_month, Integer.valueOf(lel[1])) // TODO: fix me Integer.valueOf(lel[5]) + 2000
                 .transform(HijriCalendar.class, HijriCalendar.VARIANT_UMALQURA).toString().split("-");
         t[3] = t[3].replace("[islamic", "");
         hijri_year = Integer.valueOf(t[1]);
@@ -706,30 +711,54 @@ public class force extends AppCompatActivity {
 
             datin += " ";
             tempdatin = temptoday[1];
-            if (tempdatin.equals("Jan"))
+            if (tempdatin.equals("Jan")) {
+                miladi_month = 1;
                 datin += resources.getString(R.string.janarabe);
-            else if (tempdatin.equals("Feb"))
+            }
+            else if (tempdatin.equals("Feb")) {
+                miladi_month = 2;
                 datin += resources.getString(R.string.febarabe);
-            else if (tempdatin.equals("Mar"))
+            }
+            else if (tempdatin.equals("Mar")) {
+                miladi_month = 3;
                 datin += resources.getString(R.string.mararabe);
-            else if (tempdatin.equals("Apr"))
+            }
+            else if (tempdatin.equals("Apr")) {
+                miladi_month = 4;
                 datin += resources.getString(R.string.aprarabe);
-            else if (tempdatin.contains("Ma"))
+            }
+            else if (tempdatin.contains("Ma")) {
+                miladi_month = 5;
                 datin += resources.getString(R.string.maarabe);
-            else if (tempdatin.contains("Jun"))
+            }
+            else if (tempdatin.contains("Jun")) {
+                miladi_month = 6;
                 datin += resources.getString(R.string.junarabe);
-            else if (tempdatin.contains("Jul"))
+            }
+            else if (tempdatin.contains("Jul")) {
+                miladi_month = 7;
                 datin += resources.getString(R.string.jularabe);
-            else if (tempdatin.equals("Aug"))
+            }
+            else if (tempdatin.equals("Aug")) {
+                miladi_month = 8;
                 datin += resources.getString(R.string.augusarabe);
-            else if (tempdatin.equals("Sep"))
+            }
+            else if (tempdatin.equals("Sep")) {
+                miladi_month = 9;
                 datin += resources.getString(R.string.separabe);
-            else if (tempdatin.equals("Oct"))
+            }
+            else if (tempdatin.equals("Oct")) {
+                miladi_month = 10;
                 datin += resources.getString(R.string.octarabe);
-            else if (tempdatin.equals("Nov"))
+            }
+            else if (tempdatin.equals("Nov")) {
+                miladi_month = 11;
                 datin += resources.getString(R.string.novarabe);
-            else if (tempdatin.equals("Dec"))
+            }
+            else if (tempdatin.equals("Dec")) {
+                miladi_month = 12;
                 datin += resources.getString(R.string.decarabe);
+            }
 
         }
         datin += " " + temptoday[5];
