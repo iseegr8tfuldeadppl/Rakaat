@@ -57,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // override system locale
+        Configuration cfg = new Configuration();
+        cfg.locale = new Locale("en");
+        this.getResources().updateConfiguration(cfg, null);
+
         //set custom font
         variables();
         sql_work();

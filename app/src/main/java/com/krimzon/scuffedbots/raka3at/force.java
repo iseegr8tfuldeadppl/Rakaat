@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,8 +39,13 @@ import com.batoulapps.adhan.data.DateComponents;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.krimzon.scuffedbots.raka3at.Dates.DatesCollectionAdapter;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+
+import net.time4j.PlainDate;
+import net.time4j.calendar.HijriCalendar;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +59,7 @@ public class force extends AppCompatActivity {
     private static final int REQUEST_CODE = 1000;
     protected LocationManager mLocationManager;
     protected PrayerTimes prayerTimes;
+
     protected DateComponents date;
     protected Coordinates coordinates;
     protected boolean an_alert_to_turn_location_on_was_displayed = false;
@@ -100,7 +107,10 @@ public class force extends AppCompatActivity {
     protected TextView title;
 
     protected Animation zoom_in, zoom_out, zoom_in2, zoom_out2; // for next adan
-    protected TextView citydisplay, datedisplay;
+    protected TextView citydisplay;
+
+    protected ViewPager pager;
+    protected DatesCollectionAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,22 +125,81 @@ public class force extends AppCompatActivity {
         dateFormat = new SimpleDateFormat(pattern);
 
         variables_setup();
+        fontAndy();
         sql("slat");
         load_data_from_slat_sql();
         languageshet();
         sql("force");
         //use(30, 30, true);
         location_shit();
-        fontAndy();
         low_light_alert();
 
     }
 
+    public static String hijri = "";
+    protected int hijri_month = 0, hijri_year = 0, hijri_day = 0;
+    private void hijri_date_setup() {
+        String[] t = PlainDate.of(2019, 10, 12)
+                .transform(HijriCalendar.class, HijriCalendar.VARIANT_UMALQURA).toString().split("-");
+        t[3] = t[3].replace("[islamic", "");
+        hijri_year = Integer.valueOf(t[1]);
+        hijri_month = Integer.valueOf(t[2]);
+        hijri_day = Integer.valueOf(t[3]);
+        convert_hijri_to_cute();
+    }
+
+    private void convert_hijri_to_cute() {
+        hijri += hijri_day + " ";
+        if(language.equals("ar")){
+            switch(hijri_month) {
+                case 1:
+                    hijri += resources.getString(R.string.muharram_arabe);
+                    break;
+                case 2:
+                    hijri += resources.getString(R.string.safar_arabe);
+                    break;
+                case 3:
+                    hijri += resources.getString(R.string.rabialawwal_arabe);
+                    break;
+                case 4:
+                    hijri += resources.getString(R.string.rabialthani_arabe);
+                    break;
+                case 5:
+                    hijri += resources.getString(R.string.jumadialawwal_arabe);
+                    break;
+                case 6:
+                    hijri += resources.getString(R.string.jumadialthani_arabe);
+                    break;
+                case 7:
+                    hijri += resources.getString(R.string.rajab_arabe);
+                    break;
+                case 8:
+                    hijri += resources.getString(R.string.chaaban_arabe);
+                    break;
+                case 9:
+                    hijri += resources.getString(R.string.ramadhan_arabe);
+                    break;
+                case 10:
+                    hijri += resources.getString(R.string.shawwal_arabe);
+                    break;
+                case 11:
+                    hijri += resources.getString(R.string.dhualqaada_arabe);
+                    break;
+                case 12:
+                    hijri += resources.getString(R.string.dhualhijja_arabe);
+                    break;
+            }
+
+            hijri += " " + hijri_year;
+        }
+    }
+
     protected List<TextView> prayerdisplayviews, prayerdisplayviews2;
-    protected Typeface arabic_typeface2;
+    protected Typeface arabic_typeface2, arabic_typeface3;
     private void fontAndy() {
         arabic_typeface = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
         arabic_typeface2 = Typeface.createFromAsset(getAssets(),  "Tajawal-Regular.ttf");
+        arabic_typeface3 = Typeface.createFromAsset(getAssets(),  "Tajawal-Bold.ttf");
 
 
         title.setTypeface(arabic_typeface);
@@ -141,7 +210,8 @@ public class force extends AppCompatActivity {
         praymaghrib.setTypeface(arabic_typeface);
         prayisha.setTypeface(arabic_typeface);
         slider.setTypeface(arabic_typeface);
-        datedisplay.setTypeface(arabic_typeface);
+        slider.setTypeface(arabic_typeface3);
+        /*datedisplay.setTypeface(arabic_typeface);*/
         citydisplay.setTypeface(arabic_typeface);
 
         for(int i=0; i<prayerdisplayviews.size();i++){
@@ -150,6 +220,8 @@ public class force extends AppCompatActivity {
         }
         risetime.setTypeface(arabic_typeface2);
         risetitle.setTypeface(arabic_typeface2);
+
+
 
     }
 
@@ -246,7 +318,7 @@ public class force extends AppCompatActivity {
         slideholder = findViewById(R.id.slideholder);
         slider = findViewById(R.id.slider);
         fajrtitle = findViewById(R.id.fajrtitle);
-        datedisplay = findViewById(R.id.date);
+        /*datedisplay = findViewById(R.id.date);*/
         citydisplay = findViewById(R.id.city);
         title = findViewById(R.id.title);
         full = findViewById(R.id.full);
@@ -392,12 +464,14 @@ public class force extends AppCompatActivity {
     protected String country = "";
     protected String knownName = "";
     public void use(double longitude, double latitude, boolean new_coordinates) {
+        hijri = "";
         prayers = new ArrayList<>();
+
         if(new_coordinates)
             SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
-        else {
+        else
             SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
-        }
+
         today = new Date();
         temptoday = today.toString().split(" ");
         todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
@@ -481,12 +555,62 @@ public class force extends AppCompatActivity {
         }
 
         work_on_date_n_display_it();
-        datedisplay.setText(datin);
+        display_dates();
+        /*datedisplay.setText(datin);*/
 
-        retrieveAndy();
+        if(onetimer) { onetimer = false;
+            retrieveAndy();
+        }
     }
 
-    protected String datin = "";
+    private void display_dates() {
+        pager = findViewById(R.id.pager);
+        adapter = new DatesCollectionAdapter(getSupportFragmentManager());
+        pager.setAdapter(adapter);
+        Displai();
+    }
+
+    Handler handlerr = new Handler(){
+        //alt+enter for function below
+        @Override
+        public void handleMessage(Message msg) {
+            switchswitch();
+        }
+    };
+
+    private void switchswitch() {
+        pager.setCurrentItem(2);
+    }
+
+    public void Displai(){
+
+        //runs in the background
+        Runnable r=new Runnable() {
+            @Override
+            public void run() {
+                long futuretime = System.currentTimeMillis() + 5000;
+
+                while (System.currentTimeMillis() < futuretime){
+                    //prevents multiple threads from crashing into each other
+                    synchronized (this){
+                        try{
+                            wait(futuretime - System.currentTimeMillis());
+                        } catch( Exception ignored){}
+                    }
+                }
+
+                //run the handler
+                handlerr.sendEmptyMessage(0);
+            }
+        };
+
+        //anti lag
+        Thread mythread = new Thread(r); //to thread the runnable object we launched
+        mythread.start();
+    }
+
+    protected boolean onetimer = true;
+    public static String datin = "";
     protected String tempdatin = "";
 
     private void work_on_date_n_display_it() {
@@ -508,6 +632,8 @@ public class force extends AppCompatActivity {
                 datin += resources.getString(R.string.thu);
             else if (tempdatin.equals(resources.getString(R.string.fridu)))
                 datin += resources.getString(R.string.fri);
+
+            hijri += datin + " ";
 
             datin += " ";
             tempdatin = temptoday[1];
@@ -573,6 +699,8 @@ public class force extends AppCompatActivity {
                     break;
             }
 
+            hijri += datin + " ";
+
             tempdatin = temptoday[2];
             datin += " " + tempdatin;
 
@@ -606,6 +734,8 @@ public class force extends AppCompatActivity {
         }
         datin += " " + temptoday[5];
 
+
+        hijri_date_setup();
     }
 
 
@@ -806,6 +936,7 @@ public class force extends AppCompatActivity {
     private void what_is_soon_adan_and_one_before_it() {
         temptime = String.valueOf(new Date()).split(" ")[3];
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
+
         for(int i=0;i<prayers.size();i++){
             if(rightnowcomparable>prayers.get(i))
                 temp_next_adan = i+1;
@@ -814,6 +945,7 @@ public class force extends AppCompatActivity {
         if(temp_next_adan==5) {
             end_of_day = true;
             temp_next_adan = 0;
+            previous_adan = 0;
         } else
             end_of_day = false;
 
@@ -926,23 +1058,26 @@ public class force extends AppCompatActivity {
 
     protected Animation fromfajrtolol;
     protected RelativeLayout slideholder;
+    protected int positifise = 0;
+    protected int lol = 0;
     private void slide_in_dem_dpz() {
-        if(next_adan==0) {
+        lol = ((prayers.get(next_adan)-rightnowcomparable)/60 - 1);
+        if(lol<0) positifise = -lol;
+        else positifise = lol;
+
+        slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
+        if(next_adan==0)
             fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
-            slideholder.startAnimation(fromfajrtolol);
-        } else if(next_adan==1) {
+        else if(next_adan==1)
             fromfajrtolol = loadAnimation(this, R.anim.fromfajrtodhuhr);
-            slideholder.startAnimation(fromfajrtolol);
-        } else if(next_adan==2) {
+        else if(next_adan==2)
             fromfajrtolol = loadAnimation(this, R.anim.frofajrtoasr);
-            slideholder.startAnimation(fromfajrtolol);
-        } else if(next_adan==3) {
+        else if(next_adan==3)
             fromfajrtolol = loadAnimation(this, R.anim.fromfajrtomaghrib);
-            slideholder.startAnimation(fromfajrtolol);
-        } else if(next_adan==4) {
+        else if(next_adan==4)
             fromfajrtolol = loadAnimation(this, R.anim.fromfajrtoisha);
-            slideholder.startAnimation(fromfajrtolol);
-        }
+
+        slideholder.startAnimation(fromfajrtolol);
         fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
             slideholder.setVisibility(View.VISIBLE);
         }});

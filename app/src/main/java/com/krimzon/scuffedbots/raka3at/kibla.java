@@ -1,7 +1,10 @@
 package com.krimzon.scuffedbots.raka3at;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -9,7 +12,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +27,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.batoulapps.adhan.Coordinates;
+import com.batoulapps.adhan.Qibla;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.dialogs.CustomDialogClass;
@@ -48,10 +61,13 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     String kibla, kiblatitleh, betterquality, backh;
     private TextView maintitle;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kibla);
+
+        location_shit();
 
         kiblatitle = findViewById(R.id.kiblatitle);
         maintitle = findViewById(R.id.maintitle);
@@ -78,10 +94,18 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
             english();
     }
 
-    private void getLanguage(){
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
+    private void sql(String table) {
+        if(SQLSharing.mycursor!=null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null)
+            SQLSharing.mydb.close();
+        SQLSharing.TABLE_NAME_INPUTER = table;
         SQLSharing.mydb = new SQL(this);
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+    }
+
+    private void getLanguage(){
+        sql("slat");
 
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
@@ -131,12 +155,16 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         mAzimuth = Math.round(mAzimuth);
         compass_img.setRotation(-mAzimuth);
 
-        if(85 <= mAzimuth && mAzimuth <= 119)
+        if(qibla_angle - qibla_range <= mAzimuth && mAzimuth <= qibla_angle + qibla_range)
             compass_img.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.compass));
         else
             compass_img.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.compass2));
     }
 
+    // TODO: make this range modifyable by user by the form of a seekbar
+    // TODO: add light mode to this activity
+    protected int qibla_range = 20; // actually half of range, more like reach
+    protected double qibla_angle = 105; // default is manual, but it will be updated if library got some food
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
@@ -191,8 +219,113 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
+        if(an_alert_to_turn_location_on_was_displayed)
+            AttemptToGetLocationCoordinates();
         start();
     }
+
+    private boolean checkLocation() {
+        if(!isLocationEnabled())
+            showAlert();
+        return isLocationEnabled();
+    }
+
+    protected boolean an_alert_to_turn_location_on_was_displayed = false;
+    private void showAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Enable Location")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                        an_alert_to_turn_location_on_was_displayed = true;
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent main = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(main);
+                        finish();
+                    }
+                });
+        dialog.show();
+    }
+
+    protected LocationManager mLocationManager;
+    private boolean isLocationEnabled() {
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private void AttemptToGetLocationCoordinates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            return; }
+        if(checkLocation()) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                if(new_coordinates)
+                                    new_coordinates = false;
+                                wegotcoordsboiz(location.getLongitude(), location.getLatitude());
+                            }
+                        }
+                    });
+        }
+    }
+
+    protected boolean new_coordinates = false;
+    protected Qibla qibla;
+    protected Coordinates coordinates;
+    private void wegotcoordsboiz(double longitude, double latitude){
+
+        // update coordinates in sql folks
+        if(new_coordinates)
+            SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
+        else
+            SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
+
+        coordinates = new Coordinates(latitude, longitude);
+        qibla = new Qibla(coordinates);
+        qibla_angle = qibla.direction;
+    }
+
+    protected double longitude = 0, latitude = 0;
+    private void if_theres_previous_info_load_it_n_display() {
+        new_coordinates = false;
+        SQLSharing.mycursor.moveToFirst();
+        longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
+        latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
+        wegotcoordsboiz(longitude, latitude);
+    }
+
+    private static final int REQUEST_CODE = 1000;
+    private void location_shit() {
+        sql("force");
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if(SQLSharing.mycursor.getCount()>0)
+            if_theres_previous_info_load_it_n_display();
+        if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date();
+    }
+
+    private void if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date() {
+        new_coordinates = true;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            return; }
+        if(checkLocation())
+            AttemptToGetLocationCoordinates();
+    }
+
+    protected FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     public void onBackPressed() {

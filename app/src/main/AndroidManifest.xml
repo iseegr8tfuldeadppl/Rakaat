@@ -23,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="false"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:name="com.krimzon.scuffedbots.raka3at.MyApplication">
         <activity
             android:name=".force"
             android:configChanges="orientation"

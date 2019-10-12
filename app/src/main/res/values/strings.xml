@@ -149,5 +149,20 @@
     <string name="july">Jul</string>
     <string name="aug">Aug</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="muharram_arabe">مُحَرَّم</string>
+    <string name="safar_arabe">صَفَر</string>
+    <string name="rabialawwal_arabe">رَبِيْعُ الأَوّل</string>
+    <string name="rabialthani_arabe">رَبِيْعُ الثَّانِي</string>
+    <string name="jumadialawwal_arabe">جَمَادِي الأَوّل</string>
+    <string name="jumadialthani_arabe">جَمَادِي الثَّانِي</string>
+    <string name="rajab_arabe">رَجَب</string>
+    <string name="chaaban_arabe">شَعْبَان</string>
+    <string name="ramadhan_arabe">رَمَضَان</string>
+    <string name="shawwal_arabe">شَوَّال</string>
+    <string name="dhualqaada_arabe">ذُوالْقَعْدَة</string>
+    <string name="dhualhijja_arabe">ذُوالْحِجَّة</string>
+
 
 </resources>
