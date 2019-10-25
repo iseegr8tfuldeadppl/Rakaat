@@ -42,14 +42,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.Dates.DatesCollectionAdapter;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -94,7 +94,6 @@ public class force extends AppCompatActivity {
     protected boolean new_coordinates = false;
 
     protected List<Integer> prayers;
-    protected Date today;
     protected String todaycomparable;
 
     protected RelativeLayout full;
@@ -125,17 +124,18 @@ public class force extends AppCompatActivity {
 
         dateFormat = new SimpleDateFormat(pattern);
 
+        CurrentDisplayedDay = new Date();
+
         variables_setup();
         fontAndy();
         sql("slat");
         load_data_from_slat_sql();
         languageshet();
         sql("force");
-        //use(30, 30, true);
-        location_shit();
+        location_shit(CurrentDisplayedDay);
         low_light_alert();
 
-        use(30, 30, true);
+        /*longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());*/
     }
 
     public static String hijri = "";
@@ -279,16 +279,16 @@ public class force extends AppCompatActivity {
     }
 
 
-    private void location_shit() {
+    private void location_shit(Date date) {
         sql("force");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if(SQLSharing.mycursor.getCount()>0)
-            if_theres_previous_info_load_it_n_display();
-        if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date();
+            if_theres_previous_info_load_it_n_display(date);
+        if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(date);
     }
 
 
-    private void if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date() {
+    private void if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(Date date) {
         new_coordinates = true;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
@@ -298,12 +298,14 @@ public class force extends AppCompatActivity {
     }
 
 
-    private void if_theres_previous_info_load_it_n_display() {
+    protected double longitude;
+    protected double latitude;
+    private void if_theres_previous_info_load_it_n_display(Date date) {
         new_coordinates = false;
         SQLSharing.mycursor.moveToFirst();
-        double longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
-        double latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
-        use(longitude, latitude, new_coordinates);
+        longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
+        latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
+        use(longitude, latitude, new_coordinates, date);
     }
 
 
@@ -318,6 +320,7 @@ public class force extends AppCompatActivity {
     }
 
 
+    protected Animation begone;
     protected TextView slider;
     private void variables_setup() {
         slideholder = findViewById(R.id.slideholder);
@@ -353,6 +356,7 @@ public class force extends AppCompatActivity {
         next_adan_pop_out_shrink = resources.getDimension(R.dimen.next_adan_pop_out_shrink); ///TypedValue.COMPLEX_UNIT_PX
         next_adan_size = resources.getDimension(R.dimen.next_adan_size); ///TypedValue.COMPLEX_UNIT_PX
         zoom_in = loadAnimation(this, R.anim.zoom_in);
+        begone = loadAnimation(this, R.anim.begone);
         zoom_out = loadAnimation(this, R.anim.zoom_out);
         zoom_in2 = loadAnimation(this, R.anim.zoom_in);
         zoom_out2 = loadAnimation(this, R.anim.zoom_out);
@@ -400,7 +404,9 @@ public class force extends AppCompatActivity {
                             if (location != null) {
                                 if(new_coordinates)
                                     new_coordinates = false;
-                                use(location.getLongitude(), location.getLatitude(), new_coordinates);
+                                longitude = location.getLongitude();
+                                latitude = location.getLatitude();
+                                use(longitude, latitude, new_coordinates, CurrentDisplayedDay);
                             }
                         }
                     });
@@ -468,52 +474,67 @@ public class force extends AppCompatActivity {
     protected String state = "";
     protected String country = "";
     protected String knownName = "";
-    public void use(double longitude, double latitude, boolean new_coordinates) {
+    public void use(double longitude, double latitude, boolean new_coordinates, Date today) {
+
+        // declarations
         hijri = "";
         prayers = new ArrayList<>();
 
-        if(new_coordinates)
-            SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
-        else
-            SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
-
-        today = new Date();
         temptoday = today.toString().split(" ");
         todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
-        coordinates = new Coordinates(latitude, longitude);
-        date = DateComponents.from(today);
-        prayerTimes = new PrayerTimes(coordinates, date, params);
+
+        //update coords in sql
+        update_coords_in_sql(longitude, latitude, new_coordinates);
+
+        // pull date and shape it
+        pull_date_and_shape_it(longitude, latitude, today);
+
+        // pull prayer times and shape them
+        pull_prayer_times_and_shape_them();
+
+        // display prayer times
+        display_prayer_times();
+
+        // convert prayertimes into milliseconds for comparaison and save in prayers Array
+        convert_prayertimes_into_milliseconds();
+
+        // pull location to display city or wtvr
+        pull_location(longitude, latitude);
+
+        // work on date n then display
+        work_on_date_n_display_it();
+        display_dates();
+        /*datedisplay.setText(datin);*/
+
+        // retrieve prayers array from sql so we color force buttons accordingly
+        retrieveAndy();
+    }
+
+    private void pull_location(double longitude, double latitude) {
+        Geocoder geocoder;
+        List<Address> addresses = null;
+        Locale ar = new Locale(resources.getString(R.string.ar));
+        if(language.equals("en"))
+            geocoder = new Geocoder(this, Locale.US);
+        else
+            geocoder = new Geocoder(this, ar);
+
         try {
-            fajr = DateFormat.format(timeshape, new Date(prayerTimes.fajr.getTime())).toString();
-            rise = DateFormat.format(timeshape, new Date(prayerTimes.sunrise.getTime())).toString();
-            dhuhr = DateFormat.format(timeshape, new Date(prayerTimes.dhuhr.getTime())).toString();
-            asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
-            maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
-            isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
-        } catch(Exception ignored){}
-        if(language.equals("en")) {
-            fajrtime.setText(fajr);
-            risetime.setText(rise);
-            dhuhrtime.setText(dhuhr);
-            asrtime.setText(asr);
-            maghribtime.setText(maghrib);
-            ishatime.setText(isha);
-        } else if(language.equals("ar")){ // the arabic am and pm
-            pm = getString(R.string.pm);
-            am = getString(R.string.am);
-            if(fajr.split(" ")[1].equals("AM")) tfajr = fajr.split(" ")[0] + " " + am;else tfajr = fajr.split(" ")[0] + " " +  pm;
-            if(rise.split(" ")[1].equals("AM")) trise = rise.split(" ")[0] + " " + am;else trise = rise.split(" ")[0] + " " +  pm;
-            if(dhuhr.split(" ")[1].equals("AM")) tdhuhr = dhuhr.split(" ")[0] + " " + am;else tdhuhr = dhuhr.split(" ")[0] + " " +  pm;
-            if(asr.split(" ")[1].equals("AM")) tasr = asr.split(" ")[0] + " " + am;else tasr = asr.split(" ")[0] + " " +  pm;
-            if(maghrib.split(" ")[1].equals("AM")) tmaghrib = maghrib.split(" ")[0] + " " + am;else tmaghrib = maghrib.split(" ")[0] + " " +  pm;
-            if(isha.split(" ")[1].equals("AM")) tisha = isha.split(" ")[0] + " " + am;else tisha = isha.split(" ")[0] + " " +  pm;
-            fajrtime.setText(tfajr);
-            risetime.setText(trise);
-            dhuhrtime.setText(tdhuhr);
-            asrtime.setText(tasr);
-            maghribtime.setText(tmaghrib);
-            ishatime.setText(tisha);
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        if(addresses!=null) {
+            address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            city = addresses.get(0).getLocality();
+            state = addresses.get(0).getAdminArea();
+            country = addresses.get(0).getCountryName();
+            knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+            citydisplay.setText(city);
+        }
+    }
+
+    private void convert_prayertimes_into_milliseconds() {
         fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(fajr.split(" ")[0].split(":")[1])*60;
         if(fajr.split(" ")[1].equals(resources.getString(R.string.pmer)))
             fajrtemp += 43200; //12*3600
@@ -536,45 +557,78 @@ public class force extends AppCompatActivity {
         prayers.add(asrtemp);
         prayers.add(maghribtemp);
         prayers.add(ishatemp);
+    }
 
-        Geocoder geocoder;
-        List<Address> addresses = null;
-        Locale ar = new Locale(resources.getString(R.string.ar));
-        if(language.equals("en"))
-            geocoder = new Geocoder(this, Locale.US);
-        else
-            geocoder = new Geocoder(this, ar);
+    private void display_prayer_times() {
+        if(language.equals("en")) {
+            fajrtime.setText(fajr);
+            risetime.setText(rise);
+            dhuhrtime.setText(dhuhr);
+            asrtime.setText(asr);
+            maghribtime.setText(maghrib);
+            ishatime.setText(isha);
+        } else if(language.equals("ar")){ // the arabic am and pm
+            fajrtime.setText(tfajr);
+            risetime.setText(trise);
+            dhuhrtime.setText(tdhuhr);
+            asrtime.setText(tasr);
+            maghribtime.setText(tmaghrib);
+            ishatime.setText(tisha);
+        }
+    }
 
+    private void pull_prayer_times_and_shape_them() {
+        prayerTimes = new PrayerTimes(coordinates, date, params);
         try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(addresses!=null) {
-            address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            city = addresses.get(0).getLocality();
-            state = addresses.get(0).getAdminArea();
-            country = addresses.get(0).getCountryName();
-            knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-            citydisplay.setText(city);
-        }
+            fajr = DateFormat.format(timeshape, new Date(prayerTimes.fajr.getTime())).toString();
+            rise = DateFormat.format(timeshape, new Date(prayerTimes.sunrise.getTime())).toString();
+            dhuhr = DateFormat.format(timeshape, new Date(prayerTimes.dhuhr.getTime())).toString();
+            asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
+            maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
+            isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
+        } catch(Exception ignored){}
 
-        work_on_date_n_display_it();
-        display_dates();
-        /*datedisplay.setText(datin);*/
 
-        if(onetimer) { onetimer = false;
-            retrieveAndy();
+        if(language.equals("ar")){ // the arabic am and pm
+            pm = getString(R.string.pm);
+            am = getString(R.string.am);
+            if(fajr.split(" ")[1].equals("AM")) tfajr = fajr.split(" ")[0] + " " + am;else tfajr = fajr.split(" ")[0] + " " +  pm;
+            if(rise.split(" ")[1].equals("AM")) trise = rise.split(" ")[0] + " " + am;else trise = rise.split(" ")[0] + " " +  pm;
+            if(dhuhr.split(" ")[1].equals("AM")) tdhuhr = dhuhr.split(" ")[0] + " " + am;else tdhuhr = dhuhr.split(" ")[0] + " " +  pm;
+            if(asr.split(" ")[1].equals("AM")) tasr = asr.split(" ")[0] + " " + am;else tasr = asr.split(" ")[0] + " " +  pm;
+            if(maghrib.split(" ")[1].equals("AM")) tmaghrib = maghrib.split(" ")[0] + " " + am;else tmaghrib = maghrib.split(" ")[0] + " " +  pm;
+            if(isha.split(" ")[1].equals("AM")) tisha = isha.split(" ")[0] + " " + am;else tisha = isha.split(" ")[0] + " " +  pm;
+            fajrtime.setText(tfajr);
+            risetime.setText(trise);
+            dhuhrtime.setText(tdhuhr);
+            asrtime.setText(tasr);
+            maghribtime.setText(tmaghrib);
+            ishatime.setText(tisha);
         }
+    }
+
+    private void update_coords_in_sql(double longitude, double latitude, boolean new_coordinates) {
+        if(new_coordinates)
+            SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
+        else
+            SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
+    }
+
+    private void pull_date_and_shape_it(double longitude, double latitudeDate, Date today) {
+        coordinates = new Coordinates(latitude, longitude);
+        date = DateComponents.from(today);
     }
 
     private void display_dates() {
         pager = findViewById(R.id.pager);
         adapter = new DatesCollectionAdapter(getSupportFragmentManager());
         pager.setAdapter(adapter);
-        Displai();
+        if(only_flip_to_hijri_once_in_launch){ only_flip_to_hijri_once_in_launch = false;
+            Displai();
+        }
     }
 
+    protected boolean only_flip_to_hijri_once_in_launch = true;
     Handler handlerr = new Handler(){
         //alt+enter for function below
         @Override
@@ -593,7 +647,7 @@ public class force extends AppCompatActivity {
         Runnable r=new Runnable() {
             @Override
             public void run() {
-                long futuretime = System.currentTimeMillis() + 5000;
+                long futuretime = System.currentTimeMillis() + 3000;
 
                 while (System.currentTimeMillis() < futuretime){
                     //prevents multiple threads from crashing into each other
@@ -781,23 +835,6 @@ public class force extends AppCompatActivity {
     protected Integer clickedprayertime;
     protected boolean one_of_previous_is_zero = false;
     protected String tempo;
-    public void resetClicked(View view) {
-        /*sql("force2");
-        if(SQLSharing.mycursor.getCount()>0) {
-            while(SQLSharing.mycursor.moveToNext()) {
-                if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
-                    SQLSharing.mydb.updatePrayed(todaycomparable, "00000");
-                    break;
-                }
-            }
-        }
-        if(SQLSharing.mycursor!=null && SQLSharing.mydb!=null) {
-            SQLSharing.mycursor.close();
-            SQLSharing.mydb.close();
-        }
-
-        back_to_main();*/
-    }
 
 
     private void back_to_main() {
@@ -906,26 +943,14 @@ public class force extends AppCompatActivity {
     protected String temper;
     protected List<Button> praybuttons;
     private void retrieveAndy(){
-        forces = new ArrayList<>();
-        praybuttons = new ArrayList<>();
-        praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
-        forces.add("0");forces.add("0");forces.add("0");forces.add("0");forces.add("0");
-        sql("force2");
 
-        if(SQLSharing.mycursor.getCount()>0){
-            today = new Date();
-            todaycomparable = today.toString().split(" ")[1] + " " + today.toString().split(" ")[2];
-            while(SQLSharing.mycursor.moveToNext()) {
-                if(SQLSharing.mycursor.getString(1).equals(todaycomparable)) {
-                    forces = new ArrayList<>();
-                    temper = SQLSharing.mycursor.getString(2);
-                    for(int i=0;i<temper.length();i++)
-                        forces.add( Character.toString(temper.charAt(i)) );
-                    break;
-                }
-            }
+        // prepare sql and variables
+        retrieveAndyVariableSetup();
 
-        } else {
+        // if theres smt in sql then  look up  prayed
+        if(SQLSharing.mycursor.getCount()>0)
+            pull_prayed_array_from_sql();
+        else { // else fill it up with zeros and insert
             fill_up_prayed();
             SQLSharing.mydb.insertPrayed(todaycomparable, prayed);
         }
@@ -936,21 +961,65 @@ public class force extends AppCompatActivity {
         // color pray buttons
         color_pray_buttons();
 
-        if(!end_of_day)
-            InitialDelayForNextAdanAnimation();
+        // don't display time till next adan if it's at end of day
+        if(it_is_today)
+            if(!end_of_day)
+                InitialDelayForNextAdanAnimation();
 
     }
 
-    private void color_pray_buttons() {
-        if(end_of_day){
-            for(int i=0; i<5; i++)
-                if(forces.get(i).equals("0"))
-                    praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
-        } else {
-            for (int i = 0; i < next_adan; i++)
-                if (forces.get(i).equals("0"))
-                    praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+    boolean it_is_today = true;
+    private void retrieveAndyVariableSetup() {
+        forces = new ArrayList<>();
+        praybuttons = new ArrayList<>();
+        praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
+        forces.add("0");forces.add("0");forces.add("0");forces.add("0");forces.add("0");
+        sql("force2");
+    }
+
+    private void pull_prayed_array_from_sql() {
+        while(SQLSharing.mycursor.moveToNext()) {
+            if(SQLSharing.mycursor.getString(1).equals(todaycomparable)) {
+                forces = new ArrayList<>();
+                temper = SQLSharing.mycursor.getString(2);
+                for(int i=0;i<temper.length();i++)
+                    forces.add( Character.toString(temper.charAt(i)) );
+                break;
+            }
         }
+    }
+
+    private void color_pray_buttons() {
+
+        if(it_is_today) {
+
+            if(fill_all){
+                for (int i = 0; i < 5; i++)
+                    if (forces.get(i).equals("0"))
+                        praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                    else
+                        praybuttons.get(i).setTextColor(Color.GREEN);
+            } else {
+                if (end_of_day) {
+                    for (int i = 0; i < 5; i++)
+                        if (forces.get(i).equals("0"))
+                            praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                        else
+                            praybuttons.get(i).setTextColor(Color.GREEN);
+                } else {
+                    for (int i = 0; i < next_adan; i++)
+                        if (forces.get(i).equals("0"))
+                            praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                        else
+                            praybuttons.get(i).setTextColor(Color.GREEN);
+                }
+            }
+
+        } else {
+            for (int i = 0; i < 5; i++)
+                praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+        }
+
     }
 
 
@@ -1043,7 +1112,6 @@ public class force extends AppCompatActivity {
 
 
     Handler handler = new Handler(){
-        //alt+enter for function below
         @Override
         public void handleMessage(Message msg) {
             animatenextadan();
@@ -1051,7 +1119,6 @@ public class force extends AppCompatActivity {
     };
 
     Handler handler2 = new Handler(){
-        //alt+enter for function below
         @Override
         public void handleMessage(Message msg) {
             slide_in_dem_dpz();
@@ -1090,26 +1157,59 @@ public class force extends AppCompatActivity {
     protected int positifise = 0;
     protected int lol = 0;
     private void slide_in_dem_dpz() {
-        lol = ((prayers.get(next_adan)-rightnowcomparable)/60 - 1);
-        if(lol<0) positifise = -lol;
-        else positifise = lol;
+        if(it_is_today) {
+            lol = ((prayers.get(next_adan) - rightnowcomparable) / 60 - 1);
+            if (lol < 0) positifise = -lol;
+            else positifise = lol;
 
-        slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
-        if(next_adan==0)
-            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
-        else if(next_adan==1)
-            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtodhuhr);
-        else if(next_adan==2)
-            fromfajrtolol = loadAnimation(this, R.anim.frofajrtoasr);
-        else if(next_adan==3)
-            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtomaghrib);
-        else if(next_adan==4)
-            fromfajrtolol = loadAnimation(this, R.anim.fromfajrtoisha);
+            slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
+            if (next_adan == 0)
+                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
+            else if (next_adan == 1)
+                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtodhuhr);
+            else if (next_adan == 2)
+                fromfajrtolol = loadAnimation(this, R.anim.frofajrtoasr);
+            else if (next_adan == 3)
+                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtomaghrib);
+            else if (next_adan == 4)
+                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtoisha);
 
-        slideholder.startAnimation(fromfajrtolol);
-        fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-            slideholder.setVisibility(View.VISIBLE);
-        }});
+            fromfajrtolol.setFillAfter(true);
+            slideholder.startAnimation(fromfajrtolol);
+            fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    slideholder.setVisibility(View.VISIBLE);
+                }
+            });
+        } else {
+            slideholder.setVisibility(View.INVISIBLE);
+            slideholder.startAnimation(begone);
+            begone.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    slideholder.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    slideholder.setVisibility(View.INVISIBLE);
+                }
+            });
+            clean_up_button_redness();
+        }
 
     }
 
@@ -1168,4 +1268,150 @@ public class force extends AppCompatActivity {
     }
 
 
+    private GregorianCalendar gc;
+    private boolean onetime = true;
+
+    Date CurrentDisplayedDay;
+    int day, year, month = 0;
+    String[] todaysplittemparray;
+
+    boolean all_white = false;
+    int day2, month2, year2 = 0;
+    public void is_it_future(){
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day2 = Integer.valueOf(todaysplittemparray[2]);
+        year2 = Integer.valueOf(todaysplittemparray[5]);
+        month2 = get_month(todaysplittemparray[1]);
+
+        // compare between current day and currently displayed day
+        all_white = year2 > year;
+
+        if(!all_white)
+            all_white = month2 > month && year2 >= year;
+
+        if(!all_white)
+            all_white = day2 > day && month2 >= month && year2 >= year;
+
+    }
+
+
+    boolean fill_all = false;
+    public void is_it_past(){
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day2 = Integer.valueOf(todaysplittemparray[2]);
+        year2 = Integer.valueOf(todaysplittemparray[5]);
+        month2 = get_month(todaysplittemparray[1]);
+
+        // compare between current day and currently displayed day
+        fill_all = year2 < year;
+
+        if(!fill_all) {
+            fill_all = month2 < month && year2 <= year;
+        }
+
+        if(!fill_all) {
+            fill_all = day2 < day && month2 <= month && year2 <= year;
+        }
+
+    }
+
+
+    public int get_month(String month){
+        switch (month) {
+            case "Jan":
+                return 1;
+            case "Feb":
+                return 2;
+            case "Mar":
+                return 3;
+            case "Apr":
+                return 4;
+            case "May":
+                return 5;
+            case "Jun":
+                return 6;
+            case "Jul":
+                return 7;
+            case "Aug":
+                return 8;
+            case "Sep":
+                return 9;
+            case "Oct":
+                return 10;
+            case "Nov":
+                return 11;
+            case "Dec":
+                return 12;
+        }
+        return 1;
+    }
+
+    public void checkTommorow(View view) {
+        for(int i=0; i<5; i++)
+            if(prayisha.getCurrentTextColor()==Color.GREEN)
+                praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        gc = new GregorianCalendar(year, month-1, day);
+        gc.add(Calendar.DATE, 1);
+        CurrentDisplayedDay = gc.getTime();
+
+        it_is_today = is_it_today();
+        is_it_future();
+        is_it_past();
+
+        location_shit(CurrentDisplayedDay);
+
+        if(!it_is_today) {
+            slide_in_dem_dpz();
+            for (int i = 0; i < 5; i++)
+                if (prayisha.getCurrentTextColor() == Color.GREEN)
+                    praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+        }
+
+    }
+
+    String tempdate, tempdate2;
+    private boolean is_it_today() {
+        temptoday = CurrentDisplayedDay.toString().split(" ");
+        tempdate = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
+
+        temptoday = String.valueOf(new Date()).split(" ");
+        tempdate2 = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
+
+        return tempdate.equals(tempdate2);
+    }
+
+    public void checkYesterday(View view) {
+
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        gc = new GregorianCalendar(year, month-1, day);
+        gc.add(Calendar.DATE, -1);
+        CurrentDisplayedDay = gc.getTime();
+        it_is_today = is_it_today();
+        is_it_future();
+        is_it_past();
+        location_shit(CurrentDisplayedDay);
+
+
+        if(!it_is_today) {
+            slide_in_dem_dpz();
+            for (int i = 0; i < 5; i++)
+                if (prayisha.getCurrentTextColor() == Color.GREEN)
+                    praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+        }
+    }
+
+    private void clean_up_button_redness() {
+        for(int i=0; i<5; i++)
+            praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+    }
 }

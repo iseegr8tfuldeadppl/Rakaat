@@ -163,6 +163,8 @@
     <string name="shawwal_arabe">شَوَّال</string>
     <string name="dhualqaada_arabe">ذُوالْقَعْدَة</string>
     <string name="dhualhijja_arabe">ذُوالْحِجَّة</string>
+    <string name="brak"><![CDATA[>]]></string>
+    <string name="brak2"><![CDATA[<]]></string>
 
 
 </resources>

@@ -60,6 +60,47 @@
                 class="com.krimzon.scuffedbots.raka3at.Dates.WrapContentHeightViewPager"/>
         </RelativeLayout>
 
+        <!--access other days-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sidesoftable"
+            android:layout_marginEnd="@dimen/sidesoftable"
+            android:paddingStart="@dimen/sidesoftablepaddings"
+            android:paddingEnd="@dimen/sidesoftablepaddings"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:background="@drawable/darksimpelbackground">
+            <RelativeLayout
+                android:onClick="checkYesterday"
+                android:layout_width="match_parent"
+                android:layout_height="29dp"
+                android:gravity="start"
+                android:layout_weight="1">
+                <ImageView
+                    android:onClick="checkYesterday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/arrowleft"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:onClick="checkTommorow"
+                android:layout_width="match_parent"
+                android:layout_height="29dp"
+                android:gravity="end"
+                android:layout_weight="1">
+                <ImageView
+                    android:onClick="checkTommorow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/arrowright"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
 
         <!-- Table -->
         <FrameLayout
@@ -72,14 +113,14 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:layout_marginStart="@dimen/sidesoftable"
+                android:layout_marginEnd="@dimen/sidesoftable"
                 android:paddingStart="@dimen/sidesoftablepaddings"
                 android:paddingEnd="@dimen/sidesoftablepaddings"
                 android:background="@drawable/darksimpelbackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginStart="@dimen/sidesoftable"
-                android:layout_marginEnd="@dimen/sidesoftable"
                 android:weightSum="1"
                 android:paddingTop="@dimen/padder"
                 android:paddingBottom="@dimen/padder">
@@ -387,7 +428,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    android:text="-10"
                     android:background="@drawable/delaydisplay"
                     android:textSize="20sp"/>
             </RelativeLayout>
