@@ -165,6 +165,8 @@
     <string name="dhualhijja_arabe">ذُوالْحِجَّة</string>
     <string name="brak"><![CDATA[>]]></string>
     <string name="brak2"><![CDATA[<]]></string>
+    <string name="statsenglish">Statistics</string>
+    <string name="stat1">Prayed prayers all time:</string>
 
 
 </resources>

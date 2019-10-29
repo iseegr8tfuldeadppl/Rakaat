@@ -3,13 +3,12 @@
     <item >
         <shape>
             <solid
-                android:color="#1a1a1a"/>
+                android:color="#333333"/>
             <stroke
-                android:color="#1a1a1a"
+                android:color="#333333"
                 android:width="1dp"/>
             <corners
-                android:bottomRightRadius="@dimen/tablecorners"
-                android:bottomLeftRadius="@dimen/tablecorners"/>
+                android:bottomLeftRadius="30dp"/>
         </shape>
     </item>
 </selector>

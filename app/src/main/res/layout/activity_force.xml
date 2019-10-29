@@ -7,25 +7,30 @@
     android:background="@color/black"
     android:id="@+id/full">
 
-    <!--<Button
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/darksimpelbackground"
-        android:onClick="resetClicked"
-        android:id="@+id/reset"
-        android:text="reset"
-        android:textAllCaps="false"
-        android:textSize="20sp"
-        android:textColor="#FFF"
-        android:layout_alignParentBottom="true"/>-->
+        android:layout_alignParentTop="true"
+        android:background="@drawable/statsback"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true">
+        <ImageView
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/stats"
+            android:onClick="ShowStatisticsClicked"/>
+    </RelativeLayout>
 
-
-    <!-- Main Layout Holder -->
+    <!--Table content-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:weightSum="1">
+        android:layout_centerInParent="true">
 
         <!-- Title -->
         <TextView
@@ -39,25 +44,22 @@
             android:paddingTop="25dp"
             android:paddingBottom="25dp"/>
 
-        <!-- Date in hijri n miladi -->
-        <!--<android.support.v4.view.ViewPager
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/pager"/>-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/sidesoftable"
             android:layout_marginEnd="@dimen/sidesoftable"
             android:paddingTop="17dp"
-            android:paddingBottom="15dp"
             android:background="@drawable/date"
             android:gravity="center">
-            <view
-                android:id="@+id/pager"
+            <TextView
+                android:id="@+id/daterr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                class="com.krimzon.scuffedbots.raka3at.Dates.WrapContentHeightViewPager"/>
+                android:gravity="center"
+                android:text="التاريخ"
+                android:textColor="@color/white"
+                android:textSize="@dimen/regulartextsize" />
         </RelativeLayout>
 
         <!--access other days-->
@@ -66,35 +68,46 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/sidesoftable"
             android:layout_marginEnd="@dimen/sidesoftable"
-            android:paddingStart="@dimen/sidesoftablepaddings"
-            android:paddingEnd="@dimen/sidesoftablepaddings"
             android:orientation="horizontal"
-            android:weightSum="2"
-            android:background="@drawable/darksimpelbackground">
+            android:weightSum="2">
             <RelativeLayout
+                android:focusable="true"
+                android:clickable="true"
+                android:background="@drawable/multipledayselectionbackground"
+                android:paddingStart="@dimen/sidesoftablepaddings"
                 android:onClick="checkYesterday"
                 android:layout_width="match_parent"
-                android:layout_height="29dp"
+                android:layout_height="wrap_content"
                 android:gravity="start"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/sidesoftablepaddings">
                 <ImageView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="2dp"
                     android:onClick="checkYesterday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="12dp"
+                    android:layout_height="24dp"
                     android:src="@drawable/arrowleft"
                     android:scaleType="fitXY"
                     android:adjustViewBounds="true"/>
             </RelativeLayout>
             <RelativeLayout
+                android:focusable="true"
+                android:clickable="true"
+                android:background="@drawable/multipledayselectionbackground"
                 android:onClick="checkTommorow"
                 android:layout_width="match_parent"
-                android:layout_height="29dp"
+                android:layout_height="wrap_content"
                 android:gravity="end"
-                android:layout_weight="1">
+                android:paddingEnd="@dimen/sidesoftablepaddings"
+                android:layout_weight="1"
+                android:paddingRight="@dimen/sidesoftablepaddings">
                 <ImageView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="2dp"
                     android:onClick="checkTommorow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="12dp"
+                    android:layout_height="24dp"
                     android:src="@drawable/arrowright"
                     android:scaleType="fitXY"
                     android:adjustViewBounds="true"/>
@@ -147,7 +160,10 @@
                         android:textColor="@color/white"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <Button
+                    <TextView
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
                         android:id="@+id/prayfajr"
                         android:background="@drawable/darkbuttons"
                         android:layout_weight="1"
@@ -183,7 +199,7 @@
                     android:textSize="@dimen/regulartextsize"/>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_weight=".4"
                     android:weightSum="2">
@@ -192,13 +208,14 @@
                         android:id="@+id/risetitle"
                         android:text="@string/rise_arabe"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <Button
+                    <TextView
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
                         android:visibility="invisible"
-                        android:background="@drawable/darkbuttons"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -243,7 +260,10 @@
                         android:textColor="@color/white"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <Button
+                    <TextView
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
                         android:id="@+id/praydhuhr"
                         android:background="@drawable/darkbuttons"
                         android:layout_weight="1"
@@ -292,7 +312,10 @@
                         android:textColor="@color/white"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <Button
+                    <TextView
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
                         android:id="@+id/prayasr"
                         android:background="@drawable/darkbuttons"
                         android:layout_weight="1"
@@ -341,7 +364,10 @@
                         android:textColor="@color/white"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <Button
+                    <TextView
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
                         android:id="@+id/praymaghrib"
                         android:background="@drawable/darkbuttons"
                         android:layout_weight="1"
@@ -390,7 +416,10 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <Button
+                    <TextView
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
                         android:id="@+id/prayisha"
                         android:background="@drawable/darkbuttons"
                         android:layout_weight="1"
@@ -413,8 +442,8 @@
                 android:layout_gravity="start|top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="17dp"
-                android:paddingBottom="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp">
                 <TextView
@@ -451,5 +480,6 @@
             android:layout_marginEnd="@dimen/sidesoftable"/>
 
     </LinearLayout>
+
 
 </RelativeLayout>

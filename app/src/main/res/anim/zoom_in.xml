@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:anim/linear_interpolator">
     <scale
-        android:duration="100"
+        android:duration="60"
 
         android:fromXScale="1.0"
         android:fromYScale="1.0"
-        android:toXScale="1.3"
-        android:toYScale="1.3"
+        android:toXScale="1.06"
+        android:toYScale="1.06"
 
         android:pivotX="50%"
         android:pivotY="50%"

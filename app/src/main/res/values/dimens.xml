@@ -7,7 +7,7 @@
     <dimen name="sidesoftable">35dp</dimen>
     <dimen name="topnbottomoftable">10dp</dimen>
     <dimen name="regulartextsize">16sp</dimen>
-    <dimen name="sidesoftablepaddings">7dp</dimen>
+    <dimen name="sidesoftablepaddings">20dp</dimen>
 
     <!-- next adan -->
     <dimen name="next_adan_pop_out_large">25sp</dimen>
@@ -15,5 +15,6 @@
     <dimen name="next_adan_size">23sp</dimen>
     <dimen name="twelve">12sp</dimen>
     <dimen name="yes">3dp</dimen>
+    <dimen name="tablecorners">14dp</dimen>
 
 </resources>

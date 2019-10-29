@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:layout_height="wrap_content"
+    android:background="@drawable/darksimpelbackground"
+    android:padding="30dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_weight=".3"
+            android:layout_width="69dp"
+            android:layout_height="69dp"
+            android:src="@drawable/stats"/>
+        <TextView
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/statsenglish"
+            android:textColor="@color/white"
+            android:id="@+id/statstitle"
+            android:textSize="30sp"
+            android:layout_weight=".7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/title_prayed_prayers_of_all_time"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:text="@string/stat1"/>
+        <TextView
+            android:id="@+id/prayed_prayers_of_all_time"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+</LinearLayout>

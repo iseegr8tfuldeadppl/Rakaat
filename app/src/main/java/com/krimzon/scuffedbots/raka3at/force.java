@@ -19,14 +19,12 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,9 +37,11 @@ import com.batoulapps.adhan.data.DateComponents;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.krimzon.scuffedbots.raka3at.Dates.DatesCollectionAdapter;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
+import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
+
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
 import java.io.IOException;
@@ -53,6 +53,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import static android.view.animation.AnimationUtils.loadAnimation;
+
 
 public class force extends AppCompatActivity {
 
@@ -101,15 +102,15 @@ public class force extends AppCompatActivity {
 
     protected Typeface arabic_typeface;
 
-    protected Button prayfajr, praydhuhr, prayasr, praymaghrib, prayisha;
+    protected TextView prayfajr, praydhuhr, prayasr, praymaghrib, prayisha;
 
     protected TextView title;
 
     protected Animation zoom_in, zoom_out, zoom_in2, zoom_out2; // for next adan
     protected TextView citydisplay;
 
-    protected ViewPager pager;
-    protected DatesCollectionAdapter adapter;
+    protected TextView daterr;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,27 +122,35 @@ public class force extends AppCompatActivity {
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
         params.adjustments.fajr = 2;
-
         dateFormat = new SimpleDateFormat(pattern);
 
         CurrentDisplayedDay = new Date();
 
         variables_setup();
+
         fontAndy();
+
         sql("slat");
+
         load_data_from_slat_sql();
+
         languageshet();
+
         sql("force");
+
         location_shit(CurrentDisplayedDay);
+
         low_light_alert();
 
         /*longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());*/
     }
 
+
     public static String hijri = "";
     protected int hijri_month = 0, hijri_year = 0, hijri_day = 0;
     protected String[] lel;
     protected int miladi_month = 0;
+
     private void hijri_date_setup() {
         lel = todaycomparable.split(" ");
         String[] t = PlainDate.of(Integer.valueOf(temptoday[5]), miladi_month, Integer.valueOf(lel[1])) // TODO: fix me Integer.valueOf(lel[5]) + 2000
@@ -152,6 +161,7 @@ public class force extends AppCompatActivity {
         hijri_day = Integer.valueOf(t[3]);
         convert_hijri_to_cute();
     }
+
 
     private void convert_hijri_to_cute() {
         hijri += hijri_day + " ";
@@ -199,15 +209,17 @@ public class force extends AppCompatActivity {
         }
     }
 
+
     protected List<TextView> prayerdisplayviews, prayerdisplayviews2;
     protected Typeface arabic_typeface2, arabic_typeface3;
+
     private void fontAndy() {
         arabic_typeface = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
         arabic_typeface2 = Typeface.createFromAsset(getAssets(),  "Tajawal-Regular.ttf");
         arabic_typeface3 = Typeface.createFromAsset(getAssets(),  "Tajawal-Bold.ttf");
 
-
         title.setTypeface(arabic_typeface);
+        daterr.setTypeface(arabic_typeface);
 
         prayfajr.setTypeface(arabic_typeface);
         praydhuhr.setTypeface(arabic_typeface);
@@ -225,8 +237,6 @@ public class force extends AppCompatActivity {
         }
         risetime.setTypeface(arabic_typeface2);
         risetitle.setTypeface(arabic_typeface2);
-
-
 
     }
 
@@ -253,6 +263,7 @@ public class force extends AppCompatActivity {
     protected String ishatitlel;
     protected String pm;
     protected String am;
+
     private void getStrings(){
         fajrtitlel = getString(R.string.fajrtitle);
         risetitlel = getString(R.string.rise);
@@ -300,6 +311,7 @@ public class force extends AppCompatActivity {
 
     protected double longitude;
     protected double latitude;
+
     private void if_theres_previous_info_load_it_n_display(Date date) {
         new_coordinates = false;
         SQLSharing.mycursor.moveToFirst();
@@ -322,11 +334,12 @@ public class force extends AppCompatActivity {
 
     protected Animation begone;
     protected TextView slider;
+
     private void variables_setup() {
+        daterr = findViewById(R.id.daterr);
         slideholder = findViewById(R.id.slideholder);
         slider = findViewById(R.id.slider);
         fajrtitle = findViewById(R.id.fajrtitle);
-        /*datedisplay = findViewById(R.id.date);*/
         citydisplay = findViewById(R.id.city);
         title = findViewById(R.id.title);
         full = findViewById(R.id.full);
@@ -363,8 +376,8 @@ public class force extends AppCompatActivity {
 
     }
 
-    protected float next_adan_pop_out_large, next_adan_pop_out_shrink, next_adan_size, twelve;
 
+    protected float next_adan_pop_out_large, next_adan_pop_out_shrink, next_adan_size, twelve;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -474,6 +487,7 @@ public class force extends AppCompatActivity {
     protected String state = "";
     protected String country = "";
     protected String knownName = "";
+
     public void use(double longitude, double latitude, boolean new_coordinates, Date today) {
 
         // declarations
@@ -510,6 +524,7 @@ public class force extends AppCompatActivity {
         retrieveAndy();
     }
 
+
     private void pull_location(double longitude, double latitude) {
         Geocoder geocoder;
         List<Address> addresses = null;
@@ -533,6 +548,7 @@ public class force extends AppCompatActivity {
             citydisplay.setText(city);
         }
     }
+
 
     private void convert_prayertimes_into_milliseconds() {
         fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(fajr.split(" ")[0].split(":")[1])*60;
@@ -559,6 +575,7 @@ public class force extends AppCompatActivity {
         prayers.add(ishatemp);
     }
 
+
     private void display_prayer_times() {
         if(language.equals("en")) {
             fajrtime.setText(fajr);
@@ -576,6 +593,7 @@ public class force extends AppCompatActivity {
             ishatime.setText(tisha);
         }
     }
+
 
     private void pull_prayer_times_and_shape_them() {
         prayerTimes = new PrayerTimes(coordinates, date, params);
@@ -607,6 +625,7 @@ public class force extends AppCompatActivity {
         }
     }
 
+
     private void update_coords_in_sql(double longitude, double latitude, boolean new_coordinates) {
         if(new_coordinates)
             SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
@@ -614,61 +633,18 @@ public class force extends AppCompatActivity {
             SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
     }
 
+
     private void pull_date_and_shape_it(double longitude, double latitudeDate, Date today) {
         coordinates = new Coordinates(latitude, longitude);
         date = DateComponents.from(today);
     }
 
+
     private void display_dates() {
-        pager = findViewById(R.id.pager);
-        adapter = new DatesCollectionAdapter(getSupportFragmentManager());
-        pager.setAdapter(adapter);
-        if(only_flip_to_hijri_once_in_launch){ only_flip_to_hijri_once_in_launch = false;
-            Displai();
-        }
+        daterr.setText(datin + '\n' + hijri);
     }
 
-    protected boolean only_flip_to_hijri_once_in_launch = true;
-    Handler handlerr = new Handler(){
-        //alt+enter for function below
-        @Override
-        public void handleMessage(Message msg) {
-            switchswitch();
-        }
-    };
 
-    private void switchswitch() {
-        pager.setCurrentItem(2);
-    }
-
-    public void Displai(){
-
-        //runs in the background
-        Runnable r=new Runnable() {
-            @Override
-            public void run() {
-                long futuretime = System.currentTimeMillis() + 3000;
-
-                while (System.currentTimeMillis() < futuretime){
-                    //prevents multiple threads from crashing into each other
-                    synchronized (this){
-                        try{
-                            wait(futuretime - System.currentTimeMillis());
-                        } catch( Exception ignored){}
-                    }
-                }
-
-                //run the handler
-                handlerr.sendEmptyMessage(0);
-            }
-        };
-
-        //anti lag
-        Thread mythread = new Thread(r); //to thread the runnable object we launched
-        mythread.start();
-    }
-
-    protected boolean onetimer = true;
     public static String datin = "";
     protected String tempdatin = "";
 
@@ -692,7 +668,8 @@ public class force extends AppCompatActivity {
             else if (tempdatin.equals(resources.getString(R.string.fridu)))
                 datin += resources.getString(R.string.fri);
 
-            hijri += datin + " ";
+            // add week day to hijri date
+            //hijri += datin + " ";
 
             datin += " ";
             tempdatin = temptoday[1];
@@ -758,7 +735,7 @@ public class force extends AppCompatActivity {
                     break;
             }
 
-            hijri += datin + " ";
+            //hijri += datin + " ";
 
             tempdatin = temptoday[2];
             datin += " " + tempdatin;
@@ -835,7 +812,6 @@ public class force extends AppCompatActivity {
     protected Integer clickedprayertime;
     protected boolean one_of_previous_is_zero = false;
     protected String tempo;
-
 
     private void back_to_main() {
         main = new Intent(this, MainActivity.class);
@@ -923,6 +899,7 @@ public class force extends AppCompatActivity {
 
 
     protected boolean allow_pray = false;
+
     private void compare(int i) {
         clickedprayertime = prayers.get(i);
 
@@ -941,7 +918,8 @@ public class force extends AppCompatActivity {
 
 
     protected String temper;
-    protected List<Button> praybuttons;
+    protected List<TextView> praybuttons;
+
     private void retrieveAndy(){
 
         // prepare sql and variables
@@ -968,7 +946,9 @@ public class force extends AppCompatActivity {
 
     }
 
+
     boolean it_is_today = true;
+
     private void retrieveAndyVariableSetup() {
         forces = new ArrayList<>();
         praybuttons = new ArrayList<>();
@@ -976,6 +956,7 @@ public class force extends AppCompatActivity {
         forces.add("0");forces.add("0");forces.add("0");forces.add("0");forces.add("0");
         sql("force2");
     }
+
 
     private void pull_prayed_array_from_sql() {
         while(SQLSharing.mycursor.moveToNext()) {
@@ -989,9 +970,10 @@ public class force extends AppCompatActivity {
         }
     }
 
+
     private void color_pray_buttons() {
 
-        if(it_is_today) {
+        if(!all_white) {
 
             if(fill_all){
                 for (int i = 0; i < 5; i++)
@@ -1012,6 +994,9 @@ public class force extends AppCompatActivity {
                             praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
                         else
                             praybuttons.get(i).setTextColor(Color.GREEN);
+
+                    for(int i = next_adan; i < 5; i++)
+                        praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
                 }
             }
 
@@ -1031,6 +1016,7 @@ public class force extends AppCompatActivity {
     protected boolean new_adan = false;
     protected int previous_adan = 0;
     protected boolean end_of_day = false;
+
     private void what_is_soon_adan_and_one_before_it() {
         temptime = String.valueOf(new Date()).split(" ")[3];
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
@@ -1050,6 +1036,7 @@ public class force extends AppCompatActivity {
         if(temp_next_adan!=next_adan) {
             new_adan = true;
             next_adan = temp_next_adan;
+            //next_adan = 0;
             if (next_adan != 0) // so we don't assign -1 to previous_adan
                 previous_adan = next_adan - 1;
         }
@@ -1114,16 +1101,20 @@ public class force extends AppCompatActivity {
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            animatenextadan();
+            if(it_is_today)
+                animatenextadan();
         }
     };
+
 
     Handler handler2 = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            slide_in_dem_dpz();
+            if(it_is_today)
+                slide_in_dem_dpz();
         }
     };
+
 
     private void animatenextadan() {
         temp_next_adan_textview = prayerdisplayviews.get(next_adan);
@@ -1132,86 +1123,100 @@ public class force extends AppCompatActivity {
         temp_next_adan_textview.setTextSize(normal_text_size);  // to prepare for animation
         temp_next_adan_textview.startAnimation(zoom_in);
         zoom_in.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-            temp_next_adan_textview.setTextSize((float) (normal_text_size*1.3));
-            temp_next_adan_textview.setTextColor(Color.GREEN);
-            temp_next_adan_textview.startAnimation(zoom_out);
+            if(it_is_today){
+                temp_next_adan_textview.setTextSize((float) (normal_text_size * 1.06));
+                temp_next_adan_textview.setTextColor(Color.GREEN);
+                temp_next_adan_textview.startAnimation(zoom_out);
+            }
             zoom_out.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                temp_next_adan_textview.setTextSize(normal_text_size);
+                if(it_is_today)
+                    temp_next_adan_textview.setTextSize(normal_text_size);
             }});
         }});
         temp_next_adan_textview2.startAnimation(zoom_in2);
         zoom_in2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-            temp_next_adan_textview2.setTextSize((float) (normal_text_size*1.3));
-            temp_next_adan_textview2.setTextColor(Color.GREEN);
-            temp_next_adan_textview2.startAnimation(zoom_out2);
+            if(it_is_today) {
+                temp_next_adan_textview2.setTextSize((float) (normal_text_size * 1.06));
+                temp_next_adan_textview2.setTextColor(Color.GREEN);
+                temp_next_adan_textview2.startAnimation(zoom_out2);
+            }
             zoom_out2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                temp_next_adan_textview2.setTextSize(normal_text_size);
+                if(it_is_today) {
+                    temp_next_adan_textview2.setTextSize(normal_text_size);
 
-                slide_in_dem_dpz();
+                    slide_in_dem_dpz();
+                }
             }});
         }});
     }
+
 
     protected Animation fromfajrtolol;
     protected RelativeLayout slideholder;
     protected int positifise = 0;
     protected int lol = 0;
+
     private void slide_in_dem_dpz() {
         if(it_is_today) {
             lol = ((prayers.get(next_adan) - rightnowcomparable) / 60 - 1);
             if (lol < 0) positifise = -lol;
             else positifise = lol;
 
-            slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
-            if (next_adan == 0)
-                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
-            else if (next_adan == 1)
-                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtodhuhr);
-            else if (next_adan == 2)
-                fromfajrtolol = loadAnimation(this, R.anim.frofajrtoasr);
-            else if (next_adan == 3)
-                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtomaghrib);
-            else if (next_adan == 4)
-                fromfajrtolol = loadAnimation(this, R.anim.fromfajrtoisha);
+            if (lol < 99) {
 
-            fromfajrtolol.setFillAfter(true);
-            slideholder.startAnimation(fromfajrtolol);
-            fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
+                slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
+                if (next_adan == 0)
+                    fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
+                else if (next_adan == 1)
+                    fromfajrtolol = loadAnimation(this, R.anim.fromfajrtodhuhr);
+                else if (next_adan == 2)
+                    fromfajrtolol = loadAnimation(this, R.anim.frofajrtoasr);
+                else if (next_adan == 3)
+                    fromfajrtolol = loadAnimation(this, R.anim.fromfajrtomaghrib);
+                else if (next_adan == 4)
+                    fromfajrtolol = loadAnimation(this, R.anim.fromfajrtoisha);
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
+                fromfajrtolol.setFillAfter(true);
+                slideholder.startAnimation(fromfajrtolol);
+                fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    slideholder.setVisibility(View.VISIBLE);
-                }
-            });
-        } else {
-            slideholder.setVisibility(View.INVISIBLE);
-            slideholder.startAnimation(begone);
-            begone.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    slideholder.setVisibility(View.INVISIBLE);
-                }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (it_is_today)
+                            slideholder.setVisibility(View.VISIBLE);
+                    }
+                });
+            } else {
+                slideholder.setVisibility(View.INVISIBLE);
+                slideholder.startAnimation(begone);
+                begone.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        slideholder.setVisibility(View.INVISIBLE);
+                    }
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    slideholder.setVisibility(View.INVISIBLE);
-                }
-            });
-            clean_up_button_redness();
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (it_is_today)
+                            slideholder.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
         }
 
     }
+
 
     public void InitialDelayForNextAdanAnimation(){
 
@@ -1219,7 +1224,7 @@ public class force extends AppCompatActivity {
         Runnable r=new Runnable() {
             @Override
             public void run() {
-                long futuretime = System.currentTimeMillis() + 1500;
+                long futuretime = System.currentTimeMillis() + 900;
 
                 while (System.currentTimeMillis() < futuretime){
                     //prevents multiple threads from crashing into each other
@@ -1240,13 +1245,14 @@ public class force extends AppCompatActivity {
         mythread.start();
     }
 
+
     public void SecondaryDelayForDelayDisplay(){
 
         //runs in the background
         Runnable r=new Runnable() {
             @Override
             public void run() {
-                long futuretime = System.currentTimeMillis() + 1500;
+                long futuretime = System.currentTimeMillis() + 900;
 
                 while (System.currentTimeMillis() < futuretime){
                     //prevents multiple threads from crashing into each other
@@ -1265,54 +1271,6 @@ public class force extends AppCompatActivity {
         //anti lag
         Thread mythread = new Thread(r); //to thread the runnable object we launched
         mythread.start();
-    }
-
-
-    private GregorianCalendar gc;
-    private boolean onetime = true;
-
-    Date CurrentDisplayedDay;
-    int day, year, month = 0;
-    String[] todaysplittemparray;
-
-    boolean all_white = false;
-    int day2, month2, year2 = 0;
-    public void is_it_future(){
-        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day2 = Integer.valueOf(todaysplittemparray[2]);
-        year2 = Integer.valueOf(todaysplittemparray[5]);
-        month2 = get_month(todaysplittemparray[1]);
-
-        // compare between current day and currently displayed day
-        all_white = year2 > year;
-
-        if(!all_white)
-            all_white = month2 > month && year2 >= year;
-
-        if(!all_white)
-            all_white = day2 > day && month2 >= month && year2 >= year;
-
-    }
-
-
-    boolean fill_all = false;
-    public void is_it_past(){
-        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day2 = Integer.valueOf(todaysplittemparray[2]);
-        year2 = Integer.valueOf(todaysplittemparray[5]);
-        month2 = get_month(todaysplittemparray[1]);
-
-        // compare between current day and currently displayed day
-        fill_all = year2 < year;
-
-        if(!fill_all) {
-            fill_all = month2 < month && year2 <= year;
-        }
-
-        if(!fill_all) {
-            fill_all = day2 < day && month2 <= month && year2 <= year;
-        }
-
     }
 
 
@@ -1346,10 +1304,60 @@ public class force extends AppCompatActivity {
         return 1;
     }
 
+
+    private GregorianCalendar gc;
+    Date CurrentDisplayedDay;
+    int day, year, month = 0;
+    String[] todaysplittemparray;
+    boolean all_white = false;
+    int day2, month2, year2 = 0;
+    boolean fill_all = false;
+
+    public void is_it_future_present_or_past(){
+        todaysplittemparray = String.valueOf((new Date())).split(" ");
+        day2 = Integer.valueOf(todaysplittemparray[2]);
+        year2 = Integer.valueOf(todaysplittemparray[5]);
+        month2 = get_month(todaysplittemparray[1]);
+
+        // compare between current day and currently displayed day
+
+        if(year2 < year){
+            all_white = true;
+            fill_all = false;
+            it_is_today = false;
+        } else if(month2 < month && year2 <= year){
+            all_white = true;
+            fill_all = false;
+            it_is_today = false;
+        } else if(day2 < day && month2 <= month && year2 <= year){
+            all_white = true;
+            fill_all = false;
+            it_is_today = false;
+        } else if(day2 == day && month2 == month && year2 == year){
+            all_white = false;
+            fill_all = false;
+            it_is_today = true;
+        } else if(year2 > year){
+            all_white = false;
+            fill_all = true;
+            it_is_today = false;
+        } else if(month2 > month && year2 >= year){
+            all_white = false;
+            fill_all = true;
+            it_is_today = false;
+        } else if(day2 > day && month2 >= month && year2 >= year){
+            all_white = false;
+            fill_all = true;
+            it_is_today = false;
+        }
+
+    }
+
+
     public void checkTommorow(View view) {
-        for(int i=0; i<5; i++)
+        /*for(int i=0; i<5; i++)
             if(prayisha.getCurrentTextColor()==Color.GREEN)
-                praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+                praybuttons.get(i).setTextColor(resources.getColor(R.color.white));*/
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
         day = Integer.valueOf(todaysplittemparray[2]);
@@ -1360,31 +1368,33 @@ public class force extends AppCompatActivity {
         gc.add(Calendar.DATE, 1);
         CurrentDisplayedDay = gc.getTime();
 
-        it_is_today = is_it_today();
-        is_it_future();
-        is_it_past();
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        is_it_future_present_or_past();
 
         location_shit(CurrentDisplayedDay);
 
         if(!it_is_today) {
             slide_in_dem_dpz();
-            for (int i = 0; i < 5; i++)
-                if (prayisha.getCurrentTextColor() == Color.GREEN)
-                    praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+            for (int i = 0; i < 5; i++) {
+                if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
+                    prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                }
+            }
+
+            if(temp_next_adan_textview2!=null) {
+                temp_next_adan_textview2.setTextSize(normal_text_size - difference_in_scale); // 23
+                temp_next_adan_textview.setTextSize(normal_text_size - difference_in_scale);  // to prepare for animation
+            }
+
         }
 
     }
 
-    String tempdate, tempdate2;
-    private boolean is_it_today() {
-        temptoday = CurrentDisplayedDay.toString().split(" ");
-        tempdate = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
-
-        temptoday = String.valueOf(new Date()).split(" ");
-        tempdate2 = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
-
-        return tempdate.equals(tempdate2);
-    }
 
     public void checkYesterday(View view) {
 
@@ -1396,22 +1406,36 @@ public class force extends AppCompatActivity {
         gc = new GregorianCalendar(year, month-1, day);
         gc.add(Calendar.DATE, -1);
         CurrentDisplayedDay = gc.getTime();
-        it_is_today = is_it_today();
-        is_it_future();
-        is_it_past();
-        location_shit(CurrentDisplayedDay);
 
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        is_it_future_present_or_past();
+
+        location_shit(CurrentDisplayedDay);
 
         if(!it_is_today) {
             slide_in_dem_dpz();
-            for (int i = 0; i < 5; i++)
-                if (prayisha.getCurrentTextColor() == Color.GREEN)
-                    praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+            for (int i = 0; i < 5; i++) {
+                if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
+                    prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                }
+            }
+
+            temp_next_adan_textview2.setTextSize(normal_text_size-difference_in_scale); // 23
+            temp_next_adan_textview.setTextSize(normal_text_size-difference_in_scale);  // to prepare for animation
         }
+
     }
 
-    private void clean_up_button_redness() {
-        for(int i=0; i<5; i++)
-            praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+
+    public void ShowStatisticsClicked(View view) {
+        Statistictictictictic statisticstab=new Statistictictictictic(this);
+        statisticstab.show();
     }
+
+
 }
