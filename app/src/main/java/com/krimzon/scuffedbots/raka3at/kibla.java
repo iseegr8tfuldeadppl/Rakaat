@@ -60,6 +60,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     protected TextView kiblatitle;
     String kibla, kiblatitleh, betterquality, backh;
     private TextView maintitle;
+    Typeface custom_font;
 
 
     @Override
@@ -73,7 +74,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         maintitle = findViewById(R.id.maintitle);
         back = findViewById(R.id.back);
         fix = findViewById(R.id.fix);
-        Typeface custom_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
+        custom_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
         back.setTypeface(custom_font);
         fix.setTypeface(custom_font);
         kiblatitle.setTypeface(custom_font);
@@ -119,17 +120,19 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
     private void getStrings(){
         if(language.equals("en")){
-        backh = getString(R.string.back);
-        betterquality = getString(R.string.betterquality);
-        kiblatitleh = getString(R.string.kiblatitle);
-        kibla = getString(R.string.kibla);
-    }}
+            backh = getString(R.string.back);
+            betterquality = getString(R.string.betterquality);
+            kiblatitleh = getString(R.string.kiblatitle);
+            kibla = getString(R.string.kibla);
+        }
+    }
 
     private void english(){
         maintitle.setText(kibla);
         kiblatitle.setText(kiblatitleh);
         fix.setText(betterquality);
         back.setText(backh);
+        maintitle.setTypeface(custom_font);
     }
 
     @Override

@@ -32,7 +32,7 @@
         android:layout_marginEnd="10dp"
         android:gravity="center">
         <SeekBar
-            android:layout_weight=".25"
+            android:layout_weight=".35"
             android:id="@+id/brightness"
             android:progress="1"
             android:layout_width="match_parent"
@@ -44,12 +44,12 @@
             android:progressDrawable="@drawable/volume_control"/>
         <TextView
             android:gravity="center"
-            android:layout_weight=".75"
+            android:layout_weight=".65"
             android:id="@+id/brightnesstitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:text="@string/setting1_arabe"/>
     </LinearLayout>
 
@@ -112,7 +112,7 @@
             android:layout_height="match_parent"
             android:text="@string/delaybeforecounting_arabe"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:layout_gravity="center"
             android:gravity="center"
             android:id="@+id/delaytitle"/>

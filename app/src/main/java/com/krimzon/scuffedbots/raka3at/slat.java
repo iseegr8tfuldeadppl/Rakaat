@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -183,7 +184,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             if (receiveandy.equals("force")) {
                 sender = getIntent();
                 prayer = Integer.valueOf(sender.getStringExtra("prayer"));
-                todaycomparable = sender.getStringExtra("todaycomparable");
                 todaycomparable = sender.getStringExtra("todaycomparable");
                 prayed = sender.getStringExtra("prayed");
                 forceAndy();
@@ -392,11 +392,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    public static String check_language(){
-        return String.valueOf(Locale.getDefault());
-    }
-
-
     @Override
     public void onBackPressed() {
         if(receiveandy!=null) {
@@ -531,6 +526,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                     two.setVisibility(View.INVISIBLE);
                     one.startAnimation(slide_out_from_right4);
                     slide_out_from_right4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
+                        if(!it_is_nightmode_since_lightmode_shines_and_ruins_measurement)
+                            dimm_start_button_text();
+                        else
+                            darken_start_button();
                         one.setVisibility(View.INVISIBLE);
                         coverer.setVisibility(GONE);
                         not_clicked = false; // to not allow multiple selection clicks
@@ -571,8 +570,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-            TextView lmao = findViewById(R.id.lmao);
-            lmao.setText(String.valueOf(event.values[0]));
+            /*TextView lmao = findViewById(R.id.lmao);
+            lmao.setText(String.valueOf(event.values[0]));*/
 
             if (start_was_just_clicked) { start_was_just_clicked = false;
                 if (event.values[0] < minimum_light) {
@@ -845,6 +844,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void reset(){
+
+        start.setTextColor(Color.WHITE);
+        not_clicked = true;
         tahia.setVisibility(GONE);
         one.setEnabled(true);
         two.setEnabled(true);
@@ -910,7 +912,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if(found_prayed_history_in_sql)
             SQLSharing.mydb.updatePrayed(todaycomparable,temper);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, prayed);
+            SQLSharing.mydb.insertPrayed(todaycomparable, temper);
+
     }
 
     protected boolean found_prayed_history_in_sql = false;
@@ -1015,30 +1018,33 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void update_dimmness(){
         if (scheme_light_mode == 0) {
-            if(bottombuttons.getVisibility()== View.INVISIBLE)
-                start.setTextColor(dimmest);
             raka3at.setTextColor(dimmest);
             sajda.setTextColor(dimmest);
             donetitle.setTextColor(dimmest);
             countdown.setTextColor(dimmest);
             tahia.setTextColor(dimmest);
         } else if (scheme_light_mode == 1) {
-            if(bottombuttons.getVisibility()== View.VISIBLE)
-                start.setTextColor(dimmer);
             raka3at.setTextColor(dimmer);
             sajda.setTextColor(dimmer);
             donetitle.setTextColor(dimmer);
             countdown.setTextColor(dimmer);
             tahia.setTextColor(dimmer);
         } else {
-            if(bottombuttons.getVisibility()== View.VISIBLE)
-                start.setTextColor(dimm);
             raka3at.setTextColor(dimm);
             sajda.setTextColor(dimm);
             donetitle.setTextColor(dimm);
             countdown.setTextColor(dimm);
             tahia.setTextColor(dimm);
         }
+    }
+
+    private void dimm_start_button_text(){
+        if (scheme_light_mode == 0)
+            start.setTextColor(dimmest);
+        else if (scheme_light_mode == 1)
+            start.setTextColor(dimmer);
+        else
+            start.setTextColor(dimm);
     }
 
 
@@ -1080,30 +1086,34 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void update_darkness() {
         if(scheme==0) {
-            if(bottombuttons.getVisibility()== View.INVISIBLE)
-                start.setTextColor(darkest);
             sajda.setTextColor(darkest);
             raka3at.setTextColor(darkest);
             countdown.setTextColor(darkest);
             donetitle.setTextColor(darkest);
             tahia.setTextColor(darkest);
         } else if(scheme==1) {
-            if(bottombuttons.getVisibility()== View.INVISIBLE)
-                start.setTextColor(dark);
             sajda.setTextColor(dark);
             raka3at.setTextColor(dark);
             countdown.setTextColor(dark);
             donetitle.setTextColor(dark);
             tahia.setTextColor(dark);
         } else {
-            if(bottombuttons.getVisibility()== View.INVISIBLE)
-                start.setTextColor(white);
             sajda.setTextColor(white);
             raka3at.setTextColor(white);
             countdown.setTextColor(white);
             donetitle.setTextColor(white);
             tahia.setTextColor(white);
         }
+    }
+
+
+    private void darken_start_button() {
+        if(scheme==0)
+            start.setTextColor(darkest);
+        else if(scheme==1)
+            start.setTextColor(dark);
+        else
+            start.setTextColor(white);
     }
 
 

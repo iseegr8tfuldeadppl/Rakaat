@@ -15,6 +15,6 @@
     <dimen name="next_adan_size">23sp</dimen>
     <dimen name="twelve">12sp</dimen>
     <dimen name="yes">3dp</dimen>
-    <dimen name="tablecorners">14dp</dimen>
+    <dimen name="tablecorners">6dp</dimen>
 
 </resources>

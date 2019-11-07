@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 
 import java.util.Locale;
@@ -243,6 +244,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void print(Object lol) {
         Toast.makeText(getApplicationContext(), String.valueOf(lol), Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void changeLanguageClicked(View view) {
+        LanguageChange languageChange = new LanguageChange(this);
+        languageChange.show();
     }
 
 

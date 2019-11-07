@@ -2,13 +2,13 @@
 
     <!-- English -->
     <string name="app_name">Raka\'at | عدد الركعات</string>
-    <string name="kibla">Kibla\'h</string>
+    <string name="kibla">Kibla</string>
     <string name="prayer">Prayer</string>
     <string name="privacy" translatable="false">● PRIVACY POLICY ●</string>
     <string name="instagram" translatable="false">● @SCUFFEDBOTS ●</string>
     <string name="back">Go back</string>
     <string name="betterquality">Improve accuracy</string>
-    <string name="kiblatitle">The compass gets brighter when facing Kibla\'h</string>
+    <string name="kiblatitle">The compass lights up when facing Kibla</string>
     <string name="howtouse">Tutorial</string>
     <string name="sajadat">Sajadat</string>
     <string name="noshow">Don\'t show again</string>
@@ -104,7 +104,8 @@
     <string name="rakaat_arabe">الركعات</string>
     <string name="pm">م</string>
     <string name="am">ص</string>
-    <string name="joinprayer">صلّي</string>
+    <string name="joinprayer_arabic">صلّي</string>
+    <string name="joinprayer">Pray</string>
     <string name="satarabe">السبت</string>
     <string name="sunarabe">الأحد</string>
     <string name="monarabe">الإثنين</string>
@@ -163,10 +164,38 @@
     <string name="shawwal_arabe">شَوَّال</string>
     <string name="dhualqaada_arabe">ذُوالْقَعْدَة</string>
     <string name="dhualhijja_arabe">ذُوالْحِجَّة</string>
+
+    <string name="muharram">Muḥarram</string>
+    <string name="safar">Safar</string>
+    <string name="rabialawwal">Rabiʿ al-Awwal</string>
+    <string name="rabialthani">Rabiʿ al-Thani</string>
+    <string name="jumadialawwal">Jumada al-Ula</string>
+    <string name="jumadialthani">Jumada al-Thani</string>
+    <string name="rajab">Rajab</string>
+    <string name="chaaban">Sha‘ban</string>
+    <string name="ramadhan">Ramadan</string>
+    <string name="shawwal">Shawwal</string>
+    <string name="dhualqaada">Dhu al-Qa‘dah</string>
+    <string name="dhualhijja">Dhu al-Hijjah</string>
+
     <string name="brak"><![CDATA[>]]></string>
     <string name="brak2"><![CDATA[<]]></string>
-    <string name="statsenglish">Statistics</string>
-    <string name="stat1">Prayed prayers all time:</string>
+    <string name="stats">Statistics</string>
+    <string name="alltime">All time</string>
+    <string name="past7days">Past 7 days</string>
+    <string name="today">Today</string>
+    <string name="yourprayers">Your prayers</string>
+    <string name="stats_arabe">احصائيات</string>
+    <string name="yourprayers_arabe">صلواتك</string>
+    <string name="today_arabe">اليوم</string>
+    <string name="past7days_arabe">السبع أيام الماضية</string>
+    <string name="pastmonth">Past Month</string>
+    <string name="pastmonth_arabe">الثلاثين يوم الماضية</string>
+    <string name="past6months">Past 6 Months</string>
+    <string name="past6months_arabe">السِّت أشهُر الماضية</string>
+    <string name="pastyear">Past Year</string>
+    <string name="pastyear_arabe">السّنة الماضية</string>
+    <string name="alltime_arabe">منْذُ فتْح التّطبيق</string>
 
 
 </resources>

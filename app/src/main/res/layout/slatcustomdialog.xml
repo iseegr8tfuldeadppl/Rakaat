@@ -92,6 +92,7 @@
                 android:id="@+id/btn_yes"
                 android:layout_width="100dp"
                 android:layout_height="30dp"
+                android:textAllCaps="false"
                 android:clickable="true"
                 android:text="@string/ok_arabe"
                 android:background="@drawable/buttons"
@@ -101,6 +102,7 @@
             <Button
                 android:id="@+id/btn_never"
                 android:layout_width="100dp"
+                android:textAllCaps="false"
                 android:layout_height="30dp"
                 android:clickable="true"
                 android:text="@string/noshow_arabe"

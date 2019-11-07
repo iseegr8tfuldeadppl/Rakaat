@@ -12,21 +12,59 @@
         android:orientation="horizontal"
         android:weightSum="1"
         android:gravity="center_vertical">
-        <ImageView
-            android:layout_weight=".3"
-            android:layout_width="69dp"
-            android:layout_height="69dp"
-            android:src="@drawable/stats"/>
         <TextView
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:text="@string/statsenglish"
+            android:text="@string/stats_arabe"
             android:textColor="@color/white"
             android:id="@+id/statstitle"
             android:textSize="30sp"
             android:layout_weight=".7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_weight=".3"
+            android:layout_width="69dp"
+            android:layout_height="69dp"
+            android:src="@drawable/stats"/>
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/title"
+        android:gravity="start"
+        android:layout_weight=".5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        android:textColor="@color/white"
+        android:text="@string/yourprayers_arabe"
+        android:layout_marginBottom="15dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/prayed_prayers_today"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"/>
+        <TextView
+            android:id="@+id/title_prayed_prayers_today"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:text="@string/today_arabe"/>
     </LinearLayout>
 
     <LinearLayout
@@ -36,14 +74,106 @@
         android:weightSum="1"
         android:gravity="center_vertical">
         <TextView
-            android:id="@+id/title_prayed_prayers_of_all_time"
+            android:id="@+id/prayed_prayers_past_week"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"/>
+        <TextView
+            android:id="@+id/title_prayed_prayers_past_week"
             android:gravity="center"
             android:layout_weight=".5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
             android:textColor="@color/white"
-            android:text="@string/stat1"/>
+            android:text="@string/past7days_arabe"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/prayed_prayers_past_month"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/title_prayed_prayers_past_month"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:gravity="center"
+            android:text="@string/pastmonth_arabe"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/prayed_prayers_past_six_months"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"/>
+        <TextView
+            android:id="@+id/title_prayed_prayers_past_six_months"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:text="@string/past6months_arabe"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/prayed_prayers_past_year"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"/>
+        <TextView
+            android:id="@+id/title_prayed_prayers_past_year"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:text="@string/pastyear_arabe"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
         <TextView
             android:id="@+id/prayed_prayers_of_all_time"
             android:gravity="center"
@@ -52,6 +182,15 @@
             android:layout_height="wrap_content"
             android:textSize="17sp"
             android:textColor="@color/white"/>
+        <TextView
+            android:id="@+id/title_prayed_prayers_of_all_time"
+            android:gravity="center"
+            android:layout_weight=".5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:text="@string/alltime_arabe"/>
     </LinearLayout>
 
 </LinearLayout>

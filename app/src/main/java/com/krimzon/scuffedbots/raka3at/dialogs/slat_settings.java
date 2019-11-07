@@ -2,11 +2,14 @@ package com.krimzon.scuffedbots.raka3at.dialogs;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +22,12 @@ import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.slat;
-
-import static com.krimzon.scuffedbots.raka3at.slat.arabic_font;
-import static com.krimzon.scuffedbots.raka3at.slat.check_language;
 import static com.krimzon.scuffedbots.raka3at.slat.dark;
 import static com.krimzon.scuffedbots.raka3at.slat.darkest;
 import static com.krimzon.scuffedbots.raka3at.slat.darksimpelbackground;
 import static com.krimzon.scuffedbots.raka3at.slat.delaybeforecounting;
-import static com.krimzon.scuffedbots.raka3at.slat.english_font;
 import static com.krimzon.scuffedbots.raka3at.slat.it_is_nightmode_since_lightmode_shines_and_ruins_measurement;
+import static com.krimzon.scuffedbots.raka3at.slat.language;
 import static com.krimzon.scuffedbots.raka3at.slat.raka3at;
 import static com.krimzon.scuffedbots.raka3at.slat.sajda;
 import static com.krimzon.scuffedbots.raka3at.slat.scheme;
@@ -347,18 +347,25 @@ public class slat_settings extends BottomSheetDialogFragment {
         brightnesstitle = v.findViewById(R.id.brightnesstitle);
         delaytitle = v.findViewById(R.id.delaytitle);
 
-        if(check_language().equals("ar")) {
-            brightnesstitle.setTypeface(arabic_font);
-            zero.setTypeface(arabic_font);
-            three.setTypeface(arabic_font);
-            five.setTypeface(arabic_font);
-            delaytitle.setTypeface(arabic_font);
-        } else if(check_language().equals("en")) {
-            brightnesstitle.setTypeface(english_font);
-            zero.setTypeface(english_font);
-            three.setTypeface(english_font);
-            five.setTypeface(english_font);
-            delaytitle.setTypeface(english_font);
+        if(getContext()!=null) {
+            Typeface arabic_font = Typeface.createFromAsset(getContext().getAssets(), "Tajawal-Light.ttf");
+            Typeface english_font = Typeface.createFromAsset(getContext().getAssets(), "Tajawal-Light.ttf");
+
+            if (language.equals("ar")) {
+                brightnesstitle.setTypeface(arabic_font);
+                zero.setTypeface(arabic_font);
+                three.setTypeface(arabic_font);
+                five.setTypeface(arabic_font);
+                delaytitle.setTypeface(arabic_font);
+                arrow.setTypeface(arabic_font);
+            } else if (language.equals("en")) {
+                brightnesstitle.setTypeface(english_font);
+                zero.setTypeface(english_font);
+                three.setTypeface(english_font);
+                five.setTypeface(english_font);
+                delaytitle.setTypeface(english_font);
+                arrow.setTypeface(english_font);
+            }
         }
 
         settings = v.findViewById(R.id.settings);
@@ -402,7 +409,10 @@ public class slat_settings extends BottomSheetDialogFragment {
         super.onDetach();
         SQLSharing.mycursor.close();
         SQLSharing.mydb.close();
-        print(getString(R.string.saved));
+        if(language.equals("ar"))
+            Toast.makeText(getContext(), getString(R.string.saved_arabe), Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(getContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
     }
 
     public interface BottomSheetListener {

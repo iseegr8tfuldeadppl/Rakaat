@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -25,6 +26,9 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,9 +43,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
-
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
 import java.io.IOException;
@@ -98,7 +100,7 @@ public class force extends AppCompatActivity {
     protected String todaycomparable;
 
     protected RelativeLayout full;
-    protected String language = "";
+    public static String language = "";
 
     protected Typeface arabic_typeface;
 
@@ -110,6 +112,7 @@ public class force extends AppCompatActivity {
     protected TextView citydisplay;
 
     protected TextView daterr;
+    private boolean fajr_is_red, dhuhr_is_red, asr_is_red, maghrib_is_red, isha_is_red;
 
 
     @Override
@@ -142,7 +145,7 @@ public class force extends AppCompatActivity {
 
         low_light_alert();
 
-        /*longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());*/
+        //longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());
     }
 
 
@@ -152,20 +155,22 @@ public class force extends AppCompatActivity {
     protected int miladi_month = 0;
 
     private void hijri_date_setup() {
-        lel = todaycomparable.split(" ");
-        String[] t = PlainDate.of(Integer.valueOf(temptoday[5]), miladi_month, Integer.valueOf(lel[1])) // TODO: fix me Integer.valueOf(lel[5]) + 2000
-                .transform(HijriCalendar.class, HijriCalendar.VARIANT_UMALQURA).toString().split("-");
-        t[3] = t[3].replace("[islamic", "");
-        hijri_year = Integer.valueOf(t[1]);
-        hijri_month = Integer.valueOf(t[2]);
-        hijri_day = Integer.valueOf(t[3]);
-        convert_hijri_to_cute();
+        if(miladi_month!=0) {
+            lel = todaycomparable.split(" ");
+            String[] t = PlainDate.of(Integer.valueOf(temptoday[5]), miladi_month, Integer.valueOf(lel[1])) // TODO: fix me Integer.valueOf(lel[5]) + 2000
+                    .transform(HijriCalendar.class, HijriCalendar.VARIANT_UMALQURA).toString().split("-");
+            t[3] = t[3].replace("[islamic", "");
+            hijri_year = Integer.valueOf(t[1]);
+            hijri_month = Integer.valueOf(t[2]);
+            hijri_day = Integer.valueOf(t[3]);
+            convert_hijri_to_cute();
+        }
     }
 
 
     private void convert_hijri_to_cute() {
-        hijri += hijri_day + " ";
         if(language.equals("ar")){
+            hijri += hijri_day + " ";
             switch(hijri_month) {
                 case 1:
                     hijri += resources.getString(R.string.muharram_arabe);
@@ -204,6 +209,57 @@ public class force extends AppCompatActivity {
                     hijri += resources.getString(R.string.dhualhijja_arabe);
                     break;
             }
+
+            hijri += " " + hijri_year;
+        } else {
+            switch(hijri_month) {
+                case 1:
+                    hijri += resources.getString(R.string.muharram);
+                    break;
+                case 2:
+                    hijri += resources.getString(R.string.safar);
+                    break;
+                case 3:
+                    hijri += resources.getString(R.string.rabialawwal);
+                    break;
+                case 4:
+                    hijri += resources.getString(R.string.rabialthani);
+                    break;
+                case 5:
+                    hijri += resources.getString(R.string.jumadialawwal);
+                    break;
+                case 6:
+                    hijri += resources.getString(R.string.jumadialthani);
+                    break;
+                case 7:
+                    hijri += resources.getString(R.string.rajab);
+                    break;
+                case 8:
+                    hijri += resources.getString(R.string.chaaban);
+                    break;
+                case 9:
+                    hijri += resources.getString(R.string.ramadhan);
+                    break;
+                case 10:
+                    hijri += resources.getString(R.string.shawwal);
+                    break;
+                case 11:
+                    hijri += resources.getString(R.string.dhualqaada);
+                    break;
+                case 12:
+                    hijri += resources.getString(R.string.dhualhijja);
+                    break;
+            }
+
+            hijri += " " + hijri_day;
+            if (hijri_day==2 || hijri_day==22)
+                hijri += "nd";
+            else if (hijri_day==3 || hijri_day==23)
+                hijri += "rd";
+            else if (hijri_day==1 || hijri_day==21)
+                hijri += "st";
+            else
+                hijri += "th";
 
             hijri += " " + hijri_year;
         }
@@ -250,6 +306,12 @@ public class force extends AppCompatActivity {
             asrtitle.setText(asrtitlel);
             maghrebtitle.setText(maghrebtitlel);
             ishatitle.setText(ishatitlel);
+            prayisha.setText(pray);
+            praymaghrib.setText(pray);
+            prayasr.setText(pray);
+            praydhuhr.setText(pray);
+            prayfajr.setText(pray);
+            title.setText(force);
         }
     }
 
@@ -263,6 +325,8 @@ public class force extends AppCompatActivity {
     protected String ishatitlel;
     protected String pm;
     protected String am;
+    protected String pray;
+    protected String force;
 
     private void getStrings(){
         fajrtitlel = getString(R.string.fajrtitle);
@@ -271,12 +335,20 @@ public class force extends AppCompatActivity {
         asrtitlel = getString(R.string.asrtitle);
         maghrebtitlel = getString(R.string.maghrebtitle);
         ishatitlel = getString(R.string.ishatitle);
+        pray = getString(R.string.joinprayer);
+        force = getString(R.string.force);
     }
 
+
+    protected boolean darkmode = true;
 
     private void load_data_from_slat_sql() {
         SQLSharing.mycursor.moveToPosition(6);
         language = SQLSharing.mycursor.getString(1);
+
+        SQLSharing.mycursor.moveToPosition(1);
+        if(SQLSharing.mycursor.getString(1).equals("no"))
+            light_mode();
     }
 
 
@@ -295,12 +367,13 @@ public class force extends AppCompatActivity {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if(SQLSharing.mycursor.getCount()>0)
             if_theres_previous_info_load_it_n_display(date);
+        else
+            new_coordinates = true;
         if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(date);
     }
 
 
     private void if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(Date date) {
-        new_coordinates = true;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
             return; }
@@ -415,8 +488,6 @@ public class force extends AppCompatActivity {
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null) {
-                                if(new_coordinates)
-                                    new_coordinates = false;
                                 longitude = location.getLongitude();
                                 latitude = location.getLatitude();
                                 use(longitude, latitude, new_coordinates, CurrentDisplayedDay);
@@ -496,6 +567,7 @@ public class force extends AppCompatActivity {
 
         temptoday = today.toString().split(" ");
         todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
+
 
         //update coords in sql
         update_coords_in_sql(longitude, latitude, new_coordinates);
@@ -673,38 +745,64 @@ public class force extends AppCompatActivity {
 
             datin += " ";
             tempdatin = temptoday[1];
-            if (tempdatin.equals(resources.getString(R.string.jan)))
+            if (tempdatin.equals(resources.getString(R.string.jan))) {
                 datin += "January";
-            else if (tempdatin.equals(resources.getString(R.string.feb)))
+                miladi_month = 1;
+            }
+            else if (tempdatin.equals(resources.getString(R.string.feb))) {
                 datin += "February";
-            else if (tempdatin.equals(resources.getString(R.string.mar)))
+                miladi_month = 2;
+            }
+            else if (tempdatin.equals(resources.getString(R.string.mar))) {
                 datin += "March";
-            else if (tempdatin.equals(resources.getString(R.string.apr)))
+                miladi_month = 3;
+            }
+            else if (tempdatin.equals(resources.getString(R.string.apr))) {
                 datin += "April";
-            else if (tempdatin.contains(resources.getString(R.string.mao)))
+                miladi_month = 4;
+            }
+            else if (tempdatin.contains(resources.getString(R.string.mao))) {
                 datin += "May";
-            else if (tempdatin.contains(resources.getString(R.string.june)))
+                miladi_month = 5;
+            }
+            else if (tempdatin.contains(resources.getString(R.string.june))) {
                 datin += "June";
-            else if (tempdatin.contains(resources.getString(R.string.july)))
+                miladi_month = 6;
+            }
+            else if (tempdatin.contains(resources.getString(R.string.july))) {
                 datin += "July";
-            else if (tempdatin.equals(resources.getString(R.string.aug)))
+
+                miladi_month = 7;
+            }
+            else if (tempdatin.equals(resources.getString(R.string.aug))) {
+                miladi_month = 8;
                 datin += "August";
-            else if (tempdatin.equals("Sep"))
+            }
+            else if (tempdatin.equals("Sep")) {
+                miladi_month = 9;
                 datin += "September";
-            else if (tempdatin.equals("Oct"))
+            }
+            else if (tempdatin.equals("Oct")) {
+                miladi_month = 10;
                 datin += "October";
-            else if (tempdatin.equals("Nov"))
+            }
+            else if (tempdatin.equals("Nov")) {
+                miladi_month = 11;
                 datin += "November";
-            else if (tempdatin.equals("Dec"))
+            }
+            else if (tempdatin.equals("Dec")) {
+                miladi_month = 12;
                 datin += "December";
+            }
 
             tempdatin = temptoday[2];
-            datin += " " + tempdatin;
-            if (tempdatin.equals("2") || tempdatin.equals("22"))
+            int temper = Integer.valueOf(tempdatin);
+            datin += " " + String.valueOf(temper);
+            if (temper==2 || temper==22)
                 datin += "nd";
-            else if (tempdatin.equals("3") || tempdatin.equals("23"))
+            else if (temper==3 || temper==23)
                 datin += "rd";
-            else if (tempdatin.equals("1") || tempdatin.equals("21"))
+            else if (temper==1 || temper==21)
                 datin += "st";
             else
                 datin += "th";
@@ -738,7 +836,8 @@ public class force extends AppCompatActivity {
             //hijri += datin + " ";
 
             tempdatin = temptoday[2];
-            datin += " " + tempdatin;
+            int temper = Integer.valueOf(tempdatin);
+            datin += " " + temper;
 
             datin += " ";
             tempdatin = temptoday[1];
@@ -800,7 +899,7 @@ public class force extends AppCompatActivity {
 
 
     private void print(Object dumps) {
-        Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_LONG).show();
     }
 
 
@@ -821,7 +920,7 @@ public class force extends AppCompatActivity {
 
 
     public void ishaClicked(View view) {
-        if(prayisha.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+        if(prayisha.getCurrentTextColor()==resources.getColor(R.color.lighterred) ||  isha_is_red) {
             process_prayed_request(4);
 
             if (allow_pray)
@@ -833,7 +932,7 @@ public class force extends AppCompatActivity {
 
 
     public void maghribClicked(View view) {
-        if(praymaghrib.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+        if(praymaghrib.getCurrentTextColor()==resources.getColor(R.color.lighterred) || maghrib_is_red) {
             process_prayed_request(3);
 
             if (allow_pray)
@@ -845,7 +944,7 @@ public class force extends AppCompatActivity {
 
 
     public void asrClicked(View view) {
-        if(prayasr.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+        if(prayasr.getCurrentTextColor()==resources.getColor(R.color.lighterred) || asr_is_red) {
             process_prayed_request(2);
 
             if (allow_pray)
@@ -857,7 +956,7 @@ public class force extends AppCompatActivity {
 
 
     public void dhuhrClicked(View view) {
-        if(praydhuhr.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+        if(praydhuhr.getCurrentTextColor()==resources.getColor(R.color.lighterred) || dhuhr_is_red) {
             process_prayed_request(1);
 
             if (allow_pray)
@@ -869,7 +968,8 @@ public class force extends AppCompatActivity {
 
 
     public void fajrClicked(View view) {
-        if(prayfajr.getCurrentTextColor()==resources.getColor(R.color.lighterred)) {
+        if(prayfajr.getCurrentTextColor()==resources.getColor(R.color.lighterred) ||
+                fajr_is_red) {
             process_prayed_request(0);
 
             if (allow_pray)
@@ -970,39 +1070,259 @@ public class force extends AppCompatActivity {
         }
     }
 
-
+    Drawable lightforcebuttons;
+    Drawable lightforcebuttonsgreen;
+    List<Drawable> lightforcebuttonsarray;
+    List<Drawable> lightforcebuttonsgreenarray;
+    boolean  onlyfillonce = true;
+    Drawable t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
     private void color_pray_buttons() {
+
+        if(onlyfillonce){
+            lightforcebuttonsarray = new ArrayList<>();
+            lightforcebuttonsgreenarray = new ArrayList<>();
+            onlyfillonce = false;
+            t1 = resources.getDrawable(R.drawable.lightforcebuttons);
+            t2 = resources.getDrawable(R.drawable.lightforcebuttons);
+            t3 = resources.getDrawable(R.drawable.lightforcebuttons);
+            t4 = resources.getDrawable(R.drawable.lightforcebuttons);
+            t5 = resources.getDrawable(R.drawable.lightforcebuttons);
+            lightforcebuttonsarray.add(t1);
+            lightforcebuttonsarray.add(t2);
+            lightforcebuttonsarray.add(t3);
+            lightforcebuttonsarray.add(t4);
+            lightforcebuttonsarray.add(t5);
+            t6 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
+            t7 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
+            t8 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
+            t9 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
+            t10 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
+            lightforcebuttonsgreenarray.add(t6);
+            lightforcebuttonsgreenarray.add(t7);
+            lightforcebuttonsgreenarray.add(t8);
+            lightforcebuttonsgreenarray.add(t9);
+            lightforcebuttonsgreenarray.add(t10);
+        }
 
         if(!all_white) {
 
             if(fill_all){
-                for (int i = 0; i < 5; i++)
-                    if (forces.get(i).equals("0"))
-                        praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
-                    else
-                        praybuttons.get(i).setTextColor(Color.GREEN);
+                if(darkmode) {
+                    for (int i = 0; i < 5; i++) {
+                        if(i==0)
+                            fajr_is_red = false;
+                        if(i==1)
+                            dhuhr_is_red = false;
+                        if(i==2)
+                            asr_is_red = false;
+                        if(i==3)
+                            maghrib_is_red = false;
+                        if(i==4)
+                            isha_is_red = false;
+                        if (forces.get(i).equals("0")){
+                            praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                        }else
+                            praybuttons.get(i).setTextColor(Color.GREEN);
+                    }
+                } else {
+                    for (int i = 0; i < 5; i++) {
+                        if (forces.get(i).equals("0")) {
+                            if(i==0)
+                                fajr_is_red = true;
+                            if(i==1)
+                                dhuhr_is_red = true;
+                            if(i==2)
+                                asr_is_red = true;
+                            if(i==3)
+                                maghrib_is_red = true;
+                            if(i==4)
+                                isha_is_red = true;
+                            praybuttons.get(i).setTextColor(Color.WHITE);
+                            praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
+                        } else {
+                            if(i==0)
+                                fajr_is_red = false;
+                            if(i==1)
+                                dhuhr_is_red = false;
+                            if(i==2)
+                                asr_is_red = false;
+                            if(i==3)
+                                maghrib_is_red = false;
+                            if(i==4)
+                                isha_is_red = false;
+                            praybuttons.get(i).setTextColor(Color.WHITE);
+                            praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                        }
+                    }
+                }
             } else {
                 if (end_of_day) {
-                    for (int i = 0; i < 5; i++)
-                        if (forces.get(i).equals("0"))
-                            praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
-                        else
-                            praybuttons.get(i).setTextColor(Color.GREEN);
+                    if(darkmode) {
+                        for (int i = 0; i < 5; i++) {
+                            if(i==0)
+                                fajr_is_red = false;
+                            if(i==1)
+                                dhuhr_is_red = false;
+                            if(i==2)
+                                asr_is_red = false;
+                            if(i==3)
+                                maghrib_is_red = false;
+                            if(i==4)
+                                isha_is_red = false;
+                            if (forces.get(i).equals("0"))
+                                praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                            else
+                                praybuttons.get(i).setTextColor(Color.GREEN);
+                        }
+                    } else {
+                        for (int i = 0; i < 5; i++) {
+                            if (forces.get(i).equals("0")) {
+                                if(i==0)
+                                    fajr_is_red = true;
+                                if(i==1)
+                                    dhuhr_is_red = true;
+                                if(i==2)
+                                    asr_is_red = true;
+                                if(i==3)
+                                    maghrib_is_red = true;
+                                if(i==4)
+                                    isha_is_red = true;
+                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
+                            } else {
+                                if(i==0)
+                                    fajr_is_red = false;
+                                if(i==1)
+                                    dhuhr_is_red = false;
+                                if(i==2)
+                                    asr_is_red = false;
+                                if(i==3)
+                                    maghrib_is_red = false;
+                                if(i==4)
+                                    isha_is_red = false;
+                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                            }
+                        }
+                    }
                 } else {
-                    for (int i = 0; i < next_adan; i++)
-                        if (forces.get(i).equals("0"))
-                            praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
-                        else
-                            praybuttons.get(i).setTextColor(Color.GREEN);
+                    if(darkmode) {
+                        for (int i = 0; i < next_adan; i++) {
+                            if(i==0)
+                                fajr_is_red = false;
+                            if(i==1)
+                                dhuhr_is_red = false;
+                            if(i==2)
+                                asr_is_red = false;
+                            if(i==3)
+                                maghrib_is_red = false;
+                            if(i==4)
+                                isha_is_red = false;
+                            if (forces.get(i).equals("0"))
+                                praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                            else
+                                praybuttons.get(i).setTextColor(Color.GREEN);
+                        }
+                    } else {
+                        for (int i = 0; i < next_adan; i++) {
+                            if (forces.get(i).equals("0")) {
+                                if(i==0)
+                                    fajr_is_red = true;
+                                if(i==1)
+                                    dhuhr_is_red = true;
+                                if(i==2)
+                                    asr_is_red = true;
+                                if(i==3)
+                                    maghrib_is_red = true;
+                                if(i==4)
+                                    isha_is_red = true;
+                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
+                            } else {
+                                if(i==0)
+                                    fajr_is_red = false;
+                                if(i==1)
+                                    dhuhr_is_red = false;
+                                if(i==2)
+                                    asr_is_red = false;
+                                if(i==3)
+                                    maghrib_is_red = false;
+                                if(i==4)
+                                    isha_is_red = false;
+                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                            }
+                        }
 
-                    for(int i = next_adan; i < 5; i++)
-                        praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+
+                        if(darkmode)
+                            for(int i = next_adan; i < 5; i++) {
+                                if(i==0)
+                                    fajr_is_red = false;
+                                if(i==1)
+                                    dhuhr_is_red = false;
+                                if(i==2)
+                                    asr_is_red = false;
+                                if(i==3)
+                                    maghrib_is_red = false;
+                                if(i==4)
+                                    isha_is_red = false;
+                                praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                            }
+                        else {
+                            for (int i = next_adan; i < 5; i++) {
+                                if(i==0)
+                                    fajr_is_red = false;
+                                if(i==1)
+                                    dhuhr_is_red = false;
+                                if(i==2)
+                                    asr_is_red = false;
+                                if(i==3)
+                                    maghrib_is_red = false;
+                                if(i==4)
+                                    isha_is_red = false;
+                                praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                                praybuttons.get(i).setBackground(null);
+                            }
+                        }
+
+                    }
+
                 }
             }
 
         } else {
-            for (int i = 0; i < 5; i++)
-                praybuttons.get(i).setTextColor(resources.getColor(R.color.white));
+            if(darkmode) {
+                for (int i = 0; i < 5; i++) {
+                    if(i==0)
+                        fajr_is_red = false;
+                    if(i==1)
+                        dhuhr_is_red = false;
+                    if(i==2)
+                        asr_is_red = false;
+                    if(i==3)
+                        maghrib_is_red = false;
+                    if(i==4)
+                        isha_is_red = false;
+                    praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                }
+            }
+            else {
+                for (int i = 0; i < 5; i++) {
+                    if(i==0)
+                        fajr_is_red = false;
+                    if(i==1)
+                        dhuhr_is_red = false;
+                    if(i==2)
+                        asr_is_red = false;
+                    if(i==3)
+                        maghrib_is_red = false;
+                    if(i==4)
+                        isha_is_red = false;
+                    praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    praybuttons.get(i).setBackground(null);
+                }
+            }
         }
 
     }
@@ -1101,8 +1421,10 @@ public class force extends AppCompatActivity {
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(it_is_today)
+            if(it_is_today) {
+                one_of_prayers_is_prolly_larger_size = true;
                 animatenextadan();
+            }
         }
     };
 
@@ -1116,6 +1438,7 @@ public class force extends AppCompatActivity {
     };
 
 
+    protected boolean one_of_prayers_is_prolly_larger_size = false;
     private void animatenextadan() {
         temp_next_adan_textview = prayerdisplayviews.get(next_adan);
         temp_next_adan_textview2 = prayerdisplayviews2.get(next_adan);
@@ -1355,9 +1678,6 @@ public class force extends AppCompatActivity {
 
 
     public void checkTommorow(View view) {
-        /*for(int i=0; i<5; i++)
-            if(prayisha.getCurrentTextColor()==Color.GREEN)
-                praybuttons.get(i).setTextColor(resources.getColor(R.color.white));*/
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
         day = Integer.valueOf(todaysplittemparray[2]);
@@ -1382,7 +1702,7 @@ public class force extends AppCompatActivity {
             for (int i = 0; i < 5; i++) {
                 if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
                     prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
                 }
             }
 
@@ -1421,12 +1741,14 @@ public class force extends AppCompatActivity {
             for (int i = 0; i < 5; i++) {
                 if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
                     prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
                 }
             }
 
-            temp_next_adan_textview2.setTextSize(normal_text_size-difference_in_scale); // 23
-            temp_next_adan_textview.setTextSize(normal_text_size-difference_in_scale);  // to prepare for animation
+            if(one_of_prayers_is_prolly_larger_size) {
+                temp_next_adan_textview2.setTextSize(normal_text_size - difference_in_scale); // 23
+                temp_next_adan_textview.setTextSize(normal_text_size - difference_in_scale);  // to prepare for animation
+            }
         }
 
     }
@@ -1435,6 +1757,222 @@ public class force extends AppCompatActivity {
     public void ShowStatisticsClicked(View view) {
         Statistictictictictic statisticstab=new Statistictictictictic(this);
         statisticstab.show();
+    }
+
+
+    public void arrowbackClicked(View view) {
+        Intent out = new Intent(this, MainActivity.class);
+        startActivity(out);
+        finish();
+    }
+
+
+    public void nightmodeClicked(View view) {
+        if(darkmode)
+            light_mode();
+        else
+            dark_mode();
+
+        color_pray_buttons();
+    }
+
+
+    Drawable forcebuttons, forcebuttons2, forcebuttons3, forcebuttons4, forcebuttons5;
+    Drawable lightdate;
+    Drawable lightcity;
+    Drawable simpelbackground;
+    RelativeLayout datebackground;
+    LinearLayout fajrbackground;
+    LinearLayout risebackground;
+    LinearLayout dhuhrbackground;
+    LinearLayout asrbackground;
+    LinearLayout maghribbackground;
+    LinearLayout ishabackground;
+    RelativeLayout yesterdayarrowbackground;
+    RelativeLayout tommorowarrowbackground;
+    LinearLayout rightsideelementsbackground;
+    Drawable lightmultipledayselectionbackground;
+    Drawable lightbackback;
+    Drawable lightstatsback;
+    RelativeLayout backarrowbackground;
+    Drawable lightlmfao;
+    ImageView lmfaoimage;
+    int transparentblacker;
+    int grayerthanwhite;
+    boolean onlyonceu = true;
+
+    private void light_mode() {
+        darkmode = false;
+
+        if(onlyonceu) {
+            onlyonceu = false;
+            forcebuttons = resources.getDrawable(R.drawable.forcebuttons);
+            forcebuttons2 = resources.getDrawable(R.drawable.forcebuttons);
+            forcebuttons3 = resources.getDrawable(R.drawable.forcebuttons);
+            forcebuttons4 = resources.getDrawable(R.drawable.forcebuttons);
+            forcebuttons5 = resources.getDrawable(R.drawable.forcebuttons);
+            simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
+            lightdate = resources.getDrawable(R.drawable.lightdate);
+            lightcity = resources.getDrawable(R.drawable.lightcity);
+            datebackground = findViewById(R.id.datebackground);
+            fajrbackground = findViewById(R.id.fajrbackground);
+            risebackground = findViewById(R.id.risebackground);
+            dhuhrbackground = findViewById(R.id.dhuhrbackground);
+            asrbackground = findViewById(R.id.asrbackground);
+            maghribbackground = findViewById(R.id.maghribbackground);
+            ishabackground = findViewById(R.id.ishabackground);
+            yesterdayarrowbackground = findViewById(R.id.yesterdayarrowbackground);
+            tommorowarrowbackground = findViewById(R.id.tommorowarrowbackground);
+            rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
+            lightmultipledayselectionbackground = resources.getDrawable(R.drawable.lightmultipledayselectionbackground);
+            lightbackback = resources.getDrawable(R.drawable.lightbackback);
+            lightstatsback = resources.getDrawable(R.drawable.lightstatsback);
+            backarrowbackground = findViewById(R.id.backarrowbackground);
+            lightlmfao = resources.getDrawable(R.drawable.lightlmfao);
+            lmfaoimage = findViewById(R.id.lmfao);
+            transparentblacker = resources.getColor(R.color.transparentblacker);
+        }
+
+        prayfajr.setBackground(forcebuttons);
+        praydhuhr.setBackground(forcebuttons2);
+        prayasr.setBackground(forcebuttons3);
+        praymaghrib.setBackground(forcebuttons4);
+        prayisha.setBackground(forcebuttons5);
+
+        prayfajr.setTextColor(Color.WHITE);
+        praydhuhr.setTextColor(Color.WHITE);
+        prayasr.setTextColor(Color.WHITE);
+        praymaghrib.setTextColor(Color.WHITE);
+        prayisha.setTextColor(Color.WHITE);
+
+        full.setBackground(simpelbackground);
+        title.setTextColor(Color.WHITE);
+        title.setBackgroundColor(transparentblacker);
+
+        fajrtitle.setTextColor(Color.WHITE);
+        risetitle.setTextColor(Color.WHITE);
+        dohrtitle.setTextColor(Color.WHITE);
+        asrtitle.setTextColor(Color.WHITE);
+        maghrebtitle.setTextColor(Color.WHITE);
+        ishatitle.setTextColor(Color.WHITE);
+
+        datebackground.setBackground(lightdate);
+        fajrbackground.setBackground(lightmultipledayselectionbackground);
+        risebackground.setBackground(lightmultipledayselectionbackground);
+        dhuhrbackground.setBackground(lightmultipledayselectionbackground);
+        asrbackground.setBackground(lightmultipledayselectionbackground);
+        maghribbackground.setBackground(lightmultipledayselectionbackground);
+        ishabackground.setBackground(lightmultipledayselectionbackground);
+        yesterdayarrowbackground.setBackground(lightmultipledayselectionbackground);
+        tommorowarrowbackground.setBackground(lightmultipledayselectionbackground);
+        citydisplay.setBackground(lightcity);
+
+        rightsideelementsbackground.setBackground(lightstatsback);
+        backarrowbackground.setBackground(lightbackback);
+        lmfaoimage.setImageDrawable(lightlmfao);
+
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        SQLSharing.mydb = new SQL(this);
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        ID = SQLSharing.mycursor.getString(0);
+        SQLSharing.mydb.updateData("no", ID);
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
+    }
+
+
+    Drawable darkforcebuttons, darkforcebuttons2, darkforcebuttons3, darkforcebuttons4, darkforcebuttons5;
+    Drawable forcefull;
+    Drawable dateer;
+    Drawable cityeer;
+    Drawable multipledayselectionbackground;
+    Drawable backback;
+    Drawable statsback;
+    Drawable lmfaodrawable;
+    boolean onlyonce = true;
+    String ID;
+
+    private void dark_mode() {
+        darkmode = true;
+
+        if(onlyonce) {
+            onlyonce = false;
+            darkforcebuttons = resources.getDrawable(R.drawable.darkbuttons);
+            darkforcebuttons2 = resources.getDrawable(R.drawable.darkbuttons);
+            darkforcebuttons3 = resources.getDrawable(R.drawable.darkbuttons);
+            darkforcebuttons4 = resources.getDrawable(R.drawable.darkbuttons);
+            darkforcebuttons5 = resources.getDrawable(R.drawable.darkbuttons);
+            forcefull = resources.getDrawable(R.drawable.forcefull);
+            dateer = resources.getDrawable(R.drawable.date);
+            cityeer = resources.getDrawable(R.drawable.city);
+            datebackground = findViewById(R.id.datebackground);
+            fajrbackground = findViewById(R.id.fajrbackground);
+            risebackground = findViewById(R.id.risebackground);
+            dhuhrbackground = findViewById(R.id.dhuhrbackground);
+            asrbackground = findViewById(R.id.asrbackground);
+            maghribbackground = findViewById(R.id.maghribbackground);
+            ishabackground = findViewById(R.id.ishabackground);
+            multipledayselectionbackground = resources.getDrawable(R.drawable.multipledayselectionbackground);
+            yesterdayarrowbackground = findViewById(R.id.yesterdayarrowbackground);
+            tommorowarrowbackground = findViewById(R.id.tommorowarrowbackground);
+            rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
+            backback = resources.getDrawable(R.drawable.backback);
+            statsback = resources.getDrawable(R.drawable.statsback);
+            backarrowbackground = findViewById(R.id.backarrowbackground);
+            lmfaodrawable = resources.getDrawable(R.drawable.lmfao);
+            lmfaoimage = findViewById(R.id.lmfao);
+            grayerthanwhite = resources.getColor(R.color.grayerthanwhite);
+        }
+
+        prayfajr.setBackground(darkforcebuttons);
+        praydhuhr.setBackground(darkforcebuttons2);
+        prayasr.setBackground(darkforcebuttons3);
+        praymaghrib.setBackground(darkforcebuttons4);
+        prayisha.setBackground(darkforcebuttons5);
+
+        prayfajr.setTextColor(grayerthanwhite);
+        praydhuhr.setTextColor(grayerthanwhite);
+        prayasr.setTextColor(grayerthanwhite);
+        praymaghrib.setTextColor(grayerthanwhite);
+        prayisha.setTextColor(grayerthanwhite);
+
+        full.setBackground(forcefull);
+        title.setTextColor(Color.WHITE);
+        title.setBackground(null);
+
+        fajrtitle.setTextColor(grayerthanwhite);
+        risetitle.setTextColor(grayerthanwhite);
+        dohrtitle.setTextColor(grayerthanwhite);
+        asrtitle.setTextColor(grayerthanwhite);
+        maghrebtitle.setTextColor(grayerthanwhite);
+        ishatitle.setTextColor(grayerthanwhite);
+
+        yesterdayarrowbackground.setBackground(multipledayselectionbackground);
+        tommorowarrowbackground.setBackground(multipledayselectionbackground);
+        datebackground.setBackground(dateer);
+        fajrbackground.setBackground(multipledayselectionbackground);
+        risebackground.setBackground(multipledayselectionbackground);
+        dhuhrbackground.setBackground(multipledayselectionbackground);
+        asrbackground.setBackground(multipledayselectionbackground);
+        maghribbackground.setBackground(multipledayselectionbackground);
+        ishabackground.setBackground(multipledayselectionbackground);
+
+        rightsideelementsbackground.setBackground(statsback);
+        backarrowbackground.setBackground(backback);
+        citydisplay.setBackground(cityeer);
+        lmfaoimage.setImageDrawable(lmfaodrawable);
+
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        SQLSharing.mydb = new SQL(this);
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        ID = SQLSharing.mycursor.getString(0);
+        SQLSharing.mydb.updateData("yes", ID);
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
     }
 
 
