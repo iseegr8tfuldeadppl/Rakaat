@@ -16,5 +16,7 @@
     <dimen name="twelve">12sp</dimen>
     <dimen name="yes">3dp</dimen>
     <dimen name="tablecorners">6dp</dimen>
+    <dimen name="multipledayarrowtopnbottompaddings">7dp</dimen>
+    <dimen name="linesstroke">2dp</dimen>
 
 </resources>

@@ -13,6 +13,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
@@ -407,14 +408,18 @@ public class force extends AppCompatActivity {
 
     protected Animation begone;
     protected TextView slider;
-
+    RelativeLayout doublearrowsbackground;
+    ImageView doublearrows;
     private void variables_setup() {
         daterr = findViewById(R.id.daterr);
+        doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
         slideholder = findViewById(R.id.slideholder);
         slider = findViewById(R.id.slider);
         fajrtitle = findViewById(R.id.fajrtitle);
         citydisplay = findViewById(R.id.city);
         title = findViewById(R.id.title);
+        doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
+        doublearrows = findViewById(R.id.doublearrows);
         full = findViewById(R.id.full);
         dohrtitle = findViewById(R.id.dohrtitle);
         asrtitle = findViewById(R.id.asrtitle);
@@ -446,10 +451,14 @@ public class force extends AppCompatActivity {
         zoom_out = loadAnimation(this, R.anim.zoom_out);
         zoom_in2 = loadAnimation(this, R.anim.zoom_in);
         zoom_out2 = loadAnimation(this, R.anim.zoom_out);
+        doublearrowleft = resources.getDrawable(R.drawable.doublearrowleftt);
+        doublearrowright = resources.getDrawable(R.drawable.doublearrowright);
 
     }
 
 
+    Drawable doublearrowright;
+    Drawable doublearrowleft;
     protected float next_adan_pop_out_large, next_adan_pop_out_shrink, next_adan_size, twelve;
 
     @Override
@@ -737,8 +746,11 @@ public class force extends AppCompatActivity {
                 datin += resources.getString(R.string.wed);
             else if (tempdatin.equals(resources.getString(R.string.thuru)))
                 datin += resources.getString(R.string.thu);
-            else if (tempdatin.equals(resources.getString(R.string.fridu)))
+            else if (tempdatin.equals(resources.getString(R.string.fridu))) {
                 datin += resources.getString(R.string.fri);
+                dohrtitle.setText(resources.getString(R.string.Jamo3a));
+            }
+
 
             // add week day to hijri date
             //hijri += datin + " ";
@@ -830,6 +842,7 @@ public class force extends AppCompatActivity {
                     break;
                 case "Fri":
                     datin += resources.getString(R.string.friarabe);
+                    dohrtitle.setText(resources.getString(R.string.friarabe));
                     break;
             }
 
@@ -1516,26 +1529,26 @@ public class force extends AppCompatActivity {
                             slideholder.setVisibility(View.VISIBLE);
                     }
                 });
-            } else {
-                slideholder.setVisibility(View.INVISIBLE);
-                slideholder.startAnimation(begone);
-                begone.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        slideholder.setVisibility(View.INVISIBLE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        if (it_is_today)
-                            slideholder.setVisibility(View.INVISIBLE);
-                    }
-                });
             }
+        } else {
+            slideholder.setVisibility(View.INVISIBLE);
+            slideholder.startAnimation(begone);
+            begone.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    slideholder.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (!it_is_today)
+                        slideholder.setVisibility(View.INVISIBLE);
+                }
+            });
         }
 
     }
@@ -1701,8 +1714,13 @@ public class force extends AppCompatActivity {
             slide_in_dem_dpz();
             for (int i = 0; i < 5; i++) {
                 if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
-                    prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    if(darkmode) {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    } else {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                    }
                 }
             }
 
@@ -1711,8 +1729,16 @@ public class force extends AppCompatActivity {
                 temp_next_adan_textview.setTextSize(normal_text_size - difference_in_scale);  // to prepare for animation
             }
 
+            // Display double arrows that take you back to today
+            doublearrowsbackground.setVisibility(View.VISIBLE);
+            if(fill_all)
+                doublearrows.setImageDrawable(doublearrowright);
+            if(all_white)
+                doublearrows.setImageDrawable(doublearrowleft);
+        } else {
+            // Hide double arrows that take you back to today
+            doublearrowsbackground.setVisibility(View.INVISIBLE);
         }
-
     }
 
 
@@ -1740,8 +1766,13 @@ public class force extends AppCompatActivity {
             slide_in_dem_dpz();
             for (int i = 0; i < 5; i++) {
                 if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
-                    prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                    prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    if(darkmode) {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    } else {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                    }
                 }
             }
 
@@ -1749,6 +1780,16 @@ public class force extends AppCompatActivity {
                 temp_next_adan_textview2.setTextSize(normal_text_size - difference_in_scale); // 23
                 temp_next_adan_textview.setTextSize(normal_text_size - difference_in_scale);  // to prepare for animation
             }
+
+            // Display double arrows that take you back to today
+            doublearrowsbackground.setVisibility(View.VISIBLE);
+            if(fill_all)
+                doublearrows.setImageDrawable(doublearrowright);
+            if(all_white)
+                doublearrows.setImageDrawable(doublearrowleft);
+        } else {
+            // Hide double arrows that take you back to today
+            doublearrowsbackground.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -1833,6 +1874,8 @@ public class force extends AppCompatActivity {
             transparentblacker = resources.getColor(R.color.transparentblacker);
         }
 
+        slider.setTextColor(Color.WHITE);
+
         prayfajr.setBackground(forcebuttons);
         praydhuhr.setBackground(forcebuttons2);
         prayasr.setBackground(forcebuttons3);
@@ -1849,12 +1892,18 @@ public class force extends AppCompatActivity {
         title.setTextColor(Color.WHITE);
         title.setBackgroundColor(transparentblacker);
 
-        fajrtitle.setTextColor(Color.WHITE);
+
+        if (fajrtitle.getCurrentTextColor() != Color.GREEN)
+            fajrtitle.setTextColor(Color.WHITE);
         risetitle.setTextColor(Color.WHITE);
-        dohrtitle.setTextColor(Color.WHITE);
-        asrtitle.setTextColor(Color.WHITE);
-        maghrebtitle.setTextColor(Color.WHITE);
-        ishatitle.setTextColor(Color.WHITE);
+        if (dohrtitle.getCurrentTextColor() != Color.GREEN)
+            dohrtitle.setTextColor(Color.WHITE);
+        if (asrtitle.getCurrentTextColor() != Color.GREEN)
+            asrtitle.setTextColor(Color.WHITE);
+        if (maghrebtitle.getCurrentTextColor() != Color.GREEN)
+            maghrebtitle.setTextColor(Color.WHITE);
+        if (ishatitle.getCurrentTextColor() != Color.GREEN)
+            ishatitle.setTextColor(Color.WHITE);
 
         datebackground.setBackground(lightdate);
         fajrbackground.setBackground(lightmultipledayselectionbackground);
@@ -1926,6 +1975,8 @@ public class force extends AppCompatActivity {
             grayerthanwhite = resources.getColor(R.color.grayerthanwhite);
         }
 
+        slider.setTextColor(grayerthanwhite);
+
         prayfajr.setBackground(darkforcebuttons);
         praydhuhr.setBackground(darkforcebuttons2);
         prayasr.setBackground(darkforcebuttons3);
@@ -1942,12 +1993,17 @@ public class force extends AppCompatActivity {
         title.setTextColor(Color.WHITE);
         title.setBackground(null);
 
-        fajrtitle.setTextColor(grayerthanwhite);
+        if (fajrtitle.getCurrentTextColor() != Color.GREEN)
+            fajrtitle.setTextColor(grayerthanwhite);
         risetitle.setTextColor(grayerthanwhite);
-        dohrtitle.setTextColor(grayerthanwhite);
-        asrtitle.setTextColor(grayerthanwhite);
-        maghrebtitle.setTextColor(grayerthanwhite);
-        ishatitle.setTextColor(grayerthanwhite);
+        if (dohrtitle.getCurrentTextColor() != Color.GREEN)
+            dohrtitle.setTextColor(grayerthanwhite);
+        if (asrtitle.getCurrentTextColor() != Color.GREEN)
+            asrtitle.setTextColor(grayerthanwhite);
+        if (maghrebtitle.getCurrentTextColor() != Color.GREEN)
+            maghrebtitle.setTextColor(grayerthanwhite);
+        if (ishatitle.getCurrentTextColor() != Color.GREEN)
+            ishatitle.setTextColor(grayerthanwhite);
 
         yesterdayarrowbackground.setBackground(multipledayselectionbackground);
         tommorowarrowbackground.setBackground(multipledayselectionbackground);
@@ -1976,4 +2032,17 @@ public class force extends AppCompatActivity {
     }
 
 
+    public void backtotodayClicked(View view) {
+
+        CurrentDisplayedDay = new Date();
+        it_is_today = true;
+        all_white = false;
+        fill_all = false;
+
+        location_shit(CurrentDisplayedDay);
+
+        // Hide double arrows that take you back to today
+        doublearrowsbackground.setVisibility(View.INVISIBLE);
+
+    }
 }

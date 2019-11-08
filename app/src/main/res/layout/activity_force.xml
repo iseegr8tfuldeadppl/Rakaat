@@ -119,6 +119,7 @@
             android:layout_marginStart="@dimen/sidesoftable"
             android:layout_marginEnd="@dimen/sidesoftable"
             android:paddingTop="9dp"
+            android:paddingBottom="5dp"
             android:id="@+id/datebackground"
             android:background="@drawable/date"
             android:gravity="center">
@@ -133,58 +134,94 @@
         </RelativeLayout>
 
         <!--access other days-->
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sidesoftable"
             android:layout_marginEnd="@dimen/sidesoftable"
-            android:orientation="horizontal"
-            android:weightSum="2">
-            <RelativeLayout
-                android:focusable="true"
-                android:clickable="true"
-                android:id="@+id/yesterdayarrowbackground"
-                android:background="@drawable/multipledayselectionbackground"
-                android:paddingStart="@dimen/sidesoftablepaddings"
-                android:onClick="checkYesterday"
+            android:layout_marginStart="@dimen/sidesoftable">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start"
-                android:layout_weight="1"
-                android:paddingLeft="@dimen/sidesoftablepaddings">
-                <ImageView
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="2dp"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:baselineAligned="false">
+                <RelativeLayout
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:id="@+id/yesterdayarrowbackground"
+                    android:background="@drawable/tmrandyst"
+                    android:paddingStart="@dimen/sidesoftablepaddings"
                     android:onClick="checkYesterday"
-                    android:layout_width="12dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/arrowleft"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"/>
-            </RelativeLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_weight="1"
+                    android:paddingLeft="@dimen/sidesoftablepaddings">
+                    <ImageView
+                        android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
+                        android:layout_marginBottom="@dimen/multipledayarrowtopnbottompaddings"
+                        android:onClick="checkYesterday"
+                        android:layout_width="14dp"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:layout_height="24dp"
+                        android:src="@drawable/arrowleft"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/tommorowarrowbackground"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:background="@drawable/tmrandyst"
+                    android:onClick="checkTommorow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingEnd="@dimen/sidesoftablepaddings"
+                    android:layout_weight="1"
+                    android:paddingRight="@dimen/sidesoftablepaddings">
+                    <ImageView
+                        android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
+                        android:layout_marginBottom="@dimen/multipledayarrowtopnbottompaddings"
+                        android:onClick="checkTommorow"
+                        android:layout_width="14dp"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:layout_height="24dp"
+                        android:src="@drawable/arrowright"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"/>
+                </RelativeLayout>
+            </LinearLayout>
+
             <RelativeLayout
-                android:id="@+id/tommorowarrowbackground"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/backtotoday"
+                android:paddingStart="30dp"
                 android:focusable="true"
                 android:clickable="true"
-                android:background="@drawable/multipledayselectionbackground"
-                android:onClick="checkTommorow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:paddingEnd="@dimen/sidesoftablepaddings"
-                android:layout_weight="1"
-                android:paddingRight="@dimen/sidesoftablepaddings">
+                android:onClick="backtotodayClicked"
+                android:id="@+id/doublearrowsbackground"
+                android:visibility="invisible"
+                android:paddingEnd="30dp">
                 <ImageView
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="2dp"
-                    android:onClick="checkTommorow"
-                    android:layout_width="12dp"
+                    android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
+                    android:layout_marginBottom="@dimen/multipledayarrowtopnbottompaddings"
+                    android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/arrowright"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:onClick="backtotodayClicked"
+                    android:id="@+id/doublearrows"
+                    android:src="@drawable/doublearrowright"
                     android:scaleType="fitXY"
-                    android:adjustViewBounds="true"/>
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/todo" />
             </RelativeLayout>
-        </LinearLayout>
+        </FrameLayout>
 
 
         <!-- Table -->
