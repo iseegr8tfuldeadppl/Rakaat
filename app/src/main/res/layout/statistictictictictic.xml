@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_gravity="center_horizontal"
     android:layout_height="wrap_content"
+    android:id="@+id/fulle"
     android:background="@drawable/darksimpelbackground"
     android:padding="30dp">
     <LinearLayout
@@ -173,6 +174,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="1"
+        android:paddingBottom="26dp"
         android:gravity="center_vertical">
         <TextView
             android:id="@+id/prayed_prayers_of_all_time"
@@ -192,5 +194,14 @@
             android:textColor="@color/white"
             android:text="@string/alltime_arabe"/>
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:id="@+id/dismiss"
+        android:text="@string/close"
+        android:textColor="@color/white"
+        android:background="@drawable/darkbuttons"/>
 
 </LinearLayout>

@@ -2,9 +2,14 @@ package com.krimzon.scuffedbots.raka3at.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.krimzon.scuffedbots.raka3at.R;
@@ -17,14 +22,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 
-public class Statistictictictictic extends Dialog /*implements android.view.View.OnClickListener*/ {
+public class Statistictictictictic extends Dialog implements android.view.View.OnClickListener {
 
 
     private Activity c;
 
     public Statistictictictictic(Activity a) {
         super(a);
-        // TODO Auto-generated constructor stub
         this.c = a;
     }
 
@@ -40,6 +44,7 @@ public class Statistictictictictic extends Dialog /*implements android.view.View
     }
 
 
+    Button dismiss;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +71,7 @@ public class Statistictictictictic extends Dialog /*implements android.view.View
 
         title = findViewById(R.id.title);
         statstitle = findViewById(R.id.statstitle);
+        dismiss = findViewById(R.id.dismiss);
 
         languageshet();
 
@@ -85,6 +91,30 @@ public class Statistictictictictic extends Dialog /*implements android.view.View
         display_prayed_prayers_past_year.setTypeface(arabic_typeface);
         title_prayed_prayers_today.setTypeface(arabic_typeface);
         display_prayed_prayers_today.setTypeface(arabic_typeface);
+        dismiss.setTypeface(arabic_typeface);
+
+        if(!force.darkmode) {
+            LinearLayout full = findViewById(R.id.fulle);
+            Drawable simpelbackground = c.getResources().getDrawable(R.drawable.simpelbackground);
+            Drawable buttons = c.getResources().getDrawable(R.drawable.buttons);
+            full.setBackground(simpelbackground);
+            title.setTextColor(Color.BLACK);
+            statstitle.setTextColor(Color.BLACK);
+            title_prayed_prayers_today.setTextColor(Color.BLACK);
+            display_prayed_prayers_today.setTextColor(Color.BLACK);
+            title_prayed_prayers_past_week.setTextColor(Color.BLACK);
+            display_prayed_prayers_past_week.setTextColor(Color.BLACK);
+            title_prayed_prayers_past_month.setTextColor(Color.BLACK);
+            display_prayed_prayers_past_month.setTextColor(Color.BLACK);
+            title_prayed_prayers_past_six_months.setTextColor(Color.BLACK);
+            display_prayed_prayers_past_six_months.setTextColor(Color.BLACK);
+            title_prayed_prayers_past_year.setTextColor(Color.BLACK);
+            display_prayed_prayers_past_year.setTextColor(Color.BLACK);
+            title_prayed_prayers_of_all_time.setTextColor(Color.BLACK);
+            display_of_prayed_prayers_of_all_time.setTextColor(Color.BLACK);
+            dismiss.setBackground(buttons);
+        }
+
 
         sql("force2");
         count_prayed_prayers_today();
@@ -112,8 +142,7 @@ public class Statistictictictictic extends Dialog /*implements android.view.View
         display_prayed_prayers_past_year.setText(String.valueOf(prayed_prayers));
         prayed_prayers = 0;
 
-        /*yes.setOnClickListener(this);
-        never.setOnClickListener(this);*/
+        dismiss.setOnClickListener(this);
     }
 
     private void languageshet() {
@@ -126,6 +155,7 @@ public class Statistictictictictic extends Dialog /*implements android.view.View
             title_prayed_prayers_of_all_time.setText(getContext().getString(R.string.alltime));
             statstitle.setText(getContext().getString(R.string.stats));
             title.setText(getContext().getString(R.string.yourprayers));
+            dismiss.setText(c.getResources().getString(R.string.closenglish));
         }
     }
 
@@ -239,19 +269,16 @@ public class Statistictictictictic extends Dialog /*implements android.view.View
     }
 
 
-   /* @Override
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_yes:
-                break;
-            case R.id.btn_never:
-                dismiss();
+            case R.id.dismiss:
                 break;
             default:
                 break;
         }
         dismiss();
-    }*/
+    }
 
 
 }

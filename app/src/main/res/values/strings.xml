@@ -197,6 +197,8 @@
     <string name="pastyear">Past Year</string>
     <string name="pastyear_arabe">السّنة الماضية</string>
     <string name="alltime_arabe">منْذُ فتْح التّطبيق</string>
+    <string name="close">أغلق</string>
+    <string name="closenglish">Dismiss</string>
 
 
 </resources>

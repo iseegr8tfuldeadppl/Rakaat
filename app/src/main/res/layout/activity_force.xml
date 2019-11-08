@@ -113,25 +113,30 @@
                 android:layout_marginTop="35dp"/>
         </FrameLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginStart="@dimen/sidesoftable"
-            android:layout_marginEnd="@dimen/sidesoftable"
-            android:paddingTop="9dp"
-            android:paddingBottom="5dp"
-            android:id="@+id/datebackground"
-            android:background="@drawable/date"
-            android:gravity="center">
-            <TextView
-                android:id="@+id/daterr"
+            android:layout_marginEnd="@dimen/sidesoftable">
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:lineSpacingMultiplier="1.2"
-                android:textColor="@color/white"
-                android:textSize="@dimen/regulartextsize" />
-        </RelativeLayout>
+                android:paddingTop="9dp"
+                android:paddingBottom="5dp"
+                android:id="@+id/datebackground"
+                android:background="@drawable/date"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/daterr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/regulartextsize" />
+            </RelativeLayout>
+        </LinearLayout>
 
         <!--access other days-->
         <FrameLayout
@@ -143,7 +148,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="2"
+                android:weightSum="3"
                 android:baselineAligned="false">
                 <RelativeLayout
                     android:focusable="true"
@@ -169,6 +174,15 @@
                         android:scaleType="fitXY"
                         android:adjustViewBounds="true"/>
                 </RelativeLayout>
+                <TextView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/backtotoday"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:id="@+id/city"/>
                 <RelativeLayout
                     android:id="@+id/tommorowarrowbackground"
                     android:focusable="true"
@@ -200,13 +214,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/backtotoday"
-                android:paddingStart="30dp"
                 android:focusable="true"
                 android:clickable="true"
                 android:onClick="backtotodayClicked"
                 android:id="@+id/doublearrowsbackground"
                 android:visibility="invisible"
-                android:paddingEnd="30dp">
+                android:paddingEnd="40dp"
+                android:paddingStart="40dp">
                 <ImageView
                     android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
                     android:layout_marginBottom="@dimen/multipledayarrowtopnbottompaddings"
@@ -500,12 +514,12 @@
                 android:paddingEnd="@dimen/sidesoftablepaddings"
                 android:orientation="horizontal"
                 android:layout_marginStart="@dimen/sidesoftable"
-                android:background="@drawable/darksimpelbackground"
+                android:background="@drawable/city"
                 android:id="@+id/ishabackground"
                 android:layout_marginEnd="@dimen/sidesoftable"
                 android:weightSum="1"
                 android:paddingTop="@dimen/padder"
-                android:paddingBottom="@dimen/padder">
+                android:paddingBottom="14dp">
                 <TextView
                     android:id="@+id/ishatime"
                     android:layout_width="match_parent"
@@ -577,20 +591,6 @@
         </FrameLayout>
 
         </FrameLayout>
-
-        <!-- City n wilaya -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/city"
-            android:textSize="@dimen/regulartextsize"
-            android:textColor="@color/white"
-            android:id="@+id/city"
-            android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="10dp"
-            android:layout_marginStart="@dimen/sidesoftable"
-            android:layout_marginEnd="@dimen/sidesoftable"/>
 
     </LinearLayout>
 

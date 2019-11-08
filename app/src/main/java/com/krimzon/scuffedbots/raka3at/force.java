@@ -341,7 +341,7 @@ public class force extends AppCompatActivity {
     }
 
 
-    protected boolean darkmode = true;
+    public static boolean darkmode = true;
 
     private void load_data_from_slat_sql() {
         SQLSharing.mycursor.moveToPosition(6);
@@ -657,21 +657,334 @@ public class force extends AppCompatActivity {
     }
 
 
+    boolean only_once = true;
+    Animation to_right11, to_right12, to_right1, to_right2, to_right3, to_right4, to_right5, to_right6, to_right7, to_right8, to_right9, to_right10;
+    Animation from_left11, from_left12, from_left1, from_left2, from_left3, from_left4, from_left5, from_left6, from_left7, from_left8, from_left9, from_left10;
+    boolean only_once2 = true;
+    Animation toleft1, toleft2, toleft3, toleft4, toleft5, toleft6, toleft7, toleft8, toleft9, toleft10, toleft11, toleft12;
+    Animation fromright1, fromright2, fromright3, fromright4, fromright5, fromright6, fromright7, fromright8, fromright9, fromright10, fromright11, fromright12;
     private void display_prayer_times() {
-        if(language.equals("en")) {
-            fajrtime.setText(fajr);
-            risetime.setText(rise);
-            dhuhrtime.setText(dhuhr);
-            asrtime.setText(asr);
-            maghribtime.setText(maghrib);
-            ishatime.setText(isha);
-        } else if(language.equals("ar")){ // the arabic am and pm
-            fajrtime.setText(tfajr);
-            risetime.setText(trise);
-            dhuhrtime.setText(tdhuhr);
-            asrtime.setText(tasr);
-            maghribtime.setText(tmaghrib);
-            ishatime.setText(tisha);
+        if(changing_day){
+            if(going_left){
+                if(only_once) {
+                    only_once = false;
+                    to_right1 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right2 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right3 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right4 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right5 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right6 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right7 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right8 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right9 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right10 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right11 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+                    to_right12 = loadAnimation(this, R.anim.slide_prayertimes_to_right_n_fade);
+
+                    from_left1 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left2 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left3 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left4 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left5 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left6 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left7 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left8 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left9 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left10 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left11 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                    from_left12 = loadAnimation(this, R.anim.slide_prayertimes_from_left_n_fade);
+                }
+
+                fajrtime.startAnimation(to_right1);
+                to_right1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    fajrtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        fajrtime.setText(fajr);
+                    else if(language.equals("ar"))
+                        fajrtime.setText(tfajr);
+                    fajrtime.startAnimation(from_left1);
+                    from_left1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        fajrtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                risetime.startAnimation(to_right2);
+                to_right2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    risetime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        risetime.setText(rise);
+                    else if(language.equals("ar"))
+                        risetime.setText(trise);
+                    risetime.startAnimation(from_left2);
+                    from_left2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        risetime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                dhuhrtime.startAnimation(to_right12);
+                to_right12.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    dhuhrtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        dhuhrtime.setText(dhuhr);
+                    else if(language.equals("ar"))
+                        dhuhrtime.setText(tdhuhr);
+                    dhuhrtime.startAnimation(from_left3);
+                    from_left3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        dhuhrtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                asrtime.startAnimation(to_right3);
+                to_right3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    asrtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        asrtime.setText(asr);
+                    else if(language.equals("ar"))
+                        asrtime.setText(tasr);
+                    asrtime.startAnimation(from_left4);
+                    from_left4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        asrtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                maghribtime.startAnimation(to_right4);
+                to_right4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    maghribtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        maghribtime.setText(maghrib);
+                    else if(language.equals("ar"))
+                        maghribtime.setText(tmaghrib);
+                    maghribtime.startAnimation(from_left5);
+                    from_left5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        maghribtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                ishatime.startAnimation(to_right5);
+                to_right5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    ishatime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        ishatime.setText(isha);
+                    else if(language.equals("ar"))
+                        ishatime.setText(tisha);
+                    ishatime.startAnimation(from_left6);
+                    from_left6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        ishatime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                fajrtitle.startAnimation(to_right6);
+                to_right6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    fajrtitle.setVisibility(View.INVISIBLE);
+                    fajrtitle.startAnimation(from_left7);
+                    from_left7.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        fajrtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                risetitle.startAnimation(to_right7);
+                to_right7.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    risetitle.setVisibility(View.INVISIBLE);
+                    risetitle.startAnimation(from_left8);
+                    from_left8.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        risetitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                dohrtitle.startAnimation(to_right8);
+                to_right8.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    dohrtitle.setVisibility(View.INVISIBLE);
+                    dohrtitle.startAnimation(from_left9);
+                    from_left9.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        dohrtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                asrtitle.startAnimation(to_right9);
+                to_right9.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    asrtitle.setVisibility(View.INVISIBLE);
+                    asrtitle.startAnimation(from_left10);
+                    from_left10.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        asrtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                maghrebtitle.startAnimation(to_right10);
+                to_right10.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    maghrebtitle.setVisibility(View.INVISIBLE);
+                    maghrebtitle.startAnimation(from_left11);
+                    from_left11.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        maghrebtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                ishatitle.startAnimation(to_right11);
+                to_right11.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    ishatitle.setVisibility(View.INVISIBLE);
+                    ishatitle.startAnimation(from_left12);
+                    from_left12.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        ishatitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+            }
+
+            if(going_right){
+                if(only_once2) {
+                    only_once2 = false;
+                    fromright1 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright2 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright3 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright4 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright5 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright6 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright7 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright8 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright9 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright10 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright11 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+                    fromright12 = loadAnimation(this, R.anim.slide_prayertimes_from_right_n_fade);
+
+                    toleft1 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft2 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft3 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft4 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft5 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft6 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft7 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft8 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft9 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft10 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft11 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                    toleft12 = loadAnimation(this, R.anim.slide_prayertimes_to_left_n_fade);
+                }
+
+                fajrtime.startAnimation(toleft1);
+                toleft1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    fajrtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        fajrtime.setText(fajr);
+                    else if(language.equals("ar"))
+                        fajrtime.setText(tfajr);
+                    fajrtime.startAnimation(fromright1);
+                    fromright1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        fajrtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                risetime.startAnimation(toleft2);
+                toleft2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    risetime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        risetime.setText(rise);
+                    else if(language.equals("ar"))
+                        risetime.setText(trise);
+                    risetime.startAnimation(fromright2);
+                    fromright2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        risetime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                dhuhrtime.startAnimation(toleft3);
+                toleft3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    dhuhrtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        dhuhrtime.setText(dhuhr);
+                    else if(language.equals("ar"))
+                        dhuhrtime.setText(tdhuhr);
+                    dhuhrtime.startAnimation(fromright3);
+                    fromright3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        dhuhrtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                asrtime.startAnimation(toleft5);
+                toleft5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    asrtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        asrtime.setText(asr);
+                    else if(language.equals("ar"))
+                        asrtime.setText(tasr);
+                    asrtime.startAnimation(fromright4);
+                    fromright4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        asrtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                maghribtime.startAnimation(toleft6);
+                toleft6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    maghribtime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        maghribtime.setText(maghrib);
+                    else if(language.equals("ar"))
+                        maghribtime.setText(tmaghrib);
+                    maghribtime.startAnimation(fromright5);
+                    fromright5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        maghribtime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                ishatime.startAnimation(toleft7);
+                toleft7.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    ishatime.setVisibility(View.INVISIBLE);
+                    if(language.equals("en"))
+                        ishatime.setText(isha);
+                    else if(language.equals("ar"))
+                        ishatime.setText(tisha);
+                    ishatime.startAnimation(fromright6);
+                    fromright6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        ishatime.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                fajrtitle.startAnimation(toleft8);
+                toleft8.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    fajrtitle.setVisibility(View.INVISIBLE);
+                    fajrtitle.startAnimation(fromright7);
+                    fromright7.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        fajrtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                risetitle.startAnimation(toleft9);
+                toleft9.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    risetitle.setVisibility(View.INVISIBLE);
+                    risetitle.startAnimation(fromright8);
+                    fromright8.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        risetitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                dohrtitle.startAnimation(toleft10);
+                toleft10.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    dohrtitle.setVisibility(View.INVISIBLE);
+                    dohrtitle.startAnimation(fromright9);
+                    fromright9.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        dohrtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                asrtitle.startAnimation(toleft11);
+                toleft11.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    asrtitle.setVisibility(View.INVISIBLE);
+                    asrtitle.startAnimation(fromright10);
+                    fromright10.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        asrtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                maghrebtitle.startAnimation(toleft12);
+                toleft12.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    maghrebtitle.setVisibility(View.INVISIBLE);
+                    maghrebtitle.startAnimation(fromright11);
+                    fromright11.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        maghrebtitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+                ishatitle.startAnimation(toleft4);
+                toleft4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    ishatitle.setVisibility(View.INVISIBLE);
+                    ishatitle.startAnimation(fromright12);
+                    fromright12.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                        ishatitle.setVisibility(View.VISIBLE);
+                    }});
+                }});
+            }
+        } else {
+            if(language.equals("en")) {
+                fajrtime.setText(fajr);
+                risetime.setText(rise);
+                dhuhrtime.setText(dhuhr);
+                asrtime.setText(asr);
+                maghribtime.setText(maghrib);
+                ishatime.setText(isha);
+
+            } else if(language.equals("ar")){ // the arabic am and pm
+                fajrtime.setText(tfajr);
+                risetime.setText(trise);
+                dhuhrtime.setText(tdhuhr);
+                asrtime.setText(tasr);
+                maghribtime.setText(tmaghrib);
+                ishatime.setText(tisha);
+            }
         }
     }
 
@@ -697,12 +1010,6 @@ public class force extends AppCompatActivity {
             if(asr.split(" ")[1].equals("AM")) tasr = asr.split(" ")[0] + " " + am;else tasr = asr.split(" ")[0] + " " +  pm;
             if(maghrib.split(" ")[1].equals("AM")) tmaghrib = maghrib.split(" ")[0] + " " + am;else tmaghrib = maghrib.split(" ")[0] + " " +  pm;
             if(isha.split(" ")[1].equals("AM")) tisha = isha.split(" ")[0] + " " + am;else tisha = isha.split(" ")[0] + " " +  pm;
-            fajrtime.setText(tfajr);
-            risetime.setText(trise);
-            dhuhrtime.setText(tdhuhr);
-            asrtime.setText(tasr);
-            maghribtime.setText(tmaghrib);
-            ishatime.setText(tisha);
         }
     }
 
@@ -1690,7 +1997,14 @@ public class force extends AppCompatActivity {
     }
 
 
+    boolean changing_day = false;
+    boolean going_left = false;
+    boolean going_right = false;
     public void checkTommorow(View view) {
+
+        changing_day = true;
+        going_left = false;
+        going_right = true;
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
         day = Integer.valueOf(todaysplittemparray[2]);
@@ -1743,6 +2057,10 @@ public class force extends AppCompatActivity {
 
 
     public void checkYesterday(View view) {
+
+        changing_day = true;
+        going_left = true;
+        going_right = false;
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
         day = Integer.valueOf(todaysplittemparray[2]);
@@ -1840,7 +2158,9 @@ public class force extends AppCompatActivity {
     ImageView lmfaoimage;
     int transparentblacker;
     int grayerthanwhite;
+    Drawable lightbacktotoday, lightbacktotoday2;
     boolean onlyonceu = true;
+    Drawable lighttmrandyst, lighttmrandyst2;
 
     private void light_mode() {
         darkmode = false;
@@ -1853,6 +2173,10 @@ public class force extends AppCompatActivity {
             forcebuttons4 = resources.getDrawable(R.drawable.forcebuttons);
             forcebuttons5 = resources.getDrawable(R.drawable.forcebuttons);
             simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
+            lightbacktotoday = resources.getDrawable(R.drawable.lightbacktotoday);
+            lighttmrandyst = resources.getDrawable(R.drawable.lighttmrandyst);
+            lighttmrandyst2 = resources.getDrawable(R.drawable.lighttmrandyst);
+            lightbacktotoday2 = resources.getDrawable(R.drawable.lightbacktotoday);
             lightdate = resources.getDrawable(R.drawable.lightdate);
             lightcity = resources.getDrawable(R.drawable.lightcity);
             datebackground = findViewById(R.id.datebackground);
@@ -1889,6 +2213,7 @@ public class force extends AppCompatActivity {
         prayisha.setTextColor(Color.WHITE);
 
         full.setBackground(simpelbackground);
+        doublearrowsbackground.setBackground(lightbacktotoday2);
         title.setTextColor(Color.WHITE);
         title.setBackgroundColor(transparentblacker);
 
@@ -1911,10 +2236,10 @@ public class force extends AppCompatActivity {
         dhuhrbackground.setBackground(lightmultipledayselectionbackground);
         asrbackground.setBackground(lightmultipledayselectionbackground);
         maghribbackground.setBackground(lightmultipledayselectionbackground);
-        ishabackground.setBackground(lightmultipledayselectionbackground);
-        yesterdayarrowbackground.setBackground(lightmultipledayselectionbackground);
-        tommorowarrowbackground.setBackground(lightmultipledayselectionbackground);
-        citydisplay.setBackground(lightcity);
+        ishabackground.setBackground(lightcity);
+        yesterdayarrowbackground.setBackground(lighttmrandyst);
+        tommorowarrowbackground.setBackground(lighttmrandyst2);
+        citydisplay.setBackground(lightbacktotoday);
 
         rightsideelementsbackground.setBackground(lightstatsback);
         backarrowbackground.setBackground(lightbackback);
@@ -1942,6 +2267,8 @@ public class force extends AppCompatActivity {
     Drawable lmfaodrawable;
     boolean onlyonce = true;
     String ID;
+    Drawable backtotoday, backtotoday2;
+    Drawable tmrandyst, tmrandyst2;
 
     private void dark_mode() {
         darkmode = true;
@@ -1953,7 +2280,11 @@ public class force extends AppCompatActivity {
             darkforcebuttons3 = resources.getDrawable(R.drawable.darkbuttons);
             darkforcebuttons4 = resources.getDrawable(R.drawable.darkbuttons);
             darkforcebuttons5 = resources.getDrawable(R.drawable.darkbuttons);
+            tmrandyst = resources.getDrawable(R.drawable.tmrandyst);
+            tmrandyst2 = resources.getDrawable(R.drawable.tmrandyst);
             forcefull = resources.getDrawable(R.drawable.forcefull);
+            backtotoday = resources.getDrawable(R.drawable.backtotoday);
+            backtotoday2 = resources.getDrawable(R.drawable.backtotoday);
             dateer = resources.getDrawable(R.drawable.date);
             cityeer = resources.getDrawable(R.drawable.city);
             datebackground = findViewById(R.id.datebackground);
@@ -1990,8 +2321,11 @@ public class force extends AppCompatActivity {
         prayisha.setTextColor(grayerthanwhite);
 
         full.setBackground(forcefull);
+        doublearrowsbackground.setBackground(backtotoday2);
         title.setTextColor(Color.WHITE);
         title.setBackground(null);
+
+
 
         if (fajrtitle.getCurrentTextColor() != Color.GREEN)
             fajrtitle.setTextColor(grayerthanwhite);
@@ -2005,19 +2339,19 @@ public class force extends AppCompatActivity {
         if (ishatitle.getCurrentTextColor() != Color.GREEN)
             ishatitle.setTextColor(grayerthanwhite);
 
-        yesterdayarrowbackground.setBackground(multipledayselectionbackground);
-        tommorowarrowbackground.setBackground(multipledayselectionbackground);
+        yesterdayarrowbackground.setBackground(tmrandyst);
+        tommorowarrowbackground.setBackground(tmrandyst2);
         datebackground.setBackground(dateer);
         fajrbackground.setBackground(multipledayselectionbackground);
         risebackground.setBackground(multipledayselectionbackground);
         dhuhrbackground.setBackground(multipledayselectionbackground);
         asrbackground.setBackground(multipledayselectionbackground);
         maghribbackground.setBackground(multipledayselectionbackground);
-        ishabackground.setBackground(multipledayselectionbackground);
+        ishabackground.setBackground(cityeer);
 
         rightsideelementsbackground.setBackground(statsback);
         backarrowbackground.setBackground(backback);
-        citydisplay.setBackground(cityeer);
+        citydisplay.setBackground(backtotoday);
         lmfaoimage.setImageDrawable(lmfaodrawable);
 
         SQLSharing.TABLE_NAME_INPUTER = "slat";
@@ -2038,6 +2372,9 @@ public class force extends AppCompatActivity {
         it_is_today = true;
         all_white = false;
         fill_all = false;
+
+        going_right = !going_right;
+        going_left = !going_left;
 
         location_shit(CurrentDisplayedDay);
 
