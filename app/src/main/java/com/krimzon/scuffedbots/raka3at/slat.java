@@ -3,6 +3,7 @@ package com.krimzon.scuffedbots.raka3at;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -160,6 +161,11 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slat);
 
+        // override system locale
+        Configuration cfg = new Configuration();
+        cfg.locale = new Locale("en");
+        this.getResources().updateConfiguration(cfg, null);
+
         initialize_all_variables();
         resources();
 
@@ -310,12 +316,12 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         dark = resources.getColor(R.color.dark);
         darkest = resources.getColor(R.color.darkest);
         black = resources.getColor(R.color.black);
-        darkbuttons = resources.getDrawable(R.drawable.darkbuttons);
-        darkbuttons2 = resources.getDrawable(R.drawable.darkbuttons);
-        darkbuttons4 = resources.getDrawable(R.drawable.darkbuttons);
-        darkbuttons5 = resources.getDrawable(R.drawable.darkbuttons);
-        darkbuttons6 = resources.getDrawable(R.drawable.darkbuttons);
-        darkbuttons7 = resources.getDrawable(R.drawable.darkbuttons);
+        darkbuttons = resources.getDrawable(R.drawable.darkbuttons2);
+        darkbuttons2 = resources.getDrawable(R.drawable.darkbuttons2);
+        darkbuttons4 = resources.getDrawable(R.drawable.darkbuttons2);
+        darkbuttons5 = resources.getDrawable(R.drawable.darkbuttons2);
+        darkbuttons6 = resources.getDrawable(R.drawable.darkbuttons2);
+        darkbuttons7 = resources.getDrawable(R.drawable.darkbuttons2);
         buttons4 = resources.getDrawable(R.drawable.buttons);
         buttons5 = resources.getDrawable(R.drawable.buttons);
         buttons6 = resources.getDrawable(R.drawable.buttons);
@@ -325,7 +331,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         soundsoff = resources.getDrawable(R.drawable.soundsoff);
         soundson = resources.getDrawable(R.drawable.soundson);
         simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
-        darksimpelbackground = resources.getDrawable(R.drawable.darksimpelbackground);
+        darksimpelbackground = resources.getDrawable(R.drawable.forcefull);
         dimm = resources.getColor(R.color.dimm);
         dimmer = resources.getColor(R.color.dimmer);
         dimmest = resources.getColor(R.color.dimmest);

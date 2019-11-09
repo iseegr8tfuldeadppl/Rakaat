@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/full"
-    android:background="@drawable/darksimpelbackground"
+    android:background="@drawable/forcefull"
     tools:context=".slat">
 
     <LinearLayout
@@ -88,48 +88,20 @@
             android:id="@+id/start"
             android:layout_width="150dp"
             android:layout_height="59dp"
-            android:background="@drawable/darkbuttons"
+            android:background="@drawable/darkbuttons2"
             android:onClick="startClicked"
             android:text="@string/start_arabe"
             android:layout_marginBottom="7dp"
             android:textColor="@color/white"
             android:textSize="24sp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:id="@+id/bottombuttons">
-            <Button
-                android:textAllCaps="false"
-                android:id="@+id/button"
-                android:layout_width="76dp"
-                android:layout_height="37dp"
-                android:background="@drawable/darkbuttons"
-                android:onClick="backClicked"
-                android:text="@string/back_arabe"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-            <Button
-                android:textAllCaps="false"
-                android:id="@+id/button3"
-                android:layout_width="76dp"
-                android:layout_height="37dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/darkbuttons"
-                android:onClick="howtouseClicked"
-                android:text="@string/howtouse_arabe"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:layout_marginLeft="7dp" />
-        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/darksimpelbackground"
+        android:background="@drawable/forcefull"
         android:id="@+id/countdownbackground"
         android:clickable="true"
         android:focusable="true"
@@ -151,7 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/darksimpelbackground"
+        android:background="@drawable/forcefull"
         android:weightSum="1"
         android:id="@+id/donecover"
         android:visibility="invisible">
@@ -179,7 +151,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:text="@string/back2_arabe"
-                android:background="@drawable/darkbuttons"
+                android:background="@drawable/darkbuttons2"
                 android:textSize="24sp"
                 android:textColor="@color/white"
                 android:onClick="tamClicked"/>
@@ -195,7 +167,7 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
-        android:background="@drawable/darksimpelbackground">
+        android:background="@drawable/forcefull">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -214,7 +186,7 @@
                 android:id="@+id/one"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/darkbuttons"
+                android:background="@drawable/darkbuttons2"
                 android:text="@string/one_arabe"
                 android:gravity="center"
                 android:textColor="@color/white"
@@ -231,7 +203,7 @@
                 android:id="@+id/two"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/darkbuttons"
+                android:background="@drawable/darkbuttons2"
                 android:text="@string/two_arabe"
                 android:textColor="@color/white"
                 android:textSize="40sp"
@@ -250,7 +222,7 @@
                 android:id="@+id/three"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/darkbuttons"
+                android:background="@drawable/darkbuttons2"
                 android:text="@string/three_arabe"
                 android:textColor="@color/white"
                 android:gravity="center"
@@ -267,7 +239,7 @@
                 android:focusable="true"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/darkbuttons"
+                android:background="@drawable/darkbuttons2"
                 android:text="@string/four_arabe"
                 android:textColor="@color/white"
                 android:gravity="center"
@@ -400,5 +372,85 @@
         android:textColor="@color/white"
         android:layout_centerHorizontal="true"
         android:id="@+id/lmao"/>-->
+
+    <!--<LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:id="@+id/bottombuttons">
+        <Button
+            android:textAllCaps="false"
+            android:id="@+id/button"
+            android:layout_width="76dp"
+            android:layout_height="37dp"
+            android:background="@drawable/darkbuttons2"
+            android:onClick="backClicked"
+            android:text="@string/back_arabe"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+        <Button
+            android:textAllCaps="false"
+            android:id="@+id/button3"
+            android:layout_width="76dp"
+            android:layout_height="37dp"
+            android:layout_marginStart="7dp"
+            android:background="@drawable/darkbuttons2"
+            android:onClick="howtouseClicked"
+            android:text="@string/howtouse_arabe"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_marginLeft="7dp" />
+    </LinearLayout>-->
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:clickable="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:focusable="true"
+        android:onClick="howtouseClicked"
+        android:id="@+id/nightmodebackground"
+        android:background="@drawable/statsback"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="13dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="13dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/nightmodedark"
+            android:onClick="howtouseClicked"
+            android:layout_marginRight="13dp"
+            android:layout_marginLeft="16dp"
+            android:contentDescription="@string/todo" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:onClick="backClicked"
+        android:background="@drawable/backback"
+        android:gravity="top|start"
+        android:clickable="true"
+        android:focusable="true"
+        android:id="@+id/backarrowbackground"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_marginStart="13dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="13dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/arrowleftdark"
+            android:onClick="backClicked"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="13dp" />
+    </RelativeLayout>
 
 </RelativeLayout>

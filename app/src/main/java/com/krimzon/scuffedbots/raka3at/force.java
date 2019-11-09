@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -121,6 +122,10 @@ public class force extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_force);
 
+        // override system locale
+        Configuration cfg = new Configuration();
+        cfg.locale = new Locale("en");
+        this.getResources().updateConfiguration(cfg, null);
 
         params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
         params = CalculationMethod.EGYPTIAN.getParameters();
@@ -350,6 +355,8 @@ public class force extends AppCompatActivity {
         SQLSharing.mycursor.moveToPosition(1);
         if(SQLSharing.mycursor.getString(1).equals("no"))
             light_mode();
+        else
+            darkmode = true;
     }
 
 
@@ -2120,9 +2127,7 @@ public class force extends AppCompatActivity {
 
 
     public void arrowbackClicked(View view) {
-        Intent out = new Intent(this, MainActivity.class);
-        startActivity(out);
-        finish();
+        exit();
     }
 
 
@@ -2245,9 +2250,7 @@ public class force extends AppCompatActivity {
         backarrowbackground.setBackground(lightbackback);
         lmfaoimage.setImageDrawable(lightlmfao);
 
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        sql("slat");
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);
@@ -2354,9 +2357,7 @@ public class force extends AppCompatActivity {
         citydisplay.setBackground(backtotoday);
         lmfaoimage.setImageDrawable(lmfaodrawable);
 
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        sql("slat");
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);

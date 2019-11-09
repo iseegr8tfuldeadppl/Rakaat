@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -25,7 +27,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,15 +42,17 @@ import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.dialogs.CustomDialogClass;
 
+import java.util.Locale;
+
 public class kibla extends AppCompatActivity implements SensorEventListener {
 
     // TODO work on translation settexts and shit for me
     // TODO and my popup menu
     // TODO and on force.java
 
-    private String language;
+    public static String language;
     ImageView compass_img;
-    Button back, fix;
+    Button fix;
     int mAzimuth;
     private SensorManager mSensorManager;
     private Sensor mRotationV, mAccelerometer, mMagnetometer;
@@ -61,6 +67,9 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     String kibla, kiblatitleh, betterquality, backh;
     private TextView maintitle;
     Typeface custom_font;
+    FrameLayout full;
+    RelativeLayout backarrowbackground;
+    RelativeLayout nightmodebackground;
 
 
     @Override
@@ -68,16 +77,25 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kibla);
 
+        // override system locale
+        Configuration cfg = new Configuration();
+        cfg.locale = new Locale("en");
+        this.getResources().updateConfiguration(cfg, null);
+
         location_shit();
 
         kiblatitle = findViewById(R.id.kiblatitle);
+        nightmodebackground = findViewById(R.id.nightmodebackground);
+        backarrowbackground = findViewById(R.id.backarrowbackground);
         maintitle = findViewById(R.id.maintitle);
-        back = findViewById(R.id.back);
+        full = findViewById(R.id.full);
         fix = findViewById(R.id.fix);
         custom_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
-        back.setTypeface(custom_font);
         fix.setTypeface(custom_font);
         kiblatitle.setTypeface(custom_font);
+
+
+        resources = getResources();
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         compass_img = (ImageView) findViewById(R.id.compass);
@@ -85,7 +103,15 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         work_on_language();
         start();
 
-        hideNavigationBar();
+        /*hideNavigationBar();*/
+
+        sql("slat");
+        SQLSharing.mycursor.moveToPosition(6);
+        language = SQLSharing.mycursor.getString(1);
+
+        SQLSharing.mycursor.moveToPosition(1);
+        if(SQLSharing.mycursor.getString(1).equals("no"))
+            light_mode();
     }
 
     private void work_on_language(){
@@ -120,7 +146,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
     private void getStrings(){
         if(language.equals("en")){
-            backh = getString(R.string.back);
             betterquality = getString(R.string.betterquality);
             kiblatitleh = getString(R.string.kiblatitle);
             kibla = getString(R.string.kibla);
@@ -131,7 +156,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         maintitle.setText(kibla);
         kiblatitle.setText(kiblatitleh);
         fix.setText(betterquality);
-        back.setText(backh);
         maintitle.setTypeface(custom_font);
     }
 
@@ -341,36 +365,108 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         finish();
     }
 
-    public void backClicked(View view) {
-        exit();
-    }
 
     public void fixClicked(View view) {
         CustomDialogClass cdd=new CustomDialogClass(this);
         cdd.show();
     }
 
+
+    int darkbackgroundcolor;
     private void hideNavigationBar() {
+        darkbackgroundcolor = resources.getColor(R.color.black);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            this.getWindow().setStatusBarColor(darkbackgroundcolor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            this.getWindow().getDecorView()
-                    .setSystemUiVisibility(
-                            View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
-                                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    );
-        } else {
-            this.getWindow().getDecorView()
-                    .setSystemUiVisibility(
-                            View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    );
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
+    }
+
+    public void arrowbackClicked(View view) {
+        exit();
+    }
+
+
+    boolean darkmode = true;
+    String ID = "";
+    public void nightmodeClicked(View view) {
+        if(darkmode)
+            light_mode();
+        else
+            dark_mode();
+    }
+
+
+    boolean once2 = true;
+    int white;
+    Drawable darkbuttons2;
+    Drawable forcefull;
+    Drawable backback;
+    Drawable statsback;
+    private void dark_mode() {
+        darkmode = true;
+
+        if(once2) {
+            once2 = false;
+            white = resources.getColor(R.color.white);
+            darkbuttons2 = resources.getDrawable(R.drawable.darkbuttons2);
+            forcefull = resources.getDrawable(R.drawable.forcefull);
+            backback = resources.getDrawable(R.drawable.backback);
+            statsback = resources.getDrawable(R.drawable.statsback);
+        }
+
+        backarrowbackground.setBackground(backback);
+        nightmodebackground.setBackground(statsback);
+        maintitle.setTextColor(white);
+        kiblatitle.setTextColor(white);
+        fix.setBackground(darkbuttons2);
+        full.setBackground(forcefull);
+
+        sql("slat");
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        ID = SQLSharing.mycursor.getString(0);
+        SQLSharing.mydb.updateData("yes", ID);
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
+    }
+
+
+    int lightelement;
+    Resources resources;
+    boolean once = true;
+    Drawable buttons;
+    Drawable simpelbackground;
+    Drawable lightbackback;
+    Drawable lightstatsback;
+    int black;
+    private void light_mode() {
+        darkmode = false;
+
+        if(once) {
+            once = false;
+            lightelement = resources.getColor(R.color.lightelement);
+            buttons = resources.getDrawable(R.drawable.buttons);
+            simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
+            lightbackback = resources.getDrawable(R.drawable.lightbackback);
+            lightstatsback = resources.getDrawable(R.drawable.lightstatsback);
+            black = resources.getColor(R.color.black);
+        }
+
+        nightmodebackground.setBackground(lightstatsback);
+        maintitle.setTextColor(lightelement);
+        backarrowbackground.setBackground(lightbackback);
+        kiblatitle.setTextColor(black);
+        fix.setBackground(buttons);
+        full.setBackground(simpelbackground);
+
+        sql("slat");
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        ID = SQLSharing.mycursor.getString(0);
+        SQLSharing.mydb.updateData("no", ID);
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
     }
 
 }

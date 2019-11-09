@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         set_fonts();
         work_on_language();
 
-        showNavigationBar();
+        //showNavigationBar();
     }
 
     private void work_on_language() {

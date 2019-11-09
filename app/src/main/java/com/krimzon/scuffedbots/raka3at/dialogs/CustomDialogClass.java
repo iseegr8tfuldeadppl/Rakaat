@@ -2,6 +2,7 @@ package com.krimzon.scuffedbots.raka3at.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -10,14 +11,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.krimzon.scuffedbots.raka3at.R;
+import com.krimzon.scuffedbots.raka3at.kibla;
 
 public class CustomDialogClass extends Dialog implements
         android.view.View.OnClickListener {
 
-    private Activity c;
+    protected Activity c;
     public Dialog d;
-    private Button yes;
-    private TextView fixbig, fixsmall1, fixsmall2, fixsmall3;
+    protected Button yes;
+    protected TextView fixbig, fixsmall1, fixsmall2, fixsmall3;
 
     public CustomDialogClass(Activity a) {
         super(a);
@@ -35,14 +37,32 @@ public class CustomDialogClass extends Dialog implements
         fixsmall2 = findViewById(R.id.fixsmall2);
         fixsmall3 = findViewById(R.id.fixsmall3);
 
-        Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),  "Tajawal-Light.ttf");
+        Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),  "Tajawal-Medium.ttf");
         yes.setTypeface(custom_font);
-        //fixbig.setTypeface(custom_font);
+        fixbig.setTypeface(custom_font);
         fixsmall1.setTypeface(custom_font);
         fixsmall2.setTypeface(custom_font);
         fixsmall3.setTypeface(custom_font);
 
         yes.setOnClickListener(this);
+
+        if(kibla.language.equals("en"))
+            english();
+    }
+
+    private void english() {
+        Resources resources = c.getResources();
+        String lmfao = resources.getString(R.string.lmfao);
+        String lol = resources.getString(R.string.lol);
+        String yesoyes = resources.getString(R.string.yesoyes);
+        String cbon = resources.getString(R.string.cbon);
+        String done = resources.getString(R.string.done);
+
+        fixbig.setText(lmfao);
+        fixsmall1.setText(lol);
+        fixsmall2.setText(yesoyes);
+        fixsmall3.setText(cbon);
+        yes.setText(done);
     }
 
     @Override

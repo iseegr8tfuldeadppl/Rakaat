@@ -1,61 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/darksimpelbackground"
+    android:id="@+id/full"
+    android:background="@drawable/forcefull"
     tools:context=".kibla"
-    android:orientation="vertical"
     android:gravity="center">
 
-    <TextView
-        android:id="@+id/maintitle"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/maintitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/kibla_arabe"
+            android:textColor="@color/white"
+            android:textSize="50sp"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
+            android:layout_marginBottom="15dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="19sp"
+            android:textColor="@color/white"
+            android:text="@string/kiblatitle_arabe"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/kiblatitle"/>
+
+        <ImageView
+            android:id="@+id/compass"
+            android:layout_width="250dp"
+            android:layout_height="229dp"
+            android:layout_marginBottom="50dp"
+            app:srcCompat="@drawable/compass2"
+            android:contentDescription="@string/todo" />
+
+        <Button
+            android:id="@+id/fix"
+            android:onClick="fixClicked"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:textSize="19sp"
+            android:textAllCaps="false"
+            android:background="@drawable/darkbuttons2"
+            android:text="@string/betterquality_arabe"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/kibla_arabe"
-        android:textColor="@color/white"
-        android:textSize="50sp"
-        android:paddingStart="3dp"
-        android:paddingEnd="3dp"
-        android:layout_marginBottom="15dp"/>
+        android:onClick="arrowbackClicked"
+        android:background="@drawable/backback"
+        android:gravity="top|start"
+        android:clickable="true"
+        android:focusable="true"
+        android:id="@+id/backarrowbackground"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_marginStart="13dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="13dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/arrowleftdark"
+            android:onClick="arrowbackClicked"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="13dp" />
+    </RelativeLayout>
 
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="19sp"
-        android:textColor="@color/white"
-        android:text="@string/kiblatitle_arabe"
-        android:layout_marginBottom="15dp"
-        android:id="@+id/kiblatitle"/>
-
-    <ImageView
-        android:id="@+id/compass"
-        android:layout_width="250dp"
-        android:layout_height="229dp"
-        android:layout_marginBottom="50dp"
-        app:srcCompat="@drawable/compass2" />
-
-    <Button
-        android:id="@+id/fix"
-        android:onClick="fixClicked"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:textSize="19sp"
-        android:textAllCaps="false"
-        android:background="@drawable/darkbuttons"
-        android:text="@string/betterquality_arabe"
-        android:textColor="#ffffff" />
-
-    <Button
-        android:id="@+id/back"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:textSize="19sp"
-        android:background="@drawable/darkbuttons"
-        android:onClick="backClicked"
-        android:text="@string/back_arabe"
-        android:textColor="#ffffff" />
-</LinearLayout>
+        android:clickable="true"
+        android:layout_gravity="end|top"
+        android:focusable="true"
+        android:onClick="nightmodeClicked"
+        android:id="@+id/nightmodebackground"
+        android:background="@drawable/statsback"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="13dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="13dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/nightmodedark"
+            android:onClick="nightmodeClicked"
+            android:layout_marginRight="13dp"
+            android:layout_marginLeft="16dp"
+            android:contentDescription="@string/todo" />
+    </RelativeLayout>
+</FrameLayout>
