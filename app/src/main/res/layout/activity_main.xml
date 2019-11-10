@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="@drawable/forcefull"
+    android:id="@+id/full"
     tools:context=".MainActivity">
 
     <View
@@ -58,7 +59,7 @@
                     android:layout_width="167dp"
                     android:layout_height="61dp"
                     android:onClick="salatClicked"
-                    android:background="@drawable/darkbuttons"
+                    android:background="@drawable/darkbuttons2"
                     android:text="@string/prayer_arabe"
                     android:textColor="#ffffff"
                     android:textSize="21sp"
@@ -68,7 +69,7 @@
                     android:id="@+id/kiblajoin"
                     android:layout_width="167dp"
                     android:layout_height="61dp"
-                    android:background="@drawable/darkbuttons"
+                    android:background="@drawable/darkbuttons2"
                     android:text="@string/kibla_arabe"
                     android:onClick="kiblaClicked"
                     android:textColor="#ffffff"
@@ -79,7 +80,7 @@
                     android:id="@+id/forcejoin"
                     android:layout_width="167dp"
                     android:layout_height="61dp"
-                    android:background="@drawable/darkbuttons"
+                    android:background="@drawable/darkbuttons2"
                     android:text="@string/force_arabe"
                     android:onClick="forceClicked"
                     android:textColor="#ffffff"
@@ -88,11 +89,81 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/language"
-        android:text="Language"
-        android:onClick="changeLanguageClicked"/>
+    <LinearLayout
+        android:visibility="invisible"
+        android:layout_gravity="center_vertical"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:id="@+id/botton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:gravity="center"
+            android:layout_weight=".75"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="nightmodeClicked"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="center"
+                android:background="@drawable/yellaw">
+                <ImageView
+                    android:padding="15dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_width="60dp"
+                    android:onClick="nightmodeClicked"
+                    android:layout_height="60dp"
+                    android:src="@drawable/blacknightmode"
+                    android:contentDescription="@string/todo" />
+            </RelativeLayout>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_weight=".25"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:visibility="invisible"
+        android:layout_gravity="center"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:id="@+id/botton2"
+        android:paddingBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_weight=".25"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <RelativeLayout
+            android:gravity="center"
+            android:layout_weight=".75"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="changeLanguageClicked"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="center"
+                android:background="@drawable/yellaw">
+                <ImageView
+                    android:onClick="changeLanguageClicked"
+                    android:padding="15dp"
+                    android:layout_width="60dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_height="60dp"
+                    android:src="@drawable/blacklanguage"
+                    android:contentDescription="@string/todo" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</FrameLayout>

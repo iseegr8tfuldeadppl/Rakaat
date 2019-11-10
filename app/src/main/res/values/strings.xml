@@ -126,7 +126,6 @@
     <string name="novarabe">نوفمبر</string>
     <string name="decarabe">ديسمبر</string>
     <string name="pmer">PM</string>
-    <string name="ar">ar</string>
     <string name="satu">Sat</string>
     <string name="sunu">Sun</string>
     <string name="monu">Mon</string>
@@ -134,7 +133,7 @@
     <string name="wedu">Wed</string>
     <string name="thuru">Thu</string>
     <string name="fridu">Fri</string>
-    <string name="Jamo3a">Jamo3a</string>
+    <string name="Jamo3a">Jamu\'a</string>
     <string name="sat">Saturday</string>
     <string name="sun">Sunday</string>
     <string name="mon">Monday</string>
@@ -199,6 +198,35 @@
     <string name="alltime_arabe">منْذُ فتْح التّطبيق</string>
     <string name="close">أغلق</string>
     <string name="closenglish">Dismiss</string>
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="junee">June</string>
+    <string name="julyy">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+    <string name="nd">nd</string>
+    <string name="rd">rd</string>
+    <string name="st">st</string>
+    <string name="th">th</string>
+    <string name="ar">ar</string>
+    <string name="en">en</string>
+    <string name="slat">slat</string>
+    <string name="justforce">force</string>
+    <string name="justforce2">force2</string>
+    <string name="waytooearly">It\'s way too early to pray </string>
+    <string name="waytooearly_arabe"> مُبكّر جدا لصلاة </string>
+    <string name="didyoupray">did you pray </string>
+    <string name="didyoupray_arabe" > هل صليت </string>
+    <string name="questionmark_arabe">؟</string>
+    <string name="questionmark">\?</string>
+    <string name="cannot">Cannot pray future\'s prayers</string>
+    <string name="cannot_arabe">لا يمكن الصلاة لأيام في المستقبل</string>
 
 
 </resources>

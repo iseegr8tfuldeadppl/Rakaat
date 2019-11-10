@@ -410,9 +410,10 @@
         android:layout_alignParentEnd="true"
         android:focusable="true"
         android:onClick="howtouseClicked"
-        android:id="@+id/nightmodebackground"
+        android:id="@+id/howtousebackground"
         android:background="@drawable/statsback"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
         <ImageView
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
@@ -422,7 +423,7 @@
             android:layout_marginTop="13dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/nightmodedark"
+            android:src="@drawable/questionmark"
             android:onClick="howtouseClicked"
             android:layout_marginRight="13dp"
             android:layout_marginLeft="16dp"
@@ -450,7 +451,8 @@
             android:src="@drawable/arrowleftdark"
             android:onClick="backClicked"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="13dp" />
+            android:layout_marginLeft="13dp"
+            android:contentDescription="@string/todo" />
     </RelativeLayout>
 
 </RelativeLayout>

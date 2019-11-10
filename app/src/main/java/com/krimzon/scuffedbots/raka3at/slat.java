@@ -79,9 +79,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private TextView slattitle;
     private RelativeLayout full;
     private TextView sajda_pre;
-    private Button button;
-    private Button button3;
-    private LinearLayout bottombuttons;
     private Animation fade_in_tahia, fade_out_tahia;
     private Button one, two, three, four;
     private int limit = 4; // default
@@ -149,7 +146,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private Animation slide_out_from_right4;
 
     private String rakaat, tahiah, sajadat, starth;
-    private String back, howtouse, done, back2;
+    private String back, done, back2;
     private String oneh, twoh, threeh, fourh, stop;
 
     private String start_arabe, stop_arabe;
@@ -230,8 +227,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             tahiah = getString(R.string.tahia);
             sajadat = getString(R.string.sajadat);
             starth = getString(R.string.start);
-            back = getString(R.string.back);
-            howtouse = getString(R.string.howtouse);
             done = getString(R.string.done);
             back2 = getString(R.string.back2);
             oneh = getString(R.string.one);
@@ -254,21 +249,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         tahia.setText(tahiah);
         sajda_pre.setText(sajadat);
         start.setText(starth);
-        button.setText(back);
-        button3.setText(howtouse);
         donetitle.setText(done);
         donebutton.setText(back2);
     }
 
 
     private void sql_work() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        sql("slat");
 
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
@@ -293,6 +280,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         if(is_it_dark_mode_in_sql.equals("no"))
             light_mode();
+        else
+            it_is_nightmode_since_lightmode_shines_and_ruins_measurement = true;
 
         assert SQLSharing.mycursor != null;
         SQLSharing.mycursor.close();
@@ -339,8 +328,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         soundson = resources.getDrawable(R.drawable.soundson);
     }
 
+
+    RelativeLayout backarrowbackground;
+    RelativeLayout howtousebackground;
     private void initialize_all_variables() {
         blackoutbuttonbackground = findViewById(R.id.blackoutbuttonbackground);
+        backarrowbackground = findViewById(R.id.backarrowbackground);
+        howtousebackground = findViewById(R.id.howtousebackground);
         nightmodebuttonbackground = findViewById(R.id.nightmodebuttonbackground);
         soundsbuttonbackground = findViewById(R.id.soundsbuttonbackground);
         settingsbuttonbackground = findViewById(R.id.settingsbuttonbackground);
@@ -362,9 +356,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         four = findViewById(R.id.four);
         fade_in_tahia = loadAnimation(getApplicationContext(), R.anim.fade_in);
         fade_out_tahia = loadAnimation(getApplicationContext(), R.anim.fade_out);
-        bottombuttons = findViewById(R.id.bottombuttons);
-        button3 = findViewById(R.id.button3);
-        button = findViewById(R.id.button);
         full = findViewById(R.id.full);
         sajda_pre = findViewById(R.id.sajda_pre);
         slattitle = findViewById(R.id.slattitle);
@@ -377,14 +368,14 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             slattitle.setTypeface(arabic_font);
             start.setTypeface(arabic_font);
             sajda_pre.setTypeface(arabic_font);
-            button.setTypeface(arabic_font);
-            button3.setTypeface(arabic_font);
         } else if(language.equals("en")) {
+            one.setTypeface(english_font);
+            two.setTypeface(english_font);
+            three.setTypeface(english_font);
+            four.setTypeface(english_font);
             slattitle.setTypeface(english_font);
             start.setTypeface(english_font);
             sajda_pre.setTypeface(english_font);
-            button.setTypeface(english_font);
-            button3.setTypeface(english_font);
         }
 
         //https://www.youtube.com/watch?v=ZL6s8TyHNOc
@@ -403,10 +394,18 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if(receiveandy!=null) {
             if (receiveandy.equals("force"))
                 back_to_force("no");
+            else {
+                if(entered_praying_process)
+                    reset();
+                else
+                    exit();
+            }
+        } else {
+            if(entered_praying_process)
+                reset();
             else
                 exit();
-        } else
-            exit();
+        }
     }
 
     private void hideNavigationBar() {
@@ -438,7 +437,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             this.getWindow().setStatusBarColor(darkbackgroundcolor);
     }
 
+
+    boolean entered_praying_process = false;
     private void show_raka3at_selections(){
+        entered_praying_process = true;
         if(receiveandy!=null) {
             if (receiveandy.equals("force")) {
                 one.setEnabled(false);
@@ -447,6 +449,11 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 four.setEnabled(false);
             }
         }
+
+        // Step 0: hide back & questionmarkbuttons
+        backarrowbackground.setVisibility(View.INVISIBLE);
+        howtousebackground.setVisibility(View.INVISIBLE);
+
         blackground.setVisibility(GONE);
         prepare_selection_and_countdown_things();
         coverer.setVisibility(VISIBLE);
@@ -502,7 +509,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         blackoutbutton.setVisibility(VISIBLE);
         sajda_pre.setVisibility(View.INVISIBLE);
         settings.setVisibility(View.INVISIBLE);
-        bottombuttons.setVisibility(GONE);
         slattitle.setVisibility(GONE);
 
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
@@ -622,6 +628,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void work2(SensorEvent event){
+
+
         // Step 1: a delay of 5 seconds to start working
         if(!five_second_before_actually_starting_was_finished)
             execute_delay_if_asked();
@@ -851,6 +859,15 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void reset(){
 
+        // allow to just close praying selections and praying shit when backpressed, and not just close out of activity
+        entered_praying_process = false;
+        // helps above
+        coverer.setVisibility(GONE);
+
+        // show back & questionmarkbuttons
+        backarrowbackground.setVisibility(View.VISIBLE);
+        howtousebackground.setVisibility(View.VISIBLE);
+
         start.setTextColor(Color.WHITE);
         not_clicked = true;
         tahia.setVisibility(GONE);
@@ -881,7 +898,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         countdown.setText(String.valueOf(5));
         slattitle.setVisibility(VISIBLE);
         sajda_pre.setVisibility(VISIBLE);
-        bottombuttons.setVisibility(VISIBLE);
         settings.setVisibility(VISIBLE);
 
         animation_of_initial_five_seconds_started = false;
@@ -986,15 +1002,26 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
+    boolean onlyonce2 = true;
+    Drawable lightbackback, lightstatsback;
     private void light_mode(){
         update_dimmness();
+
+
+        // top buttons backgrounds
+        if(onlyonce2) {
+            onlyonce2 = false;
+            lightbackback = resources.getDrawable(R.drawable.lightbackback);
+            lightstatsback = resources.getDrawable(R.drawable.lightstatsback);
+        }
+        backarrowbackground.setBackground(lightbackback);
+        howtousebackground.setBackground(lightstatsback);
+
         it_is_nightmode_since_lightmode_shines_and_ruins_measurement = false;
         slattitle.setTextColor(typicallightbuttoncolors);
         countdownbackground.setBackground(simpelbackground);
         full.setBackground(simpelbackground);
         sajda_pre.setTextColor(typicallightbuttoncolors);
-        button3.setBackground(buttons);
-        button.setBackground(buttons);
         coverer.setBackground(simpelbackground);
 
         donecover.setBackground(simpelbackground);
@@ -1054,15 +1081,27 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
+    boolean onlyonce = true;
+    Drawable statsback;
+    Drawable backback;
     private void dark_mode(){
         update_darkness();
+
+
+        // top buttons backgrounds
+        if(onlyonce) {
+            onlyonce = false;
+            backback = resources.getDrawable(R.drawable.backback);
+            statsback = resources.getDrawable(R.drawable.statsback);
+        }
+        backarrowbackground.setBackground(backback);
+        howtousebackground.setBackground(statsback);
+
         it_is_nightmode_since_lightmode_shines_and_ruins_measurement = true;
         slattitle.setTextColor(white);
         full.setBackground(darksimpelbackground);
         countdownbackground.setBackground(darksimpelbackground);
         sajda_pre.setTextColor(white);
-        button3.setBackground(darkbuttons);
-        button.setBackground(darkbuttons);
         coverer.setBackground(darksimpelbackground);
 
         donecover.setBackground(darksimpelbackground);

@@ -14,7 +14,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
@@ -28,7 +27,6 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -124,13 +122,13 @@ public class force extends AppCompatActivity {
 
         // override system locale
         Configuration cfg = new Configuration();
-        cfg.locale = new Locale("en");
+        cfg.locale = new Locale(getResources().getString(R.string.en));
         this.getResources().updateConfiguration(cfg, null);
 
         params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
-        params.adjustments.fajr = 2;
+        params.adjustments.fajr = 2; //2
         dateFormat = new SimpleDateFormat(pattern);
 
         CurrentDisplayedDay = new Date();
@@ -139,13 +137,13 @@ public class force extends AppCompatActivity {
 
         fontAndy();
 
-        sql("slat");
+        sql(resources.getString(R.string.slat));
 
         load_data_from_slat_sql();
 
         languageshet();
 
-        sql("force");
+        sql(resources.getString(R.string.justforce));
 
         location_shit(CurrentDisplayedDay);
 
@@ -175,7 +173,7 @@ public class force extends AppCompatActivity {
 
 
     private void convert_hijri_to_cute() {
-        if(language.equals("ar")){
+        if(language.equals(resources.getString(R.string.ar))){
             hijri += hijri_day + " ";
             switch(hijri_month) {
                 case 1:
@@ -304,7 +302,7 @@ public class force extends AppCompatActivity {
 
 
     private void languageshet() {
-        if(language.equals("en")) {
+        if(language.equals(resources.getString(R.string.en))) {
             getStrings();
             fajrtitle.setText(fajrtitlel);
             risetitle.setText(risetitlel);
@@ -362,7 +360,7 @@ public class force extends AppCompatActivity {
 
     private void low_light_alert() {
         if(getIntent().getStringExtra("light_alert").equals("yes")) {
-            if (language.equals("en"))
+            if (language.equals(resources.getString(R.string.en)))
                 Snackbar.make(full, getString(R.string.low_light), BaseTransientBottomBar.LENGTH_LONG).show();
             else
                 Snackbar.make(full, getString(R.string.low_light_arabe), BaseTransientBottomBar.LENGTH_LONG).show();
@@ -371,7 +369,7 @@ public class force extends AppCompatActivity {
 
 
     private void location_shit(Date date) {
-        sql("force");
+        sql(resources.getString(R.string.justforce));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if(SQLSharing.mycursor.getCount()>0)
             if_theres_previous_info_load_it_n_display(date);
@@ -461,9 +459,24 @@ public class force extends AppCompatActivity {
         doublearrowleft = resources.getDrawable(R.drawable.doublearrowleftt);
         doublearrowright = resources.getDrawable(R.drawable.doublearrowright);
 
+
+        prayernames = new ArrayList<>();
+        prayernames.add(resources.getString(R.string.fajrtitle));
+        prayernames.add(resources.getString(R.string.dohrtitle));
+        prayernames.add(resources.getString(R.string.asrtitle));
+        prayernames.add(resources.getString(R.string.maghrebtitle));
+        prayernames.add(resources.getString(R.string.ishatitle));
+
+        prayernames_arabe = new ArrayList<>();
+        prayernames_arabe.add(resources.getString(R.string.fajrtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.dohrtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.asrtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.maghrebtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.ishatitle_arabe));
     }
 
 
+    List<String> prayernames, prayernames_arabe;
     Drawable doublearrowright;
     Drawable doublearrowleft;
     protected float next_adan_pop_out_large, next_adan_pop_out_shrink, next_adan_size, twelve;
@@ -617,7 +630,7 @@ public class force extends AppCompatActivity {
         Geocoder geocoder;
         List<Address> addresses = null;
         Locale ar = new Locale(resources.getString(R.string.ar));
-        if(language.equals("en"))
+        if(language.equals(resources.getString(R.string.en)))
             geocoder = new Geocoder(this, Locale.US);
         else
             geocoder = new Geocoder(this, ar);
@@ -705,9 +718,9 @@ public class force extends AppCompatActivity {
                 fajrtime.startAnimation(to_right1);
                 to_right1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     fajrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         fajrtime.setText(fajr);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         fajrtime.setText(tfajr);
                     fajrtime.startAnimation(from_left1);
                     from_left1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -717,9 +730,9 @@ public class force extends AppCompatActivity {
                 risetime.startAnimation(to_right2);
                 to_right2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     risetime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         risetime.setText(rise);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         risetime.setText(trise);
                     risetime.startAnimation(from_left2);
                     from_left2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -729,9 +742,9 @@ public class force extends AppCompatActivity {
                 dhuhrtime.startAnimation(to_right12);
                 to_right12.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     dhuhrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         dhuhrtime.setText(dhuhr);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         dhuhrtime.setText(tdhuhr);
                     dhuhrtime.startAnimation(from_left3);
                     from_left3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -741,9 +754,9 @@ public class force extends AppCompatActivity {
                 asrtime.startAnimation(to_right3);
                 to_right3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     asrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         asrtime.setText(asr);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         asrtime.setText(tasr);
                     asrtime.startAnimation(from_left4);
                     from_left4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -753,9 +766,9 @@ public class force extends AppCompatActivity {
                 maghribtime.startAnimation(to_right4);
                 to_right4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     maghribtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         maghribtime.setText(maghrib);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         maghribtime.setText(tmaghrib);
                     maghribtime.startAnimation(from_left5);
                     from_left5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -765,9 +778,9 @@ public class force extends AppCompatActivity {
                 ishatime.startAnimation(to_right5);
                 to_right5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     ishatime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         ishatime.setText(isha);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         ishatime.setText(tisha);
                     ishatime.startAnimation(from_left6);
                     from_left6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -857,9 +870,9 @@ public class force extends AppCompatActivity {
                 fajrtime.startAnimation(toleft1);
                 toleft1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     fajrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         fajrtime.setText(fajr);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         fajrtime.setText(tfajr);
                     fajrtime.startAnimation(fromright1);
                     fromright1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -869,9 +882,9 @@ public class force extends AppCompatActivity {
                 risetime.startAnimation(toleft2);
                 toleft2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     risetime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         risetime.setText(rise);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         risetime.setText(trise);
                     risetime.startAnimation(fromright2);
                     fromright2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -881,9 +894,9 @@ public class force extends AppCompatActivity {
                 dhuhrtime.startAnimation(toleft3);
                 toleft3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     dhuhrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         dhuhrtime.setText(dhuhr);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         dhuhrtime.setText(tdhuhr);
                     dhuhrtime.startAnimation(fromright3);
                     fromright3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -893,9 +906,9 @@ public class force extends AppCompatActivity {
                 asrtime.startAnimation(toleft5);
                 toleft5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     asrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         asrtime.setText(asr);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         asrtime.setText(tasr);
                     asrtime.startAnimation(fromright4);
                     fromright4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -905,9 +918,9 @@ public class force extends AppCompatActivity {
                 maghribtime.startAnimation(toleft6);
                 toleft6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     maghribtime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         maghribtime.setText(maghrib);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         maghribtime.setText(tmaghrib);
                     maghribtime.startAnimation(fromright5);
                     fromright5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -917,9 +930,9 @@ public class force extends AppCompatActivity {
                 ishatime.startAnimation(toleft7);
                 toleft7.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     ishatime.setVisibility(View.INVISIBLE);
-                    if(language.equals("en"))
+                    if(language.equals(resources.getString(R.string.en)))
                         ishatime.setText(isha);
-                    else if(language.equals("ar"))
+                    else if(language.equals(resources.getString(R.string.ar)))
                         ishatime.setText(tisha);
                     ishatime.startAnimation(fromright6);
                     fromright6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -976,7 +989,7 @@ public class force extends AppCompatActivity {
                 }});
             }
         } else {
-            if(language.equals("en")) {
+            if(language.equals(resources.getString(R.string.en))) {
                 fajrtime.setText(fajr);
                 risetime.setText(rise);
                 dhuhrtime.setText(dhuhr);
@@ -984,7 +997,7 @@ public class force extends AppCompatActivity {
                 maghribtime.setText(maghrib);
                 ishatime.setText(isha);
 
-            } else if(language.equals("ar")){ // the arabic am and pm
+            } else if(language.equals(resources.getString(R.string.ar))){ // the arabic am and pm
                 fajrtime.setText(tfajr);
                 risetime.setText(trise);
                 dhuhrtime.setText(tdhuhr);
@@ -1008,7 +1021,7 @@ public class force extends AppCompatActivity {
         } catch(Exception ignored){}
 
 
-        if(language.equals("ar")){ // the arabic am and pm
+        if(language.equals(resources.getString(R.string.ar))){ // the arabic am and pm
             pm = getString(R.string.pm);
             am = getString(R.string.am);
             if(fajr.split(" ")[1].equals("AM")) tfajr = fajr.split(" ")[0] + " " + am;else tfajr = fajr.split(" ")[0] + " " +  pm;
@@ -1046,20 +1059,32 @@ public class force extends AppCompatActivity {
     private void work_on_date_n_display_it() {
         datin = "";
         tempdatin = "";
-        if(language.equals("en")) {
+        if(language.equals(resources.getString(R.string.en))) {
             tempdatin = temptoday[0];
-            if (tempdatin.equals(resources.getString(R.string.satu)))
+            if (tempdatin.equals(resources.getString(R.string.satu))) {
                 datin += resources.getString(R.string.sat);
-            else if (tempdatin.equals(resources.getString(R.string.sunu)))
+                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+            }
+            else if (tempdatin.equals(resources.getString(R.string.sunu))) {
                 datin += resources.getString(R.string.sun);
-            else if (tempdatin.equals(resources.getString(R.string.monu)))
+                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+            }
+            else if (tempdatin.equals(resources.getString(R.string.monu))) {
                 datin += resources.getString(R.string.mon);
-            else if (tempdatin.equals(resources.getString(R.string.tueu)))
+                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+            }
+            else if (tempdatin.equals(resources.getString(R.string.tueu))) {
                 datin += resources.getString(R.string.tue);
-            else if (tempdatin.equals(resources.getString(R.string.wedu)))
+                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+            }
+            else if (tempdatin.equals(resources.getString(R.string.wedu))) {
                 datin += resources.getString(R.string.wed);
-            else if (tempdatin.equals(resources.getString(R.string.thuru)))
+                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+            }
+            else if (tempdatin.equals(resources.getString(R.string.thuru))) {
                 datin += resources.getString(R.string.thu);
+                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+            }
             else if (tempdatin.equals(resources.getString(R.string.fridu))) {
                 datin += resources.getString(R.string.fri);
                 dohrtitle.setText(resources.getString(R.string.Jamo3a));
@@ -1072,87 +1097,93 @@ public class force extends AppCompatActivity {
             datin += " ";
             tempdatin = temptoday[1];
             if (tempdatin.equals(resources.getString(R.string.jan))) {
-                datin += "January";
+                datin += resources.getString(R.string.january);
                 miladi_month = 1;
             }
             else if (tempdatin.equals(resources.getString(R.string.feb))) {
-                datin += "February";
+                datin += resources.getString(R.string.february);
                 miladi_month = 2;
             }
             else if (tempdatin.equals(resources.getString(R.string.mar))) {
-                datin += "March";
+                datin += resources.getString(R.string.march);
                 miladi_month = 3;
             }
             else if (tempdatin.equals(resources.getString(R.string.apr))) {
-                datin += "April";
+                datin += resources.getString(R.string.april);
                 miladi_month = 4;
             }
             else if (tempdatin.contains(resources.getString(R.string.mao))) {
-                datin += "May";
+                datin += resources.getString(R.string.may);
                 miladi_month = 5;
             }
             else if (tempdatin.contains(resources.getString(R.string.june))) {
-                datin += "June";
+                datin += resources.getString(R.string.junee);
                 miladi_month = 6;
             }
             else if (tempdatin.contains(resources.getString(R.string.july))) {
-                datin += "July";
+                datin += resources.getString(R.string.julyy);
 
                 miladi_month = 7;
             }
             else if (tempdatin.equals(resources.getString(R.string.aug))) {
                 miladi_month = 8;
-                datin += "August";
+                datin += resources.getString(R.string.august);
             }
             else if (tempdatin.equals("Sep")) {
                 miladi_month = 9;
-                datin += "September";
+                datin += resources.getString(R.string.september);
             }
             else if (tempdatin.equals("Oct")) {
                 miladi_month = 10;
-                datin += "October";
+                datin += resources.getString(R.string.october);
             }
             else if (tempdatin.equals("Nov")) {
                 miladi_month = 11;
-                datin += "November";
+                datin += resources.getString(R.string.november);
             }
             else if (tempdatin.equals("Dec")) {
                 miladi_month = 12;
-                datin += "December";
+                datin += resources.getString(R.string.december);
             }
 
             tempdatin = temptoday[2];
             int temper = Integer.valueOf(tempdatin);
-            datin += " " + String.valueOf(temper);
+            datin += " " + temper;
             if (temper==2 || temper==22)
-                datin += "nd";
+                datin += resources.getString(R.string.nd);
             else if (temper==3 || temper==23)
-                datin += "rd";
+                datin += resources.getString(R.string.rd);
             else if (temper==1 || temper==21)
-                datin += "st";
+                datin += resources.getString(R.string.st);
             else
-                datin += "th";
+                datin += resources.getString(R.string.th);
 
-        } else if(language.equals("ar")){
+        } else if(language.equals(resources.getString(R.string.ar))){
             tempdatin = temptoday[0];
             switch (tempdatin) {
                 case "Sat":
                     datin += resources.getString(R.string.satarabe);
+                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Sun":
                     datin += resources.getString(R.string.sunarabe);
+                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Mon":
                     datin += resources.getString(R.string.monarabe);
+                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Tue":
                     datin += resources.getString(R.string.tuearabe);
+                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Wed":
                     datin += resources.getString(R.string.wedarabe);
+                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Thu":
                     datin += resources.getString(R.string.thurarabe);
+                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Fri":
                     datin += resources.getString(R.string.friarabe);
@@ -1226,7 +1257,7 @@ public class force extends AppCompatActivity {
 
 
     private void print(Object dumps) {
-        Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -1253,8 +1284,63 @@ public class force extends AppCompatActivity {
             if (allow_pray)
                 send(4);
             else
-                clean_up();
+                clean_up(4);
+        } else
+            lolz(4);
+    }
+
+    private void lolz(int i) {
+
+        // only give a chance if it's past/today but not future
+        if(!all_white) {
+
+            // don't apply checks on fajr always allow
+            if(i>0) {
+
+                // if it's after next_adan then don't allow prayer
+                if (i > next_adan && it_is_today) {
+                    if (language.equals(resources.getString(R.string.en)))
+                        print2(getString(R.string.waytooearly) + " " + prayernames.get(i));
+                    else if (language.equals(resources.getString(R.string.ar)))
+                        print2(getString(R.string.waytooearly_arabe) + " " + prayernames_arabe.get(i));
+
+                // if it's next adan then only allow prayer if it's within 30 minutes else display msg
+                } else if(i==next_adan && it_is_today) {
+
+                    if(positifise>30 && it_is_today){ // ask mom, how early can you pray a future prayer{
+                        if (language.equals(resources.getString(R.string.en)))
+                            print2(getString(R.string.waytooearly) + " " + prayernames.get(i));
+                        else if (language.equals(resources.getString(R.string.ar)))
+                            print2(getString(R.string.waytooearly_arabe) + " " + prayernames_arabe.get(i));
+                    } else if(fill_all) {
+                        if(!one_of_previous_is_zero)
+                            send(i);
+                    } else if(positifise<=30 && it_is_today){ // i left this in to know in future the use of this
+                        if(!one_of_previous_is_zero)
+                            send(i); // this will only jump when praying a prayer with 30 mins
+                    }
+
+                } else {
+
+                // this will display if u didn't pray the prayer straight above clicked one, works for today/past
+                    if (language.equals(resources.getString(R.string.en)))
+                        print2(resources.getString(R.string.didyoupray) + " " + prayernames.get(i - 1) + resources.getString(R.string.questionmark));
+                    else if (language.equals(resources.getString(R.string.ar)))
+                        print2(getString(R.string.didyoupray_arabe) + " " + prayernames_arabe.get(i - 1) + resources.getString(R.string.questionmark_arabe));
+                }
+            }
+        } else {
+
+            // for future prayers only
+            if(language.equals(resources.getString(R.string.en)))
+                print2(resources.getString(R.string.cannot));
+            else if(language.equals(resources.getString(R.string.ar)))
+                print2(resources.getString(R.string.cannot_arabe));
         }
+    }
+
+    private void print2(Object s) {
+        Snackbar.make(full, String.valueOf(s), BaseTransientBottomBar.LENGTH_SHORT).show();
     }
 
 
@@ -1265,8 +1351,9 @@ public class force extends AppCompatActivity {
             if (allow_pray)
                 send(3);
             else
-                clean_up();
-        }
+                clean_up(3);
+        } else
+            lolz(3);
     }
 
 
@@ -1277,8 +1364,9 @@ public class force extends AppCompatActivity {
             if (allow_pray)
                 send(2);
             else
-                clean_up();
-        }
+                clean_up(2);
+        } else
+            lolz(2);
     }
 
 
@@ -1289,8 +1377,9 @@ public class force extends AppCompatActivity {
             if (allow_pray)
                 send(1);
             else
-                clean_up();
-        }
+                clean_up(1);
+        } else
+            lolz(1);
     }
 
 
@@ -1302,14 +1391,16 @@ public class force extends AppCompatActivity {
             if (allow_pray)
                 send(0);
             else
-                clean_up();
-        }
+                clean_up(0);
+
+        } else
+            lolz(0);
     }
 
 
     private void send(int prayer){
         Intent slatIntent = new Intent(this, slat.class);
-        slatIntent.putExtra("sender", "force");
+        slatIntent.putExtra("sender", resources.getString(R.string.justforce));
         slatIntent.putExtra("prayer", String.valueOf(prayer));
         slatIntent.putExtra("todaycomparable", todaycomparable);
         slatIntent.putExtra("prayed", prayed);
@@ -1381,7 +1472,7 @@ public class force extends AppCompatActivity {
         praybuttons = new ArrayList<>();
         praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
         forces.add("0");forces.add("0");forces.add("0");forces.add("0");forces.add("0");
-        sql("force2");
+        sql(resources.getString(R.string.justforce2));
     }
 
 
@@ -1550,6 +1641,21 @@ public class force extends AppCompatActivity {
                             else
                                 praybuttons.get(i).setTextColor(Color.GREEN);
                         }
+
+                        for (int i = next_adan; i < 5; i++) {
+                            if (i == 0)
+                                fajr_is_red = false;
+                            if (i == 1)
+                                dhuhr_is_red = false;
+                            if (i == 2)
+                                asr_is_red = false;
+                            if (i == 3)
+                                maghrib_is_red = false;
+                            if (i == 4)
+                                isha_is_red = false;
+                            praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                        }
+
                     } else {
                         for (int i = 0; i < next_adan; i++) {
                             if (forces.get(i).equals("0")) {
@@ -1582,35 +1688,19 @@ public class force extends AppCompatActivity {
                         }
 
 
-                        if(darkmode)
-                            for(int i = next_adan; i < 5; i++) {
-                                if(i==0)
-                                    fajr_is_red = false;
-                                if(i==1)
-                                    dhuhr_is_red = false;
-                                if(i==2)
-                                    asr_is_red = false;
-                                if(i==3)
-                                    maghrib_is_red = false;
-                                if(i==4)
-                                    isha_is_red = false;
-                                praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
-                            }
-                        else {
-                            for (int i = next_adan; i < 5; i++) {
-                                if(i==0)
-                                    fajr_is_red = false;
-                                if(i==1)
-                                    dhuhr_is_red = false;
-                                if(i==2)
-                                    asr_is_red = false;
-                                if(i==3)
-                                    maghrib_is_red = false;
-                                if(i==4)
-                                    isha_is_red = false;
-                                praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
-                                praybuttons.get(i).setBackground(null);
-                            }
+                        for (int i = next_adan; i < 5; i++) {
+                            if(i==0)
+                                fajr_is_red = false;
+                            if(i==1)
+                                dhuhr_is_red = false;
+                            if(i==2)
+                                asr_is_red = false;
+                            if(i==3)
+                                maghrib_is_red = false;
+                            if(i==4)
+                                isha_is_red = false;
+                            praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                            praybuttons.get(i).setBackground(null);
                         }
 
                     }
@@ -1711,7 +1801,8 @@ public class force extends AppCompatActivity {
     }
 
 
-    private void clean_up() {
+    private void clean_up(int i) {
+        lolz(i);
         if(SQLSharing.mycursor!=null && SQLSharing.mydb!=null) {
             SQLSharing.mycursor.close();
             SQLSharing.mydb.close();
@@ -1724,7 +1815,7 @@ public class force extends AppCompatActivity {
 
 
     private void pull_prayed_one_hot_encoding_from_sql() {
-        sql("force2");
+        sql(resources.getString(R.string.justforce2));
         if(SQLSharing.mycursor.getCount()<=0)
             found_prayed_history_in_sql = false;
         else {
@@ -1812,7 +1903,7 @@ public class force extends AppCompatActivity {
             if (lol < 0) positifise = -lol;
             else positifise = lol;
 
-            if (lol < 99) {
+            if (positifise < 99) {
 
                 slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
                 if (next_adan == 0)
@@ -2250,7 +2341,7 @@ public class force extends AppCompatActivity {
         backarrowbackground.setBackground(lightbackback);
         lmfaoimage.setImageDrawable(lightlmfao);
 
-        sql("slat");
+        sql(resources.getString(R.string.slat));
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);
@@ -2357,7 +2448,7 @@ public class force extends AppCompatActivity {
         citydisplay.setBackground(backtotoday);
         lmfaoimage.setImageDrawable(lmfaodrawable);
 
-        sql("slat");
+        sql(resources.getString(R.string.slat));
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);

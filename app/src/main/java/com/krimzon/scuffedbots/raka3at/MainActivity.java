@@ -3,25 +3,29 @@ package com.krimzon.scuffedbots.raka3at;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 
 import java.util.Locale;
+
+import static android.view.animation.AnimationUtils.loadAnimation;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private Button kiblajoin;
     private Button forcejoin;
 
-    private Typeface english_font;
-    private Typeface arabic_font;
+    protected Typeface english_font;
+    protected Typeface arabic_font;
 
     private Intent kiblaIntent;
     private Intent slatIntent;
@@ -47,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static String language = "ar";
 
-    private String force_arabe, kibla_arabe, prayer_arabe, app_name_arabe;
     private String force, kibla, prayer, app_name;
     private SlatCustomDialogClass cddd;
     private boolean tutorial = false;
-
+    protected LinearLayout botton, botton2;
+    protected Animation diagonal, diagonal2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         // override system locale
         Configuration cfg = new Configuration();
-        cfg.locale = new Locale("en");
+        cfg.locale = new Locale(getResources().getString(R.string.en));
         this.getResources().updateConfiguration(cfg, null);
 
         //set custom font
@@ -69,7 +73,99 @@ public class MainActivity extends AppCompatActivity {
         set_fonts();
         work_on_language();
 
+        // slidein nightmode button
+        botton = findViewById(R.id.botton);
+        diagonal = loadAnimation(getApplicationContext(), R.anim.diagonalslide);
+        botton.startAnimation(diagonal);
+        diagonal.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+            botton.setVisibility(View.VISIBLE);
+
+            // slidein language button
+            botton2 = findViewById(R.id.botton2);
+            diagonal2 = loadAnimation(getApplicationContext(), R.anim.diagonalslide2);
+            botton2.startAnimation(diagonal2);
+            diagonal2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                botton2.setVisibility(View.VISIBLE);
+            }});
+        }});
+
         //showNavigationBar();
+    }
+
+    FrameLayout full;
+    boolean once = true, once2 = true;
+    Drawable forcefull;
+    int lightelement, white;
+    Drawable buttons, buttons2, buttons3;
+    Drawable darkbuttons, darkbuttons2, darkbuttons3;
+    Drawable simpelbackground;
+
+    private void visual_view() {
+
+    }
+
+    private void dark_mode() {
+        darkmode = false;
+        if(once){
+            once = false;
+            full = findViewById(R.id.full);
+            simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
+            buttons = resources.getDrawable(R.drawable.buttons);
+            buttons2 = resources.getDrawable(R.drawable.buttons);
+            buttons3 = resources.getDrawable(R.drawable.buttons);
+            lightelement = resources.getColor(R.color.lightelement);
+        }
+        full.setBackground(simpelbackground);
+        kiblajoin.setBackground(buttons);
+        slatjoin.setBackground(buttons2);
+        forcejoin.setBackground(buttons3);
+        maintitle.setTextColor(lightelement);
+
+        sql(resources.getString(R.string.slat));
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        ID = SQLSharing.mycursor.getString(0);
+        SQLSharing.mydb.updateData("yes", ID);
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
+    }
+
+
+    String ID = "";
+    private void sql(String table) {
+        if(SQLSharing.mycursor!=null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null)
+            SQLSharing.mydb.close();
+        SQLSharing.TABLE_NAME_INPUTER = table;
+        SQLSharing.mydb = new SQL(this);
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+    }
+
+    private void light_mode() {
+        darkmode = true;
+        if(once2){
+            once2 = false;
+            full = findViewById(R.id.full);
+            forcefull = resources.getDrawable(R.drawable.forcefull);
+            darkbuttons = resources.getDrawable(R.drawable.darkbuttons2);
+            darkbuttons2 = resources.getDrawable(R.drawable.darkbuttons2);
+            darkbuttons3 = resources.getDrawable(R.drawable.darkbuttons2);
+            white = resources.getColor(R.color.white);
+        }
+        full.setBackground(forcefull);
+        kiblajoin.setBackground(darkbuttons);
+        slatjoin.setBackground(darkbuttons2);
+        forcejoin.setBackground(darkbuttons3);
+        maintitle.setTextColor(white);
+
+        sql(resources.getString(R.string.slat));
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        ID = SQLSharing.mycursor.getString(0);
+        SQLSharing.mydb.updateData("no", ID);
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
     }
 
     private void work_on_language() {
@@ -129,16 +225,12 @@ public class MainActivity extends AppCompatActivity {
         slatjoin.setText(prayer);
     }
 
-    private void arabic() {
-        maintitle.setText(app_name_arabe);
-        kiblajoin.setText(kibla_arabe);
-        forcejoin.setText(force_arabe);
-        slatjoin.setText(prayer_arabe);
-    }
 
+    boolean darkmode = true;
     private void sql_work() {
 
 
+        // TODO MUST KEEP
         /*SQLSharing.TABLE_NAME_INPUTER = "force";
         SQLSharing.mydb = new SQL(this);
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
@@ -150,17 +242,10 @@ public class MainActivity extends AppCompatActivity {
         }*/
 
         // this is to avoid issues with added rows with google play updates to avoid crashing users
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        sql("slat");
         if(SQLSharing.mycursor.getCount()<7)  // TODO always update this
             SQLSharing.mydb.delete(this);
-        if(SQLSharing.mydb!=null && SQLSharing.mycursor!=null){
-            SQLSharing.mycursor.close();
-            SQLSharing.mydb.close();
-        }
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        sql("slat");
         if (SQLSharing.mycursor.getCount() <= 0) {
             SQLSharing.mydb.insertData("");
             SQLSharing.mydb.insertData("yes");
@@ -175,6 +260,10 @@ public class MainActivity extends AppCompatActivity {
             if(SQLSharing.mycursor.getString(1).equals(""))
                 tutorial = true;
             SQLSharing.mycursor.moveToNext();
+            if(SQLSharing.mycursor.getString(1).equals("no"))
+                darkmode = false;
+            else
+                darkmode = true;
             SQLSharing.mycursor.moveToNext();
             SQLSharing.mycursor.moveToNext();
             SQLSharing.mycursor.moveToNext();
@@ -182,6 +271,9 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mycursor.moveToNext();
             language = SQLSharing.mycursor.getString(1);
         }
+
+        if(!darkmode)
+            light_mode();
 
     }
 
@@ -199,7 +291,10 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
             return;
         } else {
-            backToast = Toast.makeText(getBaseContext(), getApplicationContext().getString(R.string.pressbackagainenglish), Toast.LENGTH_SHORT);
+            if(language.contains("en"))
+                backToast = Toast.makeText(getBaseContext(), getApplicationContext().getString(R.string.pressbackagainenglish), Toast.LENGTH_SHORT);
+            else if(language.contains("ar"))
+                backToast = Toast.makeText(getBaseContext(), getApplicationContext().getString(R.string.pressbackagainenglish_arabe), Toast.LENGTH_SHORT);
             backToast.show();
         }
 
@@ -253,4 +348,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void nightmodeClicked(View view) {
+        if(darkmode)
+            dark_mode();
+        else
+            light_mode();
+    }
 }
