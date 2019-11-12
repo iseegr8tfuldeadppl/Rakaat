@@ -47,10 +47,6 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".PrivacyPolicy"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".slat"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
