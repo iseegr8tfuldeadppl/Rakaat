@@ -222,11 +222,15 @@
     <string name="waytooearly">It\'s way too early to pray </string>
     <string name="waytooearly_arabe"> مُبكّر جدا لصلاة </string>
     <string name="didyoupray">did you pray </string>
-    <string name="didyoupray_arabe" > هل صليت </string>
+    <string name="didyoupray_arabe"> هل صليت </string>
     <string name="questionmark_arabe">؟</string>
     <string name="questionmark">\?</string>
     <string name="cannot">Cannot pray future\'s prayers</string>
     <string name="cannot_arabe">لا يمكن الصلاة لأيام في المستقبل</string>
 
+
+    <string name="appwidget_text">Working on it mate</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

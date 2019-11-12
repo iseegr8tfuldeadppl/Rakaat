@@ -100,11 +100,7 @@ public class MainActivity extends AppCompatActivity {
     Drawable darkbuttons, darkbuttons2, darkbuttons3;
     Drawable simpelbackground;
 
-    private void visual_view() {
-
-    }
-
-    private void dark_mode() {
+    private void light_mode() {
         darkmode = false;
         if(once){
             once = false;
@@ -125,9 +121,10 @@ public class MainActivity extends AppCompatActivity {
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("yes", ID);
+        SQLSharing.mydb.updateData("no", ID);
         SQLSharing.mycursor.close();
         SQLSharing.mydb.close();
+
     }
 
 
@@ -142,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
     }
 
-    private void light_mode() {
+    private void dark_mode() {
         darkmode = true;
         if(once2){
             once2 = false;
@@ -163,9 +160,10 @@ public class MainActivity extends AppCompatActivity {
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("no", ID);
+        SQLSharing.mydb.updateData("yes", ID);
         SQLSharing.mycursor.close();
         SQLSharing.mydb.close();
+
     }
 
     private void work_on_language() {
@@ -256,24 +254,18 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydb.insertData("ar"); // language
             tutorial = true;
         } else {
-            SQLSharing.mycursor.moveToFirst();
+            SQLSharing.mycursor.moveToPosition(0);
             if(SQLSharing.mycursor.getString(1).equals(""))
                 tutorial = true;
-            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToPosition(6);
+            language = SQLSharing.mycursor.getString(1);
+
+            SQLSharing.mycursor.moveToPosition(1);
             if(SQLSharing.mycursor.getString(1).equals("no"))
-                darkmode = false;
+                light_mode();
             else
                 darkmode = true;
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            language = SQLSharing.mycursor.getString(1);
         }
-
-        if(!darkmode)
-            light_mode();
 
     }
 
@@ -350,8 +342,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void nightmodeClicked(View view) {
         if(darkmode)
-            dark_mode();
-        else
             light_mode();
+        else
+            dark_mode();
     }
 }
