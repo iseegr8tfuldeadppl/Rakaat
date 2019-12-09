@@ -38,11 +38,13 @@ import com.batoulapps.adhan.Coordinates;
 import com.batoulapps.adhan.Madhab;
 import com.batoulapps.adhan.PrayerTimes;
 import com.batoulapps.adhan.data.DateComponents;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.dialogs.HomeOrMosque;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
@@ -97,7 +99,7 @@ public class force extends AppCompatActivity {
     protected boolean new_coordinates = false;
 
     protected List<Integer> prayers;
-    protected String todaycomparable;
+    public static String todaycomparable;
 
     protected RelativeLayout full;
     public static String language = "";
@@ -1061,32 +1063,41 @@ public class force extends AppCompatActivity {
         tempdatin = "";
         if(language.equals(resources.getString(R.string.en))) {
             tempdatin = temptoday[0];
+
+
             if (tempdatin.equals(resources.getString(R.string.satu))) {
                 datin += resources.getString(R.string.sat);
+                friday = false;
                 dohrtitle.setText(resources.getString(R.string.dohrtitle));
             }
             else if (tempdatin.equals(resources.getString(R.string.sunu))) {
                 datin += resources.getString(R.string.sun);
+                friday = false;
                 dohrtitle.setText(resources.getString(R.string.dohrtitle));
             }
             else if (tempdatin.equals(resources.getString(R.string.monu))) {
                 datin += resources.getString(R.string.mon);
+                friday = false;
                 dohrtitle.setText(resources.getString(R.string.dohrtitle));
             }
             else if (tempdatin.equals(resources.getString(R.string.tueu))) {
                 datin += resources.getString(R.string.tue);
+                friday = false;
                 dohrtitle.setText(resources.getString(R.string.dohrtitle));
             }
             else if (tempdatin.equals(resources.getString(R.string.wedu))) {
                 datin += resources.getString(R.string.wed);
+                friday = false;
                 dohrtitle.setText(resources.getString(R.string.dohrtitle));
             }
             else if (tempdatin.equals(resources.getString(R.string.thuru))) {
                 datin += resources.getString(R.string.thu);
+                friday = false;
                 dohrtitle.setText(resources.getString(R.string.dohrtitle));
             }
             else if (tempdatin.equals(resources.getString(R.string.fridu))) {
                 datin += resources.getString(R.string.fri);
+                friday = true;
                 dohrtitle.setText(resources.getString(R.string.Jamo3a));
             }
 
@@ -1160,33 +1171,42 @@ public class force extends AppCompatActivity {
 
         } else if(language.equals(resources.getString(R.string.ar))){
             tempdatin = temptoday[0];
+
+
             switch (tempdatin) {
                 case "Sat":
                     datin += resources.getString(R.string.satarabe);
+                    friday = false;
                     dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Sun":
                     datin += resources.getString(R.string.sunarabe);
+                    friday = false;
                     dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Mon":
                     datin += resources.getString(R.string.monarabe);
+                    friday = false;
                     dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Tue":
                     datin += resources.getString(R.string.tuearabe);
+                    friday = false;
                     dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Wed":
                     datin += resources.getString(R.string.wedarabe);
+                    friday = false;
                     dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Thu":
                     datin += resources.getString(R.string.thurarabe);
+                    friday = false;
                     dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
                     break;
                 case "Fri":
                     datin += resources.getString(R.string.friarabe);
+                    friday = true;
                     dohrtitle.setText(resources.getString(R.string.friarabe));
                     break;
             }
@@ -1260,154 +1280,159 @@ public class force extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
     }
 
-
-    protected String temptime;
-    protected Integer rightnowcomparable;
-    protected List<String> forces;
-    protected String prayed = "";
-    protected boolean found_prayed_history_in_sql = false;
-    protected Integer clickedprayertime;
-    protected boolean one_of_previous_is_zero = false;
-    protected String tempo;
-
-    private void back_to_main() {
-        main = new Intent(this, MainActivity.class);
-        startActivity(main);
-        finish();
-    }
-
-
-    public void ishaClicked(View view) {
-        if(prayisha.getCurrentTextColor()==resources.getColor(R.color.lighterred) ||  isha_is_red) {
-            process_prayed_request(4);
-
-            if (allow_pray)
-                send(4);
-            else
-                clean_up(4);
-        } else
-            lolz(4);
-    }
-
-    private void lolz(int i) {
-
-        // only give a chance if it's past/today but not future
-        if(!all_white) {
-
-            // don't apply checks on fajr always allow
-            if(i>0) {
-
-                // if it's after next_adan then don't allow prayer
-                if (i > next_adan && it_is_today) {
-                    if (language.equals(resources.getString(R.string.en)))
-                        print2(getString(R.string.waytooearly) + " " + prayernames.get(i));
-                    else if (language.equals(resources.getString(R.string.ar)))
-                        print2(getString(R.string.waytooearly_arabe) + " " + prayernames_arabe.get(i));
-
-                // if it's next adan then only allow prayer if it's within 30 minutes else display msg
-                } else if(i==next_adan && it_is_today) {
-
-                    if(positifise>30 && it_is_today){ // ask mom, how early can you pray a future prayer{
-                        if (language.equals(resources.getString(R.string.en)))
-                            print2(getString(R.string.waytooearly) + " " + prayernames.get(i));
-                        else if (language.equals(resources.getString(R.string.ar)))
-                            print2(getString(R.string.waytooearly_arabe) + " " + prayernames_arabe.get(i));
-                    } else if(fill_all) {
-                        if(!one_of_previous_is_zero)
-                            send(i);
-                    } else if(positifise<=30 && it_is_today){ // i left this in to know in future the use of this
-                        if(!one_of_previous_is_zero)
-                            send(i); // this will only jump when praying a prayer with 30 mins
-                    }
-
-                } else {
-
-                // this will display if u didn't pray the prayer straight above clicked one, works for today/past
-                    if (language.equals(resources.getString(R.string.en)))
-                        print2(resources.getString(R.string.didyoupray) + " " + prayernames.get(i - 1) + resources.getString(R.string.questionmark));
-                    else if (language.equals(resources.getString(R.string.ar)))
-                        print2(getString(R.string.didyoupray_arabe) + " " + prayernames_arabe.get(i - 1) + resources.getString(R.string.questionmark_arabe));
-                }
-            }
-        } else {
-
-            // for future prayers only
-            if(language.equals(resources.getString(R.string.en)))
-                print2(resources.getString(R.string.cannot));
-            else if(language.equals(resources.getString(R.string.ar)))
-                print2(resources.getString(R.string.cannot_arabe));
-        }
-    }
-
     private void print2(Object s) {
         Snackbar.make(full, String.valueOf(s), BaseTransientBottomBar.LENGTH_SHORT).show();
     }
 
+    SnackBar mSnackBar;
+    TextView snackButton;
+    private void print3(String s, String s2, final int prayer){
+        //https://stackoverflow.com/questions/33033157/adding-button-to-snackbar-android
+        mSnackBar = new SnackBar.Builder(this)
+                .withMessage(s)
+                .withActionMessage(s2)
+                .withStyle(SnackBar.Style.DEFAULT)
+                .show();
 
-    public void maghribClicked(View view) {
-        if(praymaghrib.getCurrentTextColor()==resources.getColor(R.color.lighterred) || maghrib_is_red) {
-            process_prayed_request(3);
-
-            if (allow_pray)
-                send(3);
-            else
-                clean_up(3);
-        } else
-            lolz(3);
+        snackButton = (TextView) mSnackBar.getContainerView().findViewById(R.id.snackButton);
+        snackButton.setTextColor(Color.GREEN);
+        snackButton.setTextSize(16);
+        snackButton.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
+            display_selection(prayer);
+            mSnackBar.hide();
+        }});
     }
 
+    protected String temptime;
+    protected Integer rightnowcomparable;
+    protected List<String> forces;
+    public static String prayed = "";
+    protected boolean found_prayed_history_in_sql = false;
+    protected boolean one_of_previous_is_zero = false;
+    protected String tempo;
+    String lmao;
 
-    public void asrClicked(View view) {
-        if(prayasr.getCurrentTextColor()==resources.getColor(R.color.lighterred) || asr_is_red) {
-            process_prayed_request(2);
+    private void check_state(int prayer) {
 
-            if (allow_pray)
-                send(2);
-            else
-                clean_up(2);
-        } else
-            lolz(2);
+        // setup the prayed array (contains 1s and 0s that determine if prayed or not
+        process_prayed_request(prayer);
+
+        // present
+        if(it_is_today) {
+            // green
+            if (String.valueOf(prayed.charAt(prayer)).equals("1")) {
+                want_to_pray_this_again(prayer);
+            }
+            // red
+            else if (prayer < next_adan) {
+                if (allow_pray)
+                    display_selection(prayer);
+                else
+                    did_you_pray_this_previous_prayer(prayer);
+            }
+            // special case of red (next_adan not being set)
+            else if(end_of_day){
+                if (allow_pray)
+                    display_selection(prayer);
+                else
+                    did_you_pray_this_previous_prayer(prayer);
+            }
+            // gray
+            else {
+                if(prayer==next_adan && positifise<=30) {
+                    theres_still_until_this_prayer(prayer);
+                } else
+                    too_early(prayer);
+            }
+        }
+
+        // future
+        else if(all_white){
+            cannot_pray_futures();
+        }
+
+        // past
+        else if(fill_all){
+            // green
+            if (String.valueOf(prayed.charAt(prayer)).equals("1")) {
+                want_to_pray_this_again(prayer);
+            }
+            // red
+            else {
+                if (allow_pray)
+                    display_selection(prayer);
+                else
+                    did_you_pray_this_previous_prayer(prayer);
+            }
+        }
+
+        clean_up();
     }
 
-
-    public void dhuhrClicked(View view) {
-        if(praydhuhr.getCurrentTextColor()==resources.getColor(R.color.lighterred) || dhuhr_is_red) {
-            process_prayed_request(1);
-
-            if (allow_pray)
-                send(1);
-            else
-                clean_up(1);
-        } else
-            lolz(1);
+    private void want_to_pray_this_again(int prayer) {
+        if(language.equals("en"))
+            print3(resources.getString(R.string.wanttopraythisagain), resources.getString(R.string.yes), prayer);
+        else if(language.equals("ar"))
+            print3(resources.getString(R.string.wanttopraythisagain_arabe), resources.getString(R.string.yes_arabe), prayer);
     }
 
+    private void theres_still_until_this_prayer(int prayer) {
+        if(language.equals("en"))
+            print3(resources.getString(R.string.theresstill) + positifise + resources.getString(R.string.minutesuntilthisprayer), resources.getString(R.string.joinprayer), prayer);
+        else if(language.equals("ar")){
+            lmao = " " + positifise + " ";
+            print3(resources.getString(R.string.theresstill_arabe) + lmao + resources.getString(R.string.minutesuntilthisprayer_arabe), resources.getString(R.string.joinprayer_arabic), prayer);
+        }
+    }
+
+    private void cannot_pray_futures() {
+        if(language.equals(resources.getString(R.string.en)))
+            print2(resources.getString(R.string.cannot));
+        else if(language.equals(resources.getString(R.string.ar)))
+            print2(resources.getString(R.string.cannot_arabe));
+    }
+
+    private void did_you_pray_this_previous_prayer(int prayer) {
+        if (language.equals(resources.getString(R.string.en)))
+            print2(resources.getString(R.string.didyoupray) + " " + prayernames.get(prayer - 1) + resources.getString(R.string.questionmark));
+        else if (language.equals(resources.getString(R.string.ar)))
+            print2(getString(R.string.didyoupray_arabe) + " " + prayernames_arabe.get(prayer - 1) + resources.getString(R.string.questionmark_arabe));
+    }
+
+    private void too_early(int prayer) {
+        if (language.equals(resources.getString(R.string.en)))
+            print2(getString(R.string.waytooearly) + " " + prayernames.get(prayer));
+        else if (language.equals(resources.getString(R.string.ar)))
+            print2(getString(R.string.waytooearly_arabe) + " " + prayernames_arabe.get(prayer));
+    }
 
     public void fajrClicked(View view) {
-        if(prayfajr.getCurrentTextColor()==resources.getColor(R.color.lighterred) ||
-                fajr_is_red) {
-            process_prayed_request(0);
-
-            if (allow_pray)
-                send(0);
-            else
-                clean_up(0);
-
-        } else
-            lolz(0);
+        check_state(0);
     }
 
-
-    private void send(int prayer){
-        Intent slatIntent = new Intent(this, slat.class);
-        slatIntent.putExtra("sender", resources.getString(R.string.justforce));
-        slatIntent.putExtra("prayer", String.valueOf(prayer));
-        slatIntent.putExtra("todaycomparable", todaycomparable);
-        slatIntent.putExtra("prayed", prayed);
-        startActivity(slatIntent);
-        finish();
+    public void dhuhrClicked(View view) {
+        check_state(1);
     }
 
+    public void asrClicked(View view) {
+        check_state(2);
+    }
+
+    public void maghribClicked(View view) {
+        check_state(3);
+    }
+
+    public void ishaClicked(View view) {
+        check_state(4);
+    }
+
+    private void display_selection(int prayerer) {
+        // prayerer = 0(fajr), 1(dhuhr), 2(asr), 3(maghrib), 4(isha)
+        HomeOrMosque mosqueorhome=new HomeOrMosque(this, friday, prayed, todaycomparable, prayerer, darkmode, language);
+        mosqueorhome.show();
+    }
+
+    public static boolean friday = false;
 
     private void fill_up_prayed() {
         prayed = "";
@@ -1415,23 +1440,25 @@ public class force extends AppCompatActivity {
             prayed += forces.get(i);
     }
 
-
     protected boolean allow_pray = false;
 
     private void compare(int i) {
-        clickedprayertime = prayers.get(i);
 
-        for (int j = 0; j < i; j++) { // check if all prayers have been clicked
-            if (forces.get(j).equals("0")) {
-                one_of_previous_is_zero = true;
-                break;
-            }
-        }
-        if(!one_of_previous_is_zero)
+        // if fajr instantly allow
+        if(i==0){
             allow_pray = true;
+        } else {
+            for (int j = 0; j < i; j++) { // check if all previous prayers are prayed
+                if (forces.get(j).equals("0")) {
+                    one_of_previous_is_zero = true;
+                    break;
+                }
+            }
+            if (!one_of_previous_is_zero)
+                allow_pray = true;
+        }
 
-        if(forces.get(i).equals("1")) // don't allow repraying already prayed ones
-            allow_pray = false;
+        one_of_previous_is_zero = false;
     }
 
 
@@ -1488,8 +1515,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-    Drawable lightforcebuttons;
-    Drawable lightforcebuttonsgreen;
     List<Drawable> lightforcebuttonsarray;
     List<Drawable> lightforcebuttonsgreenarray;
     boolean  onlyfillonce = true;
@@ -1570,6 +1595,7 @@ public class force extends AppCompatActivity {
                                 isha_is_red = false;
                             praybuttons.get(i).setTextColor(Color.WHITE);
                             praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                            praybuttons.get(i).setTextColor(Color.BLACK);
                         }
                     }
                 }
@@ -1620,6 +1646,7 @@ public class force extends AppCompatActivity {
                                     isha_is_red = false;
                                 praybuttons.get(i).setTextColor(Color.WHITE);
                                 praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                                praybuttons.get(i).setTextColor(Color.BLACK);
                             }
                         }
                     }
@@ -1684,6 +1711,7 @@ public class force extends AppCompatActivity {
                                     isha_is_red = false;
                                 praybuttons.get(i).setTextColor(Color.WHITE);
                                 praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                                praybuttons.get(i).setTextColor(Color.BLACK);
                             }
                         }
 
@@ -1801,13 +1829,11 @@ public class force extends AppCompatActivity {
     }
 
 
-    private void clean_up(int i) {
-        lolz(i);
+    private void clean_up() {
         if(SQLSharing.mycursor!=null && SQLSharing.mydb!=null) {
             SQLSharing.mycursor.close();
             SQLSharing.mydb.close();
         }
-        prayed = "";
         one_of_previous_is_zero = false;
         found_prayed_history_in_sql = false;
         allow_pray = false;
@@ -2352,6 +2378,7 @@ public class force extends AppCompatActivity {
 
 
     Drawable darkforcebuttons, darkforcebuttons2, darkforcebuttons3, darkforcebuttons4, darkforcebuttons5;
+
     Drawable forcefull;
     Drawable dateer;
     Drawable cityeer;
@@ -2374,6 +2401,7 @@ public class force extends AppCompatActivity {
             darkforcebuttons3 = resources.getDrawable(R.drawable.darkbuttons);
             darkforcebuttons4 = resources.getDrawable(R.drawable.darkbuttons);
             darkforcebuttons5 = resources.getDrawable(R.drawable.darkbuttons);
+
             tmrandyst = resources.getDrawable(R.drawable.tmrandyst);
             tmrandyst2 = resources.getDrawable(R.drawable.tmrandyst);
             forcefull = resources.getDrawable(R.drawable.forcefull);
@@ -2473,5 +2501,11 @@ public class force extends AppCompatActivity {
         // Hide double arrows that take you back to today
         doublearrowsbackground.setVisibility(View.INVISIBLE);
 
+    }
+
+    private void back_to_main() {
+        main = new Intent(this, MainActivity.class);
+        startActivity(main);
+        finish();
     }
 }

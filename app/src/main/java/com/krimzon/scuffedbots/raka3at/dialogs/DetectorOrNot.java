@@ -1,0 +1,166 @@
+
+package com.krimzon.scuffedbots.raka3at.dialogs;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.krimzon.scuffedbots.raka3at.R;
+import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
+import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.force;
+import com.krimzon.scuffedbots.raka3at.slat;
+
+public class DetectorOrNot extends Dialog {
+
+    protected Activity c;
+    boolean at_home = false;
+    boolean friday;
+    String prayed;
+    String todaycomparable;
+    int prayerer;
+    LinearLayout selectionbackground;
+    TextView selectiontitle;
+    Button selectionmosque, selectionhome;
+    Typeface arabic_typeface;
+    boolean darkmode;
+    String language;
+
+    public DetectorOrNot(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, boolean at_home) {
+        super(a);
+        this.c = a;
+        this.friday = friday;
+        this.prayed = prayed;
+        this.todaycomparable = todaycomparable;
+        this.prayerer = prayerer;
+        this.darkmode = darkmode;
+        this.language = language;
+        this.at_home = at_home;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.detectorornot);
+
+        // Step 1: initialize variables
+        selectionbackground = findViewById(R.id.selectionbackground);
+        selectiontitle = findViewById(R.id.selectiontitle);
+        selectionmosque = findViewById(R.id.selectionmosque);
+        selectionhome = findViewById(R.id.selectionhome);
+
+        // Step 2: Fonts
+        arabic_typeface = Typeface.createFromAsset(c.getAssets(),  "Tajawal-Light.ttf");
+        selectionmosque.setTypeface(arabic_typeface);
+        selectionhome.setTypeface(arabic_typeface);
+        selectiontitle.setTypeface(arabic_typeface);
+
+        // Step 3: display mode
+        if(!darkmode)
+            light_mode();
+
+        // Step 4: language
+        if(language.equals("en"))
+            english();
+
+        // Wait for selection
+        selectionhome.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
+            selectionhome.setEnabled(false);
+            selectionmosque.setEnabled(false);
+            send(prayerer);
+        }});
+        selectionmosque.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
+            selectionhome.setEnabled(false);
+            selectionmosque.setEnabled(false);
+
+            // TODO: after adding a new collumn for confirmed prayers or not, add the check here
+            set_prayer_without_using_detector();
+            c.finish();
+            c.startActivity(c.getIntent());
+            dismiss();
+        }});
+    }
+
+    private void sql(String table) {
+        if(SQLSharing.mycursor!=null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null)
+            SQLSharing.mydb.close();
+        SQLSharing.TABLE_NAME_INPUTER = table;
+        SQLSharing.mydb = new SQL(c);
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+    }
+
+
+    protected String temper = "00000";
+    protected StringBuilder strinkbilder;
+    private void set_prayer_without_using_detector() {
+        sql("force2");
+        strinkbilder = new StringBuilder(prayed);
+        strinkbilder.setCharAt(prayerer, '1');
+        temper = String.valueOf(strinkbilder);
+        check_if_prayed_exists_in_sql();
+        if(found_prayed_history_in_sql)
+            SQLSharing.mydb.updatePrayed(todaycomparable,temper);
+        else
+            SQLSharing.mydb.insertPrayed(todaycomparable, temper);
+    }
+
+    protected boolean found_prayed_history_in_sql = false;
+    private void check_if_prayed_exists_in_sql() {
+        if(SQLSharing.mycursor.getCount()<=0)
+            found_prayed_history_in_sql = false;
+        else {
+            while(SQLSharing.mycursor.moveToNext()) {
+                if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
+                    found_prayed_history_in_sql = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    private void english() {
+        selectiontitle.setText(c.getString(R.string.needdetector));
+        selectionhome.setText(c.getString(R.string.detectoryes));
+        selectionmosque.setText(c.getString(R.string.detectorno));
+    }
+
+    private void light_mode(){
+        Drawable simpelbackground = c.getResources().getDrawable(R.drawable.simpelbackground);
+        Drawable buttons = c.getResources().getDrawable(R.drawable.buttons);
+        Drawable buttons2 = c.getResources().getDrawable(R.drawable.buttons);
+        selectionbackground.setBackground(simpelbackground);
+        selectiontitle.setTextColor(Color.BLACK);
+
+        selectionmosque.setTextColor(Color.WHITE);
+        selectionhome.setTextColor(Color.WHITE);
+
+        selectionmosque.setBackground(buttons);
+        selectionhome.setBackground(buttons2);
+    }
+
+    private void send(int prayer){
+        Intent slatIntent = new Intent(c.getApplicationContext(), slat.class);
+        slatIntent.putExtra("sender", c.getResources().getString(R.string.justforce));
+        slatIntent.putExtra("prayer", String.valueOf(prayer));
+        slatIntent.putExtra("todaycomparable", todaycomparable);
+        slatIntent.putExtra("prayed", prayed);
+        slatIntent.putExtra("friday", String.valueOf(friday));
+        slatIntent.putExtra("at_home", String.valueOf(at_home));
+        c.startActivity(slatIntent);
+        c.finish();
+    }
+
+}

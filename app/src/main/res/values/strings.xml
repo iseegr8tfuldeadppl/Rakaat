@@ -232,5 +232,27 @@
     <string name="appwidget_text">Working on it mate</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
+    <string name="selectiontitle">Where are you praying?</string>
+    <string name="selectionhome">Home</string>
+    <string name="selectionmosque">Mosque</string>
+    <string name="selectiontitle_arabe">أين ستصلي؟</string>
+    <string name="selectionhome_arabe">المنزل</string>
+    <string name="selectionmosque_arabe">المسجد</string>
+    <string name="wanttopraythisagain_arabe">تريد صلاتها مرة أخرى؟</string>
+    <string name="yes_arabe">نعم</string>
+    <string name="yes">yes</string>
+    <string name="wanttopraythisagain">you want to pray this again?</string>
+    <string name="theresstill">There\'s still</string>
+    <string name="theresstill_arabe"> لا يزال </string>
+    <string name="minutesuntilthisprayer_arabe"> دقيقة لآذان هذه الصلاة </string>
+    <string name="minutesuntilthisprayer">minutes until this prayer</string>
+    <string name="space" />
+    <string name="needdetector_arabe">هل تريد إستخدام المستشعر أم صلّيت من قبل؟</string>
+    <string name="detectoryes_arabe">أُريد مستشعر الرّكعات</string>
+    <string name="detectorno_arabe">صليت من قبل</string>
+
+    <string name="needdetector">Do you want to use the detector or did you already pray?</string>
+    <string name="detectoryes">I want detector</string>
+    <string name="detectorno">Already prayed</string>
 
 </resources>

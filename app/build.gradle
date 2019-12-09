@@ -34,4 +34,5 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.X.X'
     implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.X.X'
     implementation 'net.time4j:time4j-android:4.4.2-2019c'
+    implementation 'com.github.mrengineer13:snackbar:1.2.0'
 }

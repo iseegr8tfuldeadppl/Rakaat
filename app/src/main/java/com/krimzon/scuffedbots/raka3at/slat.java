@@ -189,12 +189,17 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 prayer = Integer.valueOf(sender.getStringExtra("prayer"));
                 todaycomparable = sender.getStringExtra("todaycomparable");
                 prayed = sender.getStringExtra("prayed");
+                friday = sender.getStringExtra("friday");
+                at_home = sender.getStringExtra("at_home");
+                hideNavigationBar();
                 forceAndy();
             }
         }
     }
 
 
+    protected String friday = "";
+    protected String at_home = "";
     private void forceAndy() {
         click_on_start();
     }
@@ -480,14 +485,19 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                             if (receiveandy.equals("force")) {
                                 if (prayer == 0)
                                     limit = 2;
-                                else if (prayer == 1)
-                                    limit = 4;
+                                else if (prayer == 1) {
+                                    if(friday.equals("true") && at_home.equals("false"))
+                                        limit = 2;
+                                    else
+                                        limit = 4;
+                                }
                                 else if (prayer == 2)
                                     limit = 4;
                                 else if (prayer == 3)
                                     limit = 3;
                                 else if (prayer == 4)
                                     limit = 4;
+
                                 hide_raka3at_selections();
                             }
                         }
@@ -859,6 +869,19 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void reset(){
 
+        startclicked = false;
+        start_was_just_clicked = false;
+
+        if(blackout){
+            blackground.setOnClickListener(null);
+            blackground.setClickable(false);
+            blackground.setFocusable(false);
+            blackground.setEnabled(false);
+            blackground.setBackground(null);
+            blackout = false;
+            nightmode.setVisibility(VISIBLE);
+        }
+
         // allow to just close praying selections and praying shit when backpressed, and not just close out of activity
         entered_praying_process = false;
         // helps above
@@ -917,6 +940,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             start.setBackground(darkbuttons2);
         else
             start.setBackground(buttons2);
+
+        receiveandy = "main";
     }
 
 
