@@ -2,7 +2,6 @@ package com.krimzon.scuffedbots.raka3at.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -12,28 +11,26 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.krimzon.scuffedbots.raka3at.R;
-import com.krimzon.scuffedbots.raka3at.force;
-import com.krimzon.scuffedbots.raka3at.slat;
 
 public class HomeOrMosque extends Dialog {
 
-    protected Activity c;
-    boolean at_home = false;
-    boolean friday;
-    String prayed;
-    String todaycomparable;
-    int prayerer;
-    LinearLayout selectionbackground;
-    TextView selectiontitle;
-    Button selectionmosque, selectionhome;
-    Typeface arabic_typeface;
-    boolean darkmode;
-    String language;
+    private Activity c;
+    private boolean at_home = false;
+    private boolean friday;
+    private String prayed;
+    private String verified;
+    private String todaycomparable;
+    private String athome;
+    private int prayerer;
+    private LinearLayout selectionbackground;
+    private TextView selectiontitle;
+    private Button selectionmosque, selectionhome;
+    private Typeface arabic_typeface;
+    private boolean darkmode;
+    private String language;
 
-    public HomeOrMosque(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language) {
+    public HomeOrMosque(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, String verified, String athome) {
         super(a);
         this.c = a;
         this.friday = friday;
@@ -42,10 +39,8 @@ public class HomeOrMosque extends Dialog {
         this.prayerer = prayerer;
         this.darkmode = darkmode;
         this.language = language;
-    }
-
-    private void print(Object dumps) {
-        Toast.makeText(c.getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
+        this.verified = verified;
+        this.athome = athome;
     }
 
     @Override
@@ -79,7 +74,8 @@ public class HomeOrMosque extends Dialog {
             selectionhome.setEnabled(false);
             selectionmosque.setEnabled(false);
             at_home = true;
-            DetectorOrNot mosqueorhome=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home);
+
+            DetectorOrNot mosqueorhome=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
             mosqueorhome.show();
             dismiss();
         }});
@@ -87,7 +83,7 @@ public class HomeOrMosque extends Dialog {
             selectionhome.setEnabled(false);
             selectionmosque.setEnabled(false);
             at_home = false;
-            DetectorOrNot mosqueorhome=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home);
+            DetectorOrNot mosqueorhome=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
             mosqueorhome.show();
             dismiss();
         }});

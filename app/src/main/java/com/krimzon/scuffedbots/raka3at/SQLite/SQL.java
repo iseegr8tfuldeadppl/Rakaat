@@ -20,6 +20,8 @@ public class SQL extends SQLiteOpenHelper {
     private static final String MAGHRIB = "_MAGHRIB";
     private static final String ISHA = "_ISHA";
     private static final String PRAYED = "_PRAYED";
+    private static final String VERIFIED = "_VERIFIED";
+    private static final String ATHOME = "_ATHOME";
     private static final String LONGITUDE = "_LONGITUDE";
     private static final String LATITUDE = "_LATITUDE";
 
@@ -37,7 +39,7 @@ public class SQL extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "slat" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_2 + " TEXT" + ");");
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force2" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DAY + " TEXT, " + PRAYED + " TEXT" + ");");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force3" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DAY + " TEXT, " + PRAYED + " TEXT, " + VERIFIED + " TEXT, " + ATHOME + " TEXT" + ");");
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + LONGITUDE + " TEXT, " + LATITUDE + " TEXT" + ");");
         //create a table whenever oncreate is called
     }
@@ -86,30 +88,34 @@ public class SQL extends SQLiteOpenHelper {
     public Cursor getAllDate() {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "slat" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_2 + " TEXT" + ");");
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force2" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DAY + " TEXT, " + PRAYED + " TEXT" + ");");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force3" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DAY + " TEXT, " + PRAYED + " TEXT, " + VERIFIED + " TEXT" + ");");
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DAY + " TEXT, " + FAJR + " TEXT, " + RISE + " TEXT, " + DHUHR + " TEXT, " + ASR + " TEXT, " + MAGHRIB + " TEXT, " + ISHA + " TEXT" + ");");
         //instance
         return sqLiteDatabase.rawQuery("select * from " + SQLSharing.TABLE_NAME_INPUTER + ";", null);
     }
 
     //inputting data
-    public boolean insertPrayed(String _DAY, String _PRAYED){
+    public boolean insertPrayed(String _DAY, String _PRAYED, String _VERIFIED, String _ATHOME){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(DAY, _DAY);
         contentValues.put(PRAYED, _PRAYED);
-        long result = sqLiteDatabase.insert("force2", null, contentValues); //returns -1 if failed to add
+        contentValues.put(VERIFIED, _VERIFIED);
+        contentValues.put(ATHOME, _ATHOME);
+        long result = sqLiteDatabase.insert("force3", null, contentValues); //returns -1 if failed to add
         if(result == -1) return false;
         else return true;
     }
 
     //modify data
-    public boolean updatePrayed(String _DAY, String _PRAYED){
+    public boolean updatePrayed(String _DAY, String _PRAYED, String _VERIFIED, String _ATHOME){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(DAY, _DAY);
         contentValues.put(PRAYED, _PRAYED);
-        sqLiteDatabase.update("force2", contentValues, DAY + "=?", new String[] { _DAY });
+        contentValues.put(VERIFIED, _VERIFIED);
+        contentValues.put(ATHOME, _ATHOME);
+        sqLiteDatabase.update("force3", contentValues, DAY + "=?", new String[] { _DAY });
         return true;
     }
 

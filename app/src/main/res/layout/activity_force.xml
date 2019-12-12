@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true">
         <ImageView
+            android:id="@+id/arrowback"
             android:layout_marginStart="13dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
@@ -27,7 +28,6 @@
             android:layout_marginTop="13dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/arrowleftdark"
             android:onClick="arrowbackClicked"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="13dp" />
@@ -49,6 +49,7 @@
             android:focusable="true"
             android:layout_height="wrap_content">
             <ImageView
+                android:id="@+id/statslogo"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="13dp"
@@ -57,7 +58,6 @@
                 android:layout_marginTop="13dp"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/stats"
                 android:onClick="ShowStatisticsClicked"
                 android:layout_marginRight="13dp"
                 android:layout_marginLeft="16dp" />
@@ -69,6 +69,7 @@
             android:onClick="nightmodeClicked"
             android:layout_height="wrap_content">
             <ImageView
+                android:id="@+id/nightmodebutton"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="13dp"
@@ -77,7 +78,6 @@
                 android:layout_marginTop="13dp"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/nightmodedark"
                 android:onClick="nightmodeClicked"
                 android:layout_marginRight="13dp"
                 android:layout_marginLeft="16dp" />
@@ -98,8 +98,7 @@
             <ImageView
                 android:id="@+id/lmfao"
                 android:layout_width="match_parent"
-                android:layout_height="110dp"
-                android:src="@drawable/lmfao"/>
+                android:layout_height="110dp"/>
             <TextView
                 android:fontFamily=""
                 android:id="@+id/title"
@@ -163,6 +162,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="@dimen/sidesoftablepaddings">
                     <ImageView
+                        android:id="@+id/arrowleft"
                         android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
                         android:layout_marginBottom="@dimen/multipledayarrowtopnbottompaddings"
                         android:onClick="checkYesterday"
@@ -170,7 +170,6 @@
                         android:focusable="true"
                         android:clickable="true"
                         android:layout_height="24dp"
-                        android:src="@drawable/arrowleft"
                         android:scaleType="fitXY"
                         android:adjustViewBounds="true"/>
                 </RelativeLayout>
@@ -196,6 +195,7 @@
                     android:layout_weight="1"
                     android:paddingRight="@dimen/sidesoftablepaddings">
                     <ImageView
+                        android:id="@+id/arrowright"
                         android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
                         android:layout_marginBottom="@dimen/multipledayarrowtopnbottompaddings"
                         android:onClick="checkTommorow"
@@ -203,7 +203,6 @@
                         android:focusable="true"
                         android:clickable="true"
                         android:layout_height="24dp"
-                        android:src="@drawable/arrowright"
                         android:scaleType="fitXY"
                         android:adjustViewBounds="true"/>
                 </RelativeLayout>
@@ -230,7 +229,6 @@
                     android:clickable="true"
                     android:onClick="backtotodayClicked"
                     android:id="@+id/doublearrows"
-                    android:src="@drawable/doublearrowright"
                     android:scaleType="fitXY"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/todo" />
@@ -284,19 +282,31 @@
                         android:textColor="@color/grayerthanwhite"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <TextView
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:gravity="center"
-                        android:id="@+id/prayfajr"
-                        android:background="@drawable/darkbuttons"
-                        android:layout_weight="1"
+
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onClick="fajrClicked"
-                        android:text="@string/joinprayer_arabic"
-                        android:textSize="@dimen/regulartextsize"
-                        android:textColor="@color/grayerthanwhite"/>
+                        android:layout_weight="1">
+                        <TextView
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:gravity="center"
+                            android:id="@+id/prayfajr"
+                            android:background="@drawable/darkbuttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:onClick="fajrClicked"
+                            android:text="@string/joinprayer_arabic"
+                            android:textSize="@dimen/regulartextsize"
+                            android:textColor="@color/grayerthanwhite"/>
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="end"
+                            android:visibility="gone"
+                            android:id="@+id/fajrcheckmark"
+                            android:contentDescription="@string/todo" />
+                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -385,19 +395,31 @@
                         android:textColor="@color/grayerthanwhite"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <TextView
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:gravity="center"
-                        android:id="@+id/praydhuhr"
-                        android:background="@drawable/darkbuttons"
-                        android:layout_weight="1"
+
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:onClick="dhuhrClicked"
-                        android:text="@string/joinprayer_arabic"
-                        android:textSize="@dimen/regulartextsize"
-                        android:textColor="@color/grayerthanwhite"/>
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <TextView
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:gravity="center"
+                            android:id="@+id/praydhuhr"
+                            android:background="@drawable/darkbuttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:onClick="dhuhrClicked"
+                            android:text="@string/joinprayer_arabic"
+                            android:textSize="@dimen/regulartextsize"
+                            android:textColor="@color/grayerthanwhite"/>
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="end"
+                            android:visibility="gone"
+                            android:id="@+id/dhuhrcheckmark"
+                            android:contentDescription="@string/todo" />
+                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -438,19 +460,31 @@
                         android:textColor="@color/grayerthanwhite"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <TextView
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:gravity="center"
-                        android:id="@+id/prayasr"
-                        android:background="@drawable/darkbuttons"
-                        android:layout_weight="1"
+
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:onClick="asrClicked"
-                        android:text="@string/joinprayer_arabic"
-                        android:textSize="@dimen/regulartextsize"
-                        android:textColor="@color/grayerthanwhite"/>
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <TextView
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:gravity="center"
+                            android:id="@+id/prayasr"
+                            android:background="@drawable/darkbuttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:onClick="asrClicked"
+                            android:text="@string/joinprayer_arabic"
+                            android:textSize="@dimen/regulartextsize"
+                            android:textColor="@color/grayerthanwhite"/>
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="end"
+                            android:visibility="gone"
+                            android:id="@+id/asrcheckmark"
+                            android:contentDescription="@string/todo" />
+                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -491,19 +525,31 @@
                         android:textColor="@color/grayerthanwhite"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <TextView
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:gravity="center"
-                        android:id="@+id/praymaghrib"
-                        android:background="@drawable/darkbuttons"
-                        android:layout_weight="1"
+
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:onClick="maghribClicked"
-                        android:text="@string/joinprayer_arabic"
-                        android:textSize="@dimen/regulartextsize"
-                        android:textColor="@color/grayerthanwhite"/>
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <TextView
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:gravity="center"
+                            android:id="@+id/praymaghrib"
+                            android:background="@drawable/darkbuttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:onClick="maghribClicked"
+                            android:text="@string/joinprayer_arabic"
+                            android:textSize="@dimen/regulartextsize"
+                            android:textColor="@color/grayerthanwhite"/>
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="end"
+                            android:visibility="gone"
+                            android:id="@+id/maghribcheckmark"
+                            android:contentDescription="@string/todo" />
+                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -544,19 +590,31 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
-                    <TextView
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:gravity="center"
-                        android:id="@+id/prayisha"
-                        android:background="@drawable/darkbuttons"
-                        android:layout_weight="1"
+
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:onClick="ishaClicked"
-                        android:text="@string/joinprayer_arabic"
-                        android:textSize="@dimen/regulartextsize"
-                        android:textColor="@color/grayerthanwhite"/>
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <TextView
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:gravity="center"
+                            android:id="@+id/prayisha"
+                            android:background="@drawable/darkbuttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:onClick="ishaClicked"
+                            android:text="@string/joinprayer_arabic"
+                            android:textSize="@dimen/regulartextsize"
+                            android:textColor="@color/grayerthanwhite"/>
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="end"
+                            android:visibility="gone"
+                            android:id="@+id/ishacheckmark"
+                            android:contentDescription="@string/todo" />
+                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

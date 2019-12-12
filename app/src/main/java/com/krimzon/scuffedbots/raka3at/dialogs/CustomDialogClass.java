@@ -9,21 +9,20 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.krimzon.scuffedbots.raka3at.R;
-import com.krimzon.scuffedbots.raka3at.kibla;
 
 public class CustomDialogClass extends Dialog implements
         android.view.View.OnClickListener {
 
-    protected Activity c;
-    public Dialog d;
-    protected Button yes;
-    protected TextView fixbig, fixsmall1, fixsmall2, fixsmall3;
+    private Activity c;
+    private Button yes;
+    private TextView fixbig, fixsmall1, fixsmall2, fixsmall3;
+    private String language;
 
-    public CustomDialogClass(Activity a) {
+    public CustomDialogClass(Activity a, String language) {
         super(a);
         this.c = a;
+        this.language = language;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class CustomDialogClass extends Dialog implements
 
         yes.setOnClickListener(this);
 
-        if(kibla.language.equals("en"))
+        if(language.equals("en"))
             english();
     }
 

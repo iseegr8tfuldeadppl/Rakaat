@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-import com.krimzon.scuffedbots.raka3at.MainActivity;
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.slat;
@@ -19,11 +18,10 @@ public class SlatCustomDialogClass extends Dialog implements
         android.view.View.OnClickListener {
 
     private Intent slatIntent;
-    public Activity c;
+    private Activity c;
     private boolean MainActivitys;
-    public Dialog dialog;
-    public Button yes, never;
-    public TextView fixbig, fixsmall1, fixsmall2, fixsmall3, fixsmall4;
+    private Button yes, never;
+    private TextView fixbig, fixsmall1, fixsmall2, fixsmall3, fixsmall4;
     private String noshow;
     private String ok;
     private String ff;
@@ -31,12 +29,13 @@ public class SlatCustomDialogClass extends Dialog implements
     private String f;
     private String a;
     private String howtouse;
+    private String language;
 
-    public SlatCustomDialogClass(Activity a, boolean MainActivity) {
+    public SlatCustomDialogClass(Activity a, boolean MainActivity, String language) {
         super(a);
-        // TODO Auto-generated constructor stub
         this.c = a;
         this.MainActivitys = MainActivity;
+        this.language = language;
     }
 
     @Override
@@ -68,13 +67,13 @@ public class SlatCustomDialogClass extends Dialog implements
 
     private void check_language() {
         getStrings();
-        if(MainActivity.language.equals("en"))
+        if(language.equals("en"))
             english();
     }
 
     private void getStrings(){
         Resources resources = this.c.getResources();
-        if(MainActivity.language.equals("en")){
+        if(language.equals("en")){
             howtouse = resources.getString(R.string.howtouse);
             a = resources.getString(R.string.a);
             f = resources.getString(R.string.f);

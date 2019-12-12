@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -19,22 +18,19 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.batoulapps.adhan.Coordinates;
 import com.batoulapps.adhan.Qibla;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -50,32 +46,46 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     // TODO and my popup menu
     // TODO and on force.java
 
-    public static String language;
-    ImageView compass_img;
-    Button fix;
-    int mAzimuth;
+    private String language;
+    private ImageView compass_img;
+    private Button fix;
+    private int mAzimuth;
     private SensorManager mSensorManager;
     private Sensor mRotationV, mAccelerometer, mMagnetometer;
-    boolean haveSensor = false, haveSensor2 = false;
-    float[] rMat = new float[9];
-    float[] orientation = new float[3];
+    private boolean haveSensor = false, haveSensor2 = false;
+    private float[] rMat = new float[9];
+    private float[] orientation = new float[3];
     private float[] mLastAccelerometer = new float[3];
     private float[] mLastMagnetometer = new float[3];
     private boolean mLastAccelerometerSet = false;
     private boolean mLastMagnetometerSet = false;
-    protected TextView kiblatitle;
-    String kibla, kiblatitleh, betterquality, backh;
+    private TextView kiblatitle;
+    private String kibla, kiblatitleh, betterquality, backh;
     private TextView maintitle;
-    Typeface custom_font;
-    FrameLayout full;
-    RelativeLayout backarrowbackground;
-    RelativeLayout nightmodebackground;
+    private Typeface custom_font;
+    private FrameLayout full;
+    private RelativeLayout backarrowbackground;
+    private RelativeLayout nightmodebackground;
+    private ImageView arrowback, nightmodebutton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kibla);
+
+        arrowback = findViewById(R.id.arrowback);
+        nightmodebutton = findViewById(R.id.nightmodebutton);
+        try {
+            Glide.with(this).load(R.drawable.arrowleftdark).into(arrowback);
+        } catch (Exception ignored) {
+            arrowback.setImageDrawable(resources.getDrawable(R.drawable.arrowleftdark));
+        }
+        try {
+            Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
+        } catch (Exception ignored) {
+            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
+        }
 
         // override system locale
         Configuration cfg = new Configuration();
@@ -182,10 +192,19 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         mAzimuth = Math.round(mAzimuth);
         compass_img.setRotation(-mAzimuth);
 
-        if(qibla_angle - qibla_range <= mAzimuth && mAzimuth <= qibla_angle + qibla_range)
-            compass_img.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.compass));
-        else
-            compass_img.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.compass2));
+        if(qibla_angle - qibla_range <= mAzimuth && mAzimuth <= qibla_angle + qibla_range) {
+            try {
+                Glide.with(this).load(R.drawable.compass).into(compass_img);
+            } catch (Exception ignored) {
+                compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
+            }
+        } else {
+            try {
+                Glide.with(this).load(R.drawable.compass2).into(compass_img);
+            } catch (Exception ignored) {
+                compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+            }
+        }
     }
 
     // TODO: make this range modifyable by user by the form of a seekbar
@@ -367,7 +386,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
 
     public void fixClicked(View view) {
-        CustomDialogClass cdd=new CustomDialogClass(this);
+        CustomDialogClass cdd=new CustomDialogClass(this, language);
         cdd.show();
     }
 

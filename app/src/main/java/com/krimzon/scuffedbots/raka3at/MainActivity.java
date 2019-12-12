@@ -13,14 +13,15 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
-
 import java.util.Locale;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -33,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button kiblajoin;
     private Button forcejoin;
 
-    protected Typeface english_font;
-    protected Typeface arabic_font;
+    private Typeface font;
 
     private Intent kiblaIntent;
     private Intent slatIntent;
@@ -44,16 +44,16 @@ public class MainActivity extends AppCompatActivity {
 
     private Toast backToast;
 
-    protected Resources resources;
+    private Resources resources;
     private int darkbackgroundcolor;
 
-    public static String language = "ar";
+    private String language = "ar";
 
     private String force, kibla, prayer, app_name;
     private SlatCustomDialogClass cddd;
     private boolean tutorial = false;
-    protected LinearLayout botton, botton2;
-    protected Animation diagonal, diagonal2;
+    private LinearLayout botton, botton2;
+    private Animation diagonal, diagonal2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,31 +90,36 @@ public class MainActivity extends AppCompatActivity {
         //showNavigationBar();
     }
 
-    FrameLayout full;
-    boolean once = true, once2 = true;
-    Drawable forcefull;
-    int lightelement, white;
-    Drawable buttons, buttons2, buttons3;
-    Drawable darkbuttons, darkbuttons2, darkbuttons3;
-    Drawable simpelbackground;
+    private FrameLayout full;
+    private boolean once = true, once2 = true;
+    private Drawable forcefull;
+    private int white;
+    private Drawable buttons, buttons2, buttons3;
+    private Drawable darkbuttons, darkbuttons2, darkbuttons3;
+    private Drawable simpelbackground;
 
+    private int black;
+    private View view, view2;
     private void light_mode() {
         darkmode = false;
         if(once){
             once = false;
             full = findViewById(R.id.full);
+            view = findViewById(R.id.view);
+            view2 = findViewById(R.id.view2);
             simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
             buttons = resources.getDrawable(R.drawable.buttons);
             buttons2 = resources.getDrawable(R.drawable.buttons);
             buttons3 = resources.getDrawable(R.drawable.buttons);
-            lightelement = resources.getColor(R.color.lightelement);
+            black = resources.getColor(R.color.black);
         }
+        view.setVisibility(View.GONE);
+        view2.setVisibility(View.VISIBLE);
         full.setBackground(simpelbackground);
         kiblajoin.setBackground(buttons);
         slatjoin.setBackground(buttons2);
         forcejoin.setBackground(buttons3);
-        maintitle.setTextColor(lightelement);
-
+        maintitle.setTextColor(black);
         sql(resources.getString(R.string.slat));
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    String ID = "";
+    private String ID = "";
     private void sql(String table) {
         if(SQLSharing.mycursor!=null)
             SQLSharing.mycursor.close();
@@ -142,12 +147,16 @@ public class MainActivity extends AppCompatActivity {
         if(once2){
             once2 = false;
             full = findViewById(R.id.full);
+            view = findViewById(R.id.view);
+            view2 = findViewById(R.id.view2);
             forcefull = resources.getDrawable(R.drawable.forcefull);
             darkbuttons = resources.getDrawable(R.drawable.darkbuttons2);
             darkbuttons2 = resources.getDrawable(R.drawable.darkbuttons2);
             darkbuttons3 = resources.getDrawable(R.drawable.darkbuttons2);
             white = resources.getColor(R.color.white);
         }
+        view.setVisibility(View.VISIBLE);
+        view2.setVisibility(View.GONE);
         full.setBackground(forcefull);
         kiblajoin.setBackground(darkbuttons);
         slatjoin.setBackground(darkbuttons2);
@@ -171,8 +180,23 @@ public class MainActivity extends AppCompatActivity {
             english();
     }
 
+    private ImageView nightmodebutton, languagebutton;
     private void variables() {
-        cddd=new SlatCustomDialogClass(this, true);
+
+        nightmodebutton = findViewById(R.id.nightmodebutton);
+        languagebutton = findViewById(R.id.languagebutton);
+        try {
+            Glide.with(this).load(R.drawable.blacknightmode).into(nightmodebutton);
+        } catch (Exception ignored) {
+            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.blacknightmode));
+        }
+        try {
+            Glide.with(this).load(R.drawable.blacklanguage).into(languagebutton);
+        } catch (Exception ignored) {
+            languagebutton.setImageDrawable(resources.getDrawable(R.drawable.blacklanguage));
+        }
+
+        cddd=new SlatCustomDialogClass(this, true, language);
         maintitle = findViewById(R.id.maintitle);
         slatjoin = findViewById(R.id.slatjoin);
         kiblajoin = findViewById(R.id.kiblajoin);
@@ -189,19 +213,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void set_fonts() {
-        arabic_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
-        english_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
-        if(language.equals("en")) {
-            maintitle.setTypeface(english_font);
-            slatjoin.setTypeface(english_font);
-            kiblajoin.setTypeface(english_font);
-            forcejoin.setTypeface(english_font);
-        } else if(language.equals("ar")) {
-            maintitle.setTypeface(arabic_font);
-            slatjoin.setTypeface(arabic_font);
-            kiblajoin.setTypeface(arabic_font);
-            forcejoin.setTypeface(arabic_font);
-        }
+        font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
+
+        maintitle.setTypeface(font);
+        slatjoin.setTypeface(font);
+        kiblajoin.setTypeface(font);
+        forcejoin.setTypeface(font);
     }
 
     private void load_strings() {
@@ -222,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    boolean darkmode = true;
+    private boolean darkmode = true;
     private void sql_work() {
 
 
@@ -327,13 +344,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void print(Object lol) {
-        Toast.makeText(getApplicationContext(), String.valueOf(lol), Toast.LENGTH_SHORT).show();
-    }
-
-
     public void changeLanguageClicked(View view) {
-        LanguageChange languageChange = new LanguageChange(this);
+        LanguageChange languageChange = new LanguageChange(this, darkmode, language);
         languageChange.show();
     }
 

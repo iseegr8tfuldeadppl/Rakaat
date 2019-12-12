@@ -13,30 +13,29 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.force;
 import com.krimzon.scuffedbots.raka3at.slat;
 
 public class DetectorOrNot extends Dialog {
 
-    protected Activity c;
-    boolean at_home = false;
-    boolean friday;
-    String prayed;
-    String todaycomparable;
-    int prayerer;
-    LinearLayout selectionbackground;
-    TextView selectiontitle;
-    Button selectionmosque, selectionhome;
-    Typeface arabic_typeface;
-    boolean darkmode;
-    String language;
+    private Activity c;
+    private boolean at_home;
+    private boolean friday;
+    private String prayed;
+    private String verified;
+    private String todaycomparable;
+    private int prayerer;
+    private LinearLayout selectionbackground;
+    private TextView selectiontitle;
+    private Button selectionmosque, selectionhome;
+    private Typeface arabic_typeface;
+    private boolean darkmode;
+    private String language;
+    private String athome;
 
-    public DetectorOrNot(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, boolean at_home) {
+    public DetectorOrNot(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, boolean at_home, String verified, String athome) {
         super(a);
         this.c = a;
         this.friday = friday;
@@ -46,6 +45,8 @@ public class DetectorOrNot extends Dialog {
         this.darkmode = darkmode;
         this.language = language;
         this.at_home = at_home;
+        this.verified = verified;
+        this.athome = athome;
     }
 
     @Override
@@ -104,17 +105,27 @@ public class DetectorOrNot extends Dialog {
 
 
     protected String temper = "00000";
-    protected StringBuilder strinkbilder;
+    protected StringBuilder strinkbilder, athome_stringbuilder;
+    String new_athome;
     private void set_prayer_without_using_detector() {
-        sql("force2");
+
+        // set if at home or not
+        if(at_home){
+            athome_stringbuilder = new StringBuilder(athome);
+            athome_stringbuilder.setCharAt(prayerer, '1');
+            new_athome = String.valueOf(athome_stringbuilder);
+            athome = new_athome;
+        }
+
+        sql("force3");
         strinkbilder = new StringBuilder(prayed);
         strinkbilder.setCharAt(prayerer, '1');
         temper = String.valueOf(strinkbilder);
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable,temper);
+            SQLSharing.mydb.updatePrayed(todaycomparable,temper, verified, athome);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, temper);
+            SQLSharing.mydb.insertPrayed(todaycomparable, temper, verified, athome);
     }
 
     protected boolean found_prayed_history_in_sql = false;
@@ -157,8 +168,10 @@ public class DetectorOrNot extends Dialog {
         slatIntent.putExtra("prayer", String.valueOf(prayer));
         slatIntent.putExtra("todaycomparable", todaycomparable);
         slatIntent.putExtra("prayed", prayed);
+        slatIntent.putExtra("verified", verified);
         slatIntent.putExtra("friday", String.valueOf(friday));
         slatIntent.putExtra("at_home", String.valueOf(at_home));
+        slatIntent.putExtra("athome", String.valueOf(athome));
         c.startActivity(slatIntent);
         c.finish();
     }

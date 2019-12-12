@@ -12,4 +12,8 @@
         <item name="android:background">@drawable/diagonal_line</item>
     </style>
 
+    <style name="diagonalStyleForLightMode">
+        <item name="android:background">@drawable/diagonal_line_light_mode</item>
+    </style>
+
 </resources>

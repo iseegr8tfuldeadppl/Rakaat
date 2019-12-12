@@ -9,14 +9,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.force;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -26,10 +26,14 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
 
     private Activity c;
+    private boolean darkmode;
+    private String language;
 
-    public Statistictictictictic(Activity a) {
+    public Statistictictictictic(Activity a, boolean darkmode, String language) {
         super(a);
         this.c = a;
+        this.darkmode = darkmode;
+        this.language = language;
     }
 
 
@@ -44,12 +48,20 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     }
 
 
-    Button dismiss;
+    private Button dismiss;
+    private ImageView statslogo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.statistictictictictic);
+
+        statslogo = findViewById(R.id.statslogo);
+        try {
+            Glide.with(getContext()).load(R.drawable.stats).into(statslogo);
+        } catch (Exception ignored) {
+            statslogo.setImageDrawable(getContext().getResources().getDrawable(R.drawable.stats));
+        }
 
         display_of_prayed_prayers_of_all_time = findViewById(R.id.prayed_prayers_of_all_time);
         title_prayed_prayers_of_all_time = findViewById(R.id.title_prayed_prayers_of_all_time);
@@ -93,7 +105,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
         display_prayed_prayers_today.setTypeface(arabic_typeface);
         dismiss.setTypeface(arabic_typeface);
 
-        if(!force.darkmode) {
+        if(!darkmode) {
             LinearLayout full = findViewById(R.id.fulle);
             Drawable simpelbackground = c.getResources().getDrawable(R.drawable.simpelbackground);
             Drawable buttons = c.getResources().getDrawable(R.drawable.buttons);
@@ -116,12 +128,12 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
         }
 
 
-        sql("force2");
+        sql("force3");
         count_prayed_prayers_today();
         display_prayed_prayers_today.setText(String.valueOf(prayed_prayers));
         prayed_prayers = 0;
 
-        sql("force2");
+        sql("force3");
         count_prayed_prayers_of_all_time();
         display_of_prayed_prayers_of_all_time.setText(String.valueOf(prayed_prayers));
         prayed_prayers = 0;
@@ -146,7 +158,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     }
 
     private void languageshet() {
-        if(force.language.equals("en")){
+        if(language.equals("en")){
             title_prayed_prayers_today.setText(getContext().getString(R.string.today));
             title_prayed_prayers_past_year.setText(getContext().getString(R.string.pastyear));
             title_prayed_prayers_past_six_months.setText(getContext().getString(R.string.past6months));
@@ -182,7 +194,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     private void count_prayed_prayers(int days) {
 
 
-        sql("force2");
+        sql("force3");
         if(SQLSharing.mycursor.getCount()>0){
             // we do one day on its own since it's today and can't be looped like others look below
             gc = new GregorianCalendar();
@@ -271,13 +283,9 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.dismiss:
-                break;
-            default:
-                break;
+        if (v.getId() == R.id.dismiss) {
+            dismiss();
         }
-        dismiss();
     }
 
 

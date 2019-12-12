@@ -1,7 +1,7 @@
 <resources>
 
     <!-- English -->
-    <string name="app_name">Raka\'at | عدد الركعات</string>
+    <string name="app_name">Raka\'at | ركعات</string>
     <string name="kibla">Kibla</string>
     <string name="prayer">Prayer</string>
     <string name="privacy" translatable="false">● PRIVACY POLICY ●</string>
@@ -56,9 +56,9 @@
     <string name="rakaat">Raka\'at</string>
 
     <!-- Arabic -->
-    <string name="app_name_arabe">Raka\'at | عدد الركعات</string>
-    <string name="app_name2_arabe">Raka\'at\nعدد الركعات</string>
-    <string name="app_name2">Raka\'at\nعدد الركعات</string>
+    <string name="app_name_arabe">Raka\'at | ركعات</string>
+    <string name="app_name2_arabe">Raka\'at | ركعات</string>
+    <string name="app_name2">Raka\'at | ركعات</string>
     <string name="yesoyes_arabe">(بعيدا عن الحواسيب و أي حقل مغناطيسي قوي)</string>
     <string name="ff_arabe">(لا يُنْصح الإستِخْدام في اللأماكِن شديدة الظُلْمة)</string>
     <string name="pressbackagainenglish_arabe">إضغط مرّة أُخرى للخروج</string>
@@ -218,7 +218,7 @@
     <string name="en">en</string>
     <string name="slat">slat</string>
     <string name="justforce">force</string>
-    <string name="justforce2">force2</string>
+    <string name="justforce2">force3</string>
     <string name="waytooearly">It\'s way too early to pray </string>
     <string name="waytooearly_arabe"> مُبكّر جدا لصلاة </string>
     <string name="didyoupray">did you pray </string>
@@ -254,5 +254,7 @@
     <string name="needdetector">Do you want to use the detector or did you already pray?</string>
     <string name="detectoryes">I want detector</string>
     <string name="detectorno">Already prayed</string>
+    <string name="arabe">العربية</string>
+    <string name="english">English</string>
 
 </resources>

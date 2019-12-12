@@ -39,7 +39,6 @@
             android:layout_width="250dp"
             android:layout_height="229dp"
             android:layout_marginBottom="50dp"
-            app:srcCompat="@drawable/compass2"
             android:contentDescription="@string/todo" />
 
         <Button
@@ -65,6 +64,7 @@
         android:id="@+id/backarrowbackground"
         android:layout_height="wrap_content">
         <ImageView
+            android:id="@+id/arrowback"
             android:layout_marginStart="13dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
@@ -73,7 +73,6 @@
             android:layout_marginTop="13dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/arrowleftdark"
             android:onClick="arrowbackClicked"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="13dp" />
@@ -89,6 +88,7 @@
         android:background="@drawable/statsback"
         android:layout_height="wrap_content">
         <ImageView
+            android:id="@+id/nightmodebutton"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="13dp"
@@ -97,7 +97,6 @@
             android:layout_marginTop="13dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/nightmodedark"
             android:onClick="nightmodeClicked"
             android:layout_marginRight="13dp"
             android:layout_marginLeft="16dp"

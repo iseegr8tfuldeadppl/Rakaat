@@ -8,9 +8,17 @@
     tools:context=".MainActivity">
 
     <View
+        android:visibility="visible"
+        android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/diagonalStyle"/>
+    <View
+        android:visibility="gone"
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/diagonalStyleForLightMode"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -111,13 +119,13 @@
                 android:layout_gravity="center"
                 android:background="@drawable/yellaw">
                 <ImageView
+                    android:id="@+id/nightmodebutton"
                     android:padding="15dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_width="60dp"
                     android:onClick="nightmodeClicked"
                     android:layout_height="60dp"
-                    android:src="@drawable/blacknightmode"
                     android:contentDescription="@string/todo" />
             </RelativeLayout>
         </RelativeLayout>
@@ -154,13 +162,13 @@
                 android:layout_gravity="center"
                 android:background="@drawable/yellaw">
                 <ImageView
+                    android:id="@+id/languagebutton"
                     android:onClick="changeLanguageClicked"
                     android:padding="15dp"
                     android:layout_width="60dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_height="60dp"
-                    android:src="@drawable/blacklanguage"
                     android:contentDescription="@string/todo" />
             </RelativeLayout>
         </RelativeLayout>

@@ -24,10 +24,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <ImageView
+            android:id="@+id/statslogo"
             android:layout_weight=".3"
             android:layout_width="69dp"
-            android:layout_height="69dp"
-            android:src="@drawable/stats"/>
+            android:layout_height="69dp"/>
     </LinearLayout>
 
 

@@ -1,6 +1,5 @@
 package com.krimzon.scuffedbots.raka3at;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -28,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -49,16 +49,26 @@ import static android.view.animation.AnimationUtils.*;
 public class slat extends AppCompatActivity implements SensorEventListener, slat_settings.BottomSheetListener {
 //https://www.youtube.com/watch?v=dfTeS41BbbI
 
-    @SuppressLint("StaticFieldLeak")
-    public static TextView raka3at;
-    @SuppressLint("StaticFieldLeak")
-    public static TextView sajda;
+    // settingable
+    private int delay_between_sajadat = 800; // default 600
+    private int sajda_length_of_time = 850;
+    private int delay_between_raka3at = 7500; // default 5000
+    private int delay_during_tahia = 10000; // default 10000
+    private int minimum_light = 5; // default
+    private double sajda_darkness_percentage = 0.50; // default: percentage of light to accept it as a sajda
+    private double percentage_of_light_to_count_as_a_c_bon_rak3a = 0.65; // default
+    public static int scheme = 3; // 0:darkest 1:dark 2:white
+    public static int scheme_light_mode = 0; // 0:darkest 1:dark 2:white
+    public static int delaybeforecounting = 5;
+
+    private TextView raka3at;
+    private TextView sajda;
 
     private ImageView soundsbutton;
     private boolean sounds = true;
     private boolean started = false;
     private boolean start_was_just_clicked = false;
-    protected int soundstempint = 1;
+    private int soundstempint = 1;
     private String beep = "bloop.mp3";
     private boolean tahia_fading_started = false;
     private boolean not_clicked = true;
@@ -83,17 +93,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private Button one, two, three, four;
     private int limit = 4; // default
     private LinearLayout coverer;
-    protected double sajda_darkness_percentage = 0.50; // default: percentage of light to accept it as a sajda
-    protected double percentage_of_light_to_count_as_a_c_bon_rak3a = 0.65; // default
+
     private long futuretime = 0;
     private SimpleExoPlayer simpleExoPlayer;
-    protected int sajda_length_of_time = 850; // default : ask user for twice this time damn takes twice to be done problem here is it takes longer than the actual default cuz of it depending on sensor to be reached?
     private long futuretime2 = 0;
-    protected int delay_between_sajadat = 600; // default 600
     private boolean between_sajadat_delay_started = false;
     private long futuretime3 = 0;
-    protected int delay_between_raka3at = 5000; // default 5000
-    protected int minimum_light = 6; // default 6
+
     private boolean doitposse = true;
     private boolean between_raka3at_delay_started = false;
     private long animation_tracker_of_initial_five_seconds;
@@ -102,18 +108,16 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private Button donebutton;
     private TextView donetitle;
     private ImageView nightmode;
-    public static boolean it_is_nightmode_since_lightmode_shines_and_ruins_measurement = true;
+    private boolean it_is_nightmode_since_lightmode_shines_and_ruins_measurement = true;
     private LinearLayout countdownbackground;
     private NoPaddingTextView countdown;
     private int visibleSystemUiVisibility;
-    protected String ID;
-    public static int scheme = 3; // 0:darkest 1:dark 2:white
-    public static int scheme_light_mode = 0; // 0:darkest 1:dark 2:white
-    protected Resources resources;
+    private String ID;
+    private Resources resources;
     private int darkbackgroundcolor;
-    public static int white;
-    public static int dark;
-    public static int darkest;
+    private int white;
+    private int dark;
+    private int darkest;
     private Drawable darkbuttons;
     private int black;
     private Drawable darkbuttons2;
@@ -121,20 +125,17 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private Drawable buttons4, buttons5, buttons6, buttons7;
     private Drawable buttons;
     private Drawable buttons2;
-    public static Drawable simpelbackground;
-    public static Drawable darksimpelbackground;
+    private Drawable simpelbackground;
+    private Drawable darksimpelbackground;
     private int dimm;
     private int dimmer;
     private int dimmest;
-    public static Typeface arabic_font;
-    public static Typeface english_font;
-    protected String is_it_dark_mode_in_sql;
-    protected slat_settings bottomsheet;
+    private Typeface font;
+    private String is_it_dark_mode_in_sql;
+    private slat_settings bottomsheet;
     private int typicallightbuttoncolors;
     private boolean blackout = false;
-    public static int delaybeforecounting = 5;
     private boolean five_secs = true, four_secs = true, three_secs = true, two_secs = true;
-    private Drawable soundson, soundsoff;
     private LinearLayout blackoutbuttonbackground, nightmodebuttonbackground, soundsbuttonbackground, settingsbuttonbackground;
     private Animation slide_in_from_right;
     private Animation slide_out_from_right;
@@ -146,12 +147,12 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private Animation slide_out_from_right4;
 
     private String rakaat, tahiah, sajadat, starth;
-    private String back, done, back2;
+    private String done, back2;
     private String oneh, twoh, threeh, fourh, stop;
 
     private String start_arabe, stop_arabe;
 
-    public static String language = "ar";
+    private String language = "ar";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,11 +177,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         check_if_sent_from_force();
     }
 
-    protected String receiveandy = "";
-    protected String todaycomparable = "";
-    protected int prayer = 0;
-    protected String prayed = "00000";
-    protected Intent sender;
+    private String receiveandy = "";
+    private String todaycomparable = "";
+    private int prayer = 0;
+    private String prayed = "00000";
+    private String verified = "00000";
+    private String athome = "00000";
+    private Intent sender;
     private void check_if_sent_from_force() {
         receiveandy = getIntent().getStringExtra("sender");
         if(receiveandy!=null) {
@@ -189,8 +192,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 prayer = Integer.valueOf(sender.getStringExtra("prayer"));
                 todaycomparable = sender.getStringExtra("todaycomparable");
                 prayed = sender.getStringExtra("prayed");
+                verified = sender.getStringExtra("verified");
                 friday = sender.getStringExtra("friday");
                 at_home = sender.getStringExtra("at_home");
+                athome = sender.getStringExtra("athome");
                 hideNavigationBar();
                 forceAndy();
             }
@@ -198,8 +203,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    protected String friday = "";
-    protected String at_home = "";
+    private String friday = "";
+    private String at_home = "";
     private void forceAndy() {
         click_on_start();
     }
@@ -280,8 +285,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             sounds = true;
         else if(soundstempint==0)
             sounds = false;
-        if(!sounds)
-            soundsbutton.setImageDrawable(soundsoff);
+        if(!sounds) {
+            try {
+                Glide.with(this).load(R.drawable.soundsoff).into(soundsbutton);
+            } catch (Exception ignored) {
+                soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+            }
+        }
 
         if(is_it_dark_mode_in_sql.equals("no"))
             light_mode();
@@ -322,20 +332,17 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         buttons7 = resources.getDrawable(R.drawable.buttons);
         buttons = resources.getDrawable(R.drawable.buttons);
         buttons2 = resources.getDrawable(R.drawable.buttons);
-        soundsoff = resources.getDrawable(R.drawable.soundsoff);
-        soundson = resources.getDrawable(R.drawable.soundson);
         simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
         darksimpelbackground = resources.getDrawable(R.drawable.forcefull);
         dimm = resources.getColor(R.color.dimm);
         dimmer = resources.getColor(R.color.dimmer);
         dimmest = resources.getColor(R.color.dimmest);
 
-        soundson = resources.getDrawable(R.drawable.soundson);
     }
 
 
-    RelativeLayout backarrowbackground;
-    RelativeLayout howtousebackground;
+    private RelativeLayout backarrowbackground;
+    private RelativeLayout howtousebackground;
     private void initialize_all_variables() {
         blackoutbuttonbackground = findViewById(R.id.blackoutbuttonbackground);
         backarrowbackground = findViewById(R.id.backarrowbackground);
@@ -366,22 +373,20 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         slattitle = findViewById(R.id.slattitle);
         start = findViewById(R.id.start);
 
-        arabic_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
-        english_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
+        font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
 
-        if(language.equals("ar")) {
-            slattitle.setTypeface(arabic_font);
-            start.setTypeface(arabic_font);
-            sajda_pre.setTypeface(arabic_font);
-        } else if(language.equals("en")) {
-            one.setTypeface(english_font);
-            two.setTypeface(english_font);
-            three.setTypeface(english_font);
-            four.setTypeface(english_font);
-            slattitle.setTypeface(english_font);
-            start.setTypeface(english_font);
-            sajda_pre.setTypeface(english_font);
-        }
+        slattitle.setTypeface(font);
+        start.setTypeface(font);
+        sajda_pre.setTypeface(font);
+        one.setTypeface(font);
+        two.setTypeface(font);
+        three.setTypeface(font);
+        four.setTypeface(font);
+        slattitle.setTypeface(font);
+        start.setTypeface(font);
+        sajda_pre.setTypeface(font);
+        donetitle.setTypeface(font);
+        donebutton.setTypeface(font);
 
         //https://www.youtube.com/watch?v=ZL6s8TyHNOc
         //https://www.youtube.com/watch?v=ZL6s8TyHNOc
@@ -443,7 +448,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    boolean entered_praying_process = false;
+    private boolean entered_praying_process = false;
     private void show_raka3at_selections(){
         entered_praying_process = true;
         if(receiveandy!=null) {
@@ -588,34 +593,43 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             showNavigationBar();
     }
 
+
+    private int sensor_slowdown_for_battery_save = 50; // 50 millisecond delay between checks
+    private long futuretime4 = 0;
+    private long currenttimetemp = 0;
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-            /*TextView lmao = findViewById(R.id.lmao);
-            lmao.setText(String.valueOf(event.values[0]));*/
+            // this quick check below is to limit sensor calculation to only once every 50ms
+            // TODO: perform reallife tests on this check pls
+            currenttimetemp = System.currentTimeMillis();
+            if(currenttimetemp >= futuretime4) {
+                futuretime4 = currenttimetemp + sensor_slowdown_for_battery_save;
 
-            if (start_was_just_clicked) { start_was_just_clicked = false;
-                if (event.values[0] < minimum_light) {
-                    if(receiveandy!=null) {
-                        if (receiveandy.equals("force"))
-                            back_to_force("yes");
+                if (start_was_just_clicked) {
+                    start_was_just_clicked = false;
+                    if (event.values[0] < minimum_light) {
+                        if (receiveandy != null) {
+                            if (receiveandy.equals("force"))
+                                back_to_force("yes");
+                        }
+                        if (language.equals("en"))
+                            Snackbar.make(full, getString(R.string.low_light), BaseTransientBottomBar.LENGTH_LONG).show();
+                        else
+                            Snackbar.make(full, getString(R.string.low_light_arabe), BaseTransientBottomBar.LENGTH_LONG).show();
+                    } else {
+                        started = true;
+                        hideNavigationBar();
+                        show_raka3at_selections();
+                        if (startclicked) work2(event);
                     }
-                    if(language.equals("en"))
-                        Snackbar.make(full, getString(R.string.low_light), BaseTransientBottomBar.LENGTH_LONG).show();
-                    else
-                        Snackbar.make(full, getString(R.string.low_light_arabe), BaseTransientBottomBar.LENGTH_LONG).show();
-                } else {
-                    started = true;
-                    hideNavigationBar();
-                    show_raka3at_selections();
-                    if (startclicked) work2(event);
                 }
+
+                if (started)
+                    if (startclicked) work2(event);
+
             }
-
-            if(started)
-                if (startclicked) work2(event);
-
         }
     }
 
@@ -625,7 +639,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void click_on_start() {
         if(receiveandy!=null) {
-            if (!receiveandy.equals("force2")) {
+            if (!receiveandy.equals("force3")) {
                 if (!startclicked)
                     start_was_just_clicked = true;
                 else
@@ -728,6 +742,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if (!(num_of_raka3at == 0 && num_of_sajadat == 0)) {
             if (num_of_sajadat == 1 && between_sajadat_delay_started) {
                 if (System.currentTimeMillis() >= delay_between_sajadat + futuretime2)
+                    doitposse = true;
+            } else if (num_of_sajadat == 0 && num_of_raka3at == 2 && between_raka3at_delay_started) {
+                if (System.currentTimeMillis() >= delay_during_tahia + futuretime3)
                     doitposse = true;
             } else if (num_of_sajadat == 0 && num_of_raka3at >= 1 && between_raka3at_delay_started) {
                 if (System.currentTimeMillis() >= delay_between_raka3at + futuretime3)
@@ -945,25 +962,43 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    protected String temper = "00000";
-    protected StringBuilder strinkbilder;
+    private String temper = "00000";
+    private String new_verified = "00000";
+    private String new_athome = "00000";
+    private StringBuilder strinkbilder;
+    private StringBuilder verified_stringbuilder;
+    private StringBuilder athome_stringbuilder;
     private void show_tam_page(){
         blackground.setVisibility(GONE);
         donecover.setVisibility(VISIBLE);
 
-        sql("force2");
+        sql("force3");
+
         strinkbilder = new StringBuilder(prayed);
         strinkbilder.setCharAt(prayer, '1');
         temper = String.valueOf(strinkbilder);
+
+        verified_stringbuilder = new StringBuilder(verified);
+        verified_stringbuilder.setCharAt(prayer, '1');
+        new_verified = String.valueOf(verified_stringbuilder);
+
+        // set if at home or not
+        if(at_home.equals("true")){
+            athome_stringbuilder = new StringBuilder(athome);
+            athome_stringbuilder.setCharAt(prayer, '1');
+            new_athome = String.valueOf(athome_stringbuilder);
+            athome = new_athome;
+        }
+
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable,temper);
+            SQLSharing.mydb.updatePrayed(todaycomparable,temper, new_verified, athome);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, temper);
+            SQLSharing.mydb.insertPrayed(todaycomparable, temper, new_verified, athome);
 
     }
 
-    protected boolean found_prayed_history_in_sql = false;
+    private boolean found_prayed_history_in_sql = false;
     private void check_if_prayed_exists_in_sql() {
         if(SQLSharing.mycursor.getCount()<=0)
             found_prayed_history_in_sql = false;
@@ -1006,7 +1041,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     public void howtouseClicked(View view) {
-        SlatCustomDialogClass cdddd=new SlatCustomDialogClass(this, false);
+        SlatCustomDialogClass cdddd=new SlatCustomDialogClass(this, false, language);
         cdddd.show();
     }
 
@@ -1027,8 +1062,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    boolean onlyonce2 = true;
-    Drawable lightbackback, lightstatsback;
+    private boolean onlyonce2 = true;
+    private Drawable lightbackback, lightstatsback;
     private void light_mode(){
         update_dimmness();
 
@@ -1106,9 +1141,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    boolean onlyonce = true;
-    Drawable statsback;
-    Drawable backback;
+    private boolean onlyonce = true;
+    private Drawable statsback;
+    private Drawable backback;
     private void dark_mode(){
         update_darkness();
 
@@ -1320,11 +1355,19 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     public void soundsClicked(View view) {
         if(sounds){
-            soundsbutton.setImageDrawable(soundsoff);
+            try {
+                Glide.with(this).load(R.drawable.soundsoff).into(soundsbutton);
+            } catch (Exception ignored) {
+                soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+            }
             sounds = false;
             SQLSharing.mydb.updateData("0", "6");
         } else {
-            soundsbutton.setImageDrawable(soundson);
+            try {
+                Glide.with(this).load(R.drawable.soundson).into(soundsbutton);
+            } catch (Exception ignored) {
+                soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundson));
+            }
             sounds = true;
             SQLSharing.mydb.updateData("1", "6");
         }

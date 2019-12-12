@@ -1,15 +1,14 @@
 package com.krimzon.scuffedbots.raka3at.dialogs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,65 +21,59 @@ import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.slat;
-import static com.krimzon.scuffedbots.raka3at.slat.dark;
-import static com.krimzon.scuffedbots.raka3at.slat.darkest;
-import static com.krimzon.scuffedbots.raka3at.slat.darksimpelbackground;
 import static com.krimzon.scuffedbots.raka3at.slat.delaybeforecounting;
-import static com.krimzon.scuffedbots.raka3at.slat.it_is_nightmode_since_lightmode_shines_and_ruins_measurement;
-import static com.krimzon.scuffedbots.raka3at.slat.language;
-import static com.krimzon.scuffedbots.raka3at.slat.raka3at;
-import static com.krimzon.scuffedbots.raka3at.slat.sajda;
 import static com.krimzon.scuffedbots.raka3at.slat.scheme;
 import static com.krimzon.scuffedbots.raka3at.slat.scheme_light_mode;
-import static com.krimzon.scuffedbots.raka3at.slat.simpelbackground;
-import static com.krimzon.scuffedbots.raka3at.slat.white;
 
 public class slat_settings extends BottomSheetDialogFragment {
 
-    protected BottomSheetListener mListener;
-    protected SeekBar brightness;
-    protected Button arrow;
-    protected TextView brightnesstitle;
-    protected LinearLayout settings;
-    protected Drawable darkarrowbutton;
-    protected Drawable arrowbutton;
-    protected Resources resources;
-    protected Drawable darkest_thumb;
-    protected Drawable dark_thumb;
-    protected Drawable thumb;
-    protected Drawable volume_control;
-    protected Drawable dark_volume_control;
-    protected Drawable darkest_volume_control;
-    protected Drawable dimm_thumb;
-    protected Drawable dimmer_thumb;
-    protected Drawable dimmest_thumb;
-    protected Drawable dimm_volume_control;
-    protected Drawable dimmer_volume_control;
-    protected Drawable dimmest_volume_control;
-    protected int dimm;
-    protected int dimmer;
-    protected int dimmest;
-    protected View v;
-    protected String SCHEME_ID;
-    protected String SCHEME_LIGHT_MODE_ID;
-    protected Button five, three, zero;
-    protected Drawable darkzerodelayunselected, darkzerodelayselected, darkthreedelayunselected, darkthreedelayselected, darkfivedelayunselected, darkfivedelayselected;
-    protected Drawable zerodelayunselected, zerodelayselected, threedelayunselected, threedelayselected, fivedelayunselected, fivedelayselected;
-    protected TextView delaytitle;
+    private BottomSheetListener mListener;
+    private SeekBar brightness;
+    private Button arrow;
+    private TextView brightnesstitle;
+    private LinearLayout settings;
+    private Drawable darkarrowbutton;
+    private Drawable arrowbutton;
+    private Resources resources;
+    private Drawable darkest_thumb;
+    private Drawable dark_thumb;
+    private Drawable thumb;
+    private Drawable volume_control;
+    private Drawable dark_volume_control;
+    private Drawable darkest_volume_control;
+    private Drawable dimm_thumb;
+    private Drawable dimmer_thumb;
+    private Drawable dimmest_thumb;
+    private Drawable dimm_volume_control;
+    private Drawable dimmer_volume_control;
+    private Drawable dimmest_volume_control;
+    private int dimm;
+    private int dimmer;
+    private int dimmest;
+    private View v;
+    private String SCHEME_ID;
+    private String SCHEME_LIGHT_MODE_ID;
+    private Button five, three, zero;
+    private Drawable darkzerodelayunselected, darkzerodelayselected, darkthreedelayunselected, darkthreedelayselected, darkfivedelayunselected, darkfivedelayselected;
+    private Drawable zerodelayunselected, zerodelayselected, threedelayunselected, threedelayselected, fivedelayunselected, fivedelayselected;
+    private TextView delaytitle;
 
-    protected String delaybeforecounting_arabe;
-    protected String save_arabe;
-    protected String zeroseconds_arabe;
-    protected String threeseconds_arabe;
-    protected String fiveseconds_arabe;
-    protected String setting1_arabe;
+    private String delaybeforecounting_arabe;
+    private String save_arabe;
+    private String zeroseconds_arabe;
+    private String threeseconds_arabe;
+    private String fiveseconds_arabe;
+    private String setting1_arabe;
 
-    protected String delaybeforecountingg;
-    protected String save;
-    protected String zeroseconds;
-    protected String threeseconds;
-    protected String fiveseconds;
-    protected String setting1;
+    private String delaybeforecountingg;
+    private String save;
+    private String zeroseconds;
+    private String threeseconds;
+    private String fiveseconds;
+    private String setting1;
+    private String language = "ar";
+
+    private boolean it_is_nightmode_since_lightmode_shines_and_ruins_measurement = false;
 
     @Nullable
     @Override
@@ -129,19 +122,19 @@ public class slat_settings extends BottomSheetDialogFragment {
 
     private void work_on_language() {
         load_strings();
-        if(slat.language.equals("en"))
+        if(language.equals("en"))
             english();
     }
 
     private void load_strings(){
-        if(slat.language.equals("ar")) {
+        if(language.equals("ar")) {
             delaybeforecounting_arabe = getString(R.string.delaybeforecounting_arabe);
             save_arabe = getString(R.string.save_arabe);
             zeroseconds_arabe = getString(R.string.zeroseconds_arabe);
             threeseconds_arabe = getString(R.string.threeseconds_arabe);
             fiveseconds_arabe = getString(R.string.fiveseconds_arabe);
             setting1_arabe = getString(R.string.setting1_arabe);
-        } else if(slat.language.equals("en")){
+        } else if(language.equals("en")){
             delaybeforecountingg = getString(R.string.delaybeforecounting);
             save = getString(R.string.save);
             zeroseconds = getString(R.string.zeroseconds);
@@ -217,10 +210,15 @@ public class slat_settings extends BottomSheetDialogFragment {
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
+        it_is_nightmode_since_lightmode_shines_and_ruins_measurement = SQLSharing.mycursor.getString(1).equals("yes");
         SQLSharing.mycursor.moveToNext();
         SCHEME_ID = SQLSharing.mycursor.getString(0);
         SQLSharing.mycursor.moveToNext();
         SCHEME_LIGHT_MODE_ID = SQLSharing.mycursor.getString(0);
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        language = SQLSharing.mycursor.getString(1);
     }
 
     private void update_brightness(int progress) {
@@ -229,17 +227,17 @@ public class slat_settings extends BottomSheetDialogFragment {
                 brightness.setThumb(darkest_thumb);
                 brightness.setProgressDrawable(darkest_volume_control);
                 scheme = 0;
-                raka3at.setTextColor(darkest);
+                /*raka3at.setTextColor(darkest);
                 sajda.setTextColor(darkest);
-                brightnesstitle.setTextColor(darkest);
+                brightnesstitle.setTextColor(darkest);*/
                 SQLSharing.mydb.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
                 brightness.setThumb(dimmest_thumb);
                 brightness.setProgressDrawable(dimmest_volume_control);
                 scheme_light_mode = 0;
-                raka3at.setTextColor(dimmest);
+                /*raka3at.setTextColor(dimmest);
                 sajda.setTextColor(dimmest);
-                brightnesstitle.setTextColor(dimmest);
+                brightnesstitle.setTextColor(dimmest);*/
                 SQLSharing.mydb.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
             }
         } else if(progress<=69){
@@ -247,17 +245,17 @@ public class slat_settings extends BottomSheetDialogFragment {
                 brightness.setThumb(dark_thumb);
                 brightness.setProgressDrawable(dark_volume_control);
                 scheme = 1;
-                raka3at.setTextColor(dark);
+                /*raka3at.setTextColor(dark);
                 sajda.setTextColor(dark);
-                brightnesstitle.setTextColor(dark);
+                brightnesstitle.setTextColor(dark);*/
                 SQLSharing.mydb.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
                 brightness.setThumb(dimmer_thumb);
                 brightness.setProgressDrawable(dimmer_volume_control);
                 scheme_light_mode = 1;
-                raka3at.setTextColor(dimmer);
+                /*raka3at.setTextColor(dimmer);
                 sajda.setTextColor(dimmer);
-                brightnesstitle.setTextColor(dimmer);
+                brightnesstitle.setTextColor(dimmer);*/
                 SQLSharing.mydb.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
             }
         } else {
@@ -265,79 +263,75 @@ public class slat_settings extends BottomSheetDialogFragment {
                 brightness.setThumb(thumb);
                 brightness.setProgressDrawable(volume_control);
                 scheme = 2;
-                raka3at.setTextColor(white);
+                /*raka3at.setTextColor(white);
                 sajda.setTextColor(white);
-                brightnesstitle.setTextColor(white);
+                brightnesstitle.setTextColor(white);*/
                 SQLSharing.mydb.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
                 brightness.setThumb(dimm_thumb);
                 brightness.setProgressDrawable(dimm_volume_control);
                 scheme_light_mode = 2;
-                raka3at.setTextColor(dimm);
+                /*raka3at.setTextColor(dimm);
                 sajda.setTextColor(dimm);
-                brightnesstitle.setTextColor(dimm);
+                brightnesstitle.setTextColor(dimm);*/
                 SQLSharing.mydb.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
             }
         }
     }
 
     private void load_previous_light_mode_settings() {
-
-        settings.setBackground(simpelbackground);
-        delaytitle.setTextColor(dimmest);
-        arrow.setBackground(arrowbutton);
-        if (scheme_light_mode == 0) {
-            brightness.setProgress(10);
-            brightness.setThumb(dimmest_thumb);
-            brightness.setProgressDrawable(dimmest_volume_control);
-            raka3at.setTextColor(dimmest);
-            sajda.setTextColor(dimmest);
-            brightnesstitle.setTextColor(dimmest);
-        } else if (scheme_light_mode == 1) {
-            brightness.setProgress(50);
-            brightness.setThumb(dimmer_thumb);
-            brightness.setProgressDrawable(dimmer_volume_control);
-            raka3at.setTextColor(dimmer);
-            sajda.setTextColor(dimmer);
-            brightnesstitle.setTextColor(dimmer);
-        } else {
-            brightness.setProgress(80);
-            brightness.setThumb(dimm_thumb);
-            brightness.setProgressDrawable(dimm_volume_control);
-            raka3at.setTextColor(dimm);
-            sajda.setTextColor(dimm);
-            brightnesstitle.setTextColor(dimm);
+        if(getContext()!=null) {
+            Drawable simpelbackground = getContext().getResources().getDrawable(R.drawable.simpelbackground);
+            settings.setBackground(simpelbackground);
+            delaytitle.setTextColor(dimmest);
+            arrow.setBackground(arrowbutton);
+            if (scheme_light_mode == 0) {
+                brightness.setProgress(10);
+                brightness.setThumb(dimmest_thumb);
+                brightness.setProgressDrawable(dimmest_volume_control);
+                brightnesstitle.setTextColor(dimmest);
+            } else if (scheme_light_mode == 1) {
+                brightness.setProgress(50);
+                brightness.setThumb(dimmer_thumb);
+                brightness.setProgressDrawable(dimmer_volume_control);
+                brightnesstitle.setTextColor(dimmer);
+            } else {
+                brightness.setProgress(80);
+                brightness.setThumb(dimm_thumb);
+                brightness.setProgressDrawable(dimm_volume_control);
+                brightnesstitle.setTextColor(dimm);
+            }
         }
     }
 
     private void load_previous_dark_mode_settings() {
-        settings.setBackground(darksimpelbackground);
-        delaytitle.setTextColor(white);
-        arrow.setBackground(darkarrowbutton);
-        if (scheme == 0) {
-            brightness.setProgress(10);
-            brightness.setThumb(darkest_thumb);
-            brightness.setProgressDrawable(darkest_volume_control);
-            raka3at.setTextColor(darkest);
-            sajda.setTextColor(darkest);
-            brightnesstitle.setTextColor(darkest);
-        } else if (scheme == 1) {
-            brightness.setProgress(50);
-            brightness.setThumb(dark_thumb);
-            brightness.setProgressDrawable(dark_volume_control);
-            raka3at.setTextColor(dark);
-            sajda.setTextColor(dark);
-            brightnesstitle.setTextColor(dark);
-        } else {
-            brightness.setProgress(80);
-            brightness.setThumb(thumb);
-            brightness.setProgressDrawable(volume_control);
-            raka3at.setTextColor(white);
-            sajda.setTextColor(white);
-            brightnesstitle.setTextColor(white);
+        if(getContext()!=null) {
+            Drawable darksimpelbackground = getContext().getResources().getDrawable(R.drawable.darksimpelbackground);
+            settings.setBackground(darksimpelbackground);
+            delaytitle.setTextColor(white);
+            arrow.setBackground(darkarrowbutton);
+            if (scheme == 0) {
+                brightness.setProgress(10);
+                brightness.setThumb(darkest_thumb);
+                brightness.setProgressDrawable(darkest_volume_control);
+                brightnesstitle.setTextColor(darkest);
+            } else if (scheme == 1) {
+                brightness.setProgress(50);
+                brightness.setThumb(dark_thumb);
+                brightness.setProgressDrawable(dark_volume_control);
+                brightnesstitle.setTextColor(dark);
+            } else {
+                brightness.setProgress(80);
+                brightness.setThumb(thumb);
+                brightness.setProgressDrawable(volume_control);
+                brightnesstitle.setTextColor(white);
+            }
         }
     }
 
+    int white;
+    int dark;
+    int darkest;
     private void prepare_variables() {
         brightness = v.findViewById(R.id.brightness);
         five = v.findViewById(R.id.five);
@@ -370,6 +364,9 @@ public class slat_settings extends BottomSheetDialogFragment {
 
         settings = v.findViewById(R.id.settings);
         resources = getResources();
+        white = resources.getColor(R.color.white);
+        dark = resources.getColor(R.color.dark);
+        darkest = resources.getColor(R.color.darkest);
 
         darkzerodelayunselected = resources.getDrawable(R.drawable.darkzerodelayunselected);
         darkzerodelayselected = resources.getDrawable(R.drawable.darkzerodelayselected);
@@ -413,6 +410,9 @@ public class slat_settings extends BottomSheetDialogFragment {
             Toast.makeText(getContext(), getString(R.string.saved_arabe), Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(getContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
+
+        Intent restart = new Intent(getContext(), slat.class);
+        startActivity(restart);
     }
 
     public interface BottomSheetListener {
@@ -428,10 +428,6 @@ public class slat_settings extends BottomSheetDialogFragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement BottomSheetListener");
         }
-    }
-
-    protected void print(Object lol){
-        Toast.makeText(getContext(), String.valueOf(lol), Toast.LENGTH_SHORT).show();
     }
 
 }
