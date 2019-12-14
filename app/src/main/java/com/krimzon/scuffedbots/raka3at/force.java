@@ -1101,7 +1101,7 @@ public class force extends AppCompatActivity {
     }
 
 
-    private void pull_date_and_shape_it(double longitude, double latitudeDate, Date today) {
+    private void pull_date_and_shape_it(double longitude, double latitude, Date today) {
         coordinates = new Coordinates(latitude, longitude);
         date = DateComponents.from(today);
     }

@@ -22,6 +22,9 @@ import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
+import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
+
 import java.util.Locale;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -288,6 +291,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // adan service
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+        } else {
+            ProcessMainClass bck = new ProcessMainClass();
+            bck.launchService(getApplicationContext());
+        }
+
     }
 
 
@@ -356,4 +368,7 @@ public class MainActivity extends AppCompatActivity {
         else
             dark_mode();
     }
+
+
+
 }
