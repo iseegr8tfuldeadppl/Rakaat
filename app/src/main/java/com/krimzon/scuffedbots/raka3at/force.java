@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AlertDialog;
@@ -90,7 +89,6 @@ public class force extends AppCompatActivity {
     private TextView daterr;
     private String language = "";
     private String hijri = "";
-    private Animation zoom_in, zoom_out, zoom_in2, zoom_out2; // for next adan
     private Resources resources;
     private String pray;
     private String force;
@@ -192,6 +190,11 @@ public class force extends AppCompatActivity {
 
         //longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());
 
+
+
+    }
+
+    private void live_updates() {
         Runnable r=new Runnable() {
             @Override
             public void run() {
@@ -239,7 +242,7 @@ public class force extends AppCompatActivity {
 
                         temptime = String.valueOf(new Date()).split(" ")[3];
                         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
-                        if((prayers.get(next_adan) - rightnowcomparable ) / 60 < positifise){
+                        if(Math.floor((prayers.get(next_adan) - rightnowcomparable ) / 60) != positifise){
 
                             for(int i=0;i<prayers.size();i++){
                                 if(rightnowcomparable>prayers.get(i))
@@ -253,10 +256,19 @@ public class force extends AppCompatActivity {
                                 end_of_day = false;
 
                             if(temp_next_adan!=next_adan) { new_adan = true;
+
+                            slideholder.startAnimation(begone);
+                            begone.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                                slideholder.setVisibility(View.GONE);
+                            }});
+
+
                                 next_adan = temp_next_adan;
+                                find_slider();
+                                fade_slider_in();
                             }
 
-                            positifise = (prayers.get(next_adan) - rightnowcomparable ) / 60;
+                            positifise = (int) Math.floor((prayers.get(next_adan) - rightnowcomparable ) / 60);
 
                             handler3.sendEmptyMessage(0);
                         }
@@ -270,7 +282,6 @@ public class force extends AppCompatActivity {
         //anti lag
         Thread mythread = new Thread(r); //to thread the runnable object we launched
         mythread.start();
-
     }
 
 
@@ -332,8 +343,6 @@ public class force extends AppCompatActivity {
 
         daterr = findViewById(R.id.daterr);
         doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
-        slideholder = findViewById(R.id.slideholder);
-        slider = findViewById(R.id.slider);
         fajrtitle = findViewById(R.id.fajrtitle);
         citydisplay = findViewById(R.id.city);
         title = findViewById(R.id.title);
@@ -365,11 +374,7 @@ public class force extends AppCompatActivity {
         float next_adan_pop_out_large = resources.getDimension(R.dimen.next_adan_pop_out_large); ///TypedValue.COMPLEX_UNIT_PX
         float next_adan_pop_out_shrink = resources.getDimension(R.dimen.next_adan_pop_out_shrink); ///TypedValue.COMPLEX_UNIT_PX
         float next_adan_size = resources.getDimension(R.dimen.next_adan_size); ///TypedValue.COMPLEX_UNIT_PX
-        zoom_in = loadAnimation(this, R.anim.zoom_in);
         begone = loadAnimation(this, R.anim.begone);
-        zoom_out = loadAnimation(this, R.anim.zoom_out);
-        zoom_in2 = loadAnimation(this, R.anim.zoom_in);
-        zoom_out2 = loadAnimation(this, R.anim.zoom_out);
         /*doublearrowleft = resources.getDrawable(R.drawable.doublearrowleftt);
         doublearrowright = resources.getDrawable(R.drawable.doublearrowright);*/
 
@@ -501,10 +506,11 @@ public class force extends AppCompatActivity {
     }
 
 
+    Typeface arabic_typeface3;
     private void fontAndy() {
         Typeface arabic_typeface = Typeface.createFromAsset(getAssets(), "Tajawal-Light.ttf");
         Typeface arabic_typeface2 = Typeface.createFromAsset(getAssets(), "Tajawal-Regular.ttf");
-        Typeface arabic_typeface3 = Typeface.createFromAsset(getAssets(), "Tajawal-Bold.ttf");
+        arabic_typeface3 = Typeface.createFromAsset(getAssets(), "Tajawal-Bold.ttf");
 
         title.setTypeface(arabic_typeface);
         daterr.setTypeface(arabic_typeface);
@@ -514,8 +520,6 @@ public class force extends AppCompatActivity {
         prayasr.setTypeface(arabic_typeface);
         praymaghrib.setTypeface(arabic_typeface);
         prayisha.setTypeface(arabic_typeface);
-        slider.setTypeface(arabic_typeface);
-        slider.setTypeface(arabic_typeface3);
         /*datedisplay.setTypeface(arabic_typeface);*/
         citydisplay.setTypeface(arabic_typeface);
 
@@ -586,9 +590,9 @@ public class force extends AppCompatActivity {
     private void low_light_alert() {
         if(getIntent().getStringExtra("light_alert").equals("yes")) {
             if (language.equals(resources.getString(R.string.en)))
-                Snackbar.make(full, getString(R.string.low_light), BaseTransientBottomBar.LENGTH_LONG).show();
+                Snackbar.make(full, getString(R.string.low_light), Snackbar.LENGTH_LONG).show();
             else
-                Snackbar.make(full, getString(R.string.low_light_arabe), BaseTransientBottomBar.LENGTH_LONG).show();
+                Snackbar.make(full, getString(R.string.low_light_arabe), Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -1422,7 +1426,7 @@ public class force extends AppCompatActivity {
     }
 
     private void print2(Object s) {
-        Snackbar.make(full, String.valueOf(s), BaseTransientBottomBar.LENGTH_SHORT).show();
+        Snackbar.make(full, String.valueOf(s), Snackbar.LENGTH_SHORT).show();
     }
 
     private void print3(String s, String s2, final int prayer){
@@ -1562,7 +1566,6 @@ public class force extends AppCompatActivity {
         mosqueorhome.show();
     }
 
-
     private void check_if_prayed_or_verified_are_empty() {
         if(prayed == null)
             prayed = "00000";
@@ -1584,7 +1587,6 @@ public class force extends AppCompatActivity {
 
     }
 
-
     private void compare(int i) {
 
         // if fajr instantly allow
@@ -1603,8 +1605,6 @@ public class force extends AppCompatActivity {
 
         one_of_previous_is_zero = false;
     }
-
-
 
     private void retrieveAndy(){
 
@@ -1643,14 +1643,11 @@ public class force extends AppCompatActivity {
 
     }
 
-
-
     private void retrieveAndyVariableSetup() {
         praybuttons = new ArrayList<>();
         praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
         sql(resources.getString(R.string.justforce2));
     }
-
 
     private void color_pray_buttons() {
 
@@ -1765,8 +1762,6 @@ public class force extends AppCompatActivity {
 
     }
 
-
-
     private void what_is_soon_adan_and_one_before_it() {
         String temptime = String.valueOf(new Date()).split(" ")[3];
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
@@ -1792,6 +1787,7 @@ public class force extends AppCompatActivity {
                 previous_adan = next_adan - 1;*/
         }
 
+
         // apply vision onto all prayers only if changed
         for (int i = 0; i < prayerdisplayviews.size(); i += 1) {
                 prayerdisplayviews2.get(i).setTextSize(normal_text_size-difference_in_scale); // 16
@@ -1803,14 +1799,12 @@ public class force extends AppCompatActivity {
 
     }
 
-
     private void process_prayed_request(int compareandy) {
         pull_prayed_one_hot_encoding_from_sql();
 
         compare(compareandy); // check whether to accept allow request or not
         check_if_prayed_or_verified_are_empty();
     }
-
 
     private void clean_up() {
         if(SQLSharing.mycursor!=null && SQLSharing.mydb!=null) {
@@ -1820,7 +1814,6 @@ public class force extends AppCompatActivity {
         one_of_previous_is_zero = false;
         allow_pray = false;
     }
-
 
     private void pull_prayed_one_hot_encoding_from_sql() {
         sql(resources.getString(R.string.justforce2));
@@ -1838,7 +1831,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -1849,7 +1841,6 @@ public class force extends AppCompatActivity {
         }
     };
 
-
     /*Handler handler2 = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -1858,44 +1849,13 @@ public class force extends AppCompatActivity {
         }
     };*/
 
-
     private void animatenextadan() {
-        if(new_adan){ new_adan = false;
-            temp_next_adan_textview = prayerdisplayviews.get(next_adan);
-            temp_next_adan_textview2 = prayerdisplayviews2.get(next_adan);
-            temp_next_adan_textview2.setTextSize(normal_text_size); // 23
-            temp_next_adan_textview.setTextSize(normal_text_size);  // to prepare for animation
-            temp_next_adan_textview.startAnimation(zoom_in);
-            zoom_in.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                if(it_is_today){
-                    temp_next_adan_textview.setTextSize((float) (normal_text_size * 1.06));
-                    temp_next_adan_textview.setTextColor(Color.GREEN);
-                    temp_next_adan_textview.startAnimation(zoom_out);
-                }
-                zoom_out.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                    if(it_is_today)
-                        temp_next_adan_textview.setTextSize(normal_text_size);
-                }});
-            }});
-            temp_next_adan_textview2.startAnimation(zoom_in2);
-            zoom_in2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                if(it_is_today) {
-                    temp_next_adan_textview2.setTextSize((float) (normal_text_size * 1.06));
-                    temp_next_adan_textview2.setTextColor(Color.GREEN);
-                    temp_next_adan_textview2.startAnimation(zoom_out2);
-                }
-                zoom_out2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                    if(it_is_today) {
-                        temp_next_adan_textview2.setTextSize(normal_text_size);
-
-                        slide_in_dem_dpz();
-                    }
-                }});
-            }});
+        if(new_adan) { new_adan = false;
+            prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
+            prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
+            slide_in_dem_dpz();
         }
     }
-
-
 
     private void slide_in_dem_dpz() {
         if(it_is_today) {
@@ -1907,60 +1867,62 @@ public class force extends AppCompatActivity {
             if (older_positifice != positifise || changing_day){
                 if (positifise < 10000) { // TODO: revert this wuz for tasting
 
+
+                    find_slider();
                     slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
-                    if (next_adan == 0)
-                        fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
-                    else if (next_adan == 1)
-                        fromfajrtolol = loadAnimation(this, R.anim.fromfajrtodhuhr);
-                    else if (next_adan == 2)
-                        fromfajrtolol = loadAnimation(this, R.anim.frofajrtoasr);
-                    else if (next_adan == 3)
-                        fromfajrtolol = loadAnimation(this, R.anim.fromfajrtomaghrib);
-                    else if (next_adan == 4)
-                        fromfajrtolol = loadAnimation(this, R.anim.fromfajrtoisha);
-
-                    fromfajrtolol.setFillAfter(true);
-                    slideholder.startAnimation(fromfajrtolol);
-                    fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            if (it_is_today)
-                                slideholder.setVisibility(VISIBLE);
-                        }
-                    });
+                    fade_slider_in();
                 }
-        }
-        } else {
-            slideholder.setVisibility(View.INVISIBLE);
-            slideholder.startAnimation(begone);
-            begone.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    slideholder.setVisibility(View.INVISIBLE);
-                }
+            }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (!it_is_today)
-                        slideholder.setVisibility(View.INVISIBLE);
-                }
-            });
+            live_updates();
         }
 
     }
 
+    private void fade_slider_in() {
+        fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
+        if(it_is_today){
+            slideholder.setVisibility(View.INVISIBLE);
+            slideholder.startAnimation(fromfajrtolol);
+            fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                if (it_is_today)
+                    slideholder.setVisibility(VISIBLE);
+                else
+                    slideholder.setVisibility(GONE);
+            }});
+        } else {
+            slideholder.startAnimation(begone);
+            begone.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                if (!it_is_today)
+                    slideholder.setVisibility(View.GONE);
+            }});
+        }
+    }
+
+    private void find_slider() {
+        switch(next_adan){
+            case 0:
+                slideholder = findViewById(R.id.slideholderfajr);
+                slider = findViewById(R.id.sliderfajr);
+                break;
+            case 1:
+                slideholder = findViewById(R.id.slideholderdhuhr);
+                slider = findViewById(R.id.sliderdhuhr);
+                break;
+            case 2:
+                slideholder = findViewById(R.id.slideholderasr);
+                slider = findViewById(R.id.sliderasr);
+                break;
+            case 3:
+                slideholder = findViewById(R.id.slideholdermaghrib);
+                slider = findViewById(R.id.slidermaghrib);
+                break;
+            case 4:
+                slideholder = findViewById(R.id.slideholderisha);
+                slider = findViewById(R.id.sliderisha);
+        }
+        slider.setTypeface(arabic_typeface3);
+    }
 
     public void InitialDelayForNextAdanAnimation(){
 
@@ -1989,7 +1951,6 @@ public class force extends AppCompatActivity {
         mythread.start();
     }
 
-
     /*public void SecondaryDelayForDelayDisplay(){
 
         //runs in the background
@@ -2016,7 +1977,6 @@ public class force extends AppCompatActivity {
         Thread mythread = new Thread(r); //to thread the runnable object we launched
         mythread.start();
     }*/
-
 
     private int get_month(String month){
         switch (month) {

@@ -85,52 +85,69 @@ public class Service extends android.app.Service {
     }
 
     private void launch_prayer_processing() {
-        params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
-        params = CalculationMethod.EGYPTIAN.getParameters();
-        params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
-        params.adjustments.fajr = 2; //2
-        String pattern = "dd-MMM-yyyy";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        sql("force");
+        if(SQLSharing.mycursor.getCount()>0) {
 
-        lol = new ArrayList<>();
-        lol.add("fajr");
-        lol.add("dhuhr");
-        lol.add("asr");
-        lol.add("maghrib");
-        lol.add("isha");
+            params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
+            params = CalculationMethod.EGYPTIAN.getParameters();
+            params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
+            params.adjustments.fajr = 2; //2
+            String pattern = "dd-MMM-yyyy";
+            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
-        sql("slat");
-        if (SQLSharing.mycursor.getCount() <= 0) {
-            SQLSharing.mydb.insertMawa9it(String.valueOf(3.1875071999999998), String.valueOf(36.728832));
+            lol = new ArrayList<>();
+            lol.add("fajr");
+            lol.add("dhuhr");
+            lol.add("asr");
+            lol.add("maghrib");
+            lol.add("isha");
+
+            old_date = new Date();
+            location_shit(old_date);
+
+            find_next_adan();
         }
+    }
 
-        old_date = new Date();
-        location_shit(old_date);
+    private void find_next_adan() {
+        try {
+            temptime = String.valueOf(old_date).split(" ")[3];
+            rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
 
-
+            for (int j = 0; j < 5; j++) {
+                if (rightnowcomparable < prayers.get(j)){
+                    i = j;
+                    break;
+                }
+            }
+        } catch(Exception ignored){}
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        counter = 0;
 
-        // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
-        if (intent == null) {
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(this);
+            counter = 0;
+
+            // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
+            if (intent == null) {
+                ProcessMainClass bck = new ProcessMainClass();
+                bck.launchService(this);
+            }
+
+            // make sure you call the startForeground on onStartCommand because otherwise
+            // when we hide the notification on onScreen it will nto restart in Android 6 and 7
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                restartForeground();
+            }
+
+        sql("force");
+        if(SQLSharing.mycursor.getCount()>0) {
+                startTimer();
         }
 
-        // make sure you call the startForeground on onStartCommand because otherwise
-        // when we hide the notification on onScreen it will nto restart in Android 6 and 7
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            restartForeground();
-        }
-
-        startTimer();
-
-        // return start sticky so if it is killed by android, it will be restarted with Intent null
-        return START_STICKY;
+            // return start sticky so if it is killed by android, it will be restarted with Intent null
+            return START_STICKY;
     }
 
     @Nullable
@@ -142,11 +159,13 @@ public class Service extends android.app.Service {
     public void restartForeground() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             try {
-                Notification notification = new Notification();
-                startForeground(NOTIFICATION_ID, notification.setNotification(this, "Service notification", "This is the service's notification", R.drawable.ic_launcher_background));
-                startTimer();
-            } catch (Exception e) {
-            }
+                sql("force");
+                if(SQLSharing.mycursor.getCount()>0) {
+                    Notification notification = new Notification();
+                    startForeground(NOTIFICATION_ID, notification.setNotification(this, "Service notification", "This is the service's notification", R.drawable.ic_launcher_background));
+                    startTimer();
+                }
+            } catch (Exception ignored) {}
         }
     }
 
@@ -194,15 +213,19 @@ public class Service extends android.app.Service {
                     rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
 
                     // Check if we reached the adan, if so, then switch i to the next adan
-                    if(prayers.get(i) <= rightnowcomparable && rightnowcomparable <= prayers.get(i) + 60 && !recent_adan){
-                        recent_adan = true;
+                    display_notification("rightnowcomparable: " + rightnowcomparable, String.valueOf(prayers.get(i)));
+                    if(prayers.get(i) <= rightnowcomparable && rightnowcomparable <= prayers.get(i) + 60){
+                        if(!recent_adan) {
+                            recent_adan = true;
 
-                        // Play adan audio
-                        display_notification();
-                        initExoPlayer();
+                            // Play adan audio
+                            display_notification("New adan: " + lol.get(i), "");
+                            initExoPlayer();
 
-                        // set i to the next adan
-                        i++; if(i>=5) i = 0;
+                            // set i to the next adan
+                            i++;
+                            if (i >= 5) i = 0;
+                        }
                     } else recent_adan = false;
 
 
@@ -211,14 +234,14 @@ public class Service extends android.app.Service {
         };
     }
 
-    private void display_notification() {
+    private void display_notification(String title, String description) {
         emptyIntent = new Intent();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), NOT_USED, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.drawable.ic_launcher_background)
-                        .setContentTitle("New adan: " + lol.get(i))
-                        .setContentText("")
+                        .setContentTitle(title)
+                        .setContentText(description)
                         .setContentIntent(pendingIntent); //Required on Gingerbread and below
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -227,9 +250,7 @@ public class Service extends android.app.Service {
     }
 
     private void location_shit(Date date) {
-        sql("force");
-        if(SQLSharing.mycursor.getCount()>0)
-            if_theres_previous_info_load_it_n_display(date);
+        if_theres_previous_info_load_it_n_display(date);
     }
 
     private void if_theres_previous_info_load_it_n_display(Date date) {

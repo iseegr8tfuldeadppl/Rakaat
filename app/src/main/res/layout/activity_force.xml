@@ -84,7 +84,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <!--Table content-->
+    <!--Contents together-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -112,6 +112,7 @@
                 android:layout_marginTop="35dp"/>
         </FrameLayout>
 
+        <!-- Date -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -137,7 +138,7 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <!--access other days-->
+        <!--access other days + city-->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -240,413 +241,522 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/tablesampler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
             <LinearLayout
-                android:layout_marginStart="@dimen/sidesoftable"
-                android:layout_marginEnd="@dimen/sidesoftable"
-                android:paddingStart="@dimen/sidesoftablepaddings"
-                android:paddingEnd="@dimen/sidesoftablepaddings"
-                android:background="@drawable/darksimpelbackground"
-                android:id="@+id/fajrbackground"
+                android:id="@+id/tablesampler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1"
-                android:paddingTop="@dimen/padder"
-                android:paddingBottom="@dimen/padder">
-                <TextView
-                    android:id="@+id/fajrtime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".6"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/regulartextsize"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight=".4"
-                    android:weightSum="2">
-                    <TextView
-                        android:layout_weight="1"
-                        android:id="@+id/fajrtitle"
-                        android:text="@string/fajrtitle_arabe"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/grayerthanwhite"
-                        android:gravity="center"
-                        android:textSize="@dimen/regulartextsize"/>
+                android:orientation="vertical">
 
-                    <FrameLayout
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_marginStart="@dimen/sidesoftable"
+                        android:layout_marginEnd="@dimen/sidesoftable"
+                        android:paddingStart="@dimen/sidesoftablepaddings"
+                        android:paddingEnd="@dimen/sidesoftablepaddings"
+                        android:background="@drawable/darksimpelbackground"
+                        android:id="@+id/fajrbackground"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:paddingTop="@dimen/padder"
+                        android:paddingBottom="@dimen/padder">
                         <TextView
-                            android:paddingTop="8dp"
-                            android:paddingBottom="8dp"
+                            android:id="@+id/fajrtime"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight=".6"
+                            android:textColor="@color/white"
                             android:gravity="center"
-                            android:id="@+id/prayfajr"
-                            android:background="@drawable/darkbuttons"
+                            android:textSize="@dimen/regulartextsize"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:layout_weight=".4"
+                            android:weightSum="2">
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/fajrtitle"
+                                android:text="@string/fajrtitle_arabe"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textColor="@color/grayerthanwhite"
+                                android:gravity="center"
+                                android:textSize="@dimen/regulartextsize"/>
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+                                <TextView
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"
+                                    android:gravity="center"
+                                    android:id="@+id/prayfajr"
+                                    android:background="@drawable/darkbuttons"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:onClick="fajrClicked"
+                                    android:text="@string/joinprayer_arabic"
+                                    android:textSize="@dimen/regulartextsize"
+                                    android:textColor="@color/grayerthanwhite"/>
+                                <ImageView
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_gravity="end"
+                                    android:visibility="gone"
+                                    android:id="@+id/fajrcheckmark"
+                                    android:contentDescription="@string/todo" />
+                            </FrameLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!--Slider-->
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/slideholderfajr"
+                        android:layout_gravity="start|top"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp">
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:id="@+id/sliderfajr"
+                            android:gravity="center"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:textColor="@color/grayerthanwhite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/delaydisplay"
+                            android:textSize="20sp"/>
+                    </RelativeLayout>
+                </FrameLayout>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sidesoftable"
+                        android:layout_marginEnd="@dimen/sidesoftable"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:paddingTop="@dimen/padder"
+                        android:background="@drawable/darksimpelbackground"
+                        android:id="@+id/risebackground"
+                        android:paddingBottom="@dimen/padder"
+                        android:paddingStart="@dimen/sidesoftablepaddings"
+                        android:paddingEnd="@dimen/sidesoftablepaddings">
+                        <TextView
+                            android:id="@+id/risetime"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight=".6"
+                            android:textColor="@color/white"
+                            android:gravity="center"
+                            android:textSize="@dimen/regulartextsize"/>
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:onClick="fajrClicked"
-                            android:text="@string/joinprayer_arabic"
-                            android:textSize="@dimen/regulartextsize"
-                            android:textColor="@color/grayerthanwhite"/>
-                        <ImageView
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_gravity="end"
-                            android:visibility="gone"
-                            android:id="@+id/fajrcheckmark"
-                            android:contentDescription="@string/todo" />
-                    </FrameLayout>
-                </LinearLayout>
-            </LinearLayout>
+                            android:orientation="horizontal"
+                            android:layout_weight=".4"
+                            android:weightSum="2">
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/risetitle"
+                                android:text="@string/rise_arabe"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textColor="#989898"
+                                android:gravity="center"
+                                android:textSize="@dimen/regulartextsize"/>
+                            <TextView
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="invisible"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:text="@string/joinprayer"
+                                android:textSize="@dimen/regulartextsize"/>
+                        </LinearLayout>
+                    </LinearLayout>
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/sidesoftable"
-                android:layout_marginEnd="@dimen/sidesoftable"
-                android:orientation="horizontal"
-                android:weightSum="1"
-                android:paddingTop="@dimen/padder"
-                android:background="@drawable/darksimpelbackground"
-                android:id="@+id/risebackground"
-                android:paddingBottom="@dimen/padder"
-                android:paddingStart="@dimen/sidesoftablepaddings"
-                android:paddingEnd="@dimen/sidesoftablepaddings">
-                <TextView
-                    android:id="@+id/risetime"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".6"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/regulartextsize"/>
-                <LinearLayout
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:background="@drawable/darksimpelbackground"
+                        android:id="@+id/dhuhrbackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sidesoftable"
+                        android:layout_marginEnd="@dimen/sidesoftable"
+                        android:paddingStart="@dimen/sidesoftablepaddings"
+                        android:paddingEnd="@dimen/sidesoftablepaddings"
+                        android:orientation="horizontal"
+                        android:weightSum="1"
+                        android:paddingTop="@dimen/padder"
+                        android:paddingBottom="@dimen/padder">
+                        <TextView
+                            android:id="@+id/dohrtime"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight=".6"
+                            android:textColor="@color/white"
+                            android:gravity="center"
+                            android:textSize="@dimen/regulartextsize"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:layout_weight=".4"
+                            android:weightSum="2">
+                            <TextView
+                                android:id="@+id/dohrtitle"
+                                android:text="@string/dohrtitle_arabe"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textColor="@color/grayerthanwhite"
+                                android:gravity="center"
+                                android:textSize="@dimen/regulartextsize"/>
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+                                <TextView
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"
+                                    android:gravity="center"
+                                    android:id="@+id/praydhuhr"
+                                    android:background="@drawable/darkbuttons"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:onClick="dhuhrClicked"
+                                    android:text="@string/joinprayer_arabic"
+                                    android:textSize="@dimen/regulartextsize"
+                                    android:textColor="@color/grayerthanwhite"/>
+                                <ImageView
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_gravity="end"
+                                    android:visibility="gone"
+                                    android:id="@+id/dhuhrcheckmark"
+                                    android:contentDescription="@string/todo" />
+                            </FrameLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!--Slider-->
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/slideholderdhuhr"
+                        android:layout_gravity="start|top"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp">
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:id="@+id/sliderdhuhr"
+                            android:gravity="center"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:textColor="@color/grayerthanwhite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/delaydisplay"
+                            android:textSize="20sp"/>
+                    </RelativeLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/sidesoftablepaddings"
+                    android:paddingEnd="@dimen/sidesoftablepaddings"
+                    android:layout_marginStart="@dimen/sidesoftable"
+                    android:layout_marginEnd="@dimen/sidesoftable"
                     android:orientation="horizontal"
-                    android:layout_weight=".4"
-                    android:weightSum="2">
+                    android:weightSum="1"
+                    android:background="@drawable/darksimpelbackground"
+                    android:id="@+id/asrbackground"
+                    android:paddingTop="@dimen/padder"
+                    android:paddingBottom="@dimen/padder">
                     <TextView
-                        android:layout_weight="1"
-                        android:id="@+id/risetitle"
-                        android:text="@string/rise_arabe"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="#989898"
-                        android:gravity="center"
-                        android:textSize="@dimen/regulartextsize"/>
-                    <TextView
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:visibility="invisible"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/joinprayer"
-                        android:textSize="@dimen/regulartextsize"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:background="@drawable/darksimpelbackground"
-                android:id="@+id/dhuhrbackground"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/sidesoftable"
-                android:layout_marginEnd="@dimen/sidesoftable"
-                android:paddingStart="@dimen/sidesoftablepaddings"
-                android:paddingEnd="@dimen/sidesoftablepaddings"
-                android:orientation="horizontal"
-                android:weightSum="1"
-                android:paddingTop="@dimen/padder"
-                android:paddingBottom="@dimen/padder">
-                <TextView
-                    android:id="@+id/dohrtime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".6"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/regulartextsize"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight=".4"
-                    android:weightSum="2">
-                    <TextView
-                        android:id="@+id/dohrtitle"
-                        android:text="@string/dohrtitle_arabe"
-                        android:layout_weight="1"
+                        android:id="@+id/asrtime"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textColor="@color/grayerthanwhite"
+                        android:layout_weight=".6"
+                        android:textColor="@color/white"
                         android:gravity="center"
                         android:textSize="@dimen/regulartextsize"/>
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-                        <TextView
-                            android:paddingTop="8dp"
-                            android:paddingBottom="8dp"
-                            android:gravity="center"
-                            android:id="@+id/praydhuhr"
-                            android:background="@drawable/darkbuttons"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="dhuhrClicked"
-                            android:text="@string/joinprayer_arabic"
-                            android:textSize="@dimen/regulartextsize"
-                            android:textColor="@color/grayerthanwhite"/>
-                        <ImageView
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_gravity="end"
-                            android:visibility="gone"
-                            android:id="@+id/dhuhrcheckmark"
-                            android:contentDescription="@string/todo" />
-                    </FrameLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/sidesoftablepaddings"
-                android:paddingEnd="@dimen/sidesoftablepaddings"
-                android:layout_marginStart="@dimen/sidesoftable"
-                android:layout_marginEnd="@dimen/sidesoftable"
-                android:orientation="horizontal"
-                android:weightSum="1"
-                android:background="@drawable/darksimpelbackground"
-                android:id="@+id/asrbackground"
-                android:paddingTop="@dimen/padder"
-                android:paddingBottom="@dimen/padder">
-                <TextView
-                    android:id="@+id/asrtime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".6"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/regulartextsize"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight=".4"
-                    android:weightSum="2">
-                    <TextView
-                        android:id="@+id/asrtitle"
-                        android:text="@string/asrtitle_arabe"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:textColor="@color/grayerthanwhite"
-                        android:gravity="center"
-                        android:textSize="@dimen/regulartextsize"/>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:orientation="horizontal"
+                        android:layout_weight=".4"
+                        android:weightSum="2">
                         <TextView
-                            android:paddingTop="8dp"
-                            android:paddingBottom="8dp"
-                            android:gravity="center"
-                            android:id="@+id/prayasr"
-                            android:background="@drawable/darkbuttons"
+                            android:id="@+id/asrtitle"
+                            android:text="@string/asrtitle_arabe"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:onClick="asrClicked"
-                            android:text="@string/joinprayer_arabic"
-                            android:textSize="@dimen/regulartextsize"
-                            android:textColor="@color/grayerthanwhite"/>
-                        <ImageView
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_gravity="end"
-                            android:visibility="gone"
-                            android:id="@+id/asrcheckmark"
-                            android:contentDescription="@string/todo" />
-                    </FrameLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/sidesoftable"
-                android:layout_marginEnd="@dimen/sidesoftable"
-                android:orientation="horizontal"
-                android:paddingStart="@dimen/sidesoftablepaddings"
-                android:paddingEnd="@dimen/sidesoftablepaddings"
-                android:weightSum="1"
-                android:paddingTop="@dimen/padder"
-                android:background="@drawable/darksimpelbackground"
-                android:id="@+id/maghribbackground"
-                android:paddingBottom="@dimen/padder">
-                <TextView
-                    android:id="@+id/maghrebtime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".6"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/regulartextsize"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight=".4"
-                    android:weightSum="2">
-                    <TextView
-                        android:id="@+id/maghrebtitle"
-                        android:text="@string/maghrebtitle_arabe"
-                        android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/grayerthanwhite"
-                        android:gravity="center"
-                        android:textSize="@dimen/regulartextsize"/>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-                        <TextView
-                            android:paddingTop="8dp"
-                            android:paddingBottom="8dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/grayerthanwhite"
                             android:gravity="center"
-                            android:id="@+id/praymaghrib"
-                            android:background="@drawable/darkbuttons"
+                            android:textSize="@dimen/regulartextsize"/>
+
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="maghribClicked"
-                            android:text="@string/joinprayer_arabic"
-                            android:textSize="@dimen/regulartextsize"
-                            android:textColor="@color/grayerthanwhite"/>
-                        <ImageView
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_gravity="end"
-                            android:visibility="gone"
-                            android:id="@+id/maghribcheckmark"
-                            android:contentDescription="@string/todo" />
-                    </FrameLayout>
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <TextView
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:gravity="center"
+                                android:id="@+id/prayasr"
+                                android:background="@drawable/darkbuttons"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:onClick="asrClicked"
+                                android:text="@string/joinprayer_arabic"
+                                android:textSize="@dimen/regulartextsize"
+                                android:textColor="@color/grayerthanwhite"/>
+                            <ImageView
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_gravity="end"
+                                android:visibility="gone"
+                                android:id="@+id/asrcheckmark"
+                                android:contentDescription="@string/todo" />
+                        </FrameLayout>
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/sidesoftablepaddings"
-                android:paddingEnd="@dimen/sidesoftablepaddings"
-                android:orientation="horizontal"
-                android:layout_marginStart="@dimen/sidesoftable"
-                android:background="@drawable/city"
-                android:id="@+id/ishabackground"
-                android:layout_marginEnd="@dimen/sidesoftable"
-                android:weightSum="1"
-                android:paddingTop="@dimen/padder"
-                android:paddingBottom="14dp">
-                <TextView
-                    android:id="@+id/ishatime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".6"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textSize="@dimen/regulartextsize"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight=".4"
-                    android:weightSum="2">
-                    <TextView
-                        android:id="@+id/ishatitle"
-                        android:text="@string/ishatitle_arabe"
+                    <!--Slider-->
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/slideholderasr"
+                        android:layout_gravity="start|top"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textColor="@color/grayerthanwhite"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/regulartextsize"/>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp">
                         <TextView
-                            android:paddingTop="8dp"
-                            android:paddingBottom="8dp"
+                            android:layout_centerVertical="true"
+                            android:id="@+id/sliderasr"
                             android:gravity="center"
-                            android:id="@+id/prayisha"
-                            android:background="@drawable/darkbuttons"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="ishaClicked"
-                            android:text="@string/joinprayer_arabic"
-                            android:textSize="@dimen/regulartextsize"
-                            android:textColor="@color/grayerthanwhite"/>
-                        <ImageView
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_gravity="end"
-                            android:visibility="gone"
-                            android:id="@+id/ishacheckmark"
-                            android:contentDescription="@string/todo" />
-                    </FrameLayout>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:textColor="@color/grayerthanwhite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/delaydisplay"
+                            android:textSize="20sp"/>
+                    </RelativeLayout>
+                </FrameLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <RelativeLayout
-                android:visibility="invisible"
-                android:id="@+id/slideholder"
-                android:layout_gravity="start|top"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-                <TextView
-                    android:id="@+id/slider"
-                    android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:textColor="@color/grayerthanwhite"
-                    android:layout_width="wrap_content"
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|top"
-                    android:background="@drawable/delaydisplay"
-                    android:textSize="20sp"/>
-            </RelativeLayout>
-        </FrameLayout>
+                    android:layout_marginStart="@dimen/sidesoftable"
+                    android:layout_marginEnd="@dimen/sidesoftable"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/sidesoftablepaddings"
+                    android:paddingEnd="@dimen/sidesoftablepaddings"
+                    android:weightSum="1"
+                    android:paddingTop="@dimen/padder"
+                    android:background="@drawable/darksimpelbackground"
+                    android:id="@+id/maghribbackground"
+                    android:paddingBottom="@dimen/padder">
+                    <TextView
+                        android:id="@+id/maghrebtime"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".6"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textSize="@dimen/regulartextsize"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_weight=".4"
+                        android:weightSum="2">
+                        <TextView
+                            android:id="@+id/maghrebtitle"
+                            android:text="@string/maghrebtitle_arabe"
+                            android:layout_width="match_parent"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/grayerthanwhite"
+                            android:gravity="center"
+                            android:textSize="@dimen/regulartextsize"/>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <TextView
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:gravity="center"
+                                android:id="@+id/praymaghrib"
+                                android:background="@drawable/darkbuttons"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:onClick="maghribClicked"
+                                android:text="@string/joinprayer_arabic"
+                                android:textSize="@dimen/regulartextsize"
+                                android:textColor="@color/grayerthanwhite"/>
+                            <ImageView
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_gravity="end"
+                                android:visibility="gone"
+                                android:id="@+id/maghribcheckmark"
+                                android:contentDescription="@string/todo" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                    <!--Slider-->
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/slideholdermaghrib"
+                        android:layout_gravity="start|top"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:id="@+id/slidermaghrib"
+                            android:gravity="center"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:textColor="@color/grayerthanwhite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/delaydisplay"
+                            android:textSize="20sp"/>
+                    </RelativeLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/sidesoftablepaddings"
+                    android:paddingEnd="@dimen/sidesoftablepaddings"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/sidesoftable"
+                    android:background="@drawable/city"
+                    android:id="@+id/ishabackground"
+                    android:layout_marginEnd="@dimen/sidesoftable"
+                    android:weightSum="1"
+                    android:paddingTop="@dimen/padder"
+                    android:paddingBottom="14dp">
+                    <TextView
+                        android:id="@+id/ishatime"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".6"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textSize="@dimen/regulartextsize"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_weight=".4"
+                        android:weightSum="2">
+                        <TextView
+                            android:id="@+id/ishatitle"
+                            android:text="@string/ishatitle_arabe"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/grayerthanwhite"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textSize="@dimen/regulartextsize"/>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <TextView
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:gravity="center"
+                                android:id="@+id/prayisha"
+                                android:background="@drawable/darkbuttons"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:onClick="ishaClicked"
+                                android:text="@string/joinprayer_arabic"
+                                android:textSize="@dimen/regulartextsize"
+                                android:textColor="@color/grayerthanwhite"/>
+                            <ImageView
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_gravity="end"
+                                android:visibility="gone"
+                                android:id="@+id/ishacheckmark"
+                                android:contentDescription="@string/todo" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                    <!--Slider-->
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/slideholderisha"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:layout_centerVertical="true"
+                            android:id="@+id/sliderisha"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:paddingTop="2dp"
+                            android:gravity="center"
+                            android:paddingBottom="2dp"
+                            android:textColor="@color/grayerthanwhite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/delaydisplay"
+                            android:textSize="20sp"/>
+                    </RelativeLayout>
+                </FrameLayout>
+
+            </LinearLayout>
+
 
         </FrameLayout>
 
