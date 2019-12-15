@@ -184,9 +184,8 @@ public class Service extends android.app.Service {
         timerTask = new TimerTask() {
             public void run() {
                 try {
-                    display_notification();
 
-                    /*// Check if we are still in the same day, if not then calculate new day's prayertimes
+                    // Check if we are still in the same day, if not then calculate new day's prayertimes
                     new_date = new Date();
                     if(!String.valueOf(old_date).split(" ")[2].equals(String.valueOf(new_date).split(" ")[2]))
                         location_shit(new_date);
@@ -204,7 +203,7 @@ public class Service extends android.app.Service {
 
                         // set i to the next adan
                         i++; if(i>=5) i = 0;
-                    } else recent_adan = false;*/
+                    } else recent_adan = false;
 
 
                 } catch(Exception ignored){}
