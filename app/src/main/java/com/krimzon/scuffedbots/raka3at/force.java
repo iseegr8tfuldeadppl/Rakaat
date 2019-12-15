@@ -1787,16 +1787,6 @@ public class force extends AppCompatActivity {
                 previous_adan = next_adan - 1;*/
         }
 
-
-        // apply vision onto all prayers only if changed
-        for (int i = 0; i < prayerdisplayviews.size(); i += 1) {
-                prayerdisplayviews2.get(i).setTextSize(normal_text_size-difference_in_scale); // 16
-                prayerdisplayviews.get(i).setTextSize(normal_text_size-difference_in_scale);
-        }
-        // don't forget mi
-        risetitle.setTextSize(normal_text_size-difference_in_scale); // 16
-        risetime.setTextSize(normal_text_size-difference_in_scale);
-
     }
 
     private void process_prayed_request(int compareandy) {
@@ -1876,6 +1866,7 @@ public class force extends AppCompatActivity {
 
             live_updates();
         } else {
+            find_slider();
             if(slideholder.getVisibility()==VISIBLE){
                 slideholder.startAnimation(begone);
                 begone.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -2097,12 +2088,6 @@ public class force extends AppCompatActivity {
                     }
                 }
             }
-
-            if(temp_next_adan_textview2!=null) {
-                temp_next_adan_textview2.setTextSize(normal_text_size - difference_in_scale); // 23
-                temp_next_adan_textview.setTextSize(normal_text_size - difference_in_scale);  // to prepare for animation
-            }
-
             // Display double arrows that take you back to today
             doublearrowsbackground.setVisibility(VISIBLE);
             if(fill_all) {
@@ -2163,11 +2148,6 @@ public class force extends AppCompatActivity {
                         prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
                     }
                 }
-            }
-
-            if(one_of_prayers_is_prolly_larger_size) {
-                temp_next_adan_textview2.setTextSize(normal_text_size - difference_in_scale); // 23
-                temp_next_adan_textview.setTextSize(normal_text_size - difference_in_scale);  // to prepare for animation
             }
 
             // Display double arrows that take you back to today

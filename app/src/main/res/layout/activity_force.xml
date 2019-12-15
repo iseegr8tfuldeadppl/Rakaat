@@ -156,12 +156,12 @@
                     android:id="@+id/yesterdayarrowbackground"
                     android:background="@drawable/tmrandyst"
                     android:paddingStart="@dimen/sidesoftablepaddings"
+                    android:paddingEnd="@dimen/sidesoftablepaddings"
                     android:onClick="checkYesterday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:layout_weight="1"
-                    android:paddingLeft="@dimen/sidesoftablepaddings">
+                    android:layout_weight="1">
                     <ImageView
                         android:id="@+id/arrowleft"
                         android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
@@ -172,7 +172,8 @@
                         android:clickable="true"
                         android:layout_height="24dp"
                         android:scaleType="fitXY"
-                        android:adjustViewBounds="true"/>
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/todo" />
                 </RelativeLayout>
                 <TextView
                     android:layout_height="match_parent"
