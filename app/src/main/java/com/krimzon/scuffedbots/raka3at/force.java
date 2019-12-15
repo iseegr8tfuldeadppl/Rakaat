@@ -14,7 +14,9 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -50,7 +52,6 @@ import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,59 +66,93 @@ import static android.view.animation.AnimationUtils.loadAnimation;
 public class force extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1000;
-    private LocationManager mLocationManager;
-    private PrayerTimes prayerTimes;
-
-    private DateComponents date;
     private Coordinates coordinates;
-    private boolean an_alert_to_turn_location_on_was_displayed = false;
-
-    private TextView fajrtitle;
-    private TextView dohrtitle;
-    private TextView asrtitle;
-    private TextView maghrebtitle;
-    private TextView ishatitle;
-    private TextView fajrtime;
-    private TextView dhuhrtime;
-    private TextView asrtime;
-    private TextView maghribtime;
-    private TextView ishatime;
-    private TextView risetitle;
-    private TextView risetime;
-
-    private String fajr;
-    private String rise;
-    private String dhuhr;
-    private String asr;
-    private String maghrib;
-    private String isha;
-    private String timeshape = "hh:mm a";
-    private FusedLocationProviderClient mFusedLocationClient;
-
-    private Intent MainActivity;
-    private Intent main;
-    private CalculationParameters params;
-    private SimpleDateFormat dateFormat;
-    private String pattern = "dd-MMM-yyyy";
     private boolean new_coordinates = false;
-
-    private List<Integer> prayers;
+    private double longitude;
+    private double latitude;
+    private CalculationParameters params;
+    private boolean an_alert_to_turn_location_on_was_displayed = false;
     private String todaycomparable;
-
-    private RelativeLayout full;
-    private String language = "";
-
-    private Typeface arabic_typeface;
-
+    private DateComponents date;
+    private int hijri_month = 0, hijri_year = 0, hijri_day = 0;
+    private int miladi_month = 0;
+    private TextView fajrtitle, risetitle, dohrtitle, asrtitle, maghrebtitle, ishatitle;
+    private TextView fajrtime, risetime, dhuhrtime, asrtime, maghribtime, ishatime;
     private TextView prayfajr, praydhuhr, prayasr, praymaghrib, prayisha;
-
+    private List<TextView> prayerdisplayviews, prayerdisplayviews2;
+    private String fajrtitlel, risetitlel, dohrtitlel, asrtitlel, maghrebtitlel, ishatitlel;
+    private String fajr, rise, dhuhr, asr, maghrib, isha;
+    private List<Integer> prayers;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private RelativeLayout full;
     private TextView title;
-
-    private Animation zoom_in, zoom_out, zoom_in2, zoom_out2; // for next adan
     private TextView citydisplay;
-
     private TextView daterr;
-    private boolean fajr_is_red, dhuhr_is_red, asr_is_red, maghrib_is_red, isha_is_red;
+    private String language = "";
+    private String hijri = "";
+    private Animation zoom_in, zoom_out, zoom_in2, zoom_out2; // for next adan
+    private Resources resources;
+    private String pray;
+    private String force;
+    private boolean darkmode = true;
+    private Animation begone;
+    private TextView slider;
+    private RelativeLayout doublearrowsbackground;
+    private ImageView doublearrows;
+    private List <ImageView> checkmarks;
+    private List<String> prayernames, prayernames_arabe;
+    private RelativeLayout datebackground;
+    private LinearLayout fajrbackground, risebackground, dhuhrbackground, asrbackground, maghribbackground, ishabackground;
+    private RelativeLayout yesterdayarrowbackground, tommorowarrowbackground;
+    private LinearLayout rightsideelementsbackground;
+    private RelativeLayout backarrowbackground;
+    private ImageView lmfaoimage;
+    private boolean onlyonceu = true;
+    private boolean onlyonce = true;
+    private String ID;
+    private boolean changing_day = false;
+    private boolean going_left = false;
+    private boolean going_right = false;
+    private GregorianCalendar gc;
+    private Date CurrentDisplayedDay;
+    private int day, year, month = 0;
+    private String[] todaysplittemparray;
+    private boolean all_white = false;
+    private boolean fill_all = false;
+    private Animation fromfajrtolol;
+    private RelativeLayout slideholder;
+    private int positifise = 0;
+    private boolean one_of_prayers_is_prolly_larger_size = false;
+    private String athome = "00000";
+    private int normal_text_size = 19;
+    private int difference_in_scale = 4;
+    private TextView temp_next_adan_textview, temp_next_adan_textview2;
+    private int next_adan = -1;
+    private int temp_next_adan = 0;
+    private boolean new_adan = false;
+    private boolean end_of_day = false;
+    private boolean it_is_today = true;
+    private String verified = "";
+    private List<Drawable> lightforcebuttonsarray;
+    private List<Drawable> lightforcebuttonsgreenarray;
+    private boolean  onlyfillonce = true;
+    private List<TextView> praybuttons;
+    private boolean allow_pray = false;
+    private boolean friday = false;
+    private Integer rightnowcomparable;
+    private String prayed = "";
+    private boolean one_of_previous_is_zero = false;
+    private SnackBar mSnackBar;
+    private String datin = "";
+    private String tfajr, trise, tdhuhr, tasr, tmaghrib, tisha;
+    private String[] temptoday;
+    private boolean only_once = true;
+    private Animation to_right11, to_right12, to_right1, to_right2, to_right3, to_right4, to_right5, to_right6, to_right7, to_right8, to_right9, to_right10;
+    private Animation from_left11, from_left12, from_left1, from_left2, from_left3, from_left4, from_left5, from_left6, from_left7, from_left8, from_left9, from_left10;
+    private boolean only_once2 = true;
+    private Animation toleft1, toleft2, toleft3, toleft4, toleft5, toleft6, toleft7, toleft8, toleft9, toleft10, toleft11, toleft12;
+    private Animation fromright1, fromright2, fromright3, fromright4, fromright5, fromright6, fromright7, fromright8, fromright9, fromright10, fromright11, fromright12;
+
 
 
     @Override
@@ -134,7 +169,8 @@ public class force extends AppCompatActivity {
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
         params.adjustments.fajr = 2; //2
-        dateFormat = new SimpleDateFormat(pattern);
+        /*String pattern = "dd-MMM-yyyy";*/
+        /*SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);*/
 
         CurrentDisplayedDay = new Date();
 
@@ -155,17 +191,207 @@ public class force extends AppCompatActivity {
         low_light_alert();
 
         //longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());
+
+        Runnable r=new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    /*temptime = String.valueOf(new Date()).split(" ")[3];
+                    rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
+
+                    if (didntlookforsoonest) {
+                        didntlookforsoonest = false;
+                        for (int i = 0; i < 5; i++) {
+                            if(rightnowcomparable < prayers.get(i)){
+                                soonest = i;
+                            }
+                        }
+                    }
+
+                    while (!(prayers.get(soonest) <= rightnowcomparable && rightnowcomparable <= 60 + prayers.get(soonest)) && !adan_happening) {
+                        //prevents multiple threads from crashing into each other
+                        synchronized (this) {
+                            try {
+                                wait(1000);
+                            } catch (Exception ignored) {
+                            }
+                        }
+                    }
+
+                    adan_happening = true;
+                    soonest++;
+                    if(soonest>=5)
+                        soonest = 0;*/
+
+                    while(true) {
+                        long futuretime = System.currentTimeMillis() + 1000;
+
+                        while (System.currentTimeMillis() < futuretime) {
+                            //prevents multiple threads from crashing into each other
+                            synchronized (this) {
+                                try {
+                                    wait(futuretime - System.currentTimeMillis());
+                                } catch (Exception ignored) {
+                                }
+                            }
+                        }
+
+                        temptime = String.valueOf(new Date()).split(" ")[3];
+                        rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
+                        if((prayers.get(next_adan) - rightnowcomparable ) / 60 < positifise){
+
+                            for(int i=0;i<prayers.size();i++){
+                                if(rightnowcomparable>prayers.get(i))
+                                    temp_next_adan = i+1;
+                            }
+
+                            if(temp_next_adan==5) {
+                                end_of_day = true;
+                                temp_next_adan = 0;
+                            } else
+                                end_of_day = false;
+
+                            if(temp_next_adan!=next_adan) { new_adan = true;
+                                next_adan = temp_next_adan;
+                            }
+
+                            positifise = (prayers.get(next_adan) - rightnowcomparable ) / 60;
+
+                            handler3.sendEmptyMessage(0);
+                        }
+                    }
+
+                } catch(Exception ignored){}
+
+            }
+        };
+
+        //anti lag
+        Thread mythread = new Thread(r); //to thread the runnable object we launched
+        mythread.start();
+
     }
 
 
-    private String hijri = "";
-    private int hijri_month = 0, hijri_year = 0, hijri_day = 0;
-    private String[] lel;
-    private int miladi_month = 0;
+    int soonest;
+    boolean adan_happening = false;
+    boolean didntlookforsoonest = true;
+    String temptime;
+    Handler handler3 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            slider.setText("- " + positifise);
+        }
+    };
+
+
+
+    private void variables_setup() {
+
+
+        ImageView arrowback = findViewById(R.id.arrowback);
+        ImageView statslogo = findViewById(R.id.statslogo);
+        ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
+        ImageView arrowright = findViewById(R.id.arrowright);
+        ImageView arrowleft = findViewById(R.id.arrowleft);
+        try {
+            Glide.with(this).load(R.drawable.arrowleftdark).into(arrowback);
+        } catch (Exception ignored) {
+            arrowback.setImageDrawable(resources.getDrawable(R.drawable.arrowleftdark));
+        }
+        try {
+            Glide.with(this).load(R.drawable.stats).into(statslogo);
+        } catch (Exception ignored) {
+            statslogo.setImageDrawable(resources.getDrawable(R.drawable.stats));
+        }
+        try {
+            Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
+        } catch (Exception ignored) {
+            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
+        }
+        try {
+            Glide.with(this).load(R.drawable.arrowright).into(arrowright);
+        } catch (Exception ignored) {
+            arrowright.setImageDrawable(resources.getDrawable(R.drawable.arrowright));
+        }
+        try {
+            Glide.with(this).load(R.drawable.arrowleft).into(arrowleft);
+        } catch (Exception ignored) {
+            arrowleft.setImageDrawable(resources.getDrawable(R.drawable.arrowleft));
+        }
+
+        // checkmarks
+        ImageView fajrcheckmark = findViewById(R.id.fajrcheckmark);
+        ImageView dhuhrcheckmark = findViewById(R.id.dhuhrcheckmark);
+        ImageView asrcheckmark = findViewById(R.id.asrcheckmark);
+        ImageView maghribcheckmark = findViewById(R.id.maghribcheckmark);
+        ImageView ishacheckmark = findViewById(R.id.ishacheckmark);
+        checkmarks = new ArrayList<>();
+        checkmarks.add(fajrcheckmark);checkmarks.add(dhuhrcheckmark);checkmarks.add(asrcheckmark);checkmarks.add(maghribcheckmark);checkmarks.add(ishacheckmark);
+
+        daterr = findViewById(R.id.daterr);
+        doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
+        slideholder = findViewById(R.id.slideholder);
+        slider = findViewById(R.id.slider);
+        fajrtitle = findViewById(R.id.fajrtitle);
+        citydisplay = findViewById(R.id.city);
+        title = findViewById(R.id.title);
+        doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
+        doublearrows = findViewById(R.id.doublearrows);
+        full = findViewById(R.id.full);
+        dohrtitle = findViewById(R.id.dohrtitle);
+        asrtitle = findViewById(R.id.asrtitle);
+        maghrebtitle = findViewById(R.id.maghrebtitle);
+        ishatitle = findViewById(R.id.ishatitle);
+        fajrtime = findViewById(R.id.fajrtime);
+        dhuhrtime = findViewById(R.id.dohrtime);
+        asrtime = findViewById(R.id.asrtime);
+        maghribtime = findViewById(R.id.maghrebtime);
+        ishatime = findViewById(R.id.ishatime);
+        risetitle = findViewById(R.id.risetitle);
+        risetime = findViewById(R.id.risetime);
+        prayfajr = findViewById(R.id.prayfajr);
+        praydhuhr = findViewById(R.id.praydhuhr);
+        prayasr = findViewById(R.id.prayasr);
+        praymaghrib = findViewById(R.id.praymaghrib);
+        prayisha = findViewById(R.id.prayisha);
+
+        prayerdisplayviews = new ArrayList<>();
+        prayerdisplayviews2 = new ArrayList<>();
+        prayerdisplayviews.add(fajrtime);prayerdisplayviews.add(dhuhrtime);prayerdisplayviews.add(asrtime);prayerdisplayviews.add(maghribtime);prayerdisplayviews.add(ishatime);
+        prayerdisplayviews2.add(fajrtitle);prayerdisplayviews2.add(dohrtitle);prayerdisplayviews2.add(asrtitle);prayerdisplayviews2.add(maghrebtitle);prayerdisplayviews2.add(ishatitle);
+        resources = getResources();
+        float next_adan_pop_out_large = resources.getDimension(R.dimen.next_adan_pop_out_large); ///TypedValue.COMPLEX_UNIT_PX
+        float next_adan_pop_out_shrink = resources.getDimension(R.dimen.next_adan_pop_out_shrink); ///TypedValue.COMPLEX_UNIT_PX
+        float next_adan_size = resources.getDimension(R.dimen.next_adan_size); ///TypedValue.COMPLEX_UNIT_PX
+        zoom_in = loadAnimation(this, R.anim.zoom_in);
+        begone = loadAnimation(this, R.anim.begone);
+        zoom_out = loadAnimation(this, R.anim.zoom_out);
+        zoom_in2 = loadAnimation(this, R.anim.zoom_in);
+        zoom_out2 = loadAnimation(this, R.anim.zoom_out);
+        /*doublearrowleft = resources.getDrawable(R.drawable.doublearrowleftt);
+        doublearrowright = resources.getDrawable(R.drawable.doublearrowright);*/
+
+
+        prayernames = new ArrayList<>();
+        prayernames.add(resources.getString(R.string.fajrtitle));
+        prayernames.add(resources.getString(R.string.dohrtitle));
+        prayernames.add(resources.getString(R.string.asrtitle));
+        prayernames.add(resources.getString(R.string.maghrebtitle));
+        prayernames.add(resources.getString(R.string.ishatitle));
+
+        prayernames_arabe = new ArrayList<>();
+        prayernames_arabe.add(resources.getString(R.string.fajrtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.dohrtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.asrtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.maghrebtitle_arabe));
+        prayernames_arabe.add(resources.getString(R.string.ishatitle_arabe));
+    }
 
     private void hijri_date_setup() {
         if(miladi_month!=0) {
-            lel = todaycomparable.split(" ");
+            String[] lel = todaycomparable.split(" ");
             String[] t = PlainDate.of(Integer.valueOf(temptoday[5]), miladi_month, Integer.valueOf(lel[1])) // TODO: fix me Integer.valueOf(lel[5]) + 2000
                     .transform(HijriCalendar.class, HijriCalendar.VARIANT_UMALQURA).toString().split("-");
             t[3] = t[3].replace("[islamic", "");
@@ -275,13 +501,10 @@ public class force extends AppCompatActivity {
     }
 
 
-    private List<TextView> prayerdisplayviews, prayerdisplayviews2;
-    private Typeface arabic_typeface2, arabic_typeface3;
-
     private void fontAndy() {
-        arabic_typeface = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
-        arabic_typeface2 = Typeface.createFromAsset(getAssets(),  "Tajawal-Regular.ttf");
-        arabic_typeface3 = Typeface.createFromAsset(getAssets(),  "Tajawal-Bold.ttf");
+        Typeface arabic_typeface = Typeface.createFromAsset(getAssets(), "Tajawal-Light.ttf");
+        Typeface arabic_typeface2 = Typeface.createFromAsset(getAssets(), "Tajawal-Regular.ttf");
+        Typeface arabic_typeface3 = Typeface.createFromAsset(getAssets(), "Tajawal-Bold.ttf");
 
         title.setTypeface(arabic_typeface);
         daterr.setTypeface(arabic_typeface);
@@ -325,18 +548,6 @@ public class force extends AppCompatActivity {
     }
 
 
-    private Resources resources;
-    private String fajrtitlel;
-    private String risetitlel;
-    private String dohrtitlel;
-    private String asrtitlel;
-    private String maghrebtitlel;
-    private String ishatitlel;
-    private String pm;
-    private String am;
-    private String pray;
-    private String force;
-
     private void getStrings(){
         fajrtitlel = getString(R.string.fajrtitle);
         risetitlel = getString(R.string.rise);
@@ -348,8 +559,6 @@ public class force extends AppCompatActivity {
         force = getString(R.string.force);
     }
 
-
-    private boolean darkmode = true;
 
     private void load_data_from_slat_sql() {
         SQLSharing.mycursor.moveToPosition(6);
@@ -404,9 +613,6 @@ public class force extends AppCompatActivity {
     }
 
 
-    private double longitude;
-    private double latitude;
-
     private void if_theres_previous_info_load_it_n_display(Date date) {
         new_coordinates = false;
         SQLSharing.mycursor.moveToFirst();
@@ -426,119 +632,6 @@ public class force extends AppCompatActivity {
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
     }
 
-
-    private Animation begone;
-    private TextView slider;
-    private RelativeLayout doublearrowsbackground;
-    private ImageView doublearrows;
-    private ImageView arrowback, statslogo, nightmodebutton, arrowright, arrowleft;
-    private ImageView fajrcheckmark, dhuhrcheckmark, asrcheckmark, maghribcheckmark, ishacheckmark;
-    private List <ImageView> checkmarks;
-    private void variables_setup() {
-
-
-        arrowback = findViewById(R.id.arrowback);
-        statslogo = findViewById(R.id.statslogo);
-        nightmodebutton = findViewById(R.id.nightmodebutton);
-        arrowright = findViewById(R.id.arrowright);
-        arrowleft = findViewById(R.id.arrowleft);
-        try {
-            Glide.with(this).load(R.drawable.arrowleftdark).into(arrowback);
-        } catch (Exception ignored) {
-            arrowback.setImageDrawable(resources.getDrawable(R.drawable.arrowleftdark));
-        }
-        try {
-            Glide.with(this).load(R.drawable.stats).into(statslogo);
-        } catch (Exception ignored) {
-            statslogo.setImageDrawable(resources.getDrawable(R.drawable.stats));
-        }
-        try {
-            Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
-        } catch (Exception ignored) {
-            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
-        }
-        try {
-            Glide.with(this).load(R.drawable.arrowright).into(arrowright);
-        } catch (Exception ignored) {
-            arrowright.setImageDrawable(resources.getDrawable(R.drawable.arrowright));
-        }
-        try {
-            Glide.with(this).load(R.drawable.arrowleft).into(arrowleft);
-        } catch (Exception ignored) {
-            arrowleft.setImageDrawable(resources.getDrawable(R.drawable.arrowleft));
-        }
-
-        // checkmarks
-        fajrcheckmark = findViewById(R.id.fajrcheckmark);
-        dhuhrcheckmark = findViewById(R.id.dhuhrcheckmark);
-        asrcheckmark = findViewById(R.id.asrcheckmark);
-        maghribcheckmark = findViewById(R.id.maghribcheckmark);
-        ishacheckmark = findViewById(R.id.ishacheckmark);
-        checkmarks = new ArrayList<>();
-        checkmarks.add(fajrcheckmark);checkmarks.add(dhuhrcheckmark);checkmarks.add(asrcheckmark);checkmarks.add(maghribcheckmark);checkmarks.add(ishacheckmark);
-
-        daterr = findViewById(R.id.daterr);
-        doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
-        slideholder = findViewById(R.id.slideholder);
-        slider = findViewById(R.id.slider);
-        fajrtitle = findViewById(R.id.fajrtitle);
-        citydisplay = findViewById(R.id.city);
-        title = findViewById(R.id.title);
-        doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
-        doublearrows = findViewById(R.id.doublearrows);
-        full = findViewById(R.id.full);
-        dohrtitle = findViewById(R.id.dohrtitle);
-        asrtitle = findViewById(R.id.asrtitle);
-        maghrebtitle = findViewById(R.id.maghrebtitle);
-        ishatitle = findViewById(R.id.ishatitle);
-        fajrtime = findViewById(R.id.fajrtime);
-        dhuhrtime = findViewById(R.id.dohrtime);
-        asrtime = findViewById(R.id.asrtime);
-        maghribtime = findViewById(R.id.maghrebtime);
-        ishatime = findViewById(R.id.ishatime);
-        risetitle = findViewById(R.id.risetitle);
-        risetime = findViewById(R.id.risetime);
-        prayfajr = findViewById(R.id.prayfajr);
-        praydhuhr = findViewById(R.id.praydhuhr);
-        prayasr = findViewById(R.id.prayasr);
-        praymaghrib = findViewById(R.id.praymaghrib);
-        prayisha = findViewById(R.id.prayisha);
-
-        prayerdisplayviews = new ArrayList<>();
-        prayerdisplayviews2 = new ArrayList<>();
-        prayerdisplayviews.add(fajrtime);prayerdisplayviews.add(dhuhrtime);prayerdisplayviews.add(asrtime);prayerdisplayviews.add(maghribtime);prayerdisplayviews.add(ishatime);
-        prayerdisplayviews2.add(fajrtitle);prayerdisplayviews2.add(dohrtitle);prayerdisplayviews2.add(asrtitle);prayerdisplayviews2.add(maghrebtitle);prayerdisplayviews2.add(ishatitle);
-        resources = getResources();
-        next_adan_pop_out_large = resources.getDimension(R.dimen.next_adan_pop_out_large); ///TypedValue.COMPLEX_UNIT_PX
-        next_adan_pop_out_shrink = resources.getDimension(R.dimen.next_adan_pop_out_shrink); ///TypedValue.COMPLEX_UNIT_PX
-        next_adan_size = resources.getDimension(R.dimen.next_adan_size); ///TypedValue.COMPLEX_UNIT_PX
-        zoom_in = loadAnimation(this, R.anim.zoom_in);
-        begone = loadAnimation(this, R.anim.begone);
-        zoom_out = loadAnimation(this, R.anim.zoom_out);
-        zoom_in2 = loadAnimation(this, R.anim.zoom_in);
-        zoom_out2 = loadAnimation(this, R.anim.zoom_out);
-        /*doublearrowleft = resources.getDrawable(R.drawable.doublearrowleftt);
-        doublearrowright = resources.getDrawable(R.drawable.doublearrowright);*/
-
-
-        prayernames = new ArrayList<>();
-        prayernames.add(resources.getString(R.string.fajrtitle));
-        prayernames.add(resources.getString(R.string.dohrtitle));
-        prayernames.add(resources.getString(R.string.asrtitle));
-        prayernames.add(resources.getString(R.string.maghrebtitle));
-        prayernames.add(resources.getString(R.string.ishatitle));
-
-        prayernames_arabe = new ArrayList<>();
-        prayernames_arabe.add(resources.getString(R.string.fajrtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.dohrtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.asrtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.maghrebtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.ishatitle_arabe));
-    }
-
-
-    private List<String> prayernames, prayernames_arabe;
-    private float next_adan_pop_out_large, next_adan_pop_out_shrink, next_adan_size;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -560,8 +653,8 @@ public class force extends AppCompatActivity {
 
 
     private void exit() {
-        MainActivity = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(MainActivity);
+        Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(mainActivity);
         finish();
     }
 
@@ -624,28 +717,16 @@ public class force extends AppCompatActivity {
         super.onResume();
         if(an_alert_to_turn_location_on_was_displayed)
             AttemptToGetLocationCoordinates();
+
     }
 
-
     private boolean isLocationEnabled() {
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
 
-    private int fajrtemp;
-    private int dhuhrtemp;
-    private int asrtemp;
-    private int maghribtemp;
-    private int ishatemp;
-    private String tfajr, trise, tdhuhr, tasr, tmaghrib, tisha;
-    private String[] temptoday;
-    private String address = "";
-    private String city = "";
-    private String state = "";
-    private String country = "";
-    private String knownName = "";
 
     public void use(double longitude, double latitude, boolean new_coordinates, Date today) {
 
@@ -700,31 +781,31 @@ public class force extends AppCompatActivity {
             e.printStackTrace();
         }
         if(addresses!=null) {
-            address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            city = addresses.get(0).getLocality();
-            state = addresses.get(0).getAdminArea();
-            country = addresses.get(0).getCountryName();
-            knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            String city = addresses.get(0).getLocality();
+            String state = addresses.get(0).getAdminArea();
+            String country = addresses.get(0).getCountryName();
+            String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
             citydisplay.setText(city);
         }
     }
 
 
     private void convert_prayertimes_into_milliseconds() {
-        fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(fajr.split(" ")[0].split(":")[1])*60;
+        int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]) * 60;
         if(fajr.split(" ")[1].equals(resources.getString(R.string.pmer)))
             fajrtemp += 43200; //12*3600
         //Integer risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(rise.split(" ")[0].split(":")[1])*60;
-        dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1])*60;
+        int dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]) * 60;
         if(dhuhr.split(" ")[1].equals(resources.getString(R.string.pmer)) && !dhuhr.split(":")[0].equals("12"))
             dhuhrtemp += 43200; //12*3600
-        asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(asr.split(" ")[0].split(":")[1])*60;
+        int asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(asr.split(" ")[0].split(":")[1]) * 60;
         if(asr.split(" ")[1].equals(resources.getString(R.string.pmer)))
             asrtemp += 43200; //12*3600
-        maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1])*60;
+        int maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1]) * 60;
         if(maghrib.split(" ")[1].equals(resources.getString(R.string.pmer)))
             maghribtemp += 43200; //12*3600
-        ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(isha.split(" ")[0].split(":")[1])*60;
+        int ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(isha.split(" ")[0].split(":")[1]) * 60;
         if(isha.split(" ")[1].equals(resources.getString(R.string.pmer)))
             ishatemp += 43200; //12*3600
         prayers.add(fajrtemp);
@@ -736,12 +817,6 @@ public class force extends AppCompatActivity {
     }
 
 
-    private boolean only_once = true;
-    private Animation to_right11, to_right12, to_right1, to_right2, to_right3, to_right4, to_right5, to_right6, to_right7, to_right8, to_right9, to_right10;
-    private Animation from_left11, from_left12, from_left1, from_left2, from_left3, from_left4, from_left5, from_left6, from_left7, from_left8, from_left9, from_left10;
-    private boolean only_once2 = true;
-    private Animation toleft1, toleft2, toleft3, toleft4, toleft5, toleft6, toleft7, toleft8, toleft9, toleft10, toleft11, toleft12;
-    private Animation fromright1, fromright2, fromright3, fromright4, fromright5, fromright6, fromright7, fromright8, fromright9, fromright10, fromright11, fromright12;
     private void display_prayer_times() {
         if(changing_day){
             if(going_left){
@@ -1069,8 +1144,9 @@ public class force extends AppCompatActivity {
 
 
     private void pull_prayer_times_and_shape_them() {
-        prayerTimes = new PrayerTimes(coordinates, date, params);
+        PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, params);
         try {
+            String timeshape = "hh:mm a";
             fajr = DateFormat.format(timeshape, new Date(prayerTimes.fajr.getTime())).toString();
             rise = DateFormat.format(timeshape, new Date(prayerTimes.sunrise.getTime())).toString();
             dhuhr = DateFormat.format(timeshape, new Date(prayerTimes.dhuhr.getTime())).toString();
@@ -1081,14 +1157,14 @@ public class force extends AppCompatActivity {
 
 
         if(language.equals(resources.getString(R.string.ar))){ // the arabic am and pm
-            pm = getString(R.string.pm);
-            am = getString(R.string.am);
-            if(fajr.split(" ")[1].equals("AM")) tfajr = fajr.split(" ")[0] + " " + am;else tfajr = fajr.split(" ")[0] + " " +  pm;
-            if(rise.split(" ")[1].equals("AM")) trise = rise.split(" ")[0] + " " + am;else trise = rise.split(" ")[0] + " " +  pm;
-            if(dhuhr.split(" ")[1].equals("AM")) tdhuhr = dhuhr.split(" ")[0] + " " + am;else tdhuhr = dhuhr.split(" ")[0] + " " +  pm;
-            if(asr.split(" ")[1].equals("AM")) tasr = asr.split(" ")[0] + " " + am;else tasr = asr.split(" ")[0] + " " +  pm;
-            if(maghrib.split(" ")[1].equals("AM")) tmaghrib = maghrib.split(" ")[0] + " " + am;else tmaghrib = maghrib.split(" ")[0] + " " +  pm;
-            if(isha.split(" ")[1].equals("AM")) tisha = isha.split(" ")[0] + " " + am;else tisha = isha.split(" ")[0] + " " +  pm;
+            String pm = getString(R.string.pm);
+            String am = getString(R.string.am);
+            if(fajr.split(" ")[1].equals("AM")) tfajr = fajr.split(" ")[0] + " " + am;else tfajr = fajr.split(" ")[0] + " " + pm;
+            if(rise.split(" ")[1].equals("AM")) trise = rise.split(" ")[0] + " " + am;else trise = rise.split(" ")[0] + " " + pm;
+            if(dhuhr.split(" ")[1].equals("AM")) tdhuhr = dhuhr.split(" ")[0] + " " + am;else tdhuhr = dhuhr.split(" ")[0] + " " + pm;
+            if(asr.split(" ")[1].equals("AM")) tasr = asr.split(" ")[0] + " " + am;else tasr = asr.split(" ")[0] + " " + pm;
+            if(maghrib.split(" ")[1].equals("AM")) tmaghrib = maghrib.split(" ")[0] + " " + am;else tmaghrib = maghrib.split(" ")[0] + " " + pm;
+            if(isha.split(" ")[1].equals("AM")) tisha = isha.split(" ")[0] + " " + am;else tisha = isha.split(" ")[0] + " " + pm;
         }
     }
 
@@ -1112,12 +1188,10 @@ public class force extends AppCompatActivity {
     }
 
 
-    private String datin = "";
-    private String tempdatin = "";
 
     private void work_on_date_n_display_it() {
         datin = "";
-        tempdatin = "";
+        String tempdatin = "";
         if(language.equals(resources.getString(R.string.en))) {
             tempdatin = temptoday[0];
 
@@ -1341,8 +1415,6 @@ public class force extends AppCompatActivity {
         Snackbar.make(full, String.valueOf(s), BaseTransientBottomBar.LENGTH_SHORT).show();
     }
 
-    private SnackBar mSnackBar;
-    private TextView snackButton;
     private void print3(String s, String s2, final int prayer){
         //https://stackoverflow.com/questions/33033157/adding-button-to-snackbar-android
         mSnackBar = new SnackBar.Builder(this)
@@ -1351,7 +1423,7 @@ public class force extends AppCompatActivity {
                 .withStyle(SnackBar.Style.DEFAULT)
                 .show();
 
-        snackButton = (TextView) mSnackBar.getContainerView().findViewById(R.id.snackButton);
+        TextView snackButton = (TextView) mSnackBar.getContainerView().findViewById(R.id.snackButton);
         snackButton.setTextColor(Color.GREEN);
         snackButton.setTextSize(16);
         snackButton.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
@@ -1359,12 +1431,6 @@ public class force extends AppCompatActivity {
             mSnackBar.hide();
         }});
     }
-
-    private String temptime;
-    private Integer rightnowcomparable;
-    private String prayed = "";
-    private boolean one_of_previous_is_zero = false;
-    private String lmao;
 
     private void check_state(int prayer) {
 
@@ -1434,7 +1500,7 @@ public class force extends AppCompatActivity {
         if(language.equals("en"))
             print3(resources.getString(R.string.theresstill) + positifise + resources.getString(R.string.minutesuntilthisprayer), resources.getString(R.string.joinprayer), prayer);
         else if(language.equals("ar")){
-            lmao = " " + positifise + " ";
+            String lmao = " " + positifise + " ";
             print3(resources.getString(R.string.theresstill_arabe) + lmao + resources.getString(R.string.minutesuntilthisprayer_arabe), resources.getString(R.string.joinprayer_arabic), prayer);
         }
     }
@@ -1486,7 +1552,6 @@ public class force extends AppCompatActivity {
         mosqueorhome.show();
     }
 
-    private boolean friday = false;
 
     private void check_if_prayed_or_verified_are_empty() {
         if(prayed == null)
@@ -1509,7 +1574,6 @@ public class force extends AppCompatActivity {
 
     }
 
-    private boolean allow_pray = false;
 
     private void compare(int i) {
 
@@ -1531,7 +1595,6 @@ public class force extends AppCompatActivity {
     }
 
 
-    private List<TextView> praybuttons;
 
     private void retrieveAndy(){
 
@@ -1571,7 +1634,6 @@ public class force extends AppCompatActivity {
     }
 
 
-    private boolean it_is_today = true;
 
     private void retrieveAndyVariableSetup() {
         praybuttons = new ArrayList<>();
@@ -1579,37 +1641,23 @@ public class force extends AppCompatActivity {
         sql(resources.getString(R.string.justforce2));
     }
 
-    private String verified = "";
-    private List<Drawable> lightforcebuttonsarray;
-    private List<Drawable> lightforcebuttonsgreenarray;
-    private boolean  onlyfillonce = true;
-    private Drawable t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+
     private void color_pray_buttons() {
 
         if(onlyfillonce){
             lightforcebuttonsarray = new ArrayList<>();
             lightforcebuttonsgreenarray = new ArrayList<>();
             onlyfillonce = false;
-            t1 = resources.getDrawable(R.drawable.lightforcebuttons);
-            t2 = resources.getDrawable(R.drawable.lightforcebuttons);
-            t3 = resources.getDrawable(R.drawable.lightforcebuttons);
-            t4 = resources.getDrawable(R.drawable.lightforcebuttons);
-            t5 = resources.getDrawable(R.drawable.lightforcebuttons);
-            lightforcebuttonsarray.add(t1);
-            lightforcebuttonsarray.add(t2);
-            lightforcebuttonsarray.add(t3);
-            lightforcebuttonsarray.add(t4);
-            lightforcebuttonsarray.add(t5);
-            t6 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
-            t7 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
-            t8 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
-            t9 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
-            t10 = resources.getDrawable(R.drawable.lightforcebuttonsgreen);
-            lightforcebuttonsgreenarray.add(t6);
-            lightforcebuttonsgreenarray.add(t7);
-            lightforcebuttonsgreenarray.add(t8);
-            lightforcebuttonsgreenarray.add(t9);
-            lightforcebuttonsgreenarray.add(t10);
+            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
+            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
+            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
+            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
+            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
+            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
+            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
+            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
+            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
+            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
         }
 
         if(!all_white) {
@@ -1617,16 +1665,6 @@ public class force extends AppCompatActivity {
             if(fill_all){
                 if(darkmode) {
                     for (int i = 0; i < 5; i++) {
-                        if(i==0)
-                            fajr_is_red = false;
-                        if(i==1)
-                            dhuhr_is_red = false;
-                        if(i==2)
-                            asr_is_red = false;
-                        if(i==3)
-                            maghrib_is_red = false;
-                        if(i==4)
-                            isha_is_red = false;
                         if (String.valueOf(prayed.charAt(i)).equals("0")){
                             praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
                         }else
@@ -1635,29 +1673,9 @@ public class force extends AppCompatActivity {
                 } else {
                     for (int i = 0; i < 5; i++) {
                         if (String.valueOf(prayed.charAt(i)).equals("0")) {
-                            if(i==0)
-                                fajr_is_red = true;
-                            if(i==1)
-                                dhuhr_is_red = true;
-                            if(i==2)
-                                asr_is_red = true;
-                            if(i==3)
-                                maghrib_is_red = true;
-                            if(i==4)
-                                isha_is_red = true;
                             praybuttons.get(i).setTextColor(Color.WHITE);
                             praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
                         } else {
-                            if(i==0)
-                                fajr_is_red = false;
-                            if(i==1)
-                                dhuhr_is_red = false;
-                            if(i==2)
-                                asr_is_red = false;
-                            if(i==3)
-                                maghrib_is_red = false;
-                            if(i==4)
-                                isha_is_red = false;
                             praybuttons.get(i).setTextColor(Color.WHITE);
                             praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
                             praybuttons.get(i).setTextColor(Color.BLACK);
@@ -1668,16 +1686,6 @@ public class force extends AppCompatActivity {
                 if (end_of_day) {
                     if(darkmode) {
                         for (int i = 0; i < 5; i++) {
-                            if(i==0)
-                                fajr_is_red = false;
-                            if(i==1)
-                                dhuhr_is_red = false;
-                            if(i==2)
-                                asr_is_red = false;
-                            if(i==3)
-                                maghrib_is_red = false;
-                            if(i==4)
-                                isha_is_red = false;
                             if (String.valueOf(prayed.charAt(i)).equals("0"))
                                 praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
                             else
@@ -1686,29 +1694,9 @@ public class force extends AppCompatActivity {
                     } else {
                         for (int i = 0; i < 5; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
-                                if(i==0)
-                                    fajr_is_red = true;
-                                if(i==1)
-                                    dhuhr_is_red = true;
-                                if(i==2)
-                                    asr_is_red = true;
-                                if(i==3)
-                                    maghrib_is_red = true;
-                                if(i==4)
-                                    isha_is_red = true;
                                 praybuttons.get(i).setTextColor(Color.WHITE);
                                 praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
                             } else {
-                                if(i==0)
-                                    fajr_is_red = false;
-                                if(i==1)
-                                    dhuhr_is_red = false;
-                                if(i==2)
-                                    asr_is_red = false;
-                                if(i==3)
-                                    maghrib_is_red = false;
-                                if(i==4)
-                                    isha_is_red = false;
                                 praybuttons.get(i).setTextColor(Color.WHITE);
                                 praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
@@ -1718,16 +1706,6 @@ public class force extends AppCompatActivity {
                 } else {
                     if(darkmode) {
                         for (int i = 0; i < next_adan; i++) {
-                            if(i==0)
-                                fajr_is_red = false;
-                            if(i==1)
-                                dhuhr_is_red = false;
-                            if(i==2)
-                                asr_is_red = false;
-                            if(i==3)
-                                maghrib_is_red = false;
-                            if(i==4)
-                                isha_is_red = false;
                             if (String.valueOf(prayed.charAt(i)).equals("0"))
                                 praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
                             else
@@ -1735,45 +1713,15 @@ public class force extends AppCompatActivity {
                         }
 
                         for (int i = next_adan; i < 5; i++) {
-                            if (i == 0)
-                                fajr_is_red = false;
-                            if (i == 1)
-                                dhuhr_is_red = false;
-                            if (i == 2)
-                                asr_is_red = false;
-                            if (i == 3)
-                                maghrib_is_red = false;
-                            if (i == 4)
-                                isha_is_red = false;
                             praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
                         }
 
                     } else {
                         for (int i = 0; i < next_adan; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
-                                if(i==0)
-                                    fajr_is_red = true;
-                                if(i==1)
-                                    dhuhr_is_red = true;
-                                if(i==2)
-                                    asr_is_red = true;
-                                if(i==3)
-                                    maghrib_is_red = true;
-                                if(i==4)
-                                    isha_is_red = true;
                                 praybuttons.get(i).setTextColor(Color.WHITE);
                                 praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
                             } else {
-                                if(i==0)
-                                    fajr_is_red = false;
-                                if(i==1)
-                                    dhuhr_is_red = false;
-                                if(i==2)
-                                    asr_is_red = false;
-                                if(i==3)
-                                    maghrib_is_red = false;
-                                if(i==4)
-                                    isha_is_red = false;
                                 praybuttons.get(i).setTextColor(Color.WHITE);
                                 praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
@@ -1782,16 +1730,6 @@ public class force extends AppCompatActivity {
 
 
                         for (int i = next_adan; i < 5; i++) {
-                            if(i==0)
-                                fajr_is_red = false;
-                            if(i==1)
-                                dhuhr_is_red = false;
-                            if(i==2)
-                                asr_is_red = false;
-                            if(i==3)
-                                maghrib_is_red = false;
-                            if(i==4)
-                                isha_is_red = false;
                             praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
                             praybuttons.get(i).setBackground(null);
                         }
@@ -1804,31 +1742,11 @@ public class force extends AppCompatActivity {
         } else {
             if(darkmode) {
                 for (int i = 0; i < 5; i++) {
-                    if(i==0)
-                        fajr_is_red = false;
-                    if(i==1)
-                        dhuhr_is_red = false;
-                    if(i==2)
-                        asr_is_red = false;
-                    if(i==3)
-                        maghrib_is_red = false;
-                    if(i==4)
-                        isha_is_red = false;
                     praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
                 }
             }
             else {
                 for (int i = 0; i < 5; i++) {
-                    if(i==0)
-                        fajr_is_red = false;
-                    if(i==1)
-                        dhuhr_is_red = false;
-                    if(i==2)
-                        asr_is_red = false;
-                    if(i==3)
-                        maghrib_is_red = false;
-                    if(i==4)
-                        isha_is_red = false;
                     praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
                     praybuttons.get(i).setBackground(null);
                 }
@@ -1838,17 +1756,9 @@ public class force extends AppCompatActivity {
     }
 
 
-    private int normal_text_size = 19;
-    private int difference_in_scale = 4;
-    private TextView temp_next_adan_textview, temp_next_adan_textview2;
-    private int next_adan = 0;
-    private int temp_next_adan = 0;
-    private boolean new_adan = false;
-    private int previous_adan = 0;
-    private boolean end_of_day = false;
 
     private void what_is_soon_adan_and_one_before_it() {
-        temptime = String.valueOf(new Date()).split(" ")[3];
+        String temptime = String.valueOf(new Date()).split(" ")[3];
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
 
         for(int i=0;i<prayers.size();i++){
@@ -1856,10 +1766,11 @@ public class force extends AppCompatActivity {
                 temp_next_adan = i+1;
         }
 
+        /*int previous_adan = 0;*/
         if(temp_next_adan==5) {
             end_of_day = true;
             temp_next_adan = 0;
-            previous_adan = 0;
+            /*previous_adan = 0;*/
         } else
             end_of_day = false;
 
@@ -1867,8 +1778,8 @@ public class force extends AppCompatActivity {
             new_adan = true;
             next_adan = temp_next_adan;
             //next_adan = 0;
-            if (next_adan != 0) // so we don't assign -1 to previous_adan
-                previous_adan = next_adan - 1;
+            /*if (next_adan != 0) // so we don't assign -1 to previous_adan
+                previous_adan = next_adan - 1;*/
         }
 
         // apply vision onto all prayers only if changed
@@ -1901,7 +1812,6 @@ public class force extends AppCompatActivity {
     }
 
 
-    String athome = "00000";
     private void pull_prayed_one_hot_encoding_from_sql() {
         sql(resources.getString(R.string.justforce2));
         prayed = "00000";
@@ -1930,16 +1840,15 @@ public class force extends AppCompatActivity {
     };
 
 
-    Handler handler2 = new Handler(){
+    /*Handler handler2 = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(it_is_today)
                 slide_in_dem_dpz();
         }
-    };
+    };*/
 
 
-    private boolean one_of_prayers_is_prolly_larger_size = false;
     private void animatenextadan() {
         if(new_adan){ new_adan = false;
             temp_next_adan_textview = prayerdisplayviews.get(next_adan);
@@ -1977,21 +1886,16 @@ public class force extends AppCompatActivity {
     }
 
 
-    private Animation fromfajrtolol;
-    private RelativeLayout slideholder;
-    private int positifise = 0;
-    private int lol = 0;
-    private int older_positifice = 0;
 
     private void slide_in_dem_dpz() {
         if(it_is_today) {
-            older_positifice = positifise;
-            lol = ((prayers.get(next_adan) - rightnowcomparable) / 60 - 1);
+            int older_positifice = positifise;
+            int lol = ((prayers.get(next_adan) - rightnowcomparable) / 60 - 1);
             if (lol < 0) positifise = -lol;
             else positifise = lol;
 
-            if (older_positifice != positifise){
-                if (positifise < 99) {
+            if (older_positifice != positifise || changing_day){
+                if (positifise < 10000) { // TODO: revert this wuz for tasting
 
                     slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
                     if (next_adan == 0)
@@ -2076,7 +1980,7 @@ public class force extends AppCompatActivity {
     }
 
 
-    public void SecondaryDelayForDelayDisplay(){
+    /*public void SecondaryDelayForDelayDisplay(){
 
         //runs in the background
         Runnable r=new Runnable() {
@@ -2101,7 +2005,7 @@ public class force extends AppCompatActivity {
         //anti lag
         Thread mythread = new Thread(r); //to thread the runnable object we launched
         mythread.start();
-    }
+    }*/
 
 
     private int get_month(String month){
@@ -2135,19 +2039,12 @@ public class force extends AppCompatActivity {
     }
 
 
-    private GregorianCalendar gc;
-    private Date CurrentDisplayedDay;
-    private int day, year, month = 0;
-    private String[] todaysplittemparray;
-    private boolean all_white = false;
-    private int day2, month2, year2 = 0;
-    private boolean fill_all = false;
 
     public void is_it_future_present_or_past(){
         todaysplittemparray = String.valueOf((new Date())).split(" ");
-        day2 = Integer.valueOf(todaysplittemparray[2]);
-        year2 = Integer.valueOf(todaysplittemparray[5]);
-        month2 = get_month(todaysplittemparray[1]);
+        int day2 = Integer.valueOf(todaysplittemparray[2]);
+        int year2 = Integer.valueOf(todaysplittemparray[5]);
+        int month2 = get_month(todaysplittemparray[1]);
 
         // compare between current day and currently displayed day
 
@@ -2171,11 +2068,11 @@ public class force extends AppCompatActivity {
             all_white = false;
             fill_all = true;
             it_is_today = false;
-        } else if(month2 > month && year2 >= year){
+        } else if(month2 > month){
             all_white = false;
             fill_all = true;
             it_is_today = false;
-        } else if(day2 > day && month2 >= month && year2 >= year){
+        } else {
             all_white = false;
             fill_all = true;
             it_is_today = false;
@@ -2184,11 +2081,9 @@ public class force extends AppCompatActivity {
     }
 
 
-    private boolean changing_day = false;
-    private boolean going_left = false;
-    private boolean going_right = false;
     public void checkTommorow(View view) {
 
+        new_adan = true;
         changing_day = true;
         going_left = false;
         going_right = true;
@@ -2255,6 +2150,7 @@ public class force extends AppCompatActivity {
 
     public void checkYesterday(View view) {
 
+        new_adan = true;
         changing_day = true;
         going_left = true;
         going_right = false;
@@ -2339,49 +2235,11 @@ public class force extends AppCompatActivity {
         color_pray_buttons();
     }
 
-
-    private Drawable forcebuttons, forcebuttons2, forcebuttons3, forcebuttons4, forcebuttons5;
-    private Drawable lightdate;
-    private Drawable lightcity;
-    private Drawable simpelbackground;
-    private RelativeLayout datebackground;
-    private LinearLayout fajrbackground;
-    private LinearLayout risebackground;
-    private LinearLayout dhuhrbackground;
-    private LinearLayout asrbackground;
-    private LinearLayout maghribbackground;
-    private LinearLayout ishabackground;
-    private RelativeLayout yesterdayarrowbackground;
-    private RelativeLayout tommorowarrowbackground;
-    private LinearLayout rightsideelementsbackground;
-    private Drawable lightmultipledayselectionbackground;
-    private Drawable lightbackback;
-    private Drawable lightstatsback;
-    private RelativeLayout backarrowbackground;
-    private ImageView lmfaoimage;
-    private int transparentblacker;
-    private int grayerthanwhite;
-    private Drawable lightbacktotoday, lightbacktotoday2;
-    private boolean onlyonceu = true;
-    private Drawable lighttmrandyst, lighttmrandyst2;
-
     private void light_mode() {
         darkmode = false;
 
         if(onlyonceu) {
             onlyonceu = false;
-            forcebuttons = resources.getDrawable(R.drawable.forcebuttons);
-            forcebuttons2 = resources.getDrawable(R.drawable.forcebuttons);
-            forcebuttons3 = resources.getDrawable(R.drawable.forcebuttons);
-            forcebuttons4 = resources.getDrawable(R.drawable.forcebuttons);
-            forcebuttons5 = resources.getDrawable(R.drawable.forcebuttons);
-            simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
-            lightbacktotoday = resources.getDrawable(R.drawable.lightbacktotoday);
-            lighttmrandyst = resources.getDrawable(R.drawable.lighttmrandyst);
-            lighttmrandyst2 = resources.getDrawable(R.drawable.lighttmrandyst);
-            lightbacktotoday2 = resources.getDrawable(R.drawable.lightbacktotoday);
-            lightdate = resources.getDrawable(R.drawable.lightdate);
-            lightcity = resources.getDrawable(R.drawable.lightcity);
             datebackground = findViewById(R.id.datebackground);
             fajrbackground = findViewById(R.id.fajrbackground);
             risebackground = findViewById(R.id.risebackground);
@@ -2392,20 +2250,16 @@ public class force extends AppCompatActivity {
             yesterdayarrowbackground = findViewById(R.id.yesterdayarrowbackground);
             tommorowarrowbackground = findViewById(R.id.tommorowarrowbackground);
             rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
-            lightmultipledayselectionbackground = resources.getDrawable(R.drawable.lightmultipledayselectionbackground);
-            lightbackback = resources.getDrawable(R.drawable.lightbackback);
-            lightstatsback = resources.getDrawable(R.drawable.lightstatsback);
             backarrowbackground = findViewById(R.id.backarrowbackground);
-            transparentblacker = resources.getColor(R.color.transparentblacker);
         }
 
         slider.setTextColor(Color.WHITE);
 
-        prayfajr.setBackground(forcebuttons);
-        praydhuhr.setBackground(forcebuttons2);
-        prayasr.setBackground(forcebuttons3);
-        praymaghrib.setBackground(forcebuttons4);
-        prayisha.setBackground(forcebuttons5);
+        prayfajr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
+        praydhuhr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
+        prayasr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
+        praymaghrib.setBackground(resources.getDrawable(R.drawable.forcebuttons));
+        prayisha.setBackground(resources.getDrawable(R.drawable.forcebuttons));
 
         prayfajr.setTextColor(Color.WHITE);
         praydhuhr.setTextColor(Color.WHITE);
@@ -2413,10 +2267,10 @@ public class force extends AppCompatActivity {
         praymaghrib.setTextColor(Color.WHITE);
         prayisha.setTextColor(Color.WHITE);
 
-        full.setBackground(simpelbackground);
-        doublearrowsbackground.setBackground(lightbacktotoday2);
+        full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
+        doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.lightbacktotoday));
         title.setTextColor(Color.WHITE);
-        title.setBackgroundColor(transparentblacker);
+        title.setBackgroundColor(resources.getColor(R.color.transparentblacker));
 
 
         if (fajrtitle.getCurrentTextColor() != Color.GREEN)
@@ -2431,19 +2285,19 @@ public class force extends AppCompatActivity {
         if (ishatitle.getCurrentTextColor() != Color.GREEN)
             ishatitle.setTextColor(Color.WHITE);
 
-        datebackground.setBackground(lightdate);
-        fajrbackground.setBackground(lightmultipledayselectionbackground);
-        risebackground.setBackground(lightmultipledayselectionbackground);
-        dhuhrbackground.setBackground(lightmultipledayselectionbackground);
-        asrbackground.setBackground(lightmultipledayselectionbackground);
-        maghribbackground.setBackground(lightmultipledayselectionbackground);
-        ishabackground.setBackground(lightcity);
-        yesterdayarrowbackground.setBackground(lighttmrandyst);
-        tommorowarrowbackground.setBackground(lighttmrandyst2);
-        citydisplay.setBackground(lightbacktotoday);
+        datebackground.setBackground(resources.getDrawable(R.drawable.lightdate));
+        fajrbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
+        risebackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
+        dhuhrbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
+        asrbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
+        maghribbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
+        ishabackground.setBackground(resources.getDrawable(R.drawable.lightcity));
+        yesterdayarrowbackground.setBackground(resources.getDrawable(R.drawable.lighttmrandyst));
+        tommorowarrowbackground.setBackground(resources.getDrawable(R.drawable.lighttmrandyst));
+        citydisplay.setBackground(resources.getDrawable(R.drawable.lightbacktotoday));
 
-        rightsideelementsbackground.setBackground(lightstatsback);
-        backarrowbackground.setBackground(lightbackback);
+        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightstatsback));
+        backarrowbackground.setBackground(resources.getDrawable(R.drawable.lightbackback));
         try {
             Glide.with(this).load(R.drawable.lightlmfao).into(lmfaoimage);
         } catch (Exception ignored) {
@@ -2459,38 +2313,11 @@ public class force extends AppCompatActivity {
         SQLSharing.mydb.close();
     }
 
-
-    private Drawable darkforcebuttons, darkforcebuttons2, darkforcebuttons3, darkforcebuttons4, darkforcebuttons5;
-
-    private Drawable forcefull;
-    private Drawable dateer;
-    private Drawable cityeer;
-    private Drawable multipledayselectionbackground;
-    private Drawable backback;
-    private Drawable statsback;
-    private boolean onlyonce = true;
-    private String ID;
-    private Drawable backtotoday, backtotoday2;
-    private Drawable tmrandyst, tmrandyst2;
-
     private void dark_mode() {
         darkmode = true;
 
         if(onlyonce) {
             onlyonce = false;
-            darkforcebuttons = resources.getDrawable(R.drawable.darkbuttons);
-            darkforcebuttons2 = resources.getDrawable(R.drawable.darkbuttons);
-            darkforcebuttons3 = resources.getDrawable(R.drawable.darkbuttons);
-            darkforcebuttons4 = resources.getDrawable(R.drawable.darkbuttons);
-            darkforcebuttons5 = resources.getDrawable(R.drawable.darkbuttons);
-
-            tmrandyst = resources.getDrawable(R.drawable.tmrandyst);
-            tmrandyst2 = resources.getDrawable(R.drawable.tmrandyst);
-            forcefull = resources.getDrawable(R.drawable.forcefull);
-            backtotoday = resources.getDrawable(R.drawable.backtotoday);
-            backtotoday2 = resources.getDrawable(R.drawable.backtotoday);
-            dateer = resources.getDrawable(R.drawable.date);
-            cityeer = resources.getDrawable(R.drawable.city);
             datebackground = findViewById(R.id.datebackground);
             fajrbackground = findViewById(R.id.fajrbackground);
             risebackground = findViewById(R.id.risebackground);
@@ -2498,67 +2325,63 @@ public class force extends AppCompatActivity {
             asrbackground = findViewById(R.id.asrbackground);
             maghribbackground = findViewById(R.id.maghribbackground);
             ishabackground = findViewById(R.id.ishabackground);
-            multipledayselectionbackground = resources.getDrawable(R.drawable.multipledayselectionbackground);
             yesterdayarrowbackground = findViewById(R.id.yesterdayarrowbackground);
             tommorowarrowbackground = findViewById(R.id.tommorowarrowbackground);
             rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
-            backback = resources.getDrawable(R.drawable.backback);
-            statsback = resources.getDrawable(R.drawable.statsback);
             backarrowbackground = findViewById(R.id.backarrowbackground);
-            grayerthanwhite = resources.getColor(R.color.grayerthanwhite);
         }
 
-        slider.setTextColor(grayerthanwhite);
+        slider.setTextColor(resources.getColor(R.color.grayerthanwhite));
         try {
             Glide.with(this).load(R.drawable.lmfao).into(lmfaoimage);
         } catch (Exception ignored) {
             lmfaoimage.setImageDrawable(resources.getDrawable(R.drawable.lmfao));
         }
 
-        prayfajr.setBackground(darkforcebuttons);
-        praydhuhr.setBackground(darkforcebuttons2);
-        prayasr.setBackground(darkforcebuttons3);
-        praymaghrib.setBackground(darkforcebuttons4);
-        prayisha.setBackground(darkforcebuttons5);
+        prayfajr.setBackground(resources.getDrawable(R.drawable.darkbuttons));
+        praydhuhr.setBackground(resources.getDrawable(R.drawable.darkbuttons));
+        prayasr.setBackground(resources.getDrawable(R.drawable.darkbuttons));
+        praymaghrib.setBackground(resources.getDrawable(R.drawable.darkbuttons));
+        prayisha.setBackground(resources.getDrawable(R.drawable.darkbuttons));
 
-        prayfajr.setTextColor(grayerthanwhite);
-        praydhuhr.setTextColor(grayerthanwhite);
-        prayasr.setTextColor(grayerthanwhite);
-        praymaghrib.setTextColor(grayerthanwhite);
-        prayisha.setTextColor(grayerthanwhite);
+        prayfajr.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        praydhuhr.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        prayasr.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        praymaghrib.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        prayisha.setTextColor(resources.getColor(R.color.grayerthanwhite));
 
-        full.setBackground(forcefull);
-        doublearrowsbackground.setBackground(backtotoday2);
+        full.setBackground(resources.getDrawable(R.drawable.forcefull));
+        doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.backtotoday));
         title.setTextColor(Color.WHITE);
         title.setBackground(null);
 
 
 
         if (fajrtitle.getCurrentTextColor() != Color.GREEN)
-            fajrtitle.setTextColor(grayerthanwhite);
-        risetitle.setTextColor(grayerthanwhite);
+            fajrtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        risetitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
         if (dohrtitle.getCurrentTextColor() != Color.GREEN)
-            dohrtitle.setTextColor(grayerthanwhite);
+            dohrtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
         if (asrtitle.getCurrentTextColor() != Color.GREEN)
-            asrtitle.setTextColor(grayerthanwhite);
+            asrtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
         if (maghrebtitle.getCurrentTextColor() != Color.GREEN)
-            maghrebtitle.setTextColor(grayerthanwhite);
+            maghrebtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
         if (ishatitle.getCurrentTextColor() != Color.GREEN)
-            ishatitle.setTextColor(grayerthanwhite);
+            ishatitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
 
-        yesterdayarrowbackground.setBackground(tmrandyst);
-        tommorowarrowbackground.setBackground(tmrandyst2);
-        datebackground.setBackground(dateer);
-        fajrbackground.setBackground(multipledayselectionbackground);
-        risebackground.setBackground(multipledayselectionbackground);
-        dhuhrbackground.setBackground(multipledayselectionbackground);
-        asrbackground.setBackground(multipledayselectionbackground);
-        maghribbackground.setBackground(multipledayselectionbackground);
-        ishabackground.setBackground(cityeer);
+        yesterdayarrowbackground.setBackground(resources.getDrawable(R.drawable.tmrandyst));
+        tommorowarrowbackground.setBackground(resources.getDrawable(R.drawable.tmrandyst));
+        datebackground.setBackground(resources.getDrawable(R.drawable.date));
+        fajrbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
+        risebackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
+        dhuhrbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
+        asrbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
+        maghribbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
+        ishabackground.setBackground(resources.getDrawable(R.drawable.city));
 
-        rightsideelementsbackground.setBackground(statsback);
-        backarrowbackground.setBackground(backback);
-        citydisplay.setBackground(backtotoday);
+        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.statsback));
+        backarrowbackground.setBackground(resources.getDrawable(R.drawable.backback));
+        citydisplay.setBackground(resources.getDrawable(R.drawable.backtotoday));
         try {
             Glide.with(this).load(R.drawable.lmfao).into(lmfaoimage);
         } catch (Exception ignored) {
@@ -2574,9 +2397,9 @@ public class force extends AppCompatActivity {
         SQLSharing.mydb.close();
     }
 
-
     public void backtotodayClicked(View view) {
 
+        new_adan = true;
         CurrentDisplayedDay = new Date();
         it_is_today = true;
         all_white = false;
@@ -2593,7 +2416,7 @@ public class force extends AppCompatActivity {
     }
 
     private void back_to_main() {
-        main = new Intent(this, MainActivity.class);
+        Intent main = new Intent(this, MainActivity.class);
         startActivity(main);
         finish();
     }

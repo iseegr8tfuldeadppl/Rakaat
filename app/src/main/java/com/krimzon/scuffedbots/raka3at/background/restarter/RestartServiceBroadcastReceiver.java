@@ -12,8 +12,6 @@ import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
-
 import com.krimzon.scuffedbots.raka3at.background.Globals;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
 
@@ -38,7 +36,6 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
             return versionCode;
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
         }
         return 0;
     }
@@ -47,7 +44,6 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Log.d(TAG, "about to start timer " + context.toString());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             scheduleJob(context);
         } else {
@@ -76,7 +72,6 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
 
     public static void reStartTracker(Context context) {
         // restart the never ending service
-        Log.i(TAG, "Restarting tracker");
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         context.sendBroadcast(broadcastIntent);
     }

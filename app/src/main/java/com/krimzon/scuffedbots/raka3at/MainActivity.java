@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -20,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.background.Service;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
@@ -36,27 +35,19 @@ public class MainActivity extends AppCompatActivity {
     private Button slatjoin;
     private Button kiblajoin;
     private Button forcejoin;
-
-    private Typeface font;
-
-    private Intent kiblaIntent;
-    private Intent slatIntent;
-    private Intent forceIntent;
-
     private long backPressedTime;
-
     private Toast backToast;
-
     private Resources resources;
-    private int darkbackgroundcolor;
-
     private String language = "ar";
 
-    private String force, kibla, prayer, app_name;
-    private SlatCustomDialogClass cddd;
     private boolean tutorial = false;
     private LinearLayout botton, botton2;
-    private Animation diagonal, diagonal2;
+    private Animation diagonal2;
+    private FrameLayout full;
+
+    private View view, view2;
+    private String ID = "";
+    private boolean darkmode = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +63,12 @@ public class MainActivity extends AppCompatActivity {
         variables();
         sql_work();
         set_fonts();
-        work_on_language();
+        if(language.equals("en"))
+            english();
 
         // slidein nightmode button
         botton = findViewById(R.id.botton);
-        diagonal = loadAnimation(getApplicationContext(), R.anim.diagonalslide);
+        Animation diagonal = loadAnimation(getApplicationContext(), R.anim.diagonalslide);
         botton.startAnimation(diagonal);
         diagonal.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
             botton.setVisibility(View.VISIBLE);
@@ -93,36 +85,15 @@ public class MainActivity extends AppCompatActivity {
         //showNavigationBar();
     }
 
-    private FrameLayout full;
-    private boolean once = true, once2 = true;
-    private Drawable forcefull;
-    private int white;
-    private Drawable buttons, buttons2, buttons3;
-    private Drawable darkbuttons, darkbuttons2, darkbuttons3;
-    private Drawable simpelbackground;
-
-    private int black;
-    private View view, view2;
     private void light_mode() {
         darkmode = false;
-        if(once){
-            once = false;
-            full = findViewById(R.id.full);
-            view = findViewById(R.id.view);
-            view2 = findViewById(R.id.view2);
-            simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
-            buttons = resources.getDrawable(R.drawable.buttons);
-            buttons2 = resources.getDrawable(R.drawable.buttons);
-            buttons3 = resources.getDrawable(R.drawable.buttons);
-            black = resources.getColor(R.color.black);
-        }
         view.setVisibility(View.GONE);
         view2.setVisibility(View.VISIBLE);
-        full.setBackground(simpelbackground);
-        kiblajoin.setBackground(buttons);
-        slatjoin.setBackground(buttons2);
-        forcejoin.setBackground(buttons3);
-        maintitle.setTextColor(black);
+        full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
+        kiblajoin.setBackground(resources.getDrawable(R.drawable.buttons));
+        slatjoin.setBackground(resources.getDrawable(R.drawable.buttons));
+        forcejoin.setBackground(resources.getDrawable(R.drawable.buttons));
+        maintitle.setTextColor(resources.getColor(R.color.black));
         sql(resources.getString(R.string.slat));
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
@@ -133,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    private String ID = "";
     private void sql(String table) {
         if(SQLSharing.mycursor!=null)
             SQLSharing.mycursor.close();
@@ -147,24 +116,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void dark_mode() {
         darkmode = true;
-        if(once2){
-            once2 = false;
-            full = findViewById(R.id.full);
-            view = findViewById(R.id.view);
-            view2 = findViewById(R.id.view2);
-            forcefull = resources.getDrawable(R.drawable.forcefull);
-            darkbuttons = resources.getDrawable(R.drawable.darkbuttons2);
-            darkbuttons2 = resources.getDrawable(R.drawable.darkbuttons2);
-            darkbuttons3 = resources.getDrawable(R.drawable.darkbuttons2);
-            white = resources.getColor(R.color.white);
-        }
         view.setVisibility(View.VISIBLE);
         view2.setVisibility(View.GONE);
-        full.setBackground(forcefull);
-        kiblajoin.setBackground(darkbuttons);
-        slatjoin.setBackground(darkbuttons2);
-        forcejoin.setBackground(darkbuttons3);
-        maintitle.setTextColor(white);
+        full.setBackground(resources.getDrawable(R.drawable.forcefull));
+        kiblajoin.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
+        slatjoin.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
+        forcejoin.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
+        maintitle.setTextColor(resources.getColor(R.color.white));
 
         sql(resources.getString(R.string.slat));
         SQLSharing.mycursor.moveToFirst();
@@ -176,18 +134,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void work_on_language() {
-        load_strings();
-
-        if(language.equals("en"))
-            english();
-    }
-
-    private ImageView nightmodebutton, languagebutton;
     private void variables() {
 
-        nightmodebutton = findViewById(R.id.nightmodebutton);
-        languagebutton = findViewById(R.id.languagebutton);
+        ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
+        ImageView languagebutton = findViewById(R.id.languagebutton);
+        full = findViewById(R.id.full);
+        view = findViewById(R.id.view);
+        view2 = findViewById(R.id.view2);
+        maintitle = findViewById(R.id.maintitle);
+        slatjoin = findViewById(R.id.slatjoin);
+        kiblajoin = findViewById(R.id.kiblajoin);
+        forcejoin = findViewById(R.id.forcejoin);
+        resources = getResources();
         try {
             Glide.with(this).load(R.drawable.blacknightmode).into(nightmodebutton);
         } catch (Exception ignored) {
@@ -199,24 +157,26 @@ public class MainActivity extends AppCompatActivity {
             languagebutton.setImageDrawable(resources.getDrawable(R.drawable.blacklanguage));
         }
 
-        cddd=new SlatCustomDialogClass(this, true, language);
-        maintitle = findViewById(R.id.maintitle);
-        slatjoin = findViewById(R.id.slatjoin);
-        kiblajoin = findViewById(R.id.kiblajoin);
-        forcejoin = findViewById(R.id.forcejoin);
-        resources = getResources();
-        darkbackgroundcolor = resources.getColor(R.color.black);
-
         /*PrivacyPolicy = new Intent(this, PrivacyPolicy.class);*/
-        slatIntent = new Intent(this, slat.class);
         /*scuffedbots = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/scuffedbots"));*/
-        kiblaIntent = new Intent(this, kibla.class);
-        forceIntent = new Intent(this, force.class);
-        forceIntent.putExtra("light_alert", "no");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // adan service
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+        } else {
+            ProcessMainClass bck = new ProcessMainClass();
+            bck.launchService(getApplicationContext());
+        }
+
     }
 
     private void set_fonts() {
-        font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
+        Typeface font = Typeface.createFromAsset(getAssets(), "Tajawal-Light.ttf");
 
         maintitle.setTypeface(font);
         slatjoin.setTypeface(font);
@@ -224,25 +184,13 @@ public class MainActivity extends AppCompatActivity {
         forcejoin.setTypeface(font);
     }
 
-    private void load_strings() {
-        if(language.equals("en")) {
-            force = resources.getString(R.string.force);
-            kibla = resources.getString(R.string.kibla);
-            prayer = resources.getString(R.string.prayer);
-            app_name = resources.getString(R.string.app_name2);
-        }
-
-    }
-
     private void english() {
-        maintitle.setText(app_name);
-        kiblajoin.setText(kibla);
-        forcejoin.setText(force);
-        slatjoin.setText(prayer);
+        maintitle.setText(resources.getString(R.string.app_name2));
+        kiblajoin.setText(resources.getString(R.string.kibla));
+        forcejoin.setText(resources.getString(R.string.force));
+        slatjoin.setText(resources.getString(R.string.prayer));
     }
 
-
-    private boolean darkmode = true;
     private void sql_work() {
 
 
@@ -289,21 +237,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // adan service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-        } else {
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(getApplicationContext());
-        }
-
-    }
-
-
-    @Override
     public void onBackPressed() {
         if (backPressedTime + 2000 > System.currentTimeMillis()) {
             backToast.cancel();
@@ -323,11 +256,17 @@ public class MainActivity extends AppCompatActivity {
     /*public void privacyClicked(View view) {
         startActivity(PrivacyPolicy);
     }*/
+    /*public void scuffedClicked(View view) {
+        startActivity(scuffedbots);
+        finish();
+    }*/
 
     public void salatClicked(View view) {
-        if(tutorial)
+        if(tutorial) {
+            SlatCustomDialogClass cddd = new SlatCustomDialogClass(this, true, language);
             cddd.show();
-        else {
+        } else {
+            Intent slatIntent = new Intent(this, slat.class);
             slatIntent.putExtra("sender", "main");
             startActivity(slatIntent);
             finish();
@@ -335,32 +274,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void kiblaClicked(View view) {
+        Intent kiblaIntent = new Intent(this, kibla.class);
         startActivity(kiblaIntent);
         finish();
     }
 
-    /*public void scuffedClicked(View view) {
-        startActivity(scuffedbots);
-        finish();
-    }*/
+    public void forceClicked(View view) {
+        Intent forceIntent = new Intent(this, force.class);
+        forceIntent.putExtra("light_alert", "no");
+        startActivity(forceIntent);
+        finish(); }
 
-    public void forceClicked(View view) { startActivity(forceIntent); finish(); }
-
-    private void showNavigationBar() {
+    /*private void showNavigationBar() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             this.getWindow().setStatusBarColor(darkbackgroundcolor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-    }
-
+    }*/
 
     public void changeLanguageClicked(View view) {
         LanguageChange languageChange = new LanguageChange(this, darkmode, language);
         languageChange.show();
     }
-
 
     public void nightmodeClicked(View view) {
         if(darkmode)
@@ -368,7 +305,5 @@ public class MainActivity extends AppCompatActivity {
         else
             dark_mode();
     }
-
-
 
 }

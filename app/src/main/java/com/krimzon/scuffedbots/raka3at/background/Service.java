@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
-import android.util.Log;
 import com.batoulapps.adhan.CalculationMethod;
 import com.batoulapps.adhan.CalculationParameters;
 import com.batoulapps.adhan.Coordinates;
@@ -41,17 +40,36 @@ import com.krimzon.scuffedbots.raka3at.background.utilities.Notification;
 
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
-    private static String TAG = "Service";
     private static Service mCurrentService;
     private int counter = 0;
     private CalculationParameters params;
-    private SimpleDateFormat dateFormat;
-    private String pattern = "dd-MMM-yyyy";
+    private int NOT_USED = 1338;
+    private int mId = 5565;
+    private int i = 0;
+    private List<String> lol;
+    private String temptime;
+    private int rightnowcomparable;
+    private Date old_date, new_date;
+    private Intent emptyIntent;
+    private boolean recent_adan = false;
+    private Coordinates coordinates;
+    private DateComponents date;
+    private List<Integer> prayers;
+    private double longitude, latitude;
+    private String fajr;
+    private String dhuhr;
+    private String asr;
+    private String maghrib;
+    private String isha;
+    private PrayerTimes prayerTimes;
+    private static Timer timer;
+    private static TimerTask timerTask;
+    /*long oldTime = 0;
+    private static String TAG = "Service";*/
 
     public Service() {
         super();
     }
-
 
     @Override
     public void onCreate() {
@@ -69,7 +87,8 @@ public class Service extends android.app.Service {
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
         params.adjustments.fajr = 2; //2
-        dateFormat = new SimpleDateFormat(pattern);
+        String pattern = "dd-MMM-yyyy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
         lol = new ArrayList<>();
         lol.add("fajr");
@@ -112,13 +131,11 @@ public class Service extends android.app.Service {
         return START_STICKY;
     }
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
     public void restartForeground() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -131,7 +148,6 @@ public class Service extends android.app.Service {
         }
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -143,15 +159,9 @@ public class Service extends android.app.Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        Log.i(TAG, "onTaskRemoved called");
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
     }
-
-
-    private static Timer timer;
-    private static TimerTask timerTask;
-    long oldTime = 0;
 
     public void startTimer() {
 
@@ -167,15 +177,7 @@ public class Service extends android.app.Service {
         //schedule the timer, to wake up every 1 second
         timer.schedule(timerTask, 1000, 1000); //
     }
-    int NOT_USED = 1338;
-    int mId = 5565;
-    int i = 0;
-    List<String> lol;
-    String temptime;
-    int rightnowcomparable;
-    Date old_date, new_date;
-    Intent emptyIntent;
-    boolean recent_adan = false;
+
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
@@ -228,7 +230,6 @@ public class Service extends android.app.Service {
             if_theres_previous_info_load_it_n_display(date);
     }
 
-    double longitude, latitude;
     private void if_theres_previous_info_load_it_n_display(Date date) {
         SQLSharing.mycursor.moveToFirst();
         longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
@@ -236,14 +237,11 @@ public class Service extends android.app.Service {
         use(longitude, latitude, date);
     }
 
-    Coordinates coordinates;
     private void pull_date_and_shape_it(double longitude, double latitude, Date today) {
         coordinates = new Coordinates(latitude, longitude);
         date = DateComponents.from(today);
     }
 
-    DateComponents date;
-    List<Integer> prayers;
     private void use(double longitude, double latitude, Date today) {
         prayers = new ArrayList<>();
 
@@ -313,16 +311,10 @@ public class Service extends android.app.Service {
         prayers.add(ishatemp);
     }
 
-    private String fajr;
-    private String dhuhr;
-    private String asr;
-    private String maghrib;
-    private String isha;
-    PrayerTimes prayerTimes;
-    private String timeshape = "hh:mm a";
     private void pull_prayer_times_and_shape_them() {
         prayerTimes = new PrayerTimes(coordinates, date, params);
         try {
+            String timeshape = "hh:mm a";
             fajr = DateFormat.format(timeshape, new Date(prayerTimes.fajr.getTime())).toString();
             dhuhr = DateFormat.format(timeshape, new Date(prayerTimes.dhuhr.getTime())).toString();
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
@@ -342,10 +334,6 @@ public class Service extends android.app.Service {
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
     }
 
-
-    /**
-     * not needed
-     */
     public void stoptimertask() {
         //stop the timer, if it's not already null
         if (timer != null) {
@@ -362,5 +350,8 @@ public class Service extends android.app.Service {
         Service.mCurrentService = mCurrentService;
     }
 
+    public static void isServiceRunning(){
+
+    }
 
 }

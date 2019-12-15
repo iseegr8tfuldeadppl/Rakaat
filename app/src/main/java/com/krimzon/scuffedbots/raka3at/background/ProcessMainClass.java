@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 public class ProcessMainClass {
     public static final String TAG = ProcessMainClass.class.getSimpleName();
@@ -35,7 +34,6 @@ public class ProcessMainClass {
         } else {
             context.startService(serviceIntent);
         }
-        Log.d(TAG, "ProcessMainClass: start service go!!!!");
     }
 }
 

@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import com.krimzon.scuffedbots.raka3at.background.Globals;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
@@ -74,7 +73,6 @@ public class JobService extends android.app.job.JobService {
      */
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        Log.i(TAG, "Stopping job");
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
         // give the time to run
@@ -101,7 +99,6 @@ public class JobService extends android.app.job.JobService {
             } catch (Exception e) {
                 // not registered
             }
-            Log.i(TAG, "Finishing job");
             instance.jobFinished(jobParameters, true);
         }
     }
