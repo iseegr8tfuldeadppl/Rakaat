@@ -1875,6 +1875,14 @@ public class force extends AppCompatActivity {
             }
 
             live_updates();
+        } else {
+            if(slideholder.getVisibility()==VISIBLE){
+                slideholder.startAnimation(begone);
+                begone.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    if(!it_is_today)
+                        slideholder.setVisibility(View.GONE);
+                }});
+            }
         }
 
     }
