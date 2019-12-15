@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-public class NoPaddingTextView extends android.support.v7.widget.AppCompatTextView {
+public class NoPaddingTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     private int mAdditionalPadding;
 

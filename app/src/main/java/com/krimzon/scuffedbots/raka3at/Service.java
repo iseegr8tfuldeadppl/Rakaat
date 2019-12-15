@@ -8,9 +8,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.batoulapps.adhan.CalculationMethod;
 import com.batoulapps.adhan.CalculationParameters;
@@ -27,8 +28,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
-import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
+import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.utilities.Notification;
 
 public class Service extends android.app.Service {

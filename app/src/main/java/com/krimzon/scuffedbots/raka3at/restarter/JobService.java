@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 
 import com.krimzon.scuffedbots.raka3at.Globals;
 import com.krimzon.scuffedbots.raka3at.ProcessMainClass;

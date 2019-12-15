@@ -1,7 +1,6 @@
 package com.krimzon.scuffedbots.raka3at;
 
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
