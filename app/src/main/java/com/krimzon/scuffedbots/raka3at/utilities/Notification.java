@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at.background.utilities;
+package com.krimzon.scuffedbots.raka3at.utilities;
 
 
 import android.app.NotificationChannel;

@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at.background;
+package com.krimzon.scuffedbots.raka3at;
 
 
 import android.app.Service;

@@ -16,7 +16,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -47,6 +46,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.restarter.RestartServiceBroadcastReceiver;
 import com.krimzon.scuffedbots.raka3at.dialogs.HomeOrMosque;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
 import net.time4j.PlainDate;
@@ -715,6 +715,16 @@ public class force extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // adan service
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+        } else {
+            ProcessMainClass bck = new ProcessMainClass();
+            bck.launchService(getApplicationContext());
+        }
+
+
         if(an_alert_to_turn_location_on_was_displayed)
             AttemptToGetLocationCoordinates();
 

@@ -1,10 +1,10 @@
-package com.krimzon.scuffedbots.raka3at.background.restarter;
+package com.krimzon.scuffedbots.raka3at.restarter;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.krimzon.scuffedbots.raka3at.background.Globals;
+import com.krimzon.scuffedbots.raka3at.Globals;
 
 
 public class BootUpReceiver extends BroadcastReceiver {

@@ -18,11 +18,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.background.Service;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
-import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
-import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
+import com.krimzon.scuffedbots.raka3at.restarter.RestartServiceBroadcastReceiver;
 
 import java.util.Locale;
 

@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at.background.restarter;
+package com.krimzon.scuffedbots.raka3at.restarter;
 
 import android.app.job.JobParameters;
 import android.content.Context;
@@ -8,8 +8,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
 
-import com.krimzon.scuffedbots.raka3at.background.Globals;
-import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.Globals;
+import com.krimzon.scuffedbots.raka3at.ProcessMainClass;
 
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at.background;
+package com.krimzon.scuffedbots.raka3at;
 
 
 import android.app.NotificationManager;
@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
+
 import com.batoulapps.adhan.CalculationMethod;
 import com.batoulapps.adhan.CalculationParameters;
 import com.batoulapps.adhan.Coordinates;
@@ -26,7 +27,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import java.text.SimpleDateFormat;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.krimzon.scuffedbots.raka3at.background.utilities.Notification;
+import com.krimzon.scuffedbots.raka3at.utilities.Notification;
 
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
@@ -182,8 +182,9 @@ public class Service extends android.app.Service {
         timerTask = new TimerTask() {
             public void run() {
                 try {
+                    display_notification();
 
-                    // Check if we are still in the same day, if not then calculate new day's prayertimes
+                    /*// Check if we are still in the same day, if not then calculate new day's prayertimes
                     new_date = new Date();
                     if(!String.valueOf(old_date).split(" ")[2].equals(String.valueOf(new_date).split(" ")[2]))
                         location_shit(new_date);
@@ -201,7 +202,7 @@ public class Service extends android.app.Service {
 
                         // set i to the next adan
                         i++; if(i>=5) i = 0;
-                    } else recent_adan = false;
+                    } else recent_adan = false;*/
 
 
                 } catch(Exception ignored){}
