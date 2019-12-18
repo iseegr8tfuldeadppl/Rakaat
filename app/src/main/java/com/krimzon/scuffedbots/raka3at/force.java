@@ -46,7 +46,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.restarter.RestartServiceBroadcastReceiver;
+import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
 import com.krimzon.scuffedbots.raka3at.dialogs.HomeOrMosque;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
 import net.time4j.PlainDate;
@@ -321,8 +322,10 @@ public class force extends AppCompatActivity {
             fade_slider_in();
 
         clean_titles_and_times();
-        prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
-        prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
+        if(!end_of_day) {
+            prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
+            prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
+        }
 
         color_pray_buttons();
 

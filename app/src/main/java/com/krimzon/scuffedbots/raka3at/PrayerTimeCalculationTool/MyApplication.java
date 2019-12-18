@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at;
+package com.krimzon.scuffedbots.raka3at.PrayerTimeCalculationTool;
 
 import android.app.Application;
 

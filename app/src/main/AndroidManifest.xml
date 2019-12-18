@@ -20,7 +20,7 @@
         android:xlargeScreens="true" />
 
     <application
-        android:name=".MyApplication"
+        android:name=".PrayerTimeCalculationTool.MyApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
@@ -29,21 +29,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".forceWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/force_widget_info" />
-        </receiver>
-
-        <activity android:name=".forceWidgetConfigureActivity">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".force"
             android:configChanges="orientation"
@@ -67,11 +52,11 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".restarter.JobService"
+        <service android:name=".background.restarter.JobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
-            android:name=".restarter.RestartServiceBroadcastReceiver"
+            android:name=".background.restarter.RestartServiceBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="StartMyServiceAtBootReceiver">
@@ -85,7 +70,7 @@
         </receiver>
 
         <service
-            android:name=".Service"
+            android:name=".background.Service"
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"

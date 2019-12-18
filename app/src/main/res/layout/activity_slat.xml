@@ -42,7 +42,7 @@
                 android:textSize="50sp" />
         </RelativeLayout>
 
-        <com.krimzon.scuffedbots.raka3at.NoPaddingTextView
+        <com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView
             android:id="@+id/raka3at"
             android:paddingTop="0dp"
             android:text="@string/zero"
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
-            <com.krimzon.scuffedbots.raka3at.NoPaddingTextView
+            <com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView
                 android:id="@+id/sajda"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
         android:focusable="true"
         android:gravity="center"
         android:visibility="invisible">
-        <com.krimzon.scuffedbots.raka3at.NoPaddingTextView
+        <com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView
             android:paddingBottom="0dp"
             android:id="@+id/countdown"
             android:paddingTop="0dp"

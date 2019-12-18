@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at;
+package com.krimzon.scuffedbots.raka3at.background;
 
 
 import android.app.NotificationManager;
@@ -36,9 +36,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.utilities.Notification;
+import com.krimzon.scuffedbots.raka3at.background.utilities.Notification;
 
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;

@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at.restarter;
+package com.krimzon.scuffedbots.raka3at.background.restarter;
 
 import android.app.job.JobParameters;
 import android.content.Context;
@@ -8,8 +8,8 @@ import android.os.Build;
 import android.os.Handler;
 import androidx.annotation.RequiresApi;
 
-import com.krimzon.scuffedbots.raka3at.Globals;
-import com.krimzon.scuffedbots.raka3at.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.background.Globals;
+import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
 
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -56,7 +56,7 @@ public class JobService extends android.app.job.JobService {
                 } catch (Exception e) {
                     try {
                         getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -65,12 +65,6 @@ public class JobService extends android.app.job.JobService {
 
     }
 
-    /**
-     * called if Android kills the job service
-     *
-     * @param jobParameters
-     * @return
-     */
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
@@ -86,12 +80,6 @@ public class JobService extends android.app.job.JobService {
         return false;
     }
 
-
-    /**
-     * called when the tracker is stopped for whatever reason
-     *
-     * @param context
-     */
     public static void stopJob(Context context) {
         if (instance != null && jobParameters != null) {
             try {

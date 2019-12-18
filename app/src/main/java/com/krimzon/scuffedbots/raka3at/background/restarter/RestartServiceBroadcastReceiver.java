@@ -1,4 +1,4 @@
-package com.krimzon.scuffedbots.raka3at.restarter;
+package com.krimzon.scuffedbots.raka3at.background.restarter;
 
 
 import android.app.job.JobInfo;
@@ -12,8 +12,8 @@ import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Handler;
 import androidx.annotation.RequiresApi;
-import com.krimzon.scuffedbots.raka3at.Globals;
-import com.krimzon.scuffedbots.raka3at.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.background.Globals;
+import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
 
 import static android.content.Context.JOB_SCHEDULER_SERVICE;
 
@@ -22,12 +22,6 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
     private static JobScheduler jobScheduler;
     private RestartServiceBroadcastReceiver restartSensorServiceReceiver;
 
-    /**
-     * it returns the number of version code
-     *
-     * @param context
-     * @return
-     */
     public static long getVersionCode(Context context) {
         PackageInfo pInfo;
         try {
@@ -103,7 +97,7 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
                 } catch (Exception e) {
                     try {
                         context.getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
 
                     }
                 }
