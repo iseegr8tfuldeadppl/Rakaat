@@ -256,5 +256,8 @@
     <string name="detectorno">Already prayed</string>
     <string name="arabe">العربية</string>
     <string name="english">English</string>
+    <string name="newline">\n</string>
+    <string name="plusser">+</string>
+    <string name="minuser">-</string>
 
 </resources>

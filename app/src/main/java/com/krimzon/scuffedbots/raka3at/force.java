@@ -16,7 +16,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
@@ -144,8 +143,78 @@ public class force extends AppCompatActivity {
     private boolean only_once2 = true;
     private Animation toleft1, toleft2, toleft3, toleft4, toleft5, toleft6, toleft7, toleft8, toleft9, toleft10, toleft11, toleft12;
     private Animation fromright1, fromright2, fromright3, fromright4, fromright5, fromright6, fromright7, fromright8, fromright9, fromright10, fromright11, fromright12;
+    private int temp_negatifise;
+    private int temp_positifise;
+    private Thread mythread;
+    private int current_displayed_next_adan = 0;
+    private int temp_rightnowcomparable;
+    private boolean running = true;
+    private boolean can_find_in = true;
+    private boolean still_scoping_on_previous_adan = false;
+    private int negatifise;
+    private boolean initialdelayoncebrk = true;
 
+    private Handler handler3 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(slider!=null) {
+                if(positifise!=0)
+                    slider.setText("- " + positifise);
+                else
+                    begonethot();
+            }
+        }
+    };
+    private Handler handlos = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            for(int i=0; i<5; i++)
+                print(prayers.get(i));
+            print("rightnowcomparable: " + rightnowcomparable);
+        }
+    };
+    private Handler handler7 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            find_slider(next_adan);
+        }
+    };
+    private Handler handler6 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            for(int i=0; i<5; i++) {
+                find_slider(i);
+                slider.setVisibility(View.GONE);
+            }
 
+            find_slider(next_adan);
+        }
+    };
+    private Handler handler5 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch_to_next_adan();
+        }
+    };
+    private Handler handler4 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(slider!=null){
+                if(negatifise!=0)
+                    slider.setText("+ " + negatifise); // for sm ass reason it's over by 1 min
+                else
+                    begonethot();
+            }
+        }
+    };
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(it_is_today) {
+                animatenextadan();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,26 +267,36 @@ public class force extends AppCompatActivity {
         handlerer = new Handler(handlerThread.getLooper());
     }*/
 
-    int temp_positifise;
     private void live_updates() {
         Runnable r=new Runnable() {@Override public void run() { try {
             while(running) {
-                wait_1_second();
+                if (it_is_today) {
 
-                calculate_temp_pos_and_neg();
+                    wait_1_second();
 
-                check_next_adan();
+                    calculate_temp_pos_and_neg();
 
-                display_neg_if_possible();
+                    if(rightnowcomparable!=temp_rightnowcomparable) {
 
-                if((temp_positifise != positifise || changing_day) && !still_scoping_on_previous_adan){ changing_day = false;
-                    positifise = temp_positifise;
-                    handler3.sendEmptyMessage(0);
-                    if(new_adan)
-                        handler5.sendEmptyMessage(0);
+                        check_next_adan();
+
+                        temp_positifise = Math.round(Math.abs((prayers.get(next_adan) - rightnowcomparable)));
+                        if (next_adan != 0) {
+                            temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(next_adan - 1))));
+                        } else
+                            still_scoping_on_previous_adan = false;
+
+                        display_neg_if_possible();
+
+                        if ((temp_positifise != positifise || changing_day) && !still_scoping_on_previous_adan) {
+                            positifise = temp_positifise;
+                            handler3.sendEmptyMessage(0);
+                            if (next_adan!=current_displayed_next_adan)
+                                handler5.sendEmptyMessage(0);
+                        }
+                    }
+
                 }
-
-
             }
         } catch(Exception ignored){} }};
 
@@ -226,23 +305,59 @@ public class force extends AppCompatActivity {
         mythread.start();
     }
 
-    Thread mythread;
     private void switch_to_next_adan() {
-        calculate_temp_pos_and_neg();
 
-        slider.setVisibility(View.GONE);
+        for(int i=0; i<5; i++) {
+            find_slider(i);
+            slider.setVisibility(View.GONE);
+        }
 
         find_slider(next_adan);
+        if(still_scoping_on_previous_adan)
+            handler4.sendEmptyMessage(0);
+        else
+            handler3.sendEmptyMessage(0);
         if(can_find_in)
             fade_slider_in();
+
+        clean_titles_and_times();
+        prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
+        prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
+
+        color_pray_buttons();
+
+
+
+        // don't display time till next adan if it's at end of day
+        if(!end_of_day)
+            InitialDelayForNextAdanAnimation();
+    }
+
+    private void clean_titles_and_times() {
+
+        if(darkmode)
+            for (int i = 0; i < 5; i++){
+                prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+            }
+        else
+            for (int i = 0; i < 5; i++) {
+                prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+            }
     }
 
     private void check_next_adan() {
         for(int i=0;i<prayers.size();i++){
+            if(rightnowcomparable<prayers.get(0)) {
+                temp_next_adan = 0;
+                break;
+            }
             if(rightnowcomparable>prayers.get(i)) {
                 temp_next_adan = i + 1;
             }
         }
+
 
         if(temp_next_adan>=5) {
             end_of_day = true;
@@ -255,29 +370,32 @@ public class force extends AppCompatActivity {
             new_adan = true;
         } else
             new_adan = false;
+
+        if(changing_day)
+            new_adan = true;
+
     }
 
-    protected void display_neg_if_possible() {
+    private void display_neg_if_possible() {
         if((temp_negatifise != negatifise || changing_day) && next_adan!=0){
             changing_day = false;
-
+            negatifise = temp_negatifise;
             if(negatifise <= 30){
                 still_scoping_on_previous_adan = true;
-                handler7.sendEmptyMessage(0);
+                if (next_adan-1!=current_displayed_next_adan) {
+                    handler7.sendEmptyMessage(0);
+                    handler5.sendEmptyMessage(0);
+                }
                 handler4.sendEmptyMessage(0);
             } else
                 still_scoping_on_previous_adan = false;
         }
     }
 
-    protected void calculate_temp_pos_and_neg() {
-        temptime = String.valueOf(new Date()).split(" ")[3];
+    private void calculate_temp_pos_and_neg() {
+        String temptime = String.valueOf(new Date()).split(" ")[3];
+        temp_rightnowcomparable = rightnowcomparable;
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
-        temp_positifise = Math.round(Math.abs((prayers.get(next_adan) - rightnowcomparable )));
-        if(next_adan!=0)
-            temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(next_adan-1) )));
-        else
-            still_scoping_on_previous_adan = false;
     }
 
     private void wait_1_second() {
@@ -293,61 +411,6 @@ public class force extends AppCompatActivity {
             }
         }
     }
-
-
-    int soonest;
-    boolean adan_happening = false;
-    boolean didntlookforsoonest = true;
-    String temptime;
-    int temp_negatifise;
-    Handler handler3 = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            if(slider!=null) {
-                print("positifise: " + positifise);
-                if(positifise!=0)
-                    slider.setText("- " + positifise);
-                else
-                    begonethot();
-            }
-        }
-    };
-    Handler handler7 = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            find_slider(next_adan);
-        }
-    };
-    Handler handler6 = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            if(slider!=null) {
-                if(slider.getVisibility()==VISIBLE)
-                    slider.setVisibility(View.GONE);
-            }
-        }
-    };
-
-    Handler handler5 = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch_to_next_adan();
-        }
-    };
-    Handler handler4 = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            find_slider(next_adan);
-            if(slider!=null){
-                if(negatifise!=0)
-                    slider.setText("+ " + negatifise); // for sm ass reason it's over by 1 min
-                 else
-                    begonethot();
-            }
-        }
-    };
-
-
 
     private void variables_setup() {
 
@@ -457,7 +520,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     private void convert_hijri_to_cute() {
         if(language.equals(resources.getString(R.string.ar))){
             hijri += hijri_day + " ";
@@ -555,7 +617,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     private void fontAndy() {
         Typeface arabic_typeface = Typeface.createFromAsset(getAssets(), "Tajawal-Light.ttf");
         Typeface arabic_typeface2 = Typeface.createFromAsset(getAssets(), "Tajawal-Regular.ttf");
@@ -580,7 +641,6 @@ public class force extends AppCompatActivity {
 
     }
 
-
     private void languageshet() {
         if(language.equals(resources.getString(R.string.en))) {
             getStrings();
@@ -599,7 +659,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     private void getStrings(){
         fajrtitlel = getString(R.string.fajrtitle);
         risetitlel = getString(R.string.rise);
@@ -610,7 +669,6 @@ public class force extends AppCompatActivity {
         pray = getString(R.string.joinprayer);
         force = getString(R.string.force);
     }
-
 
     private void load_data_from_slat_sql() {
         SQLSharing.mycursor.moveToPosition(6);
@@ -634,7 +692,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     private void low_light_alert() {
         if(getIntent().getStringExtra("light_alert").equals("yes")) {
             if (language.equals(resources.getString(R.string.en)))
@@ -643,7 +700,6 @@ public class force extends AppCompatActivity {
                 Snackbar.make(full, getString(R.string.low_light_arabe), Snackbar.LENGTH_LONG).show();
         }
     }
-
 
     private void location_shit(final Date date) {
         sql(resources.getString(R.string.justforce));
@@ -655,7 +711,6 @@ public class force extends AppCompatActivity {
         if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(date);
     }
 
-
     private void if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(Date date) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
@@ -664,7 +719,6 @@ public class force extends AppCompatActivity {
             AttemptToGetLocationCoordinates();
     }
 
-
     private void if_theres_previous_info_load_it_n_display(Date date) {
         new_coordinates = false;
         SQLSharing.mycursor.moveToFirst();
@@ -672,7 +726,6 @@ public class force extends AppCompatActivity {
         latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
         use(longitude, latitude, new_coordinates, date);
     }
-
 
     private void sql(final String table) {
         if(SQLSharing.mycursor!=null)
@@ -683,7 +736,6 @@ public class force extends AppCompatActivity {
         SQLSharing.mydb = new SQL(getApplicationContext());
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -697,19 +749,16 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onBackPressed() {
         exit();
     }
-
 
     private void exit() {
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainActivity);
         finish();
     }
-
 
     private void AttemptToGetLocationCoordinates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -730,13 +779,11 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     private boolean checkLocation() {
         if(!isLocationEnabled())
             showAlert();
         return isLocationEnabled();
     }
-
 
     private void showAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -763,7 +810,6 @@ public class force extends AppCompatActivity {
         dialog.show();
     }
 
-    boolean running = true;
     @Override
     protected void onPause() {
         running = false;
@@ -832,9 +878,7 @@ public class force extends AppCompatActivity {
                 mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-
-
-    public void use(double longitude, double latitude, boolean new_coordinates, Date today) {
+    private void use(double longitude, double latitude, boolean new_coordinates, Date today) {
 
         // declarations
         hijri = "";
@@ -871,7 +915,6 @@ public class force extends AppCompatActivity {
         retrieveAndy();
     }
 
-
     private void pull_location(double longitude, double latitude) {
         Geocoder geocoder;
         List<Address> addresses = null;
@@ -895,7 +938,6 @@ public class force extends AppCompatActivity {
             citydisplay.setText(city);
         }
     }
-
 
     private void convert_prayertimes_into_seconds() {
         int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
@@ -922,8 +964,6 @@ public class force extends AppCompatActivity {
         prayers.add(ishatemp);
     }
 
-
-    private boolean can_find_in = true;
     private void display_prayer_times() {
         if(changing_day){
             if(going_left){
@@ -1076,7 +1116,7 @@ public class force extends AppCompatActivity {
                         ishatitle.setVisibility(VISIBLE);
                         if(it_is_today) {
                             can_find_in = true;
-                            fade_slider_in();
+                            handler5.sendEmptyMessage(0);
                         }
                     }});
                 }});
@@ -1232,7 +1272,7 @@ public class force extends AppCompatActivity {
                         ishatitle.setVisibility(VISIBLE);
                         if(it_is_today) {
                             can_find_in = true;
-                            fade_slider_in();
+                            handler5.sendEmptyMessage(0);
                         }
                     }});
                 }});
@@ -1256,7 +1296,6 @@ public class force extends AppCompatActivity {
             }
         }
     }
-
 
     private void pull_prayer_times_and_shape_them() {
         PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, params);
@@ -1283,7 +1322,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-
     private void update_coords_in_sql(double longitude, double latitude, boolean new_coordinates) {
         if(new_coordinates)
             SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
@@ -1291,22 +1329,18 @@ public class force extends AppCompatActivity {
             SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
     }
 
-
     private void pull_date_and_shape_it(double longitude, double latitude, Date today) {
         coordinates = new Coordinates(latitude, longitude);
         date = DateComponents.from(today);
     }
 
-
     private void display_dates() {
-        daterr.setText(datin + '\n' + hijri);
+        daterr.setText( datin + resources.getString(R.string.newline) + hijri);
     }
-
-
 
     private void work_on_date_n_display_it() {
         datin = "";
-        String tempdatin = "";
+        String tempdatin;
         if(language.equals(resources.getString(R.string.en))) {
             tempdatin = temptoday[0];
 
@@ -1522,7 +1556,6 @@ public class force extends AppCompatActivity {
         hijri_date_setup();
     }
 
-
     private void print(Object dumps) {
         Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
     }
@@ -1539,7 +1572,7 @@ public class force extends AppCompatActivity {
                 .withStyle(SnackBar.Style.DEFAULT)
                 .show();
 
-        TextView snackButton = (TextView) mSnackBar.getContainerView().findViewById(R.id.snackButton);
+        TextView snackButton = mSnackBar.getContainerView().findViewById(R.id.snackButton);
         snackButton.setTextColor(Color.GREEN);
         snackButton.setTextSize(16);
         snackButton.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
@@ -1640,26 +1673,6 @@ public class force extends AppCompatActivity {
             print2(getString(R.string.waytooearly) + " " + prayernames.get(prayer));
         else if (language.equals(resources.getString(R.string.ar)))
             print2(getString(R.string.waytooearly_arabe) + " " + prayernames_arabe.get(prayer));
-    }
-
-    public void fajrClicked(View view) {
-        check_state(0);
-    }
-
-    public void dhuhrClicked(View view) {
-        check_state(1);
-    }
-
-    public void asrClicked(View view) {
-        check_state(2);
-    }
-
-    public void maghribClicked(View view) {
-        check_state(3);
-    }
-
-    public void ishaClicked(View view) {
-        check_state(4);
     }
 
     private void display_selection(int prayerer) {
@@ -1875,6 +1888,10 @@ public class force extends AppCompatActivity {
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
 
         for(int i=0;i<prayers.size();i++){
+            if(rightnowcomparable<prayers.get(0)) {
+                temp_next_adan = 0;
+                break;
+            }
             if(rightnowcomparable>prayers.get(i))
                 temp_next_adan = i+1;
         }
@@ -1933,15 +1950,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            if(it_is_today) {
-                animatenextadan();
-            }
-        }
-    };
-
     /*Handler handler2 = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -1958,7 +1966,6 @@ public class force extends AppCompatActivity {
         }
     }
 
-    int negatifise;
     private void slide_in_dem_dpz() {
         if(it_is_today) {
             temp_positifise = Math.round( Math.abs((prayers.get(next_adan) - rightnowcomparable)) );
@@ -1966,6 +1973,7 @@ public class force extends AppCompatActivity {
             if(next_adan!=0)
                 temp_negatifise = Math.round( Math.abs((rightnowcomparable - prayers.get(next_adan-1))) );
 
+            String lol;
             if((temp_negatifise != negatifise || changing_day) && next_adan!=0){
                 negatifise = temp_negatifise;
                 if(negatifise <= 30){
@@ -1973,9 +1981,10 @@ public class force extends AppCompatActivity {
                     find_slider(next_adan);
                     if(slider!=null)
                         if(negatifise!=0){
-                            slider.setText("+ " + negatifise); // for sm ass reason it's over by 1 min
+                            lol = resources.getString(R.string.plusser) + negatifise;
+                            slider.setText(lol); // for sm ass reason it's over by 1 min
                             if(can_find_in)
-                                fade_slider_in();
+                                handler5.sendEmptyMessage(0);
                         } else
                             begonethot();
                 } else
@@ -1985,13 +1994,13 @@ public class force extends AppCompatActivity {
             if ((temp_positifise != positifise || changing_day) && !still_scoping_on_previous_adan){
                 positifise = temp_positifise;
                 if (positifise < 10000) { // TODO: revert this wuz for tasting
-
                     find_slider(next_adan);
                     if(slider!=null)
                         if(positifise!=0){
-                            slider.setText("- " + positifise); // for sm ass reason it's over by 1 min
+                            lol = resources.getString(R.string.minuser) + positifise;
+                            slider.setText(lol); // for sm ass reason it's over by 1 min
                             if(can_find_in)
-                                fade_slider_in();
+                                handler5.sendEmptyMessage(0);
                         } else
                             begonethot();
                 }
@@ -2005,7 +2014,6 @@ public class force extends AppCompatActivity {
 
     }
 
-    boolean still_scoping_on_previous_adan = false;
     private void begonethot() {
         handler6.sendEmptyMessage(0);
     }
@@ -2038,20 +2046,31 @@ public class force extends AppCompatActivity {
         else
             temp = next_adaner;
         switch (temp) {
+            case -1:
+                slider = findViewById(R.id.sliderisha);
+                current_displayed_next_adan = 5;
+                break;
             case 0:
+            case 5:
                 slider = findViewById(R.id.sliderfajr);
+                current_displayed_next_adan = 0;
                 break;
             case 1:
                 slider = findViewById(R.id.sliderdhuhr);
+                current_displayed_next_adan = 1;
                 break;
             case 2:
                 slider = findViewById(R.id.sliderasr);
+                current_displayed_next_adan = 2;
                 break;
             case 3:
                 slider = findViewById(R.id.slidermaghrib);
+                current_displayed_next_adan = 3;
                 break;
             case 4:
                 slider = findViewById(R.id.sliderisha);
+                current_displayed_next_adan = 4;
+                break;
         }
     }
 
@@ -2062,7 +2081,6 @@ public class force extends AppCompatActivity {
         }
     }*/
 
-    boolean initialdelayoncebrk = true;
     public void InitialDelayForNextAdanAnimation(){
 
         if(initialdelayoncebrk){ initialdelayoncebrk = false;
@@ -2151,8 +2169,6 @@ public class force extends AppCompatActivity {
         return 1;
     }
 
-
-
     public void is_it_future_present_or_past(){
         todaysplittemparray = String.valueOf((new Date())).split(" ");
         int day2 = Integer.valueOf(todaysplittemparray[2]);
@@ -2193,151 +2209,6 @@ public class force extends AppCompatActivity {
 
     }
 
-
-    public void checkTommorow(View view) {
-
-        can_find_in = false;
-        new_adan = true;
-        changing_day = true;
-        going_left = false;
-        going_right = true;
-
-        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
-        month = get_month(todaysplittemparray[1]);
-
-        gc = new GregorianCalendar(year, month-1, day);
-        gc.add(Calendar.DATE, 1);
-        CurrentDisplayedDay = gc.getTime();
-
-        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
-        month = get_month(todaysplittemparray[1]);
-
-        is_it_future_present_or_past();
-
-        location_shit(CurrentDisplayedDay);
-
-        if(!it_is_today) {
-            slide_in_dem_dpz();
-            for (int i = 0; i < 5; i++) {
-                if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
-                    if(darkmode) {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
-                    } else {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
-                    }
-                }
-            }
-            // Display double arrows that take you back to today
-            doublearrowsbackground.setVisibility(VISIBLE);
-            if(fill_all) {
-                try {
-                    Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
-                } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
-                }
-            } if(all_white) {
-                try {
-                    Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
-                } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
-                }
-            }
-        } else {
-            // Hide double arrows that take you back to today
-            doublearrowsbackground.setVisibility(View.INVISIBLE);
-        }
-
-    }
-
-
-    public void checkYesterday(View view) {
-
-        can_find_in = false;
-        new_adan = true;
-        changing_day = true;
-        going_left = true;
-        going_right = false;
-
-        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
-        month = get_month(todaysplittemparray[1]);
-
-        gc = new GregorianCalendar(year, month-1, day);
-        gc.add(Calendar.DATE, -1);
-        CurrentDisplayedDay = gc.getTime();
-
-        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
-        month = get_month(todaysplittemparray[1]);
-
-        is_it_future_present_or_past();
-
-        location_shit(CurrentDisplayedDay);
-
-        if(!it_is_today) {
-            slide_in_dem_dpz();
-            for (int i = 0; i < 5; i++) {
-                if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
-                    if(darkmode) {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
-                    } else {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
-                    }
-                }
-            }
-
-            // Display double arrows that take you back to today
-            doublearrowsbackground.setVisibility(VISIBLE);
-            if(fill_all) {
-                try {
-                    Glide.with(this).load(R.drawable.doublearrowright).into(doublearrows);
-                } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowright));
-                }
-            } if(all_white) {
-                try {
-                    Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
-                } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
-                }
-            }
-        } else {
-            // Hide double arrows that take you back to today
-            doublearrowsbackground.setVisibility(View.INVISIBLE);
-        }
-
-    }
-
-
-    public void ShowStatisticsClicked(View view) {
-        Statistictictictictic statisticstab=new Statistictictictictic(this, darkmode, language);
-        statisticstab.show();
-    }
-
-
-    public void arrowbackClicked(View view) {
-        exit();
-    }
-
-
-    public void nightmodeClicked(View view) {
-        if(darkmode)
-            light_mode();
-        else
-            dark_mode();
-
-        color_pray_buttons();
-    }
 
     private void light_mode() {
         darkmode = false;
@@ -2499,6 +2370,34 @@ public class force extends AppCompatActivity {
         SQLSharing.mydb.close();
     }
 
+
+    private void back_to_main() {
+        Intent main = new Intent(this, MainActivity.class);
+        startActivity(main);
+        finish();
+    }
+
+
+    public void fajrClicked(View view) {
+        check_state(0);
+    }
+
+    public void dhuhrClicked(View view) {
+        check_state(1);
+    }
+
+    public void asrClicked(View view) {
+        check_state(2);
+    }
+
+    public void maghribClicked(View view) {
+        check_state(3);
+    }
+
+    public void ishaClicked(View view) {
+        check_state(4);
+    }
+
     public void backtotodayClicked(View view) {
 
         can_find_in = false;
@@ -2519,9 +2418,145 @@ public class force extends AppCompatActivity {
 
     }
 
-    private void back_to_main() {
-        Intent main = new Intent(this, MainActivity.class);
-        startActivity(main);
-        finish();
+    public void checkTommorow(View view) {
+
+        can_find_in = false;
+        new_adan = true;
+        changing_day = true;
+        going_left = false;
+        going_right = true;
+
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        gc = new GregorianCalendar(year, month-1, day);
+        gc.add(Calendar.DATE, 1);
+        CurrentDisplayedDay = gc.getTime();
+
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        is_it_future_present_or_past();
+
+        location_shit(CurrentDisplayedDay);
+
+        if(!it_is_today) {
+            slide_in_dem_dpz();
+            for (int i = 0; i < 5; i++) {
+                if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
+                    if(darkmode) {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    } else {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                    }
+                }
+            }
+            // Display double arrows that take you back to today
+            doublearrowsbackground.setVisibility(VISIBLE);
+            if(fill_all) {
+                try {
+                    Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
+                } catch (Exception ignored) {
+                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
+                }
+            } if(all_white) {
+                try {
+                    Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
+                } catch (Exception ignored) {
+                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
+                }
+            }
+        } else {
+            // Hide double arrows that take you back to today
+            doublearrowsbackground.setVisibility(View.INVISIBLE);
+        }
+
     }
+
+    public void checkYesterday(View view) {
+
+        can_find_in = false;
+        new_adan = true;
+        changing_day = true;
+        going_left = true;
+        going_right = false;
+
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        gc = new GregorianCalendar(year, month-1, day);
+        gc.add(Calendar.DATE, -1);
+        CurrentDisplayedDay = gc.getTime();
+
+        todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
+        day = Integer.valueOf(todaysplittemparray[2]);
+        year = Integer.valueOf(todaysplittemparray[5]);
+        month = get_month(todaysplittemparray[1]);
+
+        is_it_future_present_or_past();
+
+        location_shit(CurrentDisplayedDay);
+
+        if(!it_is_today) {
+            slide_in_dem_dpz();
+            for (int i = 0; i < 5; i++) {
+                if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
+                    if(darkmode) {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    } else {
+                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                    }
+                }
+            }
+
+            // Display double arrows that take you back to today
+            doublearrowsbackground.setVisibility(VISIBLE);
+            if(fill_all) {
+                try {
+                    Glide.with(this).load(R.drawable.doublearrowright).into(doublearrows);
+                } catch (Exception ignored) {
+                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowright));
+                }
+            } if(all_white) {
+                try {
+                    Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
+                } catch (Exception ignored) {
+                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
+                }
+            }
+        } else {
+            // Hide double arrows that take you back to today
+            doublearrowsbackground.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    public void ShowStatisticsClicked(View view) {
+        Statistictictictictic statisticstab=new Statistictictictictic(this, darkmode, language);
+        statisticstab.show();
+    }
+
+    public void arrowbackClicked(View view) {
+        exit();
+    }
+
+    public void nightmodeClicked(View view) {
+        if(darkmode)
+            light_mode();
+        else
+            dark_mode();
+
+        color_pray_buttons();
+    }
+
 }

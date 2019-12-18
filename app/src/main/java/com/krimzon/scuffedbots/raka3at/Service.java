@@ -112,9 +112,16 @@ public class Service extends android.app.Service {
     private void find_next_adan() {
         try {
             temptime = String.valueOf(old_date).split(" ")[3];
+            int rightnowcomparable_old = rightnowcomparable;
             rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
 
+            if(rightnowcomparable_old!=rightnowcomparable)
+                display_notification("rightnowcomparable: " + rightnowcomparable, String.valueOf(prayers.get(i)));
             for (int j = 0; j < 5; j++) {
+                if(rightnowcomparable<prayers.get(0)) {
+                    i = 0;
+                    break;
+                }
                 if (rightnowcomparable > prayers.get(j)){
                     i = j + 1;
                 }
@@ -218,7 +225,6 @@ public class Service extends android.app.Service {
 
                     if(!end_of_day) {
                         // Check if we reached the adan, if so, then switch i to the next adan
-                        display_notification("rightnowcomparable: " + rightnowcomparable, String.valueOf(prayers.get(i)));
                         if (prayers.get(i) == rightnowcomparable) {
                             if (!recent_adan) {
                                 recent_adan = true;
