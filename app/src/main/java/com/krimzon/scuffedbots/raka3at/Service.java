@@ -112,17 +112,22 @@ public class Service extends android.app.Service {
     private void find_next_adan() {
         try {
             temptime = String.valueOf(old_date).split(" ")[3];
-            rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
+            rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
 
             for (int j = 0; j < 5; j++) {
-                if (rightnowcomparable < prayers.get(j)){
-                    i = j;
-                    break;
+                if (rightnowcomparable > prayers.get(j)){
+                    i = j + 1;
                 }
             }
+            if(i>=5){
+                i = 0;
+                end_of_day = true;
+            } else
+                end_of_day = false;
         } catch(Exception ignored){}
     }
 
+    private boolean end_of_day = false;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -209,25 +214,25 @@ public class Service extends android.app.Service {
                     if(!String.valueOf(old_date).split(" ")[2].equals(String.valueOf(new_date).split(" ")[2]))
                         location_shit(new_date);
                     old_date = new_date;
-                    temptime = String.valueOf(old_date).split(" ")[3];
-                    rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
+                    find_next_adan();
 
-                    // Check if we reached the adan, if so, then switch i to the next adan
-                    display_notification("rightnowcomparable: " + rightnowcomparable, String.valueOf(prayers.get(i)));
-                    if(prayers.get(i) <= rightnowcomparable && rightnowcomparable <= prayers.get(i) + 60){
-                        if(!recent_adan) {
-                            recent_adan = true;
+                    if(!end_of_day) {
+                        // Check if we reached the adan, if so, then switch i to the next adan
+                        display_notification("rightnowcomparable: " + rightnowcomparable, String.valueOf(prayers.get(i)));
+                        if (prayers.get(i) == rightnowcomparable) {
+                            if (!recent_adan) {
+                                recent_adan = true;
 
-                            // Play adan audio
-                            display_notification("New adan: " + lol.get(i), "");
-                            initExoPlayer();
+                                // Play adan audio
+                                display_notification("New adan: " + lol.get(i), "");
+                                initExoPlayer();
 
-                            // set i to the next adan
-                            i++;
-                            if (i >= 5) i = 0;
-                        }
-                    } else recent_adan = false;
-
+                                // set i to the next adan
+                                i++;
+                                if (i >= 5) i = 0;
+                            }
+                        } else recent_adan = false;
+                    }
 
                 } catch(Exception ignored){}
             }
@@ -302,22 +307,22 @@ public class Service extends android.app.Service {
     }
 
     private void convert_prayertimes_into_milliseconds() {
-        int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]) * 60;
+        int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
         if(fajr.split(" ")[1].equals("PM"))
-            fajrtemp += 43200; //12*3600
+            fajrtemp += 720; //12*60
         //Integer risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(rise.split(" ")[0].split(":")[1])*60;
-        int dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]) * 60;
+        int dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]);
         if(dhuhr.split(" ")[1].equals("PM") && !dhuhr.split(":")[0].equals("12"))
-            dhuhrtemp += 43200; //12*3600
-        int asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(asr.split(" ")[0].split(":")[1]) * 60;
+            dhuhrtemp += 720; //12*60
+        int asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(asr.split(" ")[0].split(":")[1]);
         if(asr.split(" ")[1].equals("PM"))
-            asrtemp += 43200; //12*3600
-        int maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1]) * 60;
+            asrtemp += 720; //12*60
+        int maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1]);
         if(maghrib.split(" ")[1].equals("PM"))
-            maghribtemp += 43200; //12*3600
-        int ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0]) * 3600 + Integer.valueOf(isha.split(" ")[0].split(":")[1]) * 60;
+            maghribtemp += 720; //12*60
+        int ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(isha.split(" ")[0].split(":")[1]);
         if(isha.split(" ")[1].equals("PM"))
-            ishatemp += 43200; //12*3600
+            ishatemp += 720; //12*60
 
 
 

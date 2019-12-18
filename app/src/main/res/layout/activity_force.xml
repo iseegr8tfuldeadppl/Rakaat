@@ -98,9 +98,9 @@
             <ImageView
                 android:id="@+id/lmfao"
                 android:layout_width="match_parent"
-                android:layout_height="110dp"/>
+                android:layout_height="110dp"
+                android:contentDescription="@string/todo" />
             <TextView
-                android:fontFamily=""
                 android:id="@+id/title"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
@@ -113,30 +113,19 @@
         </FrameLayout>
 
         <!-- Date -->
-        <LinearLayout
+        <TextView
+            android:layout_marginStart="@dimen/sidesoftable"
+            android:layout_marginEnd="@dimen/sidesoftable"
+            android:paddingTop="9dp"
+            android:paddingBottom="5dp"
+            android:id="@+id/daterr"
+            android:background="@drawable/date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="@dimen/sidesoftable"
-            android:layout_marginEnd="@dimen/sidesoftable">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="9dp"
-                android:paddingBottom="5dp"
-                android:id="@+id/datebackground"
-                android:background="@drawable/date"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/daterr"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:lineSpacingMultiplier="1.2"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/regulartextsize" />
-            </RelativeLayout>
-        </LinearLayout>
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="@color/white"
+            android:textSize="@dimen/regulartextsize" />
 
         <!--access other days + city-->
         <FrameLayout
@@ -193,9 +182,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:paddingEnd="@dimen/sidesoftablepaddings"
+                    android:paddingStart="@dimen/sidesoftablepaddings"
                     android:layout_weight="1"
-                    android:paddingRight="@dimen/sidesoftablepaddings">
+                    android:paddingEnd="@dimen/sidesoftablepaddings">
                     <ImageView
                         android:id="@+id/arrowright"
                         android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
@@ -206,7 +195,8 @@
                         android:clickable="true"
                         android:layout_height="24dp"
                         android:scaleType="fitXY"
-                        android:adjustViewBounds="true"/>
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/todo" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -239,10 +229,7 @@
 
 
         <!-- Table -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
+        <LinearLayout
                 android:id="@+id/tablesampler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -316,28 +303,22 @@
                     </LinearLayout>
 
                     <!--Slider-->
-                    <RelativeLayout
+                    <TextView
                         android:visibility="gone"
-                        android:id="@+id/slideholderfajr"
-                        android:layout_gravity="start|top"
-                        android:layout_width="match_parent"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/sliderfajr"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/grayerthanwhite"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp">
-                        <TextView
-                            android:layout_centerVertical="true"
-                            android:id="@+id/sliderfajr"
-                            android:gravity="center"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:textColor="@color/grayerthanwhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/delaydisplay"
-                            android:textSize="20sp"/>
-                    </RelativeLayout>
+                        android:background="@drawable/delaydisplay"
+                        android:textSize="20sp"/>
                 </FrameLayout>
 
                 <LinearLayout
@@ -456,28 +437,22 @@
                     </LinearLayout>
 
                     <!--Slider-->
-                    <RelativeLayout
+                    <TextView
                         android:visibility="gone"
-                        android:id="@+id/slideholderdhuhr"
-                        android:layout_gravity="start|top"
-                        android:layout_width="match_parent"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/sliderdhuhr"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/grayerthanwhite"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp">
-                        <TextView
-                            android:layout_centerVertical="true"
-                            android:id="@+id/sliderdhuhr"
-                            android:gravity="center"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:textColor="@color/grayerthanwhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/delaydisplay"
-                            android:textSize="20sp"/>
-                    </RelativeLayout>
+                        android:background="@drawable/delaydisplay"
+                        android:textSize="20sp"/>
                 </FrameLayout>
 
                 <FrameLayout
@@ -549,28 +524,22 @@
                 </LinearLayout>
 
                     <!--Slider-->
-                    <RelativeLayout
+                    <TextView
                         android:visibility="gone"
-                        android:id="@+id/slideholderasr"
-                        android:layout_gravity="start|top"
-                        android:layout_width="match_parent"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/sliderasr"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/grayerthanwhite"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp">
-                        <TextView
-                            android:layout_centerVertical="true"
-                            android:id="@+id/sliderasr"
-                            android:gravity="center"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:textColor="@color/grayerthanwhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/delaydisplay"
-                            android:textSize="20sp"/>
-                    </RelativeLayout>
+                        android:background="@drawable/delaydisplay"
+                        android:textSize="20sp"/>
                 </FrameLayout>
 
                 <FrameLayout
@@ -642,28 +611,22 @@
                 </LinearLayout>
 
                     <!--Slider-->
-                    <RelativeLayout
+                    <TextView
                         android:visibility="gone"
-                        android:id="@+id/slideholdermaghrib"
-                        android:layout_gravity="start|top"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <TextView
-                            android:layout_centerVertical="true"
-                            android:id="@+id/slidermaghrib"
-                            android:gravity="center"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:textColor="@color/grayerthanwhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/delaydisplay"
-                            android:textSize="20sp"/>
-                    </RelativeLayout>
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/slidermaghrib"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/grayerthanwhite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/delaydisplay"
+                        android:textSize="20sp"/>
                 </FrameLayout>
 
                 <FrameLayout
@@ -735,31 +698,25 @@
                 </LinearLayout>
 
                     <!--Slider-->
-                    <RelativeLayout
+                    <TextView
                         android:visibility="gone"
-                        android:id="@+id/slideholderisha"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <TextView
-                            android:layout_centerVertical="true"
-                            android:id="@+id/sliderisha"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:paddingTop="2dp"
-                            android:gravity="center"
-                            android:paddingBottom="2dp"
-                            android:textColor="@color/grayerthanwhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/delaydisplay"
-                            android:textSize="20sp"/>
-                    </RelativeLayout>
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/sliderisha"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textColor="@color/grayerthanwhite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/delaydisplay"
+                        android:textSize="20sp"/>
                 </FrameLayout>
 
             </LinearLayout>
-
-
-        </FrameLayout>
 
     </LinearLayout>
 
