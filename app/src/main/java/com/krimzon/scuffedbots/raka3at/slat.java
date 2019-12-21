@@ -930,21 +930,20 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         StringBuilder verified_stringbuilder = new StringBuilder(verified);
         verified_stringbuilder.setCharAt(prayer, '1');
-        String new_verified = String.valueOf(verified_stringbuilder);
+        verified = String.valueOf(verified_stringbuilder);
 
         // set if at home or not
         if(at_home.equals("true")){
             StringBuilder athome_stringbuilder = new StringBuilder(athome);
             athome_stringbuilder.setCharAt(prayer, '1');
-            String new_athome = String.valueOf(athome_stringbuilder);
-            athome = new_athome;
+            athome = String.valueOf(athome_stringbuilder);
         }
 
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable, temper, new_verified, athome);
+            SQLSharing.mydb.updatePrayed(todaycomparable, temper, verified, athome);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, temper, new_verified, athome);
+            SQLSharing.mydb.insertPrayed(todaycomparable, temper, verified, athome);
 
     }
 

@@ -30,12 +30,12 @@ public class DetectorOrNot extends Dialog {
     private LinearLayout selectionbackground;
     private TextView selectiontitle;
     private Button selectionmosque, selectionhome;
-    private Typeface arabic_typeface;
     private boolean darkmode;
     private String language;
     private String athome;
+    private boolean found_prayed_history_in_sql = false;
 
-    public DetectorOrNot(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, boolean at_home, String verified, String athome) {
+    DetectorOrNot(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, boolean at_home, String verified, String athome) {
         super(a);
         this.c = a;
         this.friday = friday;
@@ -62,7 +62,7 @@ public class DetectorOrNot extends Dialog {
         selectionhome = findViewById(R.id.selectionhome);
 
         // Step 2: Fonts
-        arabic_typeface = Typeface.createFromAsset(c.getAssets(),  "Tajawal-Light.ttf");
+        Typeface arabic_typeface = Typeface.createFromAsset(c.getAssets(), "Tajawal-Light.ttf");
         selectionmosque.setTypeface(arabic_typeface);
         selectionhome.setTypeface(arabic_typeface);
         selectiontitle.setTypeface(arabic_typeface);
@@ -93,42 +93,36 @@ public class DetectorOrNot extends Dialog {
         }});
     }
 
-    private void sql(String table) {
+    private void sql() {
         if(SQLSharing.mycursor!=null)
             SQLSharing.mycursor.close();
         if(SQLSharing.mydb!=null)
             SQLSharing.mydb.close();
-        SQLSharing.TABLE_NAME_INPUTER = table;
+        SQLSharing.TABLE_NAME_INPUTER = "force3";
         SQLSharing.mydb = new SQL(c);
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
     }
 
-
-    protected String temper = "00000";
-    protected StringBuilder strinkbilder, athome_stringbuilder;
-    String new_athome;
     private void set_prayer_without_using_detector() {
 
         // set if at home or not
         if(at_home){
-            athome_stringbuilder = new StringBuilder(athome);
+            StringBuilder athome_stringbuilder = new StringBuilder(athome);
             athome_stringbuilder.setCharAt(prayerer, '1');
-            new_athome = String.valueOf(athome_stringbuilder);
-            athome = new_athome;
+            athome = String.valueOf(athome_stringbuilder);
         }
 
-        sql("force3");
-        strinkbilder = new StringBuilder(prayed);
+        sql();
+        StringBuilder strinkbilder = new StringBuilder(prayed);
         strinkbilder.setCharAt(prayerer, '1');
-        temper = String.valueOf(strinkbilder);
+        String temper = String.valueOf(strinkbilder);
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable,temper, verified, athome);
+            SQLSharing.mydb.updatePrayed(todaycomparable, temper, verified, athome);
         else
             SQLSharing.mydb.insertPrayed(todaycomparable, temper, verified, athome);
     }
 
-    protected boolean found_prayed_history_in_sql = false;
     private void check_if_prayed_exists_in_sql() {
         if(SQLSharing.mycursor.getCount()<=0)
             found_prayed_history_in_sql = false;

@@ -27,7 +27,8 @@
             android:id="@+id/statslogo"
             android:layout_weight=".3"
             android:layout_width="69dp"
-            android:layout_height="69dp"/>
+            android:layout_height="69dp"
+            android:contentDescription="@string/todo" />
     </LinearLayout>
 
 
@@ -36,7 +37,7 @@
         android:gravity="start"
         android:layout_weight=".5"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:textSize="26sp"
         android:textColor="@color/white"
         android:text="@string/yourprayers_arabe"
@@ -52,7 +53,7 @@
         <TextView
             android:id="@+id/prayed_prayers_today"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -60,7 +61,7 @@
         <TextView
             android:id="@+id/title_prayed_prayers_today"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -77,7 +78,7 @@
         <TextView
             android:id="@+id/prayed_prayers_past_week"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -85,7 +86,7 @@
         <TextView
             android:id="@+id/title_prayed_prayers_past_week"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -102,7 +103,7 @@
         <TextView
             android:id="@+id/prayed_prayers_past_month"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -112,7 +113,7 @@
             android:id="@+id/title_prayed_prayers_past_month"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight=".5"
+            android:layout_weight=".3"
             android:gravity="center"
             android:text="@string/pastmonth_arabe"
             android:textColor="@color/white"
@@ -128,7 +129,7 @@
         <TextView
             android:id="@+id/prayed_prayers_past_six_months"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -136,7 +137,7 @@
         <TextView
             android:id="@+id/title_prayed_prayers_past_six_months"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -153,7 +154,7 @@
         <TextView
             android:id="@+id/prayed_prayers_past_year"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -161,7 +162,7 @@
         <TextView
             android:id="@+id/title_prayed_prayers_past_year"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -179,7 +180,7 @@
         <TextView
             android:id="@+id/prayed_prayers_of_all_time"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"
@@ -187,7 +188,7 @@
         <TextView
             android:id="@+id/title_prayed_prayers_of_all_time"
             android:gravity="center"
-            android:layout_weight=".5"
+            android:layout_weight=".3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="17sp"

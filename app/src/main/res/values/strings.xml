@@ -186,13 +186,13 @@
     <string name="today">Today</string>
     <string name="yourprayers">Your prayers</string>
     <string name="stats_arabe">احصائيات</string>
-    <string name="yourprayers_arabe">صلواتك</string>
+    <string name="yourprayers_arabe">كم صليت حتى الآن</string>
     <string name="today_arabe">اليوم</string>
-    <string name="past7days_arabe">السبع أيام الماضية</string>
+    <string name="past7days_arabe">السبع أيام</string>
     <string name="pastmonth">Past Month</string>
-    <string name="pastmonth_arabe">الثلاثين يوم الماضية</string>
+    <string name="pastmonth_arabe">الثلاثين يوم</string>
     <string name="past6months">Past 6 Months</string>
-    <string name="past6months_arabe">السِّت أشهُر الماضية</string>
+    <string name="past6months_arabe">السِّت أشهُر</string>
     <string name="pastyear">Past Year</string>
     <string name="pastyear_arabe">السّنة الماضية</string>
     <string name="alltime_arabe">منْذُ فتْح التّطبيق</string>
