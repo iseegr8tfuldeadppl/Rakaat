@@ -405,8 +405,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             this.getWindow().setStatusBarColor(resources.getColor(R.color.darkbackgroundcolor));
     }
 
-
-
     private void show_raka3at_selections(){
         entered_praying_process = true;
         if(receiveandy!=null) {
@@ -564,28 +562,30 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 int sensor_slowdown_for_battery_save = 50;
                 futuretime4 = currenttimetemp + sensor_slowdown_for_battery_save;
 
-                if (start_was_just_clicked) {
-                    start_was_just_clicked = false;
+                if (start_was_just_clicked) { start_was_just_clicked = false;
                     if (event.values[0] < minimum_light) {
                         if (receiveandy != null) {
                             if (receiveandy.equals("force"))
                                 back_to_force("yes");
                         }
                         if (language.equals("en"))
-                            Snackbar.make(full, getString(R.string.low_light), BaseTransientBottomBar.LENGTH_LONG).show();
+                            Snackbar.make(full, getString(R.string.low_light), Snackbar.LENGTH_LONG).show();
                         else
-                            Snackbar.make(full, getString(R.string.low_light_arabe), BaseTransientBottomBar.LENGTH_LONG).show();
+                            Snackbar.make(full, getString(R.string.low_light_arabe), Snackbar.LENGTH_LONG).show();
                     } else {
                         started = true;
                         hideNavigationBar();
                         show_raka3at_selections();
-                        if (startclicked) work2(event);
+                        work2(event);
                     }
                 }
 
-                if (started)
-                    if (startclicked) work2(event);
 
+                if (started) {
+                    if (startclicked) {
+                        work2(event);
+                    }
+                }
             }
         }
     }
@@ -596,7 +596,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void click_on_start() {
         if(receiveandy!=null) {
-            if (!receiveandy.equals("force3")) {
+            if (!receiveandy.equals("force")) {
                 if (!startclicked)
                     start_was_just_clicked = true;
                 else
@@ -844,6 +844,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         startclicked = false;
         start_was_just_clicked = false;
+        between_raka3at_delay_started = false;
+        between_sajadat_delay_started = false;
 
         if(blackout){
             blackground.setOnClickListener(null);
@@ -896,6 +898,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         sajda_pre.setVisibility(VISIBLE);
         settings.setVisibility(VISIBLE);
 
+        doitposse = true;
         animation_of_initial_five_seconds_started = false;
         five_second_before_actually_starting_was_finished = false;
         if(language.equals("en"))
