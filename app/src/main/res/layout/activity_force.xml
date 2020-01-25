@@ -7,31 +7,64 @@
     android:background="@drawable/forcefull"
     android:id="@+id/full">
 
-    <RelativeLayout
+
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:onClick="arrowbackClicked"
-        android:background="@drawable/backback"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:clickable="true"
-        android:focusable="true"
-        android:id="@+id/backarrowbackground"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/backback"
+        android:id="@+id/leftsideelementsbackground"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true">
-        <ImageView
-            android:id="@+id/arrowback"
-            android:layout_marginStart="13dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:onClick="arrowbackClicked"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginTop="13dp"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:onClick="arrowbackClicked"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="13dp" />
-    </RelativeLayout>
+            android:id="@+id/backarrowbackground"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/arrowback"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="13dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="13dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="13dp"
+                android:onClick="arrowbackClicked"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="settingsClicked"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/settingsbutton"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="settingsClicked"
+                android:layout_marginStart="13dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="13dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="13dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+
+
 
     <LinearLayout
         android:layout_width="wrap_content"

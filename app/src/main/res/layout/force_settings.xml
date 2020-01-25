@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/darksimpelbackground"
+    android:id="@+id/settings"
+    android:gravity="center_horizontal">
+
+    <Button
+        android:textAllCaps="false"
+        android:id="@+id/arrow"
+        android:background="@drawable/darkarrowbutton"
+        android:layout_width="250dp"
+        android:text="@string/save_arabe"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center">
+        <Spinner
+            android:layout_weight=".20"
+            android:id="@+id/adanselector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>
+        <TextView
+            android:gravity="center"
+            android:layout_weight=".8"
+            android:id="@+id/brightnesstitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="Adan"/>
+    </LinearLayout>
+
+</LinearLayout>

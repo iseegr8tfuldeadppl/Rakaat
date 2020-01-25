@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="adans">
+        <item name="adan1">Saudi</item>
+        <item name="adan2">Morrocan</item>
+        <item name="adan3">Algerian</item>
+    </string-array>
+</resources>

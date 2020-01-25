@@ -50,6 +50,8 @@ import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
 import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
 import com.krimzon.scuffedbots.raka3at.dialogs.HomeOrMosque;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
+import com.krimzon.scuffedbots.raka3at.dialogs.force_settings;
+import com.krimzon.scuffedbots.raka3at.dialogs.slat_settings;
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
 import java.io.IOException;
@@ -64,7 +66,7 @@ import static android.view.View.VISIBLE;
 import static android.view.animation.AnimationUtils.loadAnimation;
 
 
-public class force extends AppCompatActivity {
+public class force extends AppCompatActivity implements force_settings.BottomSheetListener {
 
     private static final int REQUEST_CODE = 1000;
     private Coordinates coordinates;
@@ -171,12 +173,6 @@ public class force extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             use(longitude, latitude, new_coordinates, new Date());
-        }
-    };
-    private Handler handlos = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            print("current_displayed_next_adan: " + current_displayed_next_adan + " next_adan: " + next_adan + " end_of_day: " + end_of_day);
         }
     };
     private Handler handler7 = new Handler(){
@@ -495,6 +491,7 @@ public class force extends AppCompatActivity {
         ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
         ImageView arrowright = findViewById(R.id.arrowright);
         ImageView arrowleft = findViewById(R.id.arrowleft);
+        ImageView settingsbutton = findViewById(R.id.settingsbutton);
         try {
             Glide.with(this).load(R.drawable.arrowleftdark).into(arrowback);
         } catch (Exception ignored) {
@@ -509,6 +506,11 @@ public class force extends AppCompatActivity {
             Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
         } catch (Exception ignored) {
             nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
+        }
+        try {
+            Glide.with(this).load(R.drawable.settingsforce).into(settingsbutton);
+        } catch (Exception ignored) {
+            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.settingsforce));
         }
         try {
             Glide.with(this).load(R.drawable.arrowright).into(arrowright);
@@ -2637,4 +2639,13 @@ public class force extends AppCompatActivity {
         color_pray_buttons();
     }
 
+    public void settingsClicked(View view) {
+        force_settings bottomsheet = new force_settings();
+        bottomsheet.show(getSupportFragmentManager(), "bottomsheeter");
+    }
+
+    @Override
+    public void onButtonClicked(String text) {
+
+    }
 }

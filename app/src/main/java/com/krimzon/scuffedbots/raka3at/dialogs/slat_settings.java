@@ -27,14 +27,12 @@ import static com.krimzon.scuffedbots.raka3at.slat.scheme_light_mode;
 
 public class slat_settings extends BottomSheetDialogFragment {
 
-    private BottomSheetListener mListener;
     private SeekBar brightness;
     private Button arrow;
     private TextView brightnesstitle;
     private LinearLayout settings;
     private Drawable darkarrowbutton;
     private Drawable arrowbutton;
-    private Resources resources;
     private Drawable darkest_thumb;
     private Drawable dark_thumb;
     private Drawable thumb;
@@ -363,7 +361,7 @@ public class slat_settings extends BottomSheetDialogFragment {
         }
 
         settings = v.findViewById(R.id.settings);
-        resources = getResources();
+        Resources resources = getResources();
         white = resources.getColor(R.color.white);
         dark = resources.getColor(R.color.dark);
         darkest = resources.getColor(R.color.darkest);
@@ -424,7 +422,7 @@ public class slat_settings extends BottomSheetDialogFragment {
         super.onAttach(context);
 
         try {
-            mListener = (BottomSheetListener) context;
+            BottomSheetListener mListener = (BottomSheetListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement BottomSheetListener");
         }

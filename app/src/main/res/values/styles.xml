@@ -16,4 +16,14 @@
         <item name="android:background">@drawable/diagonal_line_light_mode</item>
     </style>
 
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+        <item name="android:height">30dp</item>
+        <item name="android:width">100dp</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:height">30dp</item>
+        <item name="android:width">100dp</item>
+    </style>
+
 </resources>
