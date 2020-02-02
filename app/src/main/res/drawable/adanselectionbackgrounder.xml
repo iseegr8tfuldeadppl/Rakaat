@@ -3,6 +3,7 @@
     <item>
         <shape>
             <solid android:color="@color/forcefullbackground"/>
+            <corners android:radius="60dp" />
         </shape>
     </item>
 </selector>

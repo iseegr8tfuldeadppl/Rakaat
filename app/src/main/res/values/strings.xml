@@ -259,5 +259,14 @@
     <string name="newline">\n</string>
     <string name="plusser">+</string>
     <string name="minuser">-</string>
+    <string name="adan1">Magharibi 1</string>
+    <string name="adan2">Magharibi 2</string>
+    <string name="adan3">Char9i 1</string>
+    <string name="adan4">Char9i 2</string>
+    <string name="adan5">Makki 1</string>
+    <string name="adan6">Makki 2</string>
+    <string name="adan1_arabe">مغاربي 1</string>
+    <string name="adan2_arabe">مغاربي 2</string>
+    <string name="adanhn">الآذان</string>
 
 </resources>
