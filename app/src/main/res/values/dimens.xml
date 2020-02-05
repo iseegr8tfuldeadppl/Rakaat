@@ -26,9 +26,10 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="adanselectiontextsize">16sp</dimen>
     <dimen name="adantextsizer">24sp</dimen>
-    <dimen name="biglollers">10dp</dimen>
+    <dimen name="biglollers">15dp</dimen>
     <dimen name="distancebetweenadanselections">5dp</dimen>
     <dimen name="tabrightpadding">11dp</dimen>
     <dimen name="soundimagesize">10dp</dimen>
+    <dimen name="playbuttonsize">7dp</dimen>
 
 </resources>

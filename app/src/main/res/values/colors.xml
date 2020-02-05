@@ -28,4 +28,5 @@
     <color name="selectedadanbackground">#75E70E</color>
     <color name="darkbackground">#262626</color>
     <color name="forcefullbackground">#121212</color>
+    <color name="coolbright">#404040</color>
 </resources>

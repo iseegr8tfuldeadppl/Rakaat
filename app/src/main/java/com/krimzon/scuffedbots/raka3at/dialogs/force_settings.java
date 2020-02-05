@@ -82,37 +82,32 @@ public class force_settings extends BottomSheetDialogFragment {
         adans.get(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AdanSelection adanSelection = new AdanSelection(v.getContext(), darkmode, language, 0);
-                adanSelection.show();
+                launch_selection(0);
             }
         });
         // we ignored get(1) as fajr has no adan
         adans.get(2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AdanSelection adanSelection = new AdanSelection(v.getContext(), darkmode, language, 2);
-                adanSelection.show();
+                launch_selection(1);
             }
         });
         adans.get(3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AdanSelection adanSelection = new AdanSelection(v.getContext(), darkmode, language, 3);
-                adanSelection.show();
+                launch_selection(2);
             }
         });
         adans.get(4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AdanSelection adanSelection = new AdanSelection(v.getContext(), darkmode, language, 4);
-                adanSelection.show();
+                launch_selection(3);
             }
         });
         adans.get(5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AdanSelection adanSelection = new AdanSelection(v.getContext(), darkmode, language, 5);
-                adanSelection.show();
+                launch_selection(4);
             }
         });
 
@@ -223,6 +218,38 @@ public class force_settings extends BottomSheetDialogFragment {
                 update_sql();
             }
         });
+    }
+
+    private void launch_selection(int i) {
+        LinearLayout settingsmenu = v.findViewById(R.id.settingsmenu);
+        LinearLayout selectionmenu = v.findViewById(R.id.selectionmenu);
+        settingsmenu.setVisibility(View.GONE);
+        selectionmenu.setVisibility(View.VISIBLE);
+        variables_of_selection();
+        apply_font_to_selection();
+    }
+
+    private void apply_font_to_selection() {
+        try{
+            Typeface arabic_typeface = Typeface.createFromAsset(getContext().getAssets(), "Tajawal-Light.ttf");
+            selectiontitle.setTypeface(arabic_typeface);
+            for(int i=0; i<6; i++)
+                adansselection.get(i).setTypeface(arabic_typeface);
+        } catch(Exception ignored){ print("applying fonts failed"); }
+    }
+
+    private TextView selectiontitle;
+    private List<TextView> adansselection;
+    private void variables_of_selection() {
+        adansselection = new ArrayList<>();
+        adansselection.add((TextView) v.findViewById(R.id.adan1));
+        adansselection.add((TextView) v.findViewById(R.id.adan2));
+        adansselection.add((TextView) v.findViewById(R.id.adan3));
+        adansselection.add((TextView) v.findViewById(R.id.adan4));
+        adansselection.add((TextView) v.findViewById(R.id.adan5));
+        adansselection.add((TextView) v.findViewById(R.id.adan6));
+
+        selectiontitle = v.findViewById(R.id.selectiontitle);
     }
 
     private void rotate_sound_flags(int i) {

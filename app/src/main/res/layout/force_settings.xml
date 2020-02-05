@@ -20,400 +20,587 @@
         android:textSize="17sp"
         android:layout_height="wrap_content"/>
 
-    <!--Mou'adin Title-->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="23sp"
-        android:textColor="@color/white"
-        android:id="@+id/adantitle"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="@string/adanhn" />
 
-    <!--Fajr Selections-->
     <LinearLayout
+        android:id="@+id/settingsmenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="10dp"
-        android:paddingStart="10dp"
-        android:paddingLeft="10dp"
-        android:paddingEnd="@dimen/tabrightpadding"
-        android:paddingRight="@dimen/tabrightpadding"
-        android:background="@drawable/adanselectionbackgrounder"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_weight=".15"
+        android:orientation="vertical">
+        <!--Mou'adin Title-->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="23sp"
+            android:textColor="@color/white"
+            android:id="@+id/adantitle"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:gravity="center"
-                android:id="@+id/fajrtitle"
-                android:text="@string/fajrtitle_arabe"
-                android:layout_weight=".75"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_weight=".25"
-                android:id="@+id/fajradan"
-                android:background="@drawable/adanliner"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"/>
-        </LinearLayout>
-        <FrameLayout
-            android:padding="@dimen/soundimagesize"
-            android:id="@+id/fajrringmodebackground"
+            android:text="@string/adanhn" />
+
+        <!--Fajr Selections-->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".85"
-            android:clickable="true"
-            android:focusable="true">
-            <ImageView
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:id="@+id/fajrringmode"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="@dimen/tabrightpadding"
+            android:paddingRight="@dimen/tabrightpadding"
+            android:background="@drawable/selectorresposive"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_weight=".15"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </FrameLayout>
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:gravity="center"
+                    android:id="@+id/fajrtitle"
+                    android:text="@string/fajrtitle_arabe"
+                    android:layout_weight=".75"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_weight=".25"
+                    android:id="@+id/fajradan"
+                    android:background="@color/coolbright"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <FrameLayout
+                android:padding="@dimen/soundimagesize"
+                android:id="@+id/fajrringmodebackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".85"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/fajrringmode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!--Rise Selections-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="@dimen/tabrightpadding"
+            android:paddingRight="@dimen/tabrightpadding"
+            android:background="@drawable/selectorresposive"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_weight=".15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:gravity="center"
+                    android:id="@+id/risetitle"
+                    android:text="@string/rise_arabe"
+                    android:layout_weight=".75"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_weight=".25"
+                    android:id="@+id/riseadan"
+                    android:visibility="invisible"
+                    android:background="@color/coolbright"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <FrameLayout
+                android:padding="@dimen/soundimagesize"
+                android:id="@+id/riseringmodebackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".85"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:id="@+id/riseringmode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!--Dhuhr Selections-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="@dimen/tabrightpadding"
+            android:paddingRight="@dimen/tabrightpadding"
+            android:background="@drawable/selectorresposive"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_weight=".15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:gravity="center"
+                    android:id="@+id/dhuhrtitle"
+                    android:text="@string/dohrtitle_arabe"
+                    android:layout_weight=".75"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_weight=".25"
+                    android:id="@+id/dhuhradan"
+                    android:background="@color/coolbright"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <FrameLayout
+                android:padding="@dimen/soundimagesize"
+                android:id="@+id/dhuhrringmodebackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".85"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/dhuhrringmode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!--Asr Selections-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="@dimen/tabrightpadding"
+            android:paddingRight="@dimen/tabrightpadding"
+            android:background="@drawable/selectorresposive"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_weight=".15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:gravity="center"
+                    android:id="@+id/asrtitle"
+                    android:text="@string/asrtitle_arabe"
+                    android:layout_weight=".75"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_weight=".25"
+                    android:id="@+id/asradan"
+                    android:background="@color/coolbright"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <FrameLayout
+                android:padding="@dimen/soundimagesize"
+                android:id="@+id/asrringmodebackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".85"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/asrringmode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!--Maghrib Selections-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="@dimen/tabrightpadding"
+            android:paddingRight="@dimen/tabrightpadding"
+            android:background="@drawable/selectorresposive"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_weight=".15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:gravity="center"
+                    android:id="@+id/maghribtitle"
+                    android:text="@string/maghrebtitle_arabe"
+                    android:layout_weight=".75"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_weight=".25"
+                    android:id="@+id/maghribadan"
+                    android:background="@color/coolbright"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <FrameLayout
+                android:padding="@dimen/soundimagesize"
+                android:id="@+id/maghribringmodebackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".85"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/maghribringmode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!--Isha Selections-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="@dimen/tabrightpadding"
+            android:paddingRight="@dimen/tabrightpadding"
+            android:background="@drawable/selectorresposive"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="39dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_weight=".15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/adanselectiontextsize"
+                    android:gravity="center"
+                    android:id="@+id/ishatitle"
+                    android:text="@string/ishatitle_arabe"
+                    android:layout_weight=".75"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/ishaadan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".25"
+                    android:background="@color/coolbright"
+                    android:gravity="center"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/adanselectiontextsize" />
+            </LinearLayout>
+            <FrameLayout
+                android:padding="@dimen/soundimagesize"
+                android:id="@+id/isharingmodebackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".85"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/isharingmode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
 
-    <!--Rise Selections-->
     <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/selectionmenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:paddingStart="10dp"
-        android:paddingLeft="10dp"
-        android:paddingEnd="@dimen/tabrightpadding"
-        android:paddingRight="@dimen/tabrightpadding"
-        android:background="@drawable/adanselectionbackgrounder"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_weight=".15"
+        android:orientation="vertical">
+        <!--Adan Selection Title-->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="23sp"
+            android:textColor="@color/white"
+            android:id="@+id/selectiontitle"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:text="@string/select_an_adan_arabe" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/selectorresposive">
             <TextView
+                android:id="@+id/adan1"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:gravity="center"
-                android:id="@+id/risetitle"
-                android:text="@string/rise_arabe"
-                android:layout_weight=".75"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_weight=".25"
-                android:id="@+id/riseadan"
-                android:visibility="invisible"
-                android:background="@drawable/adanliner"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
                 android:textColor="@color/white"
+                android:text="@string/adan1_arabe"
+                android:paddingTop="@dimen/biglollers"
+                android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:gravity="center"/>
-        </LinearLayout>
-        <FrameLayout
-            android:padding="@dimen/soundimagesize"
-            android:id="@+id/riseringmodebackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".85"
-            android:clickable="true"
-            android:focusable="true">
             <ImageView
-                android:layout_gravity="center"
-                android:id="@+id/riseringmode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center" />
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/playbutton"/>
         </FrameLayout>
-    </LinearLayout>
-
-    <!--Dhuhr Selections-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:paddingStart="10dp"
-        android:paddingLeft="10dp"
-        android:paddingEnd="@dimen/tabrightpadding"
-        android:paddingRight="@dimen/tabrightpadding"
-        android:background="@drawable/adanselectionbackgrounder"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_weight=".15"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/selectorresposive">
             <TextView
+                android:id="@+id/adan2"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:gravity="center"
-                android:id="@+id/dhuhrtitle"
-                android:text="@string/dohrtitle_arabe"
-                android:layout_weight=".75"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_weight=".25"
-                android:id="@+id/dhuhradan"
-                android:background="@drawable/adanliner"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
                 android:textColor="@color/white"
+                android:text="@string/adan2_arabe"
+                android:paddingTop="@dimen/biglollers"
+                android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:gravity="center"/>
-        </LinearLayout>
-        <FrameLayout
-            android:padding="@dimen/soundimagesize"
-            android:id="@+id/dhuhrringmodebackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".85"
-            android:clickable="true"
-            android:focusable="true">
             <ImageView
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:id="@+id/dhuhrringmode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/playbutton"/>
         </FrameLayout>
-    </LinearLayout>
-
-    <!--Asr Selections-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:paddingStart="10dp"
-        android:paddingLeft="10dp"
-        android:paddingEnd="@dimen/tabrightpadding"
-        android:paddingRight="@dimen/tabrightpadding"
-        android:background="@drawable/adanselectionbackgrounder"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_weight=".15"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/selectorresposive">
             <TextView
+                android:id="@+id/adan3"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:gravity="center"
-                android:id="@+id/asrtitle"
-                android:text="@string/asrtitle_arabe"
-                android:layout_weight=".75"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_weight=".25"
-                android:id="@+id/asradan"
-                android:background="@drawable/adanliner"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
                 android:textColor="@color/white"
+                android:text="@string/adan3_arabe"
+                android:paddingTop="@dimen/biglollers"
+                android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:gravity="center"/>
-        </LinearLayout>
-        <FrameLayout
-            android:padding="@dimen/soundimagesize"
-            android:id="@+id/asrringmodebackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".85"
-            android:clickable="true"
-            android:focusable="true">
             <ImageView
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:id="@+id/asrringmode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/playbutton"/>
         </FrameLayout>
-    </LinearLayout>
-
-    <!--Maghrib Selections-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:paddingStart="10dp"
-        android:paddingLeft="10dp"
-        android:paddingEnd="@dimen/tabrightpadding"
-        android:paddingRight="@dimen/tabrightpadding"
-        android:background="@drawable/adanselectionbackgrounder"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_weight=".15"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/selectorresposive">
             <TextView
+                android:id="@+id/adan4"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:gravity="center"
-                android:id="@+id/maghribtitle"
-                android:text="@string/maghrebtitle_arabe"
-                android:layout_weight=".75"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_weight=".25"
-                android:id="@+id/maghribadan"
-                android:background="@drawable/adanliner"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
                 android:textColor="@color/white"
+                android:text="@string/adan4_arabe"
+                android:paddingTop="@dimen/biglollers"
+                android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:gravity="center"/>
-        </LinearLayout>
-        <FrameLayout
-            android:padding="@dimen/soundimagesize"
-            android:id="@+id/maghribringmodebackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".85"
-            android:clickable="true"
-            android:focusable="true">
             <ImageView
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:id="@+id/maghribringmode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/playbutton"/>
         </FrameLayout>
-    </LinearLayout>
-
-    <!--Isha Selections-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:paddingStart="10dp"
-        android:paddingLeft="10dp"
-        android:paddingEnd="@dimen/tabrightpadding"
-        android:paddingRight="@dimen/tabrightpadding"
-        android:background="@drawable/adanselectionbackgrounder"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="39dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="17dp"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_weight=".15"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/selectorresposive">
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:gravity="center"
-                android:id="@+id/ishatitle"
-                android:text="@string/ishatitle_arabe"
-                android:layout_weight=".75"
-                android:textColor="@color/white"/>
-
-            <TextView
-                android:id="@+id/ishaadan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                android:background="@drawable/adanliner"
-                android:gravity="center"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/adanselectiontextsize" />
-        </LinearLayout>
-        <FrameLayout
-            android:padding="@dimen/soundimagesize"
-            android:id="@+id/isharingmodebackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".85"
-            android:clickable="true"
-            android:focusable="true">
-            <ImageView
-                android:layout_gravity="center"
-                android:gravity="center"
+                android:id="@+id/adan5"
                 android:clickable="true"
                 android:focusable="true"
-                android:id="@+id/isharingmode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="@string/adan5_arabe"
+                android:paddingTop="@dimen/biglollers"
+                android:paddingBottom="@dimen/biglollers"
+                android:textSize="@dimen/adanselectiontextsize"
+                android:gravity="center"/>
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/playbutton"/>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="39dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/selectorresposive">
+            <TextView
+                android:id="@+id/adan6"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="@string/adan6_arabe"
+                android:paddingTop="@dimen/biglollers"
+                android:paddingBottom="@dimen/biglollers"
+                android:textSize="@dimen/adanselectiontextsize"
+                android:gravity="center"/>
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/playbutton"/>
         </FrameLayout>
     </LinearLayout>
 
