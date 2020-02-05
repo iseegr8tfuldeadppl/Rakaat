@@ -8,9 +8,15 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
+
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdanSelection extends Dialog {
 
@@ -31,6 +37,35 @@ public class AdanSelection extends Dialog {
         this.darkmode = darkmode;
         this.language = language;
         this.prayer = prayer;
+
+        variables();
+        applyfont();
+    }
+
+    private TextView selectiontitle;
+    private Button selectionmosque;
+    private List<Button> adans;
+    private void variables() {
+        adans = new ArrayList<>();
+        adans.add((Button) findViewById(R.id.adan1));
+        adans.add((Button) findViewById(R.id.adan2));
+        adans.add((Button) findViewById(R.id.adan3));
+        adans.add((Button) findViewById(R.id.adan4));
+        adans.add((Button) findViewById(R.id.adan5));
+        adans.add((Button) findViewById(R.id.adan6));
+
+        selectionmosque = findViewById(R.id.selectionmosque);
+        selectiontitle = findViewById(R.id.selectiontitle);
+    }
+
+    private void applyfont() {
+        try{
+            Typeface arabic_typeface = Typeface.createFromAsset(getContext().getAssets(), "Tajawal-Light.ttf");
+            selectionmosque.setTypeface(arabic_typeface);
+            selectiontitle.setTypeface(arabic_typeface);
+            for(int i=0; i<6; i++)
+                adans.get(i).setTypeface(arabic_typeface);
+        } catch(Exception ignored){}
     }
 
     @Override

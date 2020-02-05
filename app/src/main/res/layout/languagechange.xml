@@ -22,7 +22,7 @@ xmlns:android="http://schemas.android.com/apk/res/android">
         android:gravity="center"
         android:textSize="27sp"
         android:textAllCaps="false"
-        android:text="Choose your language"/>
+        android:text="@string/choose_your_language"/>
     <Button
         android:id="@+id/english"
         android:gravity="center"

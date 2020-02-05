@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     android:id="@+id/selectionbackground"
     android:layout_width="match_parent"
@@ -11,6 +12,9 @@
     android:orientation="vertical"
     android:gravity="center"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:layout_width="1000dp"
+        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/selectiontitle"
         android:layout_width="match_parent"
@@ -21,101 +25,108 @@
         android:gravity="center"
         android:textSize="27sp"
         android:textAllCaps="false"
-        android:text="Select An Adan"/>
-    <TextView
+        android:text="@string/select_an_adan_arabe"/>
+    <Button
+        android:textAllCaps="false"
         android:id="@+id/adan1"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginBottom="@dimen/distancebetweenadanselections"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/darkbackground"
-        android:text="@string/adan1"
+        android:textColor="@color/white"
+        android:text="@string/adan1_arabe"
         android:paddingTop="@dimen/biglollers"
-        android:background="@drawable/adanselectionelementselected"
+        android:background="@drawable/adanselectionbackgrounder"
         android:paddingBottom="@dimen/biglollers"
         android:textSize="@dimen/adantextsizer"
         android:gravity="center"/>
-    <TextView
+    <Button
+        android:textAllCaps="false"
         android:id="@+id/adan2"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginBottom="@dimen/distancebetweenadanselections"
         android:layout_width="match_parent"
-        android:text="@string/adan2"
+        android:text="@string/adan2_arabe"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/biglollers"
-        android:background="@drawable/adanselectionelement"
+        android:background="@drawable/adanselectionbackgrounder"
         android:paddingBottom="@dimen/biglollers"
-        android:textColor="@color/darkbackground"
+        android:textColor="@color/white"
         android:textSize="@dimen/adantextsizer"
         android:gravity="center"/>
-    <TextView
+    <Button
+        android:textAllCaps="false"
         android:id="@+id/adan3"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginBottom="@dimen/distancebetweenadanselections"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/adan3"
-        android:textColor="@color/darkbackground"
+        android:text="@string/adan3_arabe"
+        android:textColor="@color/white"
         android:paddingTop="@dimen/biglollers"
-        android:background="@drawable/adanselectionelement"
+        android:background="@drawable/adanselectionbackgrounder"
         android:paddingBottom="@dimen/biglollers"
         android:textSize="@dimen/adantextsizer"
         android:gravity="center"/>
-    <TextView
+    <Button
+        android:textAllCaps="false"
         android:id="@+id/adan4"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginBottom="@dimen/distancebetweenadanselections"
         android:layout_width="match_parent"
-        android:background="@drawable/adanselectionelement"
+        android:background="@drawable/adanselectionbackgrounder"
         android:layout_height="wrap_content"
-        android:textColor="@color/darkbackground"
-        android:text="@string/adan4"
+        android:textColor="@color/white"
+        android:text="@string/adan4_arabe"
         android:paddingTop="@dimen/biglollers"
         android:paddingBottom="@dimen/biglollers"
         android:textSize="@dimen/adantextsizer"
         android:gravity="center"/>
-    <TextView
+    <Button
+        android:textAllCaps="false"
         android:id="@+id/adan5"
         android:clickable="true"
         android:focusable="true"
         android:layout_marginBottom="@dimen/distancebetweenadanselections"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/darkbackground"
+        android:textColor="@color/white"
         android:paddingTop="@dimen/biglollers"
         android:paddingBottom="@dimen/biglollers"
-        android:text="@string/adan5"
+        android:text="@string/adan5_arabe"
         android:textSize="@dimen/adantextsizer"
-        android:background="@drawable/adanselectionelement"
+        android:background="@drawable/adanselectionbackgrounder"
         android:gravity="center"/>
-    <TextView
+    <Button
+        android:textAllCaps="false"
         android:id="@+id/adan6"
         android:clickable="true"
         android:focusable="true"
         android:layout_width="match_parent"
-        android:text="@string/adan6"
+        android:text="@string/adan6_arabe"
         android:layout_height="wrap_content"
-        android:textColor="@color/darkbackground"
-        android:background="@drawable/adanselectionelement"
+        android:textColor="@color/white"
+        android:background="@drawable/adanselectionbackgrounder"
         android:paddingTop="@dimen/biglollers"
         android:paddingBottom="@dimen/biglollers"
         android:textSize="@dimen/adantextsizer"
         android:gravity="center"/>
+
     <Button
         android:id="@+id/selectionmosque"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/darkbuttons"
+        android:gravity="center"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:background="@drawable/darkbuttons"
-        android:textColor="@color/white"
-        android:textSize="17sp"
+        android:text="@string/done_arabe"
         android:textAllCaps="false"
-        android:text="@string/done_arabe"/>
+        android:textColor="@color/white"
+        android:textSize="17sp" />
 </LinearLayout>

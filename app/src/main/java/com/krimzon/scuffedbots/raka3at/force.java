@@ -156,7 +156,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private boolean still_scoping_on_previous_adan = false;
     private int negatifise;
     private boolean initialdelayoncebrk = true;
-    private int minute_limit_to_display_positifise = 10000;
+    private int minute_limit_to_display_positifise = 100;
 
     private Handler handler3 = new Handler(){
         @Override

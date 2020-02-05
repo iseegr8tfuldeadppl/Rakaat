@@ -40,8 +40,8 @@
         android:layout_marginTop="10dp"
         android:paddingStart="10dp"
         android:paddingLeft="10dp"
-        android:paddingEnd="21dp"
-        android:paddingRight="21dp"
+        android:paddingEnd="@dimen/tabrightpadding"
+        android:paddingRight="@dimen/tabrightpadding"
         android:background="@drawable/adanselectionbackgrounder"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
@@ -49,14 +49,12 @@
         android:layout_marginEnd="17dp"
         android:gravity="center">
         <LinearLayout
-            android:layout_weight=".1"
+            android:layout_weight=".15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingEnd="15dp"
             android:orientation="horizontal"
-            android:weightSum="1"
-            android:paddingRight="15dp">
+            android:weightSum="1">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,12 +76,23 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"/>
         </LinearLayout>
-        <ImageView
-            android:gravity="center"
-            android:layout_weight=".9"
-            android:id="@+id/fajrringmode"
+        <FrameLayout
+            android:padding="@dimen/soundimagesize"
+            android:id="@+id/fajrringmodebackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight=".85"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/fajrringmode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
     </LinearLayout>
 
     <!--Rise Selections-->
@@ -95,8 +104,8 @@
         android:layout_marginTop="5dp"
         android:paddingStart="10dp"
         android:paddingLeft="10dp"
-        android:paddingEnd="21dp"
-        android:paddingRight="21dp"
+        android:paddingEnd="@dimen/tabrightpadding"
+        android:paddingRight="@dimen/tabrightpadding"
         android:background="@drawable/adanselectionbackgrounder"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
@@ -104,14 +113,12 @@
         android:layout_marginEnd="17dp"
         android:gravity="center">
         <LinearLayout
-            android:layout_weight=".1"
+            android:layout_weight=".15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingEnd="15dp"
             android:orientation="horizontal"
-            android:weightSum="1"
-            android:paddingRight="15dp">
+            android:weightSum="1">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -134,12 +141,23 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"/>
         </LinearLayout>
-        <ImageView
-            android:gravity="center"
-            android:layout_weight=".9"
-            android:id="@+id/riseringmode"
+        <FrameLayout
+            android:padding="@dimen/soundimagesize"
+            android:id="@+id/riseringmodebackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight=".85"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_gravity="center"
+                android:id="@+id/riseringmode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center" />
+        </FrameLayout>
     </LinearLayout>
 
     <!--Dhuhr Selections-->
@@ -151,8 +169,8 @@
         android:layout_marginTop="5dp"
         android:paddingStart="10dp"
         android:paddingLeft="10dp"
-        android:paddingEnd="21dp"
-        android:paddingRight="21dp"
+        android:paddingEnd="@dimen/tabrightpadding"
+        android:paddingRight="@dimen/tabrightpadding"
         android:background="@drawable/adanselectionbackgrounder"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
@@ -160,14 +178,12 @@
         android:layout_marginEnd="17dp"
         android:gravity="center">
         <LinearLayout
-            android:layout_weight=".1"
+            android:layout_weight=".15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingEnd="15dp"
             android:orientation="horizontal"
-            android:weightSum="1"
-            android:paddingRight="15dp">
+            android:weightSum="1">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,12 +205,23 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"/>
         </LinearLayout>
-        <ImageView
-            android:gravity="center"
-            android:layout_weight=".9"
-            android:id="@+id/dhuhrringmode"
+        <FrameLayout
+            android:padding="@dimen/soundimagesize"
+            android:id="@+id/dhuhrringmodebackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight=".85"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/dhuhrringmode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
     </LinearLayout>
 
     <!--Asr Selections-->
@@ -206,8 +233,8 @@
         android:layout_marginTop="5dp"
         android:paddingStart="10dp"
         android:paddingLeft="10dp"
-        android:paddingEnd="21dp"
-        android:paddingRight="21dp"
+        android:paddingEnd="@dimen/tabrightpadding"
+        android:paddingRight="@dimen/tabrightpadding"
         android:background="@drawable/adanselectionbackgrounder"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
@@ -215,14 +242,12 @@
         android:layout_marginEnd="17dp"
         android:gravity="center">
         <LinearLayout
-            android:layout_weight=".1"
+            android:layout_weight=".15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingEnd="15dp"
             android:orientation="horizontal"
-            android:weightSum="1"
-            android:paddingRight="15dp">
+            android:weightSum="1">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -244,12 +269,23 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"/>
         </LinearLayout>
-        <ImageView
-            android:gravity="center"
-            android:layout_weight=".9"
-            android:id="@+id/asrringmode"
+        <FrameLayout
+            android:padding="@dimen/soundimagesize"
+            android:id="@+id/asrringmodebackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight=".85"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/asrringmode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
     </LinearLayout>
 
     <!--Maghrib Selections-->
@@ -261,8 +297,8 @@
         android:layout_marginTop="5dp"
         android:paddingStart="10dp"
         android:paddingLeft="10dp"
-        android:paddingEnd="21dp"
-        android:paddingRight="21dp"
+        android:paddingEnd="@dimen/tabrightpadding"
+        android:paddingRight="@dimen/tabrightpadding"
         android:background="@drawable/adanselectionbackgrounder"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
@@ -270,14 +306,12 @@
         android:layout_marginEnd="17dp"
         android:gravity="center">
         <LinearLayout
-            android:layout_weight=".1"
+            android:layout_weight=".15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingEnd="15dp"
             android:orientation="horizontal"
-            android:weightSum="1"
-            android:paddingRight="15dp">
+            android:weightSum="1">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -299,12 +333,23 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"/>
         </LinearLayout>
-        <ImageView
-            android:gravity="center"
-            android:layout_weight=".9"
-            android:id="@+id/maghribringmode"
+        <FrameLayout
+            android:padding="@dimen/soundimagesize"
+            android:id="@+id/maghribringmodebackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight=".85"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/maghribringmode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
     </LinearLayout>
 
     <!--Isha Selections-->
@@ -316,8 +361,8 @@
         android:layout_marginTop="5dp"
         android:paddingStart="10dp"
         android:paddingLeft="10dp"
-        android:paddingEnd="21dp"
-        android:paddingRight="21dp"
+        android:paddingEnd="@dimen/tabrightpadding"
+        android:paddingRight="@dimen/tabrightpadding"
         android:background="@drawable/adanselectionbackgrounder"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="39dp"
@@ -325,14 +370,12 @@
         android:layout_marginEnd="17dp"
         android:gravity="center">
         <LinearLayout
-            android:layout_weight=".1"
+            android:layout_weight=".15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingEnd="15dp"
             android:orientation="horizontal"
-            android:weightSum="1"
-            android:paddingRight="15dp">
+            android:weightSum="1">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -342,24 +385,36 @@
                 android:text="@string/ishatitle_arabe"
                 android:layout_weight=".75"
                 android:textColor="@color/white"/>
+
             <TextView
-                android:layout_weight=".25"
                 android:id="@+id/ishaadan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".25"
                 android:background="@drawable/adanliner"
+                android:gravity="center"
                 android:paddingTop="14dp"
                 android:paddingBottom="14dp"
                 android:textColor="@color/white"
-                android:textSize="@dimen/adanselectiontextsize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"/>
+                android:textSize="@dimen/adanselectiontextsize" />
         </LinearLayout>
-        <ImageView
-            android:gravity="center"
-            android:layout_weight=".9"
-            android:id="@+id/isharingmode"
+        <FrameLayout
+            android:padding="@dimen/soundimagesize"
+            android:id="@+id/isharingmodebackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight=".85"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/isharingmode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
     </LinearLayout>
 
 </LinearLayout>
