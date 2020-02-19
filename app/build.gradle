@@ -22,11 +22,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     implementation 'com.batoulapps.adhan:adhan:1.1.0'
-    implementation 'com.google.android.gms:play-services:11.8.0'
+    implementation 'com.google.android.gms:play-services:12.0.1'
     implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.X.X'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.X.X'

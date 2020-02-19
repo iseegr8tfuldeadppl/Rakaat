@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mycursor.close();
         }*/
 
-        // this is to avoid issues with added rows with google play updates to avoid crashing users
+        // this is to avoid issues with added rows with google darkplay updates to avoid crashing users
         sql("slat");
         if(SQLSharing.mycursor.getCount()<8)  // TODO always update this
             SQLSharing.mydb.delete(this);
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydb.insertData("5"); // delay before starting detection
             SQLSharing.mydb.insertData("1"); // sounds default: on
             SQLSharing.mydb.insertData("ar"); // language
-            SQLSharing.mydb.insertData("2,0 0,0 2,0 2,0 2,0 2,0"); // 1,0 means adan  is off but by default selects adan 1 for every prayer // adan selections selection,ringmode selections: 1 2 3 4 5 6 (there r 6 adanat) (adanat), ringmode: 0(off), 1(vibration-only), 2(adan play only), 3(adan+vibrate)
+            SQLSharing.mydb.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,0 means adan  is off but by default selects adan 1 for every prayer // adan selections selection,ringmode selections: 1 2 3 4 5 6 (there r 6 adanat) (adanat), ringmode: 0(off), 1(vibration-only), 2(adan darkplay only), 3(adan+vibrate)
             tutorial = true;
         } else {
             SQLSharing.mycursor.moveToPosition(0);

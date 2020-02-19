@@ -51,7 +51,6 @@ import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadc
 import com.krimzon.scuffedbots.raka3at.dialogs.HomeOrMosque;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
 import com.krimzon.scuffedbots.raka3at.dialogs.force_settings;
-import com.krimzon.scuffedbots.raka3at.dialogs.slat_settings;
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
 import java.io.IOException;
@@ -64,7 +63,6 @@ import java.util.Locale;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.animation.AnimationUtils.loadAnimation;
-
 
 public class force extends AppCompatActivity implements force_settings.BottomSheetListener {
 
@@ -160,21 +158,15 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     private Handler handler3 = new Handler(){
         @Override
-        public void handleMessage(Message msg) {
-            if(slider!=null) {
+        public void handleMessage(Message msg) { if(slider!=null) {
                 if(positifise!=0)
                     slider.setText("- " + positifise);
                 else
                     begonethot();
-            }
-        }
-    };
+            } }};
     private Handler calluse = new Handler(){
         @Override
-        public void handleMessage(Message msg) {
-            use(longitude, latitude, new_coordinates, new Date());
-        }
-    };
+        public void handleMessage(Message msg) { use(longitude, latitude, new_coordinates, new Date()); }};
     private Handler handler7 = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -183,15 +175,10 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     };
     private Handler handler6 = new Handler(){
         @Override
-        public void handleMessage(Message msg) {
-            for(int i=0; i<5; i++) {
+        public void handleMessage(Message msg) { for(int i=0; i<5; i++) {
                 find_slider(i, true);
                 slider.setVisibility(View.GONE);
-            }
-
-            find_slider(next_adan, false);
-        }
-    };
+            }find_slider(next_adan, false); }};
     private Handler handler5 = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -200,8 +187,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     };
     private Handler checkonfajr = new Handler(){
         @Override
-        public void handleMessage(Message msg) {
-            if(positifise < minute_limit_to_display_positifise){
+        public void handleMessage(Message msg) { if(positifise < minute_limit_to_display_positifise){
 
                 for(int i=0; i<5; i++) {
                     find_slider(i, true);
@@ -229,28 +215,13 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                 if(slider.getVisibility()!=VISIBLE)
                     slider.setVisibility(VISIBLE);
                 slider = slidertemp;*/
-            }
-        }
-    };
+            } }};
     private Handler handler4 = new Handler(){
         @Override
-        public void handleMessage(Message msg) {
-            if(slider!=null){
-                if(negatifise!=0)
-                    slider.setText("+ " + negatifise); // for sm ass reason it's over by 1 min
-                else
-                    begonethot();
-            }
-        }
-    };
+        public void handleMessage(Message msg) { if(slider!=null){ if(negatifise!=0) slider.setText("+ " + negatifise);begonethot(); } }};
     private Handler handler = new Handler(){
         @Override
-        public void handleMessage(Message msg) {
-            if(it_is_today) {
-                animatenextadan();
-            }
-        }
-    };
+        public void handleMessage(Message msg) { if(it_is_today) animatenextadan(); }};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -2289,7 +2260,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     }
 
-
     private void light_mode() {
         darkmode = false;
 
@@ -2450,13 +2420,11 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         SQLSharing.mydb.close();
     }
 
-
     private void back_to_main() {
         Intent main = new Intent(this, MainActivity.class);
         startActivity(main);
         finish();
     }
-
 
     public void fajrClicked(View view) {
         check_state(0);

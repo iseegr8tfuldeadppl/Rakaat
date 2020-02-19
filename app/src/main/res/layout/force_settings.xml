@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"/>
 
 
+    <!--Main Page-->
     <LinearLayout
         android:id="@+id/settingsmenu"
         android:layout_width="match_parent"
@@ -36,7 +37,6 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/adanhn" />
-
         <!--Fajr Selections-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -100,7 +100,6 @@
                     android:layout_height="wrap_content"/>
             </FrameLayout>
         </LinearLayout>
-
         <!--Rise Selections-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -165,7 +164,6 @@
                     android:gravity="center" />
             </FrameLayout>
         </LinearLayout>
-
         <!--Dhuhr Selections-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -229,7 +227,6 @@
                     android:layout_height="wrap_content"/>
             </FrameLayout>
         </LinearLayout>
-
         <!--Asr Selections-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -293,7 +290,6 @@
                     android:layout_height="wrap_content"/>
             </FrameLayout>
         </LinearLayout>
-
         <!--Maghrib Selections-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -357,7 +353,6 @@
                     android:layout_height="wrap_content"/>
             </FrameLayout>
         </LinearLayout>
-
         <!--Isha Selections-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -424,6 +419,7 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!--Mouadin Selector page-->
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/selectionmenu"
@@ -440,17 +436,27 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/select_an_adan_arabe" />
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:clickable="true"
-            android:focusable="true"
+            android:orientation="horizontal"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
-            android:background="@drawable/selectorresposive">
+            android:weightSum="1">
+            <ImageView
+                android:id="@+id/adan1audioplayer"
+                android:layout_weight=".85"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/playbuttonheight"
+                android:src="@drawable/play"/>
             <TextView
+                android:layout_weight=".15"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/selectorresposive"
                 android:id="@+id/adan1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -460,24 +466,28 @@
                 android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
                 android:gravity="center"/>
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/playbuttonsize"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/playbutton"/>
-        </FrameLayout>
-        <FrameLayout
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
-            android:background="@drawable/selectorresposive">
+            android:weightSum="1">
+            <ImageView
+                android:id="@+id/adan2audioplayer"
+                android:layout_weight=".85"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/playbuttonheight"
+                android:src="@drawable/play"/>
             <TextView
+                android:layout_weight=".15"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/selectorresposive"
                 android:id="@+id/adan2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -487,24 +497,28 @@
                 android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
                 android:gravity="center"/>
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/playbuttonsize"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/playbutton"/>
-        </FrameLayout>
-        <FrameLayout
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:clickable="true"
-            android:focusable="true"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
-            android:background="@drawable/selectorresposive">
+            android:weightSum="1">
+            <ImageView
+                android:id="@+id/adan3audioplayer"
+                android:layout_weight=".85"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/playbuttonheight"
+                android:src="@drawable/play"/>
             <TextView
+                android:layout_weight=".15"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/selectorresposive"
                 android:id="@+id/adan3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -514,24 +528,28 @@
                 android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
                 android:gravity="center"/>
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/playbuttonsize"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/playbutton"/>
-        </FrameLayout>
-        <FrameLayout
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
             android:layout_marginStart="17dp"
-            android:clickable="true"
-            android:focusable="true"
             android:layout_marginEnd="17dp"
-            android:background="@drawable/selectorresposive">
+            android:weightSum="1">
+            <ImageView
+                android:id="@+id/adan4audioplayer"
+                android:layout_weight=".85"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/playbuttonheight"
+                android:src="@drawable/play"/>
             <TextView
+                android:layout_weight=".15"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/selectorresposive"
                 android:id="@+id/adan4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -541,24 +559,28 @@
                 android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
                 android:gravity="center"/>
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/playbuttonsize"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/playbutton"/>
-        </FrameLayout>
-        <FrameLayout
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
-            android:background="@drawable/selectorresposive">
+            android:weightSum="1">
+            <ImageView
+                android:id="@+id/adan5audioplayer"
+                android:layout_weight=".85"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/playbuttonheight"
+                android:src="@drawable/play"/>
             <TextView
+                android:layout_weight=".15"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/selectorresposive"
                 android:id="@+id/adan5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -568,24 +590,29 @@
                 android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
                 android:gravity="center"/>
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/playbuttonsize"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/playbutton"/>
-        </FrameLayout>
-        <FrameLayout
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="39dp"
-            android:clickable="true"
-            android:focusable="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="36dp"
+            android:orientation="horizontal"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
-            android:background="@drawable/selectorresposive">
+            android:weightSum="1">
+            <ImageView
+                android:id="@+id/adan6audioplayer"
+                android:layout_weight=".85"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/playbuttonsize"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/playbuttonheight"
+                android:src="@drawable/play"/>
             <TextView
+                android:layout_weight=".15"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/selectorresposive"
                 android:id="@+id/adan6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -595,13 +622,7 @@
                 android:paddingBottom="@dimen/biglollers"
                 android:textSize="@dimen/adanselectiontextsize"
                 android:gravity="center"/>
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/playbuttonsize"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/playbutton"/>
-        </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

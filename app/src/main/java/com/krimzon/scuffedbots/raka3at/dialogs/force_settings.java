@@ -3,10 +3,20 @@ package com.krimzon.scuffedbots.raka3at.dialogs;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,13 +39,14 @@ public class force_settings extends BottomSheetDialogFragment {
     private LinearLayout settings;
     private View v;
     private String language = "ar", ID = "", adanSelections = "";
-    private boolean darkmode = true, once2 = true, once = true;
+    private boolean darkmode = true, once2 = true, once = true, audioisplaying = false;
     private String[] selections;
     private Resources resources;
-    private TextView adantitle;
-    private List<TextView> adans, titles;
-    private List<ImageView> ringmodes;
+    private TextView adantitle, selectiontitle;
+    private List<TextView> adans, titles, adansselection;
+    private List<ImageView> ringmodes, audioplayer;
     private List<FrameLayout> ringmodesbackground;
+    private int selectedadan = -1, currentlyplayingadan = 0;
 
     private void print(Object dumps) {
         Toast.makeText(v.getContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
@@ -112,121 +123,239 @@ public class force_settings extends BottomSheetDialogFragment {
         });
 
 
-        // Sound Mode OnClickListeners
         ringmodes.get(0).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(0);
-                update_bitmap(0);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(0);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodes.get(1).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(1);
-                update_bitmap(1);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(1);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodes.get(2).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(2);
-                update_bitmap(2);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(2);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodes.get(3).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(3);
-                update_bitmap(3);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(3);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodes.get(4).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(4);
-                update_bitmap(4);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(4);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodes.get(5).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(5);
-                update_bitmap(5);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(5);
             }
         });
         ringmodesbackground.get(0).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(0);
-                update_bitmap(0);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(0);
             }
         });
         ringmodesbackground.get(1).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(1);
-                update_bitmap(1);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(1);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodesbackground.get(2).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(2);
-                update_bitmap(2);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(2);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodesbackground.get(3).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(3);
-                update_bitmap(3);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(3);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodesbackground.get(4).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(4);
-                update_bitmap(4);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(4);
             }
         });
-        // Sound Mode OnClickListeners
         ringmodesbackground.get(5).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                rotate_sound_flags(5);
-                update_bitmap(5);
-                update_sql();
+            public void onClick(View v) { rotate_sound_flags(5);
             }
         });
     }
 
-    private void launch_selection(int i) {
+    private void launch_selection(final int prayertobemodified) {
         LinearLayout settingsmenu = v.findViewById(R.id.settingsmenu);
         LinearLayout selectionmenu = v.findViewById(R.id.selectionmenu);
         settingsmenu.setVisibility(View.GONE);
         selectionmenu.setVisibility(View.VISIBLE);
         variables_of_selection();
         apply_font_to_selection();
+        if(prayertobemodified>0)
+            apply_already_selected_mouadin(prayertobemodified+1);
+        else
+            apply_already_selected_mouadin(prayertobemodified);
+
+        adansselection.get(0).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { applyselectedadan(0, prayertobemodified); }});
+        adansselection.get(1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { applyselectedadan(1, prayertobemodified); }});
+        adansselection.get(2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { applyselectedadan(2, prayertobemodified); }});
+        adansselection.get(3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { applyselectedadan(3, prayertobemodified); }});
+        adansselection.get(4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { applyselectedadan(4, prayertobemodified); }});
+        adansselection.get(5).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { applyselectedadan(5, prayertobemodified); }});
+
+        audioplayer.get(0).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { playcorrespondingaudio(0);
+            }
+        });
+        audioplayer.get(1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { playcorrespondingaudio(1);
+            }
+        });
+        audioplayer.get(2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { playcorrespondingaudio(2);
+            }
+        });
+        audioplayer.get(3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { playcorrespondingaudio(3);
+            }
+        });
+        audioplayer.get(4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { playcorrespondingaudio(4);
+            }
+        });
+        audioplayer.get(5).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { playcorrespondingaudio(5);
+            }
+        });
+    }
+
+    private void apply_already_selected_mouadin(int prayertobemodified) {
+        selectedadan = Integer.valueOf(selections[prayertobemodified].split(",")[0]) - 1;
+        adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+    }
+
+    private void playcorrespondingaudio(int i) {
+        if(!audioisplaying || currentlyplayingadan!=i){
+            audioisplaying = true;
+            try {
+                Glide.with(getContext()).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
+            } catch (Exception ignored) {
+                audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
+            }
+            try {
+                Glide.with(getContext()).load(R.drawable.pause).into(audioplayer.get(i));
+            } catch (Exception ignored) {
+                audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pause));
+            }
+            currentlyplayingadan = i;
+            playadan(currentlyplayingadan);
+        } else {
+            audioisplaying = false;
+            stopadan();
+            try {
+                Glide.with(getContext()).load(R.drawable.play).into(audioplayer.get(i));
+            } catch (Exception ignored) {
+                audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.play));
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopadan();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopadan();
+    }
+
+    private void stopadan(){
+        try{
+            simpleExoPlayer.stop();
+            simpleExoPlayer.release();
+        } catch(Exception ignored){}
+    }
+    private SimpleExoPlayer simpleExoPlayer;
+    private void playadan(int adantag) {
+        try{
+            simpleExoPlayer.stop();
+            simpleExoPlayer.release();
+        } catch(Exception ignored){}
+        String adan = "";
+        switch(adantag){
+            case 0:
+                adan = "amine.mp3";
+                break;
+            case 1:
+                adan = "altazi.mp3";
+                break;
+            case 2:
+                adan = "karim.mp3";
+                break;
+            case 3:
+                adan = "ismail.mp3";
+                break;
+            case 4:
+                adan = "afasi.mp3";
+                break;
+            case 5:
+                adan = "madani.mp3";
+        }
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
+                getContext(),
+                null,
+                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
+        );
+        TrackSelector trackSelector = new DefaultTrackSelector();
+        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
+                renderersFactory,
+                trackSelector
+        );
+        String userAgent = Util.getUserAgent(getContext(), getResources().getString(R.string.adanner));
+        try {
+            ExtractorMediaSource mediaSource = new ExtractorMediaSource(
+                    Uri.parse(getResources().getString(R.string.idek) + adan), // file audio ada di folder assets
+                    new DefaultDataSourceFactory(getContext(), userAgent),
+                    new DefaultExtractorsFactory(),
+                    null,
+                    null
+            );
+            simpleExoPlayer.prepare(mediaSource);
+            simpleExoPlayer.setPlayWhenReady(true);
+        } catch(Exception ignored){}
+    }
+
+    private void applyselectedadan(int i, int prayertobemodified) {
+        if(selectedadan!=i){
+            adansselection.get(i).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+            if(selectedadan!=-1)
+                adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectorresposive));
+            selectedadan = i;
+            applyselectedadantoadanselections(prayertobemodified, selectedadan + 1);
+            update_sql();
+        }
     }
 
     private void apply_font_to_selection() {
@@ -238,8 +367,6 @@ public class force_settings extends BottomSheetDialogFragment {
         } catch(Exception ignored){ print("applying fonts failed"); }
     }
 
-    private TextView selectiontitle;
-    private List<TextView> adansselection;
     private void variables_of_selection() {
         adansselection = new ArrayList<>();
         adansselection.add((TextView) v.findViewById(R.id.adan1));
@@ -249,12 +376,22 @@ public class force_settings extends BottomSheetDialogFragment {
         adansselection.add((TextView) v.findViewById(R.id.adan5));
         adansselection.add((TextView) v.findViewById(R.id.adan6));
 
+        audioplayer = new ArrayList<>();
+        audioplayer.add((ImageView) v.findViewById(R.id.adan1audioplayer));
+        audioplayer.add((ImageView) v.findViewById(R.id.adan2audioplayer));
+        audioplayer.add((ImageView) v.findViewById(R.id.adan3audioplayer));
+        audioplayer.add((ImageView) v.findViewById(R.id.adan4audioplayer));
+        audioplayer.add((ImageView) v.findViewById(R.id.adan5audioplayer));
+        audioplayer.add((ImageView) v.findViewById(R.id.adan6audioplayer));
+
         selectiontitle = v.findViewById(R.id.selectiontitle);
     }
 
     private void rotate_sound_flags(int i) {
+
         String[] yes;
         yes = selections[i].split(",");
+
         if(yes[1].equals(String.valueOf(0))){
             selections[i] = yes[0] + "," + String.valueOf(1);
             StringBuilder temp = new StringBuilder();
@@ -263,20 +400,16 @@ public class force_settings extends BottomSheetDialogFragment {
                 temp.append(" ");
             }
             adanSelections = temp.toString();
-        } else if(yes[1].equals(String.valueOf(1))){
+        }
+
+        else if(yes[1].equals(String.valueOf(1))){
             selections[i] = yes[0] + "," + String.valueOf(2);
 
             if(i==1) // fajr will not have a sound, only vibrate/no sound
                 selections[i] = yes[0] + "," + String.valueOf(0);
+            else
+                adans.get(i).setVisibility(View.VISIBLE);
 
-            StringBuilder temp = new StringBuilder();
-            for(int j=0; j<6; j++){
-                temp.append(selections[j]);
-                temp.append(" ");
-            }
-            adanSelections = temp.toString();
-        } else if(yes[1].equals(String.valueOf(2))){
-            selections[i] = yes[0] + "," + String.valueOf(0);
             StringBuilder temp = new StringBuilder();
             for(int j=0; j<6; j++){
                 temp.append(selections[j]);
@@ -284,6 +417,35 @@ public class force_settings extends BottomSheetDialogFragment {
             }
             adanSelections = temp.toString();
         }
+
+        else if(yes[1].equals(String.valueOf(2))){
+            selections[i] = yes[0] + "," + String.valueOf(0);
+            StringBuilder temp = new StringBuilder();
+            for(int j=0; j<6; j++){
+                temp.append(selections[j]);
+                temp.append(" ");
+            }
+            adanSelections = temp.toString();
+
+            adans.get(i).setVisibility(View.INVISIBLE);
+        }
+
+        update_bitmap(i);
+        update_sql();
+    }
+
+    private void applyselectedadantoadanselections(int prayedtobemodified, int selectedmouadin) {
+        String[] yes;
+        if(prayedtobemodified>0)
+            prayedtobemodified++;
+        yes = selections[prayedtobemodified].split(",");
+        selections[prayedtobemodified] = String.valueOf(selectedmouadin) + "," + yes[1];
+        StringBuilder temp = new StringBuilder();
+        for(int j=0; j<6; j++){
+            temp.append(selections[j]);
+            temp.append(" ");
+        }
+        adanSelections = temp.toString();
     }
 
     private void update_bitmap(int i) {
@@ -298,6 +460,7 @@ public class force_settings extends BottomSheetDialogFragment {
                     } catch (Exception ignored) {
                         ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
                     }
+                    adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "1":
                     // vibrate only
@@ -306,6 +469,7 @@ public class force_settings extends BottomSheetDialogFragment {
                     } catch (Exception ignored) {
                         ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
                     }
+                    adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "2":
                     // ring only
@@ -319,15 +483,29 @@ public class force_settings extends BottomSheetDialogFragment {
             switch (yes[1]) {
                 case "0":
                     // no ring no vibrate
-                    ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+                    try {
+                        Glide.with(this).load(R.drawable.soundsoff).into(ringmodes.get(i));
+                    } catch (Exception ignored) {
+                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+                    }
+                    adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "1":
                     // vibrate only
-                    ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
+                    try {
+                        Glide.with(this).load(R.drawable.vibrate).into(ringmodes.get(i));
+                    } catch (Exception ignored) {
+                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
+                    }
+                    adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "2":
                     // ring only
-                    ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
+                    try {
+                        Glide.with(this).load(R.drawable.soundson).into(ringmodes.get(i));
+                    } catch (Exception ignored) {
+                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
+                    }
             }
         }
 
@@ -353,16 +531,16 @@ public class force_settings extends BottomSheetDialogFragment {
                     adans.get(i).setText(resources.getString(R.string.adan2_arabe));
                     break;
                 case "3":
-                    adans.get(i).setText(resources.getString(R.string.adan3));
+                    adans.get(i).setText(resources.getString(R.string.adan3_arabe));
                     break;
                 case "4":
-                    adans.get(i).setText(resources.getString(R.string.adan4));
+                    adans.get(i).setText(resources.getString(R.string.adan4_arabe));
                     break;
                 case "5":
-                    adans.get(i).setText(resources.getString(R.string.adan5));
+                    adans.get(i).setText(resources.getString(R.string.adan5_arabe));
                     break;
                 case "6":
-                    adans.get(i).setText(resources.getString(R.string.adan6));
+                    adans.get(i).setText(resources.getString(R.string.adan6_arabe));
                     break;
             }
         }
@@ -500,10 +678,11 @@ public class force_settings extends BottomSheetDialogFragment {
             Toast.makeText(getContext(), getString(R.string.saved_arabe), Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(getContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
+        stopadan();
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         try {

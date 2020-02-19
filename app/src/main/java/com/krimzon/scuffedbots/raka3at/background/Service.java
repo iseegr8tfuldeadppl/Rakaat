@@ -232,7 +232,7 @@ public class Service extends android.app.Service {
 
                                 // Play adan audio
                                 display_notification("New adan: " + lol.get(i), "");
-                                initExoPlayer();
+                                playadan(pullselectedadanforthisprayerfromSQL(i));
 
                                 // set i to the next adan
                                 i++;
@@ -244,6 +244,29 @@ public class Service extends android.app.Service {
                 } catch(Exception ignored){}
             }
         };
+    }
+
+    private String[] selections;
+    private int pullselectedadanforthisprayerfromSQL(int prayedtobepopped) {
+        if(SQLSharing.mycursor!=null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null)
+            SQLSharing.mydb.close();
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        SQLSharing.mydb = new SQL(this);
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        int selectedadan = Integer.valueOf(SQLSharing.mycursor.getString(1).split(" ")[prayedtobepopped].split(",")[0]) - 1;
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
+        return selectedadan;
     }
 
     private void display_notification(String title, String description) {
@@ -290,27 +313,54 @@ public class Service extends android.app.Service {
     }
 
 
-    private void initExoPlayer() {
+    private SimpleExoPlayer simpleExoPlayer;
+    private void playadan(int adantag) {
+        try{
+            simpleExoPlayer.stop();
+            simpleExoPlayer.release();
+        } catch(Exception ignored){}
+        String adan = "";
+        switch(adantag){
+            case 0:
+                adan = "amine.mp3";
+                break;
+            case 1:
+                adan = "altazi.mp3";
+                break;
+            case 2:
+                adan = "karim.mp3";
+                break;
+            case 3:
+                adan = "ismail.mp3";
+                break;
+            case 4:
+                adan = "afasi.mp3";
+                break;
+            case 5:
+                adan = "madani.mp3";
+        }
         DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
                 this,
                 null,
                 DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
         );
         TrackSelector trackSelector = new DefaultTrackSelector();
-        SimpleExoPlayer simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
+        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
                 renderersFactory,
                 trackSelector
         );
-        String userAgent = Util.getUserAgent(this, "Play Audio");
-        ExtractorMediaSource mediaSource = new ExtractorMediaSource(
-                Uri.parse("asset:///" + "bloop.mp3"), // file audio ada di folder assets
-                new DefaultDataSourceFactory(this, userAgent),
-                new DefaultExtractorsFactory(),
-                null,
-                null
-        );
-        simpleExoPlayer.prepare(mediaSource);
-        simpleExoPlayer.setPlayWhenReady(true);
+        String userAgent = Util.getUserAgent(this, getResources().getString(R.string.adanner));
+        try {
+            ExtractorMediaSource mediaSource = new ExtractorMediaSource(
+                    Uri.parse(getResources().getString(R.string.idek) + adan), // file audio ada di folder assets
+                    new DefaultDataSourceFactory(this, userAgent),
+                    new DefaultExtractorsFactory(),
+                    null,
+                    null
+            );
+            simpleExoPlayer.prepare(mediaSource);
+            simpleExoPlayer.setPlayWhenReady(true);
+        } catch(Exception ignored){}
     }
 
     private void convert_prayertimes_into_milliseconds() {
