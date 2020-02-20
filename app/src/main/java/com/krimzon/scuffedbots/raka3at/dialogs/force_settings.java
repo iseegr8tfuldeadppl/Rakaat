@@ -36,7 +36,6 @@ import java.util.List;
 public class force_settings extends BottomSheetDialogFragment {
 
     private Button arrow;
-    private LinearLayout settings;
     private View v;
     private String language = "ar", ID = "", adanSelections = "";
     private boolean darkmode = true, once2 = true, once = true, audioisplaying = false;
@@ -63,39 +62,42 @@ public class force_settings extends BottomSheetDialogFragment {
         apply_selected_language();
         apply_adanSelections();
         onClickListeners();
-        /*if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement)
-            load_previous_dark_mode_settings();
-        else
-            load_previous_light_mode_settings();*/
-
-        /*work_on_language();*/
+        dark_light_mode();
 
         arrow.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            LinearLayout settingsmenu = v.findViewById(R.id.settingsmenu);
-            if(settingsmenu.getVisibility()==View.GONE){
-                LinearLayout selectionmenu = v.findViewById(R.id.selectionmenu);
-                settingsmenu.setVisibility(View.GONE);
-                selectionmenu.setVisibility(View.VISIBLE);
+            if(!mouadineselectionpageison){
+                dismiss();
+            } else {
+                mouadineselectionpageison = false;
+                adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectorresposive));
+                settingsmenu.setVisibility(View.VISIBLE);
+                selectionmenu.setVisibility(View.GONE);
+                apply_adanSelectionsshort();
                 if(language.equals("ar"))
                     arrow.setText(resources.getString(R.string.save_arabe));
                 else if(language.equals("en"))
                     arrow.setText(resources.getString(R.string.save));
-
-                if(language.equals("en")){
-                    adansselection.get(0).setText(resources.getString(R.string.adan1));
-                    adansselection.get(1).setText(resources.getString(R.string.adan2));
-                    adansselection.get(2).setText(resources.getString(R.string.adan3));
-                    adansselection.get(3).setText(resources.getString(R.string.adan4));
-                    adansselection.get(4).setText(resources.getString(R.string.adan5));
-                    adansselection.get(5).setText(resources.getString(R.string.adan6));
-                    selectiontitle.setText(resources.getString(R.string.select_an_adan));
-                }
-            } else
-                dismiss();
+            }
         }});
         return v;
     }
 
+    private void dark_light_mode() {
+        if(!darkmode){
+            v.findViewById(R.id.settings).setBackground(getResources().getDrawable(R.drawable.simpelbackground));
+            v.findViewById(R.id.arrow).setBackground(getResources().getDrawable(R.drawable.arrowbutton));
+            v.findViewById(R.id.fajrback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+            v.findViewById(R.id.riseback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+            v.findViewById(R.id.dhuhrback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+            v.findViewById(R.id.asrback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+            v.findViewById(R.id.maghrebback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+            v.findViewById(R.id.ishaback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
+            for(TextView adan:adans)
+                adan.setBackgroundColor(getResources().getColor(R.color.slightlydarkercoolbright));
+        }
+    }
+
+    private boolean mouadineselectionpageison = false;
     private void apply_selected_language() {
         if(language.equals("en")){
             titles.get(0).setText(resources.getString(R.string.fajrtitle));
@@ -221,10 +223,21 @@ public class force_settings extends BottomSheetDialogFragment {
     }
 
     private void launch_selection(final int prayertobemodified) {
-        LinearLayout selectionmenu = v.findViewById(R.id.selectionmenu);
-        LinearLayout settingsmenu = v.findViewById(R.id.settingsmenu);
         settingsmenu.setVisibility(View.GONE);
         selectionmenu.setVisibility(View.VISIBLE);
+        mouadineselectionpageison = true;
+
+        apply_lightmode_if_found_to_play_buttons();
+
+        if(language.equals("en")){
+            adansselection.get(0).setText(resources.getString(R.string.adan1));
+            adansselection.get(1).setText(resources.getString(R.string.adan2));
+            adansselection.get(2).setText(resources.getString(R.string.adan3));
+            adansselection.get(3).setText(resources.getString(R.string.adan4));
+            adansselection.get(4).setText(resources.getString(R.string.adan5));
+            adansselection.get(5).setText(resources.getString(R.string.adan6));
+            selectiontitle.setText(resources.getString(R.string.select_an_adan));
+        }
 
         if(language.equals("ar"))
             arrow.setText(resources.getString(R.string.back_arabe));
@@ -289,6 +302,16 @@ public class force_settings extends BottomSheetDialogFragment {
         });
     }
 
+    private void apply_lightmode_if_found_to_play_buttons() {
+        for(ImageView audioplayers:audioplayer){
+            try {
+                Glide.with(getContext()).load(R.drawable.pauselightmode).into(audioplayers);
+            } catch (Exception ignored) {
+                audioplayers.setImageDrawable(resources.getDrawable(R.drawable.pauselightmode));
+            }
+        }
+    }
+
     private void apply_already_selected_mouadin(int prayertobemodified) {
         selectedadan = Integer.valueOf(selections[prayertobemodified].split(",")[0]) - 1;
         adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
@@ -297,15 +320,28 @@ public class force_settings extends BottomSheetDialogFragment {
     private void playcorrespondingaudio(int i) {
         if(!audioisplaying || currentlyplayingadan!=i){
             audioisplaying = true;
-            try {
-                Glide.with(getContext()).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
-            } catch (Exception ignored) {
-                audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
-            }
-            try {
-                Glide.with(getContext()).load(R.drawable.pause).into(audioplayer.get(i));
-            } catch (Exception ignored) {
-                audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pause));
+            if(darkmode) {
+                try {
+                    Glide.with(getContext()).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
+                } catch (Exception ignored) {
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
+                }
+                try {
+                    Glide.with(getContext()).load(R.drawable.pause).into(audioplayer.get(i));
+                } catch (Exception ignored) {
+                    audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pause));
+                }
+            } else {
+                try {
+                    Glide.with(getContext()).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
+                } catch (Exception ignored) {
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
+                }
+                try {
+                    Glide.with(getContext()).load(R.drawable.pauselightmode).into(audioplayer.get(i));
+                } catch (Exception ignored) {
+                    audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pauselightmode));
+                }
             }
             currentlyplayingadan = i;
             playadan(currentlyplayingadan);
@@ -496,56 +532,104 @@ public class force_settings extends BottomSheetDialogFragment {
             switch (yes[1]) {
                 case "0":
                     // no ring no vibrate
-                    try {
-                        Glide.with(this).load(R.drawable.soundsoff).into(ringmodes.get(i));
-                    } catch (Exception ignored) {
-                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+                    if(darkmode) {
+                        try {
+                            Glide.with(this).load(R.drawable.soundsoff).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+                        }
+                    } else {
+                        try {
+                            Glide.with(this).load(R.drawable.soundsofflightmode).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsofflightmode));
+                        }
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "1":
                     // vibrate only
-                    try {
-                        Glide.with(this).load(R.drawable.vibrate).into(ringmodes.get(i));
-                    } catch (Exception ignored) {
-                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
+                    if(darkmode){
+                        try {
+                            Glide.with(this).load(R.drawable.vibrate).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
+                        }
+                    } else {
+                        try {
+                            Glide.with(this).load(R.drawable.vibratelightmode).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibratelightmode));
+                        }
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "2":
                     // ring only
-                    try {
-                        Glide.with(this).load(R.drawable.soundson).into(ringmodes.get(i));
-                    } catch (Exception ignored) {
-                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
+                    if(darkmode){
+                        try {
+                            Glide.with(this).load(R.drawable.soundson).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
+                        }
+                    }else {
+                        try {
+                            Glide.with(this).load(R.drawable.soundsonlightmode).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsonlightmode));
+                        }
                     }
             }
         } else {
             switch (yes[1]) {
                 case "0":
                     // no ring no vibrate
-                    try {
-                        Glide.with(this).load(R.drawable.soundsoff).into(ringmodes.get(i));
-                    } catch (Exception ignored) {
-                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+                    if(darkmode) {
+                        try {
+                            Glide.with(this).load(R.drawable.soundsoff).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
+                        }
+                    } else {
+                        try {
+                            Glide.with(this).load(R.drawable.soundsofflightmode).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsofflightmode));
+                        }
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "1":
                     // vibrate only
-                    try {
-                        Glide.with(this).load(R.drawable.vibrate).into(ringmodes.get(i));
-                    } catch (Exception ignored) {
-                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
+                    if(darkmode){
+                        try {
+                            Glide.with(this).load(R.drawable.vibrate).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
+                        }
+                    } else {
+                        try {
+                            Glide.with(this).load(R.drawable.vibratelightmode).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibratelightmode));
+                        }
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "2":
                     // ring only
-                    try {
-                        Glide.with(this).load(R.drawable.soundson).into(ringmodes.get(i));
-                    } catch (Exception ignored) {
-                        ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
+                    if(darkmode){
+                        try {
+                            Glide.with(this).load(R.drawable.soundson).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
+                        }
+                    }else {
+                        try {
+                            Glide.with(this).load(R.drawable.soundsonlightmode).into(ringmodes.get(i));
+                        } catch (Exception ignored) {
+                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsonlightmode));
+                        }
                     }
             }
         }
@@ -558,6 +642,11 @@ public class force_settings extends BottomSheetDialogFragment {
             update_bitmap(i);
         }
         once2 = false;
+    }
+
+    private void apply_adanSelectionsshort() {
+        for(int i=0; i<6;i++)
+            update_adan(i);
     }
 
     private void update_adan(int i) {
@@ -664,9 +753,12 @@ public class force_settings extends BottomSheetDialogFragment {
         SQLSharing.mydb.close();
     }
 
+    private LinearLayout selectionmenu, settingsmenu;
     private void prepare_variables() {
+
+        selectionmenu = v.findViewById(R.id.selectionmenu);
+        settingsmenu = v.findViewById(R.id.settingsmenu);
         arrow = v.findViewById(R.id.arrow);
-        settings = v.findViewById(R.id.settings);
         adantitle = v.findViewById(R.id.adantitle);
 
         adans = new ArrayList<>();

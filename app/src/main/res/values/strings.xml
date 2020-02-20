@@ -265,12 +265,12 @@
     <string name="select_an_adan_arabe">إختيار مؤذّن</string>
     <string name="choose_your_language">Choose your language</string>
 
-    <string name="adan1">Moroccan - Amine Kaassis</string>
-    <string name="adan2">Moroccan - Anas Altazi</string>
-    <string name="adan3">Eastern - Ahmad Karim</string>
-    <string name="adan4">Shrine of Hijaz - Farhan Ismail</string>
-    <string name="adan5">Macca - Machari Alafasy</string>
-    <string name="adan6">Madina - Ali Malla</string>
+    <string name="adan1">Moroccan (Amine Kaassis)</string>
+    <string name="adan2">Moroccan (Anas Altazi)</string>
+    <string name="adan3">Eastern (Ahmad Karim)</string>
+    <string name="adan4">Shrine of Hijaz (Farhan Ismail)</string>
+    <string name="adan5">Macca (Machari Alafasy)</string>
+    <string name="adan6">Madina (Ali Malla)</string>
     <string name="adan1_arabe">مغربي (أمين كعسيس)</string>
     <string name="adan2_arabe">مغربي (أنس التازي)</string>
     <string name="adan3_arabe">شرقي (أحمد كريم)</string>

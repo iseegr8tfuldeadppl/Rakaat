@@ -23,7 +23,6 @@
 
     <!--Main Page-->
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/settingsmenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,6 +47,7 @@
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:paddingEnd="@dimen/tabrightpadding"
+            android:id="@+id/fajrback"
             android:paddingRight="@dimen/tabrightpadding"
             android:background="@drawable/selectorresposive"
             android:layout_gravity="center_horizontal"
@@ -111,6 +111,7 @@
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:paddingEnd="@dimen/tabrightpadding"
+            android:id="@+id/riseback"
             android:paddingRight="@dimen/tabrightpadding"
             android:background="@drawable/selectorresposive"
             android:layout_gravity="center_horizontal"
@@ -176,6 +177,7 @@
             android:paddingLeft="10dp"
             android:paddingEnd="@dimen/tabrightpadding"
             android:paddingRight="@dimen/tabrightpadding"
+            android:id="@+id/dhuhrback"
             android:background="@drawable/selectorresposive"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="5dp"
@@ -242,6 +244,7 @@
             android:background="@drawable/selectorresposive"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="5dp"
+            android:id="@+id/asrback"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
             android:gravity="center">
@@ -301,6 +304,7 @@
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:paddingEnd="@dimen/tabrightpadding"
+            android:id="@+id/maghrebback"
             android:paddingRight="@dimen/tabrightpadding"
             android:background="@drawable/selectorresposive"
             android:layout_gravity="center_horizontal"
@@ -365,6 +369,7 @@
             android:paddingLeft="10dp"
             android:paddingEnd="@dimen/tabrightpadding"
             android:paddingRight="@dimen/tabrightpadding"
+            android:id="@+id/ishaback"
             android:background="@drawable/selectorresposive"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="39dp"
@@ -422,6 +427,7 @@
 
     <!--Mouadin Selector page-->
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/selectionmenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

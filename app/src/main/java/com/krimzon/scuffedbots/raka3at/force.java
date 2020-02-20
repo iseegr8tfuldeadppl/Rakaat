@@ -78,7 +78,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private int miladi_month = 0;
     private TextView fajrtitle, risetitle, dohrtitle, asrtitle, maghrebtitle, ishatitle;
     private TextView fajrtime, risetime, dhuhrtime, asrtime, maghribtime, ishatime;
-    private TextView prayfajr, praydhuhr, prayasr, praymaghrib, prayisha;
     private List<TextView> prayerdisplayviews, prayerdisplayviews2;
     private String fajrtitlel, risetitlel, dohrtitlel, asrtitlel, maghrebtitlel, ishatitlel;
     private String fajr, rise, dhuhr, asr, maghrib, isha;
@@ -161,8 +160,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         public boolean handleMessage(@NonNull Message msg) { if(it_is_today) animatenextadan(); return true; }});
     private Handler checkonfajr = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(@NonNull Message msg) {
-            if(positifise < minute_limit_to_display_positifise){
+        public boolean handleMessage(@NonNull Message msg) { if(positifise < minute_limit_to_display_positifise){
 
                 for(int i=0; i<5; i++) {
                     find_slider(i, true);
@@ -190,10 +188,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                 if(slider.getVisibility()!=VISIBLE  && (negatifise<=minute_limit_to_display_negatifise || positifise<minute_limit_to_display_positifise))
                     slider.setVisibility(VISIBLE);
                 slider = slidertemp;*/
-            }
-            return true;
-        }
-    });
+            }return true; }});
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,6 +218,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         load_data_from_slat_sql();
 
+
         languageshet();
 
         sql(resources.getString(R.string.justforce));
@@ -245,7 +241,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                     calculate_rightnowcomparable();
 
                     if(rightnowcomparable!=temp_rightnowcomparable) {
-
 
                         temp_positifise = Math.round((prayers.get(next_adan) - rightnowcomparable));
 
@@ -454,6 +449,14 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             arrowleft.setImageDrawable(resources.getDrawable(R.drawable.arrowleft));
         }
 
+        //praybuttons
+        praybuttons = new ArrayList<>();
+        praybuttons.add((TextView) findViewById(R.id.prayfajr));
+        praybuttons.add((TextView) findViewById(R.id.praydhuhr));
+        praybuttons.add((TextView) findViewById(R.id.prayasr));
+        praybuttons.add((TextView) findViewById(R.id.praymaghrib));
+        praybuttons.add((TextView) findViewById(R.id.prayisha));
+
         // checkmarks
         checkmarks = new ArrayList<>();
         checkmarks.add((ImageView) findViewById(R.id.fajrcheckmark));
@@ -481,20 +484,12 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         ishatime = findViewById(R.id.ishatime);
         risetitle = findViewById(R.id.risetitle);
         risetime = findViewById(R.id.risetime);
-        prayfajr = findViewById(R.id.prayfajr);
-        praydhuhr = findViewById(R.id.praydhuhr);
-        prayasr = findViewById(R.id.prayasr);
-        praymaghrib = findViewById(R.id.praymaghrib);
-        prayisha = findViewById(R.id.prayisha);
 
         prayerdisplayviews = new ArrayList<>();
         prayerdisplayviews2 = new ArrayList<>();
         prayerdisplayviews.add(fajrtime);prayerdisplayviews.add(dhuhrtime);prayerdisplayviews.add(asrtime);prayerdisplayviews.add(maghribtime);prayerdisplayviews.add(ishatime);
         prayerdisplayviews2.add(fajrtitle);prayerdisplayviews2.add(dohrtitle);prayerdisplayviews2.add(asrtitle);prayerdisplayviews2.add(maghrebtitle);prayerdisplayviews2.add(ishatitle);
         resources = getResources();
-        float next_adan_pop_out_large = resources.getDimension(R.dimen.next_adan_pop_out_large); ///TypedValue.COMPLEX_UNIT_PX
-        float next_adan_pop_out_shrink = resources.getDimension(R.dimen.next_adan_pop_out_shrink); ///TypedValue.COMPLEX_UNIT_PX
-        float next_adan_size = resources.getDimension(R.dimen.next_adan_size); ///TypedValue.COMPLEX_UNIT_PX
         /*doublearrowleft = resources.getDrawable(R.drawable.doublearrowleftt);
         doublearrowright = resources.getDrawable(R.drawable.doublearrowright);*/
 
@@ -529,6 +524,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     private void convert_hijri_to_cute() {
         if(language.equals(resources.getString(R.string.ar))){
+            hijri = "";
             hijri += hijri_day + " ";
             switch(hijri_month) {
                 case 1:
@@ -571,6 +567,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
             hijri += " " + hijri_year;
         } else {
+            hijri = "";
             switch(hijri_month) {
                 case 1:
                     hijri += resources.getString(R.string.muharram);
@@ -631,11 +628,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         title.setTypeface(arabic_typeface);
         daterr.setTypeface(arabic_typeface);
 
-        prayfajr.setTypeface(arabic_typeface);
-        praydhuhr.setTypeface(arabic_typeface);
-        prayasr.setTypeface(arabic_typeface);
-        praymaghrib.setTypeface(arabic_typeface);
-        prayisha.setTypeface(arabic_typeface);
+        for(TextView praybutton:praybuttons)
+            praybutton.setTypeface(arabic_typeface);
+
         /*datedisplay.setTypeface(arabic_typeface);*/
         citydisplay.setTypeface(arabic_typeface);
 
@@ -657,11 +652,8 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             asrtitle.setText(asrtitlel);
             maghrebtitle.setText(maghrebtitlel);
             ishatitle.setText(ishatitlel);
-            prayisha.setText(pray);
-            praymaghrib.setText(pray);
-            prayasr.setText(pray);
-            praydhuhr.setText(pray);
-            prayfajr.setText(pray);
+            for(TextView praybutton:praybuttons)
+                praybutton.setText(pray);
             title.setText(force);
         }
     }
@@ -887,41 +879,64 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                 mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    private void use(double longitude, double latitude, boolean new_coordinates, Date today) {
 
-        // declarations
-        hijri = "";
-        prayers = new ArrayList<>();
+    private Handler display_prayer_times = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            // display prayer times
+            display_prayer_times();
+            return true; }});
 
-        temptoday = today.toString().split(" ");
-        todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
+    private Handler work_on_date_n_display_it_and_display_dates = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            // work on date n then display
+            work_on_date_n_display_it();
+            display_dates();
+            return true; }});
 
+    private Handler retrieveAndy = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            // retrieve prayers array from sql so we color force buttons accordingly
+            retrieveAndy();
+            return true; }});
 
-        //update coords in sql
-        update_coords_in_sql(longitude, latitude, new_coordinates);
+    private void use(final double longitude, final double latitude, final boolean new_coordinates, final Date today) {
 
-        // pull date and shape it
-        pull_date_and_shape_it(longitude, latitude, today);
+        Runnable useRunnable=new Runnable() {@Override public void run() { try {
 
-        // pull prayer times and shape them
-        pull_prayer_times_and_shape_them();
+            // declarations
+            prayers = new ArrayList<>();
 
-        // display prayer times
-        display_prayer_times();
+            temptoday = today.toString().split(" ");
+            todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
 
-        // convert prayertimes into seconds for comparaison and save in prayers Array
-        convert_prayertimes_into_seconds();
+            //update coords in sql
+            update_coords_in_sql(longitude, latitude, new_coordinates);
 
-        // pull location to display city or wtvr
-        pull_location(longitude, latitude);
+            // pull date and shape it
+            pull_date_and_shape_it(longitude, latitude, today);
 
-        // work on date n then display
-        work_on_date_n_display_it();
-        display_dates();
+            // pull prayer times and shape them
+            pull_prayer_times_and_shape_them();
+
+            display_prayer_times.sendEmptyMessage(0);
+
+            // convert prayertimes into seconds for comparaison and save in prayers Array
+            convert_prayertimes_into_seconds();
+
+            // pull location to display city or wtvr
+            pull_location(longitude, latitude);
+
+            work_on_date_n_display_it_and_display_dates.sendEmptyMessage(0);
+
+            retrieveAndy.sendEmptyMessage(0);
+        } catch(Exception e){e.printStackTrace();} }};
+
+        Thread useThread = new Thread(useRunnable);
+        useThread.start();
         /*datedisplay.setText(datin);*/
-
-        // retrieve prayers array from sql so we color force buttons accordingly
-        retrieveAndy();
 
     }
 
@@ -967,7 +982,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         if(isha.split(" ")[1].equals(resources.getString(R.string.pmer)))
             ishatemp += 720; //12*60
         prayers.add(fajrtemp);
-        /*prayers.add(risetemp);*/
         prayers.add(dhuhrtemp);
         prayers.add(asrtemp);
         prayers.add(maghribtemp);
@@ -1345,7 +1359,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     }
 
     private void display_dates() {
-        daterr.setText( datin + resources.getString(R.string.newline) + hijri);
+        daterr.setText( datin + '\n' + hijri);
     }
 
     private void work_on_date_n_display_it() {
@@ -1618,7 +1632,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             }
             // gray
             else {
-                if(prayer==next_adan && positifise<=30) {
+                if(prayer==next_adan && positifise<=30 && !still_scoping_on_previous_adan) {
                     theres_still_until_this_prayer(prayer);
                 } else
                     too_early(prayer);
@@ -1733,9 +1747,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     private void retrieveAndy(){
 
-        // prepare sql and variables
-        retrieveAndyVariableSetup();
-
         // if theres smt in sql then  look up  prayed
         sql(resources.getString(R.string.justforce2));
         if (SQLSharing.mycursor.getCount() > 0) {
@@ -1761,7 +1772,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         what_is_soon_adan_and_one_before_it();
 
         // color pray buttons
-
         color_pray_buttons();
 
         // don't display time till next adan if it's at end of day
@@ -1769,11 +1779,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             if(!end_of_day)
                 InitialDelayForNextAdanAnimation();
 
-    }
-
-    private void retrieveAndyVariableSetup() {
-        praybuttons = new ArrayList<>();
-        praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
     }
 
     private void color_pray_buttons() {
@@ -2009,7 +2014,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                     fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                         if (it_is_today && (negatifise<=minute_limit_to_display_negatifise || positifise<minute_limit_to_display_positifise))
                             slider.setVisibility(VISIBLE);
-                        else
+                        else if(!it_is_today)
                             slider.setVisibility(GONE);
                     }});
                 }
@@ -2175,17 +2180,10 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             leftsideelementsbackground = findViewById(R.id.leftsideelementsbackground);
         }
 
-        prayfajr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
-        praydhuhr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
-        prayasr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
-        praymaghrib.setBackground(resources.getDrawable(R.drawable.forcebuttons));
-        prayisha.setBackground(resources.getDrawable(R.drawable.forcebuttons));
-
-        prayfajr.setTextColor(Color.WHITE);
-        praydhuhr.setTextColor(Color.WHITE);
-        prayasr.setTextColor(Color.WHITE);
-        praymaghrib.setTextColor(Color.WHITE);
-        prayisha.setTextColor(Color.WHITE);
+        for(TextView praybutton:praybuttons){
+            praybutton.setBackground(resources.getDrawable(R.drawable.forcebuttons));
+            praybutton.setTextColor(Color.WHITE);
+        }
 
         full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
         doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.lightbacktotoday));
@@ -2258,23 +2256,15 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             lmfaoimage.setImageDrawable(resources.getDrawable(R.drawable.lmfao));
         }
 
-        prayfajr.setBackground(resources.getDrawable(R.drawable.darkbuttons));
-        praydhuhr.setBackground(resources.getDrawable(R.drawable.darkbuttons));
-        prayasr.setBackground(resources.getDrawable(R.drawable.darkbuttons));
-        praymaghrib.setBackground(resources.getDrawable(R.drawable.darkbuttons));
-        prayisha.setBackground(resources.getDrawable(R.drawable.darkbuttons));
-
-        prayfajr.setTextColor(resources.getColor(R.color.grayerthanwhite));
-        praydhuhr.setTextColor(resources.getColor(R.color.grayerthanwhite));
-        prayasr.setTextColor(resources.getColor(R.color.grayerthanwhite));
-        praymaghrib.setTextColor(resources.getColor(R.color.grayerthanwhite));
-        prayisha.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        for(TextView praybutton:praybuttons) {
+            praybutton.setBackground(resources.getDrawable(R.drawable.darkbuttons));
+            praybutton.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        }
 
         full.setBackground(resources.getDrawable(R.drawable.forcefull));
         doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.backtotoday));
         title.setTextColor(Color.WHITE);
         title.setBackground(null);
-
 
 
         if (fajrtitle.getCurrentTextColor() != Color.GREEN)

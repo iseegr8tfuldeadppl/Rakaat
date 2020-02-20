@@ -158,7 +158,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         initialize_all_variables();
         resources();
 
-        if (light == null)
+        if (!light_sensor_works)
             exit();
 
         sql_work();
@@ -353,10 +353,17 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         raka3at = findViewById(R.id.raka3at);
         raka3at.setText(String.valueOf(num_of_raka3at));
         sensorManager = (SensorManager) getSystemService(Service.SENSOR_SERVICE);
-        light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        try {
+            light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+            light_sensor_works = true;
+        } catch(Exception e){
+            e.printStackTrace();
+            light_sensor_works = false;
+        }
     }
 
 
+    private boolean light_sensor_works = true;
     @Override
     public void onBackPressed() {
         if(receiveandy!=null) {
@@ -542,7 +549,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL);
+        if(light_sensor_works)
+            sensorManager.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL);
         if(five_second_before_actually_starting_was_finished) {
             hideNavigationBar();
         } else
@@ -591,18 +599,20 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    public void startClicked(View view){ click_on_start(); }
+    public void startClicked(View view){
+        if(light_sensor_works)
+            click_on_start();
+        else
+            print("Light sensor not found");
+    }
 
 
     private void click_on_start() {
         if(receiveandy!=null) {
-            if (!receiveandy.equals("force")) {
-                if (!startclicked)
-                    start_was_just_clicked = true;
-                else
-                    reset();
-            } else
-                back_to_force("no");
+            if (!startclicked)
+                start_was_just_clicked = true;
+            else
+                reset();
         } else
             back_to_force("no");
     }
