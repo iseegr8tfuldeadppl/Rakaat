@@ -86,14 +86,8 @@ public class force_settings extends BottomSheetDialogFragment {
         if(!darkmode){
             v.findViewById(R.id.settings).setBackground(getResources().getDrawable(R.drawable.simpelbackground));
             v.findViewById(R.id.arrow).setBackground(getResources().getDrawable(R.drawable.arrowbutton));
-            v.findViewById(R.id.fajrback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
-            v.findViewById(R.id.riseback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
-            v.findViewById(R.id.dhuhrback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
-            v.findViewById(R.id.asrback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
-            v.findViewById(R.id.maghrebback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
-            v.findViewById(R.id.ishaback).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
             for(TextView adan:adans)
-                adan.setBackgroundColor(getResources().getColor(R.color.slightlydarkercoolbright));
+                adan.setBackgroundColor(getResources().getColor(R.color.typicallightbuttoncolors));
         }
     }
 
@@ -227,7 +221,6 @@ public class force_settings extends BottomSheetDialogFragment {
         selectionmenu.setVisibility(View.VISIBLE);
         mouadineselectionpageison = true;
 
-        apply_lightmode_if_found_to_play_buttons();
 
         if(language.equals("en")){
             adansselection.get(0).setText(resources.getString(R.string.adan1));
@@ -300,14 +293,16 @@ public class force_settings extends BottomSheetDialogFragment {
             public void onClick(View v) { playcorrespondingaudio(5);
             }
         });
+
+        apply_lightmode_if_found_to_play_buttons();
     }
 
     private void apply_lightmode_if_found_to_play_buttons() {
         for(ImageView audioplayers:audioplayer){
             try {
-                Glide.with(getContext()).load(R.drawable.pauselightmode).into(audioplayers);
+                Glide.with(getContext()).load(R.drawable.playlightmode).into(audioplayers);
             } catch (Exception ignored) {
-                audioplayers.setImageDrawable(resources.getDrawable(R.drawable.pauselightmode));
+                audioplayers.setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
             }
         }
     }

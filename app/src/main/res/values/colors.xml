@@ -15,6 +15,7 @@
     <color name="dark">#999999</color>
     <color name="darkest">#737373</color>
     <color name="typicallightbuttoncolors">#555555</color>
+    <color name="typicallightbuttoncolorser">#777777</color>
 
     <color name="dimmest">#555555</color>
     <color name="dimmer">#8c8c8c</color>

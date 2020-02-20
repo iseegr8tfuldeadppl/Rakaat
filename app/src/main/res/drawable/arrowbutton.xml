@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="@color/typicallightbuttoncolors"/>
-            <stroke android:color="@color/typicallightbuttoncolors" android:width="1dp"/>
+            <solid android:color="@color/typicallightbuttoncolorser"/>
+            <stroke android:color="@color/typicallightbuttoncolorser" android:width="1dp"/>
             <corners
                 android:bottomRightRadius="90dp"
                 android:bottomLeftRadius="90dp"

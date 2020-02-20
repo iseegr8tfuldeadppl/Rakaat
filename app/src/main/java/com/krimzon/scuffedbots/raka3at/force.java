@@ -2006,7 +2006,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     private void fade_slider_in() {
         if(!end_of_day){
-            if(it_is_today){
+            if(it_is_today && (negatifise<=minute_limit_to_display_negatifise || positifise<minute_limit_to_display_positifise)){
                 if(slider.getVisibility()!=VISIBLE){
                     Animation fromfajrtolol = loadAnimation(this, R.anim.fromfajrtofajr);
                     slider.setVisibility(View.INVISIBLE);
