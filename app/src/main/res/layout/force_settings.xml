@@ -23,6 +23,7 @@
 
     <!--Main Page-->
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/settingsmenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +37,7 @@
             android:id="@+id/adantitle"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="@string/adanhn" />
+            android:text="@string/adan_arabe" />
         <!--Fajr Selections-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -421,7 +422,6 @@
 
     <!--Mouadin Selector page-->
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/selectionmenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

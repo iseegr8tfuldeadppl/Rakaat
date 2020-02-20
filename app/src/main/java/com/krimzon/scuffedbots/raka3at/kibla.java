@@ -77,9 +77,9 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         arrowback = findViewById(R.id.arrowback);
         nightmodebutton = findViewById(R.id.nightmodebutton);
         try {
-            Glide.with(this).load(R.drawable.arrowleftdark).into(arrowback);
+            Glide.with(this).load(R.drawable.backarrowdark).into(arrowback);
         } catch (Exception ignored) {
-            arrowback.setImageDrawable(resources.getDrawable(R.drawable.arrowleftdark));
+            arrowback.setImageDrawable(resources.getDrawable(R.drawable.backarrowdark));
         }
         try {
             Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);

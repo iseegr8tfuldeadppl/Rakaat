@@ -60,6 +60,7 @@ public class force_settings extends BottomSheetDialogFragment {
         prepare_variables();
         applyfont();
         sql_work();
+        apply_selected_language();
         apply_adanSelections();
         onClickListeners();
         /*if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement)
@@ -70,9 +71,43 @@ public class force_settings extends BottomSheetDialogFragment {
         /*work_on_language();*/
 
         arrow.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            dismiss();
+            LinearLayout settingsmenu = v.findViewById(R.id.settingsmenu);
+            if(settingsmenu.getVisibility()==View.GONE){
+                LinearLayout selectionmenu = v.findViewById(R.id.selectionmenu);
+                settingsmenu.setVisibility(View.GONE);
+                selectionmenu.setVisibility(View.VISIBLE);
+                if(language.equals("ar"))
+                    arrow.setText(resources.getString(R.string.save_arabe));
+                else if(language.equals("en"))
+                    arrow.setText(resources.getString(R.string.save));
+
+                if(language.equals("en")){
+                    adansselection.get(0).setText(resources.getString(R.string.adan1));
+                    adansselection.get(1).setText(resources.getString(R.string.adan2));
+                    adansselection.get(2).setText(resources.getString(R.string.adan3));
+                    adansselection.get(3).setText(resources.getString(R.string.adan4));
+                    adansselection.get(4).setText(resources.getString(R.string.adan5));
+                    adansselection.get(5).setText(resources.getString(R.string.adan6));
+                    selectiontitle.setText(resources.getString(R.string.select_an_adan));
+                }
+            } else
+                dismiss();
         }});
         return v;
+    }
+
+    private void apply_selected_language() {
+        if(language.equals("en")){
+            titles.get(0).setText(resources.getString(R.string.fajrtitle));
+            titles.get(1).setText(resources.getString(R.string.rise));
+            titles.get(2).setText(resources.getString(R.string.dohrtitle));
+            titles.get(3).setText(resources.getString(R.string.asrtitle));
+            titles.get(4).setText(resources.getString(R.string.maghrebtitle));
+            titles.get(5).setText(resources.getString(R.string.ishatitle));
+            arrow.setText(resources.getString(R.string.save));
+            adantitle.setText(resources.getString(R.string.adan));
+        }
+
     }
 
     private void applyfont() {
@@ -186,10 +221,16 @@ public class force_settings extends BottomSheetDialogFragment {
     }
 
     private void launch_selection(final int prayertobemodified) {
-        LinearLayout settingsmenu = v.findViewById(R.id.settingsmenu);
         LinearLayout selectionmenu = v.findViewById(R.id.selectionmenu);
+        LinearLayout settingsmenu = v.findViewById(R.id.settingsmenu);
         settingsmenu.setVisibility(View.GONE);
         selectionmenu.setVisibility(View.VISIBLE);
+
+        if(language.equals("ar"))
+            arrow.setText(resources.getString(R.string.back_arabe));
+        else if(language.equals("en"))
+            arrow.setText(resources.getString(R.string.back));
+
         variables_of_selection();
         apply_font_to_selection();
         if(prayertobemodified>0)
@@ -525,23 +566,40 @@ public class force_settings extends BottomSheetDialogFragment {
             // applied currently selected adan
             switch (yes[0]) {
                 case "1":
-                    adans.get(i).setText(resources.getString(R.string.adan1_arabe));
+                    if(language.equals("ar"))
+                        adans.get(i).setText(resources.getString(R.string.adan1_arabe));
+                    else if(language.equals("en"))
+                        adans.get(i).setText(resources.getString(R.string.adan1));
                     break;
                 case "2":
-                    adans.get(i).setText(resources.getString(R.string.adan2_arabe));
+                    if(language.equals("ar"))
+                        adans.get(i).setText(resources.getString(R.string.adan2_arabe));
+                    else if(language.equals("en"))
+                        adans.get(i).setText(resources.getString(R.string.adan2));
                     break;
                 case "3":
-                    adans.get(i).setText(resources.getString(R.string.adan3_arabe));
+                    if(language.equals("ar"))
+                        adans.get(i).setText(resources.getString(R.string.adan3_arabe));
+                    else if(language.equals("en"))
+                        adans.get(i).setText(resources.getString(R.string.adan3));
                     break;
                 case "4":
-                    adans.get(i).setText(resources.getString(R.string.adan4_arabe));
+                    if(language.equals("ar"))
+                        adans.get(i).setText(resources.getString(R.string.adan4_arabe));
+                    else if(language.equals("en"))
+                        adans.get(i).setText(resources.getString(R.string.adan4));
                     break;
                 case "5":
-                    adans.get(i).setText(resources.getString(R.string.adan5_arabe));
+                    if(language.equals("ar"))
+                        adans.get(i).setText(resources.getString(R.string.adan5_arabe));
+                    else if(language.equals("en"))
+                        adans.get(i).setText(resources.getString(R.string.adan5));
                     break;
                 case "6":
-                    adans.get(i).setText(resources.getString(R.string.adan6_arabe));
-                    break;
+                    if(language.equals("ar"))
+                        adans.get(i).setText(resources.getString(R.string.adan6_arabe));
+                    else if(language.equals("en"))
+                        adans.get(i).setText(resources.getString(R.string.adan6));
             }
         }
     }

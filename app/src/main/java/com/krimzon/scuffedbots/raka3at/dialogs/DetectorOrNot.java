@@ -35,7 +35,7 @@ public class DetectorOrNot extends Dialog {
     private String athome;
     private boolean found_prayed_history_in_sql = false;
 
-    DetectorOrNot(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, boolean at_home, String verified, String athome) {
+    public DetectorOrNot(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, boolean at_home, String verified, String athome) {
         super(a);
         this.c = a;
         this.friday = friday;

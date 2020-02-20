@@ -259,7 +259,8 @@
     <string name="newline">\n</string>
     <string name="plusser">+</string>
     <string name="minuser">-</string>
-    <string name="adanhn">الآذان</string>
+    <string name="adan_arabe">الآذان</string>
+    <string name="adan">Adan</string>
     <string name="select_an_adan">Select An Adan</string>
     <string name="select_an_adan_arabe">إختيار مؤذّن</string>
     <string name="choose_your_language">Choose your language</string>

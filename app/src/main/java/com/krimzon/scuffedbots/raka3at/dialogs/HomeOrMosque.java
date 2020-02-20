@@ -75,16 +75,16 @@ public class HomeOrMosque extends Dialog {
             selectionmosque.setEnabled(false);
             at_home = true;
 
-            DetectorOrNot mosqueorhome=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
-            mosqueorhome.show();
+            DetectorOrNot detectorOrNot=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
+            detectorOrNot.show();
             dismiss();
         }});
         selectionmosque.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
             selectionhome.setEnabled(false);
             selectionmosque.setEnabled(false);
             at_home = false;
-            DetectorOrNot mosqueorhome=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
-            mosqueorhome.show();
+            DetectorOrNot detectorOrNot=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
+            detectorOrNot.show();
             dismiss();
         }});
     }

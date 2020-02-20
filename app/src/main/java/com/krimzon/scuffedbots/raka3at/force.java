@@ -9,7 +9,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -103,31 +102,19 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private LinearLayout fajrbackground, risebackground, dhuhrbackground, asrbackground, maghribbackground, ishabackground;
     private RelativeLayout yesterdayarrowbackground, tommorowarrowbackground;
     private LinearLayout rightsideelementsbackground;
-    private RelativeLayout backarrowbackground;
     private ImageView lmfaoimage;
-    private boolean onlyonceu = true;
-    private boolean onlyonce = true;
+    private boolean onlyonceu = true, onlyonce = true;
     private String ID;
-    private boolean changing_day = false;
-    private boolean going_left = false;
-    private boolean going_right = false;
+    private boolean going_left = false, going_right = false, changing_day = false;
     private GregorianCalendar gc;
     private Date CurrentDisplayedDay;
     private int day, year, month = 0;
     private String[] todaysplittemparray;
-    private boolean all_white = false;
-    private boolean fill_all = false;
-    private int positifise = 0;
+    private boolean all_white = false, fill_all = false;
     private String athome = "00000";
-    private int next_adan = -1;
-    private int temp_next_adan = 0;
-    private boolean new_adan = false;
-    private boolean end_of_day = false;
-    private boolean it_is_today = true;
+    private int next_adan = -1, temp_next_adan = 0;
+    private boolean end_of_day = false, it_is_today = true, new_adan = false;
     private String verified = "";
-    private List<Drawable> lightforcebuttonsarray;
-    private List<Drawable> lightforcebuttonsgreenarray;
-    private boolean  onlyfillonce = true;
     private List<TextView> praybuttons;
     private boolean allow_pray = false;
     private boolean friday = false;
@@ -138,56 +125,44 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private String datin = "";
     private String tfajr, trise, tdhuhr, tasr, tmaghrib, tisha;
     private String[] temptoday;
-    private boolean only_once = true;
+    private boolean only_once = true, only_once2 = true;
     private Animation to_right11, to_right12, to_right1, to_right2, to_right3, to_right4, to_right5, to_right6, to_right7, to_right8, to_right9, to_right10;
     private Animation from_left11, from_left12, from_left1, from_left2, from_left3, from_left4, from_left5, from_left6, from_left7, from_left8, from_left9, from_left10;
-    private boolean only_once2 = true;
     private Animation toleft1, toleft2, toleft3, toleft4, toleft5, toleft6, toleft7, toleft8, toleft9, toleft10, toleft11, toleft12;
     private Animation fromright1, fromright2, fromright3, fromright4, fromright5, fromright6, fromright7, fromright8, fromright9, fromright10, fromright11, fromright12;
-    private int temp_negatifise;
-    private int temp_positifise;
+    private int temp_negatifise = 1000, temp_positifise = 1000, negatifise = 1000, positifise = 1000;
     private Thread mythread;
-    private int current_displayed_next_adan = 0;
-    private int temp_rightnowcomparable;
-    private boolean running = true;
-    private boolean can_find_in = true;
-    private boolean still_scoping_on_previous_adan = false;
-    private int negatifise;
-    private boolean initialdelayoncebrk = true;
-    private int minute_limit_to_display_positifise = 100;
+    private int current_displayed_next_adan = 0, temp_rightnowcomparable;
+    private boolean running = true, initialdelayoncebrk = true, still_scoping_on_previous_adan = false, can_find_in = true;
+    private int minute_limit_to_display_positifise = 100, minute_limit_to_display_negatifise = 20;
+    private LinearLayout leftsideelementsbackground;
 
-    private Handler handler3 = new Handler(){
+    private Handler handler3 = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) { if(slider!=null) {
-                if(positifise!=0)
-                    slider.setText("- " + positifise);
-                else
-                    begonethot();
-            } }};
-    private Handler calluse = new Handler(){
+        public boolean handleMessage(@NonNull Message msg) { if(slider!=null) { if(positifise!=0) slider.setText("- " + positifise);else begonethot(); }return true;}});
+    private Handler calluse = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) { use(longitude, latitude, new_coordinates, new Date()); }};
-    private Handler handler7 = new Handler(){
+        public boolean handleMessage(@NonNull Message msg) { use(longitude, latitude, new_coordinates, new Date()); return true;}});
+    private Handler handler7 = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) {
-            find_slider(next_adan, false);
-        }
-    };
-    private Handler handler6 = new Handler(){
+        public boolean handleMessage(@NonNull Message msg) { find_slider(next_adan, false);return true; }});
+    private Handler handler6 = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) { for(int i=0; i<5; i++) {
-                find_slider(i, true);
-                slider.setVisibility(View.GONE);
-            }find_slider(next_adan, false); }};
-    private Handler handler5 = new Handler(){
+        public boolean handleMessage(@NonNull Message msg) { for(int i = 0; i<5; i++) { find_slider(i, true);slider.setVisibility(View.GONE); }find_slider(next_adan, false); return true;}});
+    private Handler handler5 = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) {
-            switch_to_next_adan();
-        }
-    };
-    private Handler checkonfajr = new Handler(){
+        public boolean handleMessage(@NonNull Message msg) { switch_to_next_adan();return true; }
+    });
+    private Handler handler4 = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) { if(positifise < minute_limit_to_display_positifise){
+        public boolean handleMessage(@NonNull Message msg) { if(slider!=null){ if(negatifise!=0) slider.setText("+ " + negatifise);begonethot();  } return true;}});
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) { if(it_is_today) animatenextadan(); return true; }});
+    private Handler checkonfajr = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            if(positifise < minute_limit_to_display_positifise){
 
                 for(int i=0; i<5; i++) {
                     find_slider(i, true);
@@ -212,17 +187,13 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
                 /*TextView slidertemp = slider;
                 slider = findViewById(R.id.sliderfajr);
-                if(slider.getVisibility()!=VISIBLE)
+                if(slider.getVisibility()!=VISIBLE  && (negatifise<=minute_limit_to_display_negatifise || positifise<minute_limit_to_display_positifise))
                     slider.setVisibility(VISIBLE);
                 slider = slidertemp;*/
-            } }};
-    private Handler handler4 = new Handler(){
-        @Override
-        public void handleMessage(Message msg) { if(slider!=null){ if(negatifise!=0) slider.setText("+ " + negatifise);begonethot(); } }};
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) { if(it_is_today) animatenextadan(); }};
-
+            }
+            return true;
+        }
+    });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -252,7 +223,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         load_data_from_slat_sql();
 
-
         languageshet();
 
         sql(resources.getString(R.string.justforce));
@@ -263,16 +233,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         //longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());
 
-
-
     }
-
-    /*private HandlerThread handlerThread;
-    private void preparing_background_handler(){
-        handlerThread = new HandlerThread("inference");
-        handlerThread.start();
-        handlerer = new Handler(handlerThread.getLooper());
-    }*/
 
     private void live_updates() {
         Runnable r=new Runnable() {@Override public void run() { try {
@@ -321,7 +282,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
                 }
             }
-        } catch(Exception ignored){} }};
+        } catch(Exception e){e.printStackTrace();} }};
 
         //anti lag
         mythread = new Thread(r); //to thread the runnable object we launched
@@ -415,7 +376,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         if((temp_negatifise != negatifise || changing_day) && next_adan!=0){
             changing_day = false;
             negatifise = temp_negatifise;
-            if(negatifise <= 30){
+            if(negatifise <= minute_limit_to_display_negatifise){
                 still_scoping_on_previous_adan = true;
                 if (next_adan-1!=current_displayed_next_adan) {
                     handler7.sendEmptyMessage(0);
@@ -448,8 +409,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             synchronized (this) {
                 try {
                     wait(futuretime - System.currentTimeMillis());
-                } catch (Exception ignored) {
-                }
+                } catch(Exception e){e.printStackTrace();}
             }
         }
     }
@@ -464,9 +424,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         ImageView arrowleft = findViewById(R.id.arrowleft);
         ImageView settingsbutton = findViewById(R.id.settingsbutton);
         try {
-            Glide.with(this).load(R.drawable.arrowleftdark).into(arrowback);
+            Glide.with(this).load(R.drawable.backarrowdark).into(arrowback);
         } catch (Exception ignored) {
-            arrowback.setImageDrawable(resources.getDrawable(R.drawable.arrowleftdark));
+            arrowback.setImageDrawable(resources.getDrawable(R.drawable.backarrowdark));
         }
         try {
             Glide.with(this).load(R.drawable.stats).into(statslogo);
@@ -495,13 +455,12 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         }
 
         // checkmarks
-        ImageView fajrcheckmark = findViewById(R.id.fajrcheckmark);
-        ImageView dhuhrcheckmark = findViewById(R.id.dhuhrcheckmark);
-        ImageView asrcheckmark = findViewById(R.id.asrcheckmark);
-        ImageView maghribcheckmark = findViewById(R.id.maghribcheckmark);
-        ImageView ishacheckmark = findViewById(R.id.ishacheckmark);
         checkmarks = new ArrayList<>();
-        checkmarks.add(fajrcheckmark);checkmarks.add(dhuhrcheckmark);checkmarks.add(asrcheckmark);checkmarks.add(maghribcheckmark);checkmarks.add(ishacheckmark);
+        checkmarks.add((ImageView) findViewById(R.id.fajrcheckmark));
+        checkmarks.add((ImageView) findViewById(R.id.dhuhrcheckmark));
+        checkmarks.add((ImageView) findViewById(R.id.asrcheckmark));
+        checkmarks.add((ImageView) findViewById(R.id.maghribcheckmark));
+        checkmarks.add((ImageView) findViewById(R.id.ishacheckmark));
 
         daterr = findViewById(R.id.daterr);
         doublearrowsbackground = findViewById(R.id.doublearrowsbackground);
@@ -741,12 +700,14 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     }
 
     private void low_light_alert() {
-        if(getIntent().getStringExtra("light_alert").equals("yes")) {
-            if (language.equals(resources.getString(R.string.en)))
-                Snackbar.make(full, getString(R.string.low_light), Snackbar.LENGTH_LONG).show();
-            else
-                Snackbar.make(full, getString(R.string.low_light_arabe), Snackbar.LENGTH_LONG).show();
-        }
+        try {
+            if (getIntent().getStringExtra("light_alert").equals("yes")) {
+                if (language.equals(resources.getString(R.string.en)))
+                    Snackbar.make(full, getString(R.string.low_light), Snackbar.LENGTH_LONG).show();
+                else
+                    Snackbar.make(full, getString(R.string.low_light_arabe), Snackbar.LENGTH_LONG).show();
+            }
+        } catch(Exception e){e.printStackTrace();}
     }
 
     private void location_shit(final Date date) {
@@ -921,6 +882,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     private boolean isLocationEnabled() {
         LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        assert mLocationManager != null;
         return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
@@ -977,14 +939,14 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(addresses!=null) {
+        try{
             String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
             String country = addresses.get(0).getCountryName();
             String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
             citydisplay.setText(city);
-        }
+        } catch(Exception e){ e.printStackTrace();}
     }
 
     private void convert_prayertimes_into_seconds() {
@@ -1355,7 +1317,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
             maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
             isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
-        } catch(Exception ignored){}
+        } catch(Exception e){e.printStackTrace();}
 
 
         if(language.equals(resources.getString(R.string.ar))){ // the arabic am and pm
@@ -1809,34 +1771,12 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     }
 
-    /*
-
-        runInBackground(new Runnable() {
-            @Override
-            public void run() {});
-     */
-
     private void retrieveAndyVariableSetup() {
         praybuttons = new ArrayList<>();
         praybuttons.add(prayfajr); praybuttons.add(praydhuhr); praybuttons.add(prayasr); praybuttons.add(praymaghrib); praybuttons.add(prayisha);
     }
 
     private void color_pray_buttons() {
-        if(onlyfillonce){
-            lightforcebuttonsarray = new ArrayList<>();
-            lightforcebuttonsgreenarray = new ArrayList<>();
-            onlyfillonce = false;
-            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
-            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
-            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
-            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
-            lightforcebuttonsarray.add(resources.getDrawable(R.drawable.lightforcebuttons));
-            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
-            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
-            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
-            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
-            lightforcebuttonsgreenarray.add(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
-        }
 
         if(!all_white) {
 
@@ -1852,10 +1792,10 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                     for (int i = 0; i < 5; i++) {
                         if (String.valueOf(prayed.charAt(i)).equals("0")) {
                             praybuttons.get(i).setTextColor(Color.WHITE);
-                            praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
+                            praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
                         } else {
                             praybuttons.get(i).setTextColor(Color.WHITE);
-                            praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                            praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
                             praybuttons.get(i).setTextColor(Color.BLACK);
                         }
                     }
@@ -1873,10 +1813,10 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                         for (int i = 0; i < 5; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
                                 praybuttons.get(i).setTextColor(Color.WHITE);
-                                praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
+                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
                             } else {
                                 praybuttons.get(i).setTextColor(Color.WHITE);
-                                praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
                             }
                         }
@@ -1898,10 +1838,10 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                         for (int i = 0; i < next_adan; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
                                 praybuttons.get(i).setTextColor(Color.WHITE);
-                                praybuttons.get(i).setBackground(lightforcebuttonsarray.get(i));
+                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
                             } else {
                                 praybuttons.get(i).setTextColor(Color.WHITE);
-                                praybuttons.get(i).setBackground(lightforcebuttonsgreenarray.get(i));
+                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
                             }
                         }
@@ -1999,14 +1939,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         }
     }
 
-    /*Handler handler2 = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            if(it_is_today)
-                slide_in_dem_dpz();
-        }
-    };*/
-
     private void animatenextadan() {
         if(new_adan) { new_adan = false;
             prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
@@ -2075,7 +2007,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                     slider.setVisibility(View.INVISIBLE);
                     slider.startAnimation(fromfajrtolol);
                     fromfajrtolol.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                        if (it_is_today)
+                        if (it_is_today && (negatifise<=minute_limit_to_display_negatifise || positifise<minute_limit_to_display_positifise))
                             slider.setVisibility(VISIBLE);
                         else
                             slider.setVisibility(GONE);
@@ -2125,13 +2057,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         }
     }
 
-    /*private Handler handlerer;
-    protected synchronized void runInBackground(final Runnable r) {
-        if (handlerer != null) {
-            handlerer.post(r);
-        }
-    }*/
-
     public void InitialDelayForNextAdanAnimation(){
 
         if(initialdelayoncebrk){ initialdelayoncebrk = false;
@@ -2146,7 +2071,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                         synchronized (this){
                             try{
                                 wait(futuretime - System.currentTimeMillis());
-                            } catch( Exception ignored){}
+                            } catch(Exception e){e.printStackTrace();}
                         }
                     }
 
@@ -2162,33 +2087,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             handler.sendEmptyMessage(0);
         }
     }
-
-    /*public void SecondaryDelayForDelayDisplay(){
-
-        //runs in the background
-        Runnable r=new Runnable() {
-            @Override
-            public void run() {
-                long futuretime = System.currentTimeMillis() + 900;
-
-                while (System.currentTimeMillis() < futuretime){
-                    //prevents multiple threads from crashing into each other
-                    synchronized (this){
-                        try{
-                            wait(futuretime - System.currentTimeMillis());
-                        } catch( Exception ignored){}
-                    }
-                }
-
-                //run the handler
-                handler2.sendEmptyMessage(0);
-            }
-        };
-
-        //anti lag
-        Thread mythread = new Thread(r); //to thread the runnable object we launched
-        mythread.start();
-    }*/
 
     private int get_month(String month){
         switch (month) {
@@ -2274,10 +2172,8 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             yesterdayarrowbackground = findViewById(R.id.yesterdayarrowbackground);
             tommorowarrowbackground = findViewById(R.id.tommorowarrowbackground);
             rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
-            backarrowbackground = findViewById(R.id.backarrowbackground);
+            leftsideelementsbackground = findViewById(R.id.leftsideelementsbackground);
         }
-
-        slider.setTextColor(Color.WHITE);
 
         prayfajr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
         praydhuhr.setBackground(resources.getDrawable(R.drawable.forcebuttons));
@@ -2321,7 +2217,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         citydisplay.setBackground(resources.getDrawable(R.drawable.lightbacktotoday));
 
         rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightstatsback));
-        backarrowbackground.setBackground(resources.getDrawable(R.drawable.lightbackback));
+        leftsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightbackback));
         try {
             Glide.with(this).load(R.drawable.lightlmfao).into(lmfaoimage);
         } catch (Exception ignored) {
@@ -2351,10 +2247,11 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             yesterdayarrowbackground = findViewById(R.id.yesterdayarrowbackground);
             tommorowarrowbackground = findViewById(R.id.tommorowarrowbackground);
             rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
-            backarrowbackground = findViewById(R.id.backarrowbackground);
+            leftsideelementsbackground = findViewById(R.id.leftsideelementsbackground);
         }
 
-        slider.setTextColor(resources.getColor(R.color.grayerthanwhite));
+        try{ slider.setTextColor(resources.getColor(R.color.grayerthanwhite));}catch(Exception ignored){}
+
         try {
             Glide.with(this).load(R.drawable.lmfao).into(lmfaoimage);
         } catch (Exception ignored) {
@@ -2403,7 +2300,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         ishabackground.setBackground(resources.getDrawable(R.drawable.city));
 
         rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.statsback));
-        backarrowbackground.setBackground(resources.getDrawable(R.drawable.backback));
+        leftsideelementsbackground.setBackground(resources.getDrawable(R.drawable.backback));
         citydisplay.setBackground(resources.getDrawable(R.drawable.backtotoday));
         try {
             Glide.with(this).load(R.drawable.lmfao).into(lmfaoimage);
@@ -2509,9 +2406,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             doublearrowsbackground.setVisibility(VISIBLE);
             if(fill_all) {
                 try {
-                    Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
+                    Glide.with(this).load(R.drawable.doublearrowright).into(doublearrows);
                 } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
+                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowright));
                 }
             } if(all_white) {
                 try {
