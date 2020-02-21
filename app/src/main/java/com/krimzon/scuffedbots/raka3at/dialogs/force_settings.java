@@ -807,7 +807,7 @@ public class force_settings extends BottomSheetDialogFragment {
         settingstitle = v.findViewById(R.id.settingstitle);
         notitext = v.findViewById(R.id.notitext);
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notiswitch.setVisibility(View.GONE);
             settingstitle.setVisibility(View.GONE);
             notitext.setVisibility(View.GONE);
