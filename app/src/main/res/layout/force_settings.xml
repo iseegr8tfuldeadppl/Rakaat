@@ -36,7 +36,7 @@
             android:id="@+id/settingstitle"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="إعدادات" />
+            android:text="@string/settings_arabe" />
         <LinearLayout
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
@@ -56,11 +56,11 @@
                 android:layout_weight=".20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="19sp"
+                android:textSize="18sp"
                 android:textColor="@color/white"
                 android:id="@+id/notitext"
                 android:gravity="center"
-                android:text="إشعار التطبيق في شريط الإعلامات" />
+                android:text="@string/main_noti_arabe" />
         </LinearLayout>
 
         <!--Mou'adin Title-->

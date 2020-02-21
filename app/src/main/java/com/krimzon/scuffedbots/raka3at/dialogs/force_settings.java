@@ -116,6 +116,10 @@ public class force_settings extends BottomSheetDialogFragment {
             titles.get(5).setText(resources.getString(R.string.ishatitle));
             arrow.setText(resources.getString(R.string.save));
             adantitle.setText(resources.getString(R.string.adan));
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                settingstitle.setText(resources.getString(R.string.settings));
+                notitext.setText(resources.getString(R.string.main_noti));
+            }
         }
 
     }
@@ -162,7 +166,7 @@ public class force_settings extends BottomSheetDialogFragment {
             SQLSharing.mycursor.moveToNext();
             SWITCHSETTINGID = SQLSharing.mycursor.getString(0);
         }
-        SQLSharing.mydb.updateData(switch_setting, ID);
+        SQLSharing.mydb.updateData(switch_setting, SWITCHSETTINGID);
         SQLSharing.mydb.close();
     }
 

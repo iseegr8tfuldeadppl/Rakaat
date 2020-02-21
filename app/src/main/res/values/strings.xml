@@ -283,5 +283,9 @@
     <string name="nextadan">Next adan is</string>
     <string name="at_arabe">عند</string>
     <string name="at">at</string>
+    <string name="settings_arabe">إعدادات</string>
+    <string name="main_noti_arabe">إشعار التطبيق في شريط الإعلامات</string>
+    <string name="settings">Settings</string>
+    <string name="main_noti">App notification</string>
 
 </resources>
