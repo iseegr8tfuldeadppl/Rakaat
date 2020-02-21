@@ -12,7 +12,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -171,19 +170,19 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void check_if_sent_from_force() {
         receiveandy = getIntent().getStringExtra("sender");
-        if(receiveandy!=null) {
-            if (receiveandy.equals("force")) {
-                Intent sender = getIntent();
-                prayer = Integer.valueOf(sender.getStringExtra("prayer"));
-                todaycomparable = sender.getStringExtra("todaycomparable");
-                prayed = sender.getStringExtra("prayed");
-                verified = sender.getStringExtra("verified");
-                friday = sender.getStringExtra("friday");
-                at_home = sender.getStringExtra("at_home");
-                athome = sender.getStringExtra("athome");
-                hideNavigationBar();
-                forceAndy();
-            }
+        if(receiveandy==null)
+            receiveandy = "main";
+        if (receiveandy.equals("force")) {
+            Intent sender = getIntent();
+            prayer = Integer.valueOf(sender.getStringExtra("prayer"));
+            todaycomparable = sender.getStringExtra("todaycomparable");
+            prayed = sender.getStringExtra("prayed");
+            verified = sender.getStringExtra("verified");
+            friday = sender.getStringExtra("friday");
+            at_home = sender.getStringExtra("at_home");
+            athome = sender.getStringExtra("athome");
+            hideNavigationBar();
+            forceAndy();
         }
     }
 
@@ -608,13 +607,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void click_on_start() {
-        if(receiveandy!=null) {
-            if (!startclicked)
-                start_was_just_clicked = true;
-            else
-                reset();
-        } else
-            back_to_force("no");
+        if (!startclicked)
+            start_was_just_clicked = true;
+        else
+            reset();
     }
 
 
@@ -1199,14 +1195,11 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     public void tamClicked(View view) {
-        if(receiveandy!=null) {
-            if (receiveandy.equals("force"))
-                back_to_force("no");
-            else {
-                donecover.setVisibility(GONE);
-                reset();
-            }
-        } else {
+        if(receiveandy==null)
+            receiveandy = "main";
+        if (receiveandy.equals("force"))
+            back_to_force("no");
+        else {
             donecover.setVisibility(GONE);
             reset();
         }

@@ -24,7 +24,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -111,7 +110,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private String[] todaysplittemparray;
     private boolean all_white = false, fill_all = false;
     private String athome = "00000";
-    private int next_adan = -1, temp_next_adan = 0;
+    private int next_adan = 0, temp_next_adan = 0;
     private boolean end_of_day = false, it_is_today = true, new_adan = false;
     private String verified = "";
     private List<TextView> praybuttons;
@@ -135,6 +134,15 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private boolean running = true, initialdelayoncebrk = true, still_scoping_on_previous_adan = false, can_find_in = true;
     private int minute_limit_to_display_positifise = 100, minute_limit_to_display_negatifise = 20;
     private LinearLayout leftsideelementsbackground;
+
+
+    private Handler displaycity = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            citydisplay.setText(city);
+            return true;}});
+
+
 
     private Handler handler3 = new Handler(new Handler.Callback() {
         @Override
@@ -218,7 +226,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         load_data_from_slat_sql();
 
-
         languageshet();
 
         sql(resources.getString(R.string.justforce));
@@ -227,7 +234,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         low_light_alert();
 
-        //longitude = 30;latitude = 30;use(longitude, latitude, false, new Date());
+        //longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
 
     }
 
@@ -300,10 +307,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             fade_slider_in();
 
         clean_titles_and_times();
-        if(!end_of_day) {
-            prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
-            prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
-        }
+
+        prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
+        prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
 
         color_pray_buttons();
 
@@ -858,12 +864,15 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         handlerThread.start();
         handlerer = new Handler(handlerThread.getLooper());*/
 
-        // adan service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-        } else {
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(getApplicationContext());
+        sql("force");
+        if(SQLSharing.mycursor.getCount()>0){
+            // adan service
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+            } else {
+                ProcessMainClass bck = new ProcessMainClass();
+                bck.launchService(getApplicationContext());
+            }
         }
 
 
@@ -956,14 +965,15 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         }
         try{
             String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            String city = addresses.get(0).getLocality();
+            city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
             String country = addresses.get(0).getCountryName();
             String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-            citydisplay.setText(city);
+            displaycity.sendEmptyMessage(0);
         } catch(Exception e){ e.printStackTrace();}
     }
 
+    private String city = "";
     private void convert_prayertimes_into_seconds() {
         int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
         if(fajr.split(" ")[1].equals(resources.getString(R.string.pmer)))
@@ -1898,6 +1908,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         } else
             end_of_day = false;
 
+        if(temp_next_adan<0) temp_next_adan = 0;
         if(temp_next_adan!=next_adan) {
             new_adan = true;
             next_adan = temp_next_adan;
@@ -1937,7 +1948,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                 prayed = SQLSharing.mycursor.getString(2);
                 verified = SQLSharing.mycursor.getString(3);
                 athome = SQLSharing.mycursor.getString(4);
-                Log.i("LOL", prayed);
                 /*print(SQLSharing.mycursor.getColumnCount());*/
                 break;
             }

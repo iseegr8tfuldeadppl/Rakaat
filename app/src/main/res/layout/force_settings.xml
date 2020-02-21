@@ -27,6 +27,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <!--Notification Enabler-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="23sp"
+            android:textColor="@color/white"
+            android:id="@+id/settingstitle"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="إعدادات" />
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp">
+            <Switch
+                android:id="@+id/notiswitch"
+                android:gravity="center"
+                android:layout_weight=".80"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_weight=".20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="19sp"
+                android:textColor="@color/white"
+                android:id="@+id/notitext"
+                android:gravity="center"
+                android:text="إشعار التطبيق في شريط الإعلامات" />
+        </LinearLayout>
+
         <!--Mou'adin Title-->
         <TextView
             android:layout_width="match_parent"
@@ -34,7 +70,7 @@
             android:textSize="23sp"
             android:textColor="@color/white"
             android:id="@+id/adantitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="35dp"
             android:gravity="center"
             android:text="@string/adan_arabe" />
         <!--Fajr Selections-->

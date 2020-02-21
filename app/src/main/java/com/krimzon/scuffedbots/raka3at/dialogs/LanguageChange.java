@@ -48,7 +48,6 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
     private Button english, arabic;
     private TextView languagetitle;
     private LinearLayout languagebackground;
-    private Typeface font;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,7 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
         languagebackground = findViewById(R.id.languagebackground);
         languagetitle = findViewById(R.id.languagetitle);
 
-        font = Typeface.createFromAsset(c.getAssets(),  "Tajawal-Light.ttf");
+        Typeface font = Typeface.createFromAsset(c.getAssets(), "Tajawal-Light.ttf");
         english.setTypeface(font);
         arabic.setTypeface(font);
         languagetitle.setTypeface(font);

@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
             bck.launchService(getApplicationContext());
         }
 
+
     }
 
     private void set_fonts() {
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
         // this is to avoid issues with added rows with google darkplay updates to avoid crashing users
         sql("slat");
-        if(SQLSharing.mycursor.getCount()<8)  // TODO always update this
+        if(SQLSharing.mycursor.getCount()<9)  // TODO always update this
             SQLSharing.mydb.delete(this);
         sql("slat");
         if (SQLSharing.mycursor.getCount() <= 0) {
@@ -218,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydb.insertData("1"); // sounds default: on
             SQLSharing.mydb.insertData("ar"); // language
             SQLSharing.mydb.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,2 => default adan, adan sounds fully on (1 is for vibrte, 0 is for no sounds)
+            SQLSharing.mydb.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
             tutorial = true;
         } else {
             SQLSharing.mycursor.moveToPosition(0);
@@ -225,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
                 tutorial = true;
             SQLSharing.mycursor.moveToPosition(6);
             language = SQLSharing.mycursor.getString(1);
+
 
             SQLSharing.mycursor.moveToPosition(1);
             if(SQLSharing.mycursor.getString(1).equals("no"))

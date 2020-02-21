@@ -43,8 +43,8 @@ public class SlatCustomDialogClass extends Dialog implements
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.slatcustomdialog);
-        yes = (Button) findViewById(R.id.btn_yes);
-        never = (Button) findViewById(R.id.btn_never);
+        yes = findViewById(R.id.btn_yes);
+        never = findViewById(R.id.btn_never);
         fixbig = findViewById(R.id.fixbig);
         fixsmall1 = findViewById(R.id.fixsmall1);
         fixsmall2 = findViewById(R.id.fixsmall2);

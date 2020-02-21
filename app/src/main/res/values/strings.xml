@@ -279,5 +279,9 @@
     <string name="adan6_arabe">مدني (علي ملا)</string>
     <string name="adanner">Adan</string>
     <string name="idek">asset:///adans/</string>
+    <string name="nextadan_arabe">الأذان المقبل هو</string>
+    <string name="nextadan">Next adan is</string>
+    <string name="at_arabe">عند</string>
+    <string name="at">at</string>
 
 </resources>

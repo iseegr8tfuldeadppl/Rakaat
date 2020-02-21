@@ -1,6 +1,5 @@
 package com.krimzon.scuffedbots.raka3at.background;
 
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,10 +8,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.format.DateFormat;
-
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-
 import com.batoulapps.adhan.CalculationMethod;
 import com.batoulapps.adhan.CalculationParameters;
 import com.batoulapps.adhan.Coordinates;
@@ -28,14 +25,11 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
@@ -44,31 +38,25 @@ import com.krimzon.scuffedbots.raka3at.background.utilities.Notification;
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
     private static Service mCurrentService;
-    private int counter = 0;
     private CalculationParameters params;
-    private int NOT_USED = 1338;
-    private int mId = 5565;
     private int i = 0;
     private List<String> lol;
-    private String temptime;
     private int rightnowcomparable;
     private Date old_date, new_date;
-    private Intent emptyIntent;
     private boolean recent_adan = false;
     private Coordinates coordinates;
     private DateComponents date;
     private List<Integer> prayers;
-    private double longitude, latitude;
     private String fajr;
     private String dhuhr;
     private String asr;
     private String maghrib;
     private String isha;
-    private PrayerTimes prayerTimes;
     private static Timer timer;
     private static TimerTask timerTask;
-    /*long oldTime = 0;
-    private static String TAG = "Service";*/
+    private boolean end_of_day = false;
+    private boolean main_notification_switch = true;
+    private SimpleExoPlayer simpleExoPlayer;
 
     public Service() {
         super();
@@ -78,13 +66,33 @@ public class Service extends android.app.Service {
     public void onCreate() {
         super.onCreate();
         mCurrentService = this;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+        // check if switch for main notification is on
+        sql("slat");
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        main_notification_switch = SQLSharing.mycursor.getString(1).equals("yes");
+
+        close_sql();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             restartForeground();
-        } else {
-            launch_prayer_processing();
-        }
+
+        sql("force");
+        if(SQLSharing.mycursor.getCount()>0)
+            startTimer();
+        close_sql();
     }
 
+    private String nextadan = "";
+    private String at = "";
     private void launch_prayer_processing() {
         sql("force");
         if(SQLSharing.mycursor.getCount()>0) {
@@ -93,15 +101,34 @@ public class Service extends android.app.Service {
             params = CalculationMethod.EGYPTIAN.getParameters();
             params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
             params.adjustments.fajr = 2; //2
-            String pattern = "dd-MMM-yyyy";
-            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+            //String pattern = "dd-MMM-yyyy";
+            //SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+
+            sql("slat");
+            SQLSharing.mycursor.moveToPosition(6);
+            String language = SQLSharing.mycursor.getString(1);
+            close_sql();
 
             lol = new ArrayList<>();
-            lol.add("fajr");
-            lol.add("dhuhr");
-            lol.add("asr");
-            lol.add("maghrib");
-            lol.add("isha");
+            if(language.equals("en")){
+                nextadan = getResources().getString(R.string.nextadan);
+                at = getResources().getString(R.string.at);
+
+                lol.add(getResources().getString(R.string.fajrtitle));
+                lol.add(getResources().getString(R.string.dohrtitle));
+                lol.add(getResources().getString(R.string.asrtitle));
+                lol.add(getResources().getString(R.string.maghrebtitle));
+                lol.add(getResources().getString(R.string.ishatitle));
+            } else if(language.equals("ar")){
+                nextadan = getResources().getString(R.string.nextadan_arabe);
+                at = getResources().getString(R.string.at_arabe);
+
+                lol.add(getResources().getString(R.string.fajrtitle_arabe));
+                lol.add(getResources().getString(R.string.dohrtitle_arabe));
+                lol.add(getResources().getString(R.string.asrtitle_arabe));
+                lol.add(getResources().getString(R.string.maghrebtitle_arabe));
+                lol.add(getResources().getString(R.string.ishatitle_arabe));
+            }
 
             old_date = new Date();
             location_shit(old_date);
@@ -112,12 +139,12 @@ public class Service extends android.app.Service {
 
     private void find_next_adan() {
         try {
-            temptime = String.valueOf(old_date).split(" ")[3];
+            String temptime = String.valueOf(old_date).split(" ")[3];
             int rightnowcomparable_old = rightnowcomparable;
             rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
 
-            if(rightnowcomparable_old!=rightnowcomparable)
-                display_notification("rightnowcomparable: " + rightnowcomparable, String.valueOf(prayers.get(i)));
+            //if(rightnowcomparable_old!=rightnowcomparable)
+                // displayed rightnowcomparable
             for (int j = 0; j < 5; j++) {
                 if(rightnowcomparable<prayers.get(0)) {
                     i = 0;
@@ -135,32 +162,50 @@ public class Service extends android.app.Service {
         } catch(Exception ignored){}
     }
 
-    private boolean end_of_day = false;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-            counter = 0;
+        // check if switch for main notification is on
+        sql("slat");
+        SQLSharing.mycursor.moveToFirst();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToNext();
+        main_notification_switch = SQLSharing.mycursor.getString(1).equals("yes");
+        SQLSharing.mycursor.close();
+        SQLSharing.mydb.close();
 
-            // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
-            if (intent == null) {
-                ProcessMainClass bck = new ProcessMainClass();
-                bck.launchService(this);
-            }
-
-            // make sure you call the startForeground on onStartCommand because otherwise
-            // when we hide the notification on onScreen it will nto restart in Android 6 and 7
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                restartForeground();
-            }
-
-        sql("force");
-        if(SQLSharing.mycursor.getCount()>0) {
-                startTimer();
+        // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
+        if (intent == null) {
+            ProcessMainClass bck = new ProcessMainClass();
+            bck.launchService(this);
         }
 
-            // return start sticky so if it is killed by android, it will be restarted with Intent null
-            return START_STICKY;
+        // make sure you call the startForeground on onStartCommand because otherwise
+        // when we hide the notification on onScreen it will nto restart in Android 6 and 7
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            restartForeground();
+
+        sql("force");
+        if(SQLSharing.mycursor.getCount()>0)
+            startTimer();
+        close_sql();
+
+        // return start sticky so if it is killed by android, it will be restarted with Intent null
+        return START_STICKY;
+    }
+
+    private void close_sql() {
+        if(SQLSharing.mycursor==null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb==null)
+            SQLSharing.mydb.close();
     }
 
     @Nullable
@@ -170,13 +215,13 @@ public class Service extends android.app.Service {
     }
 
     public void restartForeground() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 sql("force");
                 if(SQLSharing.mycursor.getCount()>0) {
-                    Notification notification = new Notification();
-                    startForeground(NOTIFICATION_ID, notification.setNotification(this, "Service notification", "This is the service's notification", R.drawable.ic_launcher_background));
-                    startTimer();
+                    if(main_notification_switch) {
+                        display_notification("Raka'at", "*Loading Next Adan*");
+                    }
                 }
             } catch (Exception ignored) {}
         }
@@ -231,7 +276,11 @@ public class Service extends android.app.Service {
                                 recent_adan = true;
 
                                 // Play adan audio
-                                display_notification("New adan: " + lol.get(i), "");
+                                if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+                                    display_notification("New adan: " + lol.get(i) + " " + fajr, "");
+                                else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                                    display_notification("New adan: " + lol.get(i) + " " + fajr, "");
+
                                 playadan(pullselectedadanforthisprayerfromSQL(i));
 
                                 // set i to the next adan
@@ -239,14 +288,19 @@ public class Service extends android.app.Service {
                                 if (i >= 5) i = 0;
                             }
                         } else recent_adan = false;
-                    }
 
-                } catch(Exception ignored){}
+                    }
+                        if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+                            display_notification(nextadan + " " + lol.get(i) + " " + at + " " + praytimesregularform.get(i), "");
+                        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                            display_notification(nextadan + " " + lol.get(i) + " " + praytimesregularform.get(i), "");
+
+                } catch(Exception e){e.printStackTrace();}
             }
         };
     }
 
-    private String[] selections;
+    private int twentyfourhourtimeofnextadan = 0;
     private int pullselectedadanforthisprayerfromSQL(int prayedtobepopped) {
         if(SQLSharing.mycursor!=null)
             SQLSharing.mycursor.close();
@@ -270,18 +324,26 @@ public class Service extends android.app.Service {
     }
 
     private void display_notification(String title, String description) {
-        emptyIntent = new Intent();
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), NOT_USED, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(getApplicationContext())
-                        .setSmallIcon(R.drawable.ic_launcher_background)
-                        .setContentTitle(title)
-                        .setContentText(description)
-                        .setContentIntent(pendingIntent); //Required on Gingerbread and below
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        assert notificationManager != null;
-        notificationManager.notify(mId, mBuilder.build());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification notification = new Notification();
+            startForeground(NOTIFICATION_ID, notification.setNotification(this, title, description, R.drawable.ic_launcher_background));
+        } else {
+            Intent emptyIntent = new Intent();
+            int NOT_USED = 1338;
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), NOT_USED, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(getApplicationContext())
+                            .setSmallIcon(R.drawable.ic_launcher_background)
+                            .setContentTitle(title)
+                            .setContentText(description)
+                            .setContentIntent(pendingIntent); //Required on Gingerbread and below
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            assert notificationManager != null;
+            int mId = 5565;
+            notificationManager.notify(mId, mBuilder.build());
+        }
     }
 
     private void location_shit(Date date) {
@@ -289,9 +351,10 @@ public class Service extends android.app.Service {
     }
 
     private void if_theres_previous_info_load_it_n_display(Date date) {
+        sql("force");
         SQLSharing.mycursor.moveToFirst();
-        longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
-        latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
+        double longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
+        double latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
         use(longitude, latitude, date);
     }
 
@@ -312,8 +375,6 @@ public class Service extends android.app.Service {
         convert_prayertimes_into_milliseconds();
     }
 
-
-    private SimpleExoPlayer simpleExoPlayer;
     private void playadan(int adantag) {
         try{
             simpleExoPlayer.stop();
@@ -394,10 +455,56 @@ public class Service extends android.app.Service {
         prayers.add(asrtemp);
         prayers.add(maghribtemp);
         prayers.add(ishatemp);
+
+
+
+        praytimesregularform = new ArrayList<>();
+
+        if(fajr.split(" ")[1].equals("PM")) {
+            if(Integer.valueOf(fajr.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + fajr.split(" ")[0].split(":")[1]);
+            else
+                praytimesregularform.add(String.valueOf(Integer.valueOf(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
+        } else
+            praytimesregularform.add(fajr.split(" ")[0]);
+
+        if(dhuhr.split(" ")[1].equals("PM")){
+            if(Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + dhuhr.split(" ")[0].split(":")[1]);
+            else
+                praytimesregularform.add(String.valueOf(Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
+        } else
+            praytimesregularform.add(dhuhr.split(" ")[0]);
+
+        if(asr.split(" ")[1].equals("PM")){
+            if(Integer.valueOf(asr.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
+            else
+                praytimesregularform.add(String.valueOf(Integer.valueOf(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
+        } else
+            praytimesregularform.add(asr.split(" ")[0]);
+
+        if(maghrib.split(" ")[1].equals("PM")){
+            if(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
+            else
+                praytimesregularform.add(String.valueOf(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
+        } else
+            praytimesregularform.add(maghrib.split(" ")[0]);
+
+        if(isha.split(" ")[1].equals("PM")){
+            if(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + isha.split(" ")[0].split(":")[1]);
+            else
+                praytimesregularform.add(String.valueOf(Integer.valueOf(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
+        } else
+            praytimesregularform.add(isha.split(" ")[0]);
+
     }
 
+    private List<String> praytimesregularform;
     private void pull_prayer_times_and_shape_them() {
-        prayerTimes = new PrayerTimes(coordinates, date, params);
+        PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, params);
         try {
             String timeshape = "hh:mm a";
             fajr = DateFormat.format(timeshape, new Date(prayerTimes.fajr.getTime())).toString();
@@ -405,6 +512,7 @@ public class Service extends android.app.Service {
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
             maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
             isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
+
         } catch(Exception ignored){}
 
     }

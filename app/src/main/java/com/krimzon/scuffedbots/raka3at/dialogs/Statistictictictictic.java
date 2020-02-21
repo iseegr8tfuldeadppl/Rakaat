@@ -37,49 +37,49 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     }
 
 
-    private void sql(String table) {
+    private void sql() {
         if(SQLSharing.mycursor!=null)
             SQLSharing.mycursor.close();
         if(SQLSharing.mydb!=null)
             SQLSharing.mydb.close();
-        SQLSharing.TABLE_NAME_INPUTER = table;
+        SQLSharing.TABLE_NAME_INPUTER = "force3";
         SQLSharing.mydb = new SQL(c.getApplicationContext());
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
     }
 
 
     private Button dismiss;
-    private ImageView statslogo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.statistictictictictic);
 
-        statslogo = findViewById(R.id.statslogo);
+        ImageView statslogo = findViewById(R.id.statslogo);
         try {
             Glide.with(getContext()).load(R.drawable.stats).into(statslogo);
         } catch (Exception ignored) {
             statslogo.setImageDrawable(getContext().getResources().getDrawable(R.drawable.stats));
         }
 
-        display_of_prayed_prayers_of_all_time = findViewById(R.id.prayed_prayers_of_all_time);
+        TextView display_of_prayed_prayers_of_all_time = findViewById(R.id.prayed_prayers_of_all_time);
         title_prayed_prayers_of_all_time = findViewById(R.id.title_prayed_prayers_of_all_time);
 
-        display_prayed_prayers_past_week = findViewById(R.id.prayed_prayers_past_week);
+        TextView display_prayed_prayers_past_week = findViewById(R.id.prayed_prayers_past_week);
         title_prayed_prayers_past_week = findViewById(R.id.title_prayed_prayers_past_week);
 
-        display_prayed_prayers_past_month = findViewById(R.id.prayed_prayers_past_month);
+        TextView display_prayed_prayers_past_month = findViewById(R.id.prayed_prayers_past_month);
         title_prayed_prayers_past_month = findViewById(R.id.title_prayed_prayers_past_month);
 
         title_prayed_prayers_past_six_months = findViewById(R.id.title_prayed_prayers_past_six_months);
-        display_prayed_prayers_past_six_months = findViewById(R.id.prayed_prayers_past_six_months);
+        TextView display_prayed_prayers_past_six_months = findViewById(R.id.prayed_prayers_past_six_months);
 
         title_prayed_prayers_past_year = findViewById(R.id.title_prayed_prayers_past_year);
-        display_prayed_prayers_past_year = findViewById(R.id.prayed_prayers_past_year);
+        TextView display_prayed_prayers_past_year = findViewById(R.id.prayed_prayers_past_year);
 
         title_prayed_prayers_today = findViewById(R.id.title_prayed_prayers_today);
-        display_prayed_prayers_today = findViewById(R.id.prayed_prayers_today);
+        TextView display_prayed_prayers_today = findViewById(R.id.prayed_prayers_today);
 
         title = findViewById(R.id.title);
         statstitle = findViewById(R.id.statstitle);
@@ -87,7 +87,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
         languageshet();
 
-        arabic_typeface = Typeface.createFromAsset(c.getAssets(),  "Tajawal-Light.ttf");
+        Typeface arabic_typeface = Typeface.createFromAsset(c.getAssets(), "Tajawal-Light.ttf");
 
         statstitle.setTypeface(arabic_typeface);
         title.setTypeface(arabic_typeface);
@@ -128,12 +128,12 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
         }
 
 
-        sql("force3");
+        sql();
         count_prayed_prayers_today();
         display_prayed_prayers_today.setText(String.valueOf(prayed_prayers));
         prayed_prayers = 0;
 
-        sql("force3");
+        sql();
         count_prayed_prayers_of_all_time();
         display_of_prayed_prayers_of_all_time.setText(String.valueOf(prayed_prayers));
         prayed_prayers = 0;
@@ -194,14 +194,14 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     private void count_prayed_prayers(int days) {
 
 
-        sql("force3");
+        sql();
         if(SQLSharing.mycursor.getCount()>0){
             // we do one day on its own since it's today and can't be looped like others look below
-            gc = new GregorianCalendar();
+            GregorianCalendar gc = new GregorianCalendar();
             day = gc.getTime();
             tempday = day.toString().split(" ");
             daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5].charAt(2) + tempday[5].charAt(3);
-            count_prayed_prayers2(days);
+            count_prayed_prayers2();
 
 
             for(int i=0; i < days - 1; i++){ // will only do 6
@@ -210,7 +210,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
                 day = gc.getTime();
                 tempday = day.toString().split(" ");
                 daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5].charAt(2) + tempday[5].charAt(3);
-                count_prayed_prayers2(days);
+                count_prayed_prayers2();
             }
 
         } else
@@ -219,7 +219,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     }
 
 
-    private void count_prayed_prayers2(int days) {
+    private void count_prayed_prayers2() {
 
         SQLSharing.mycursor.moveToFirst();
         if (daycomparable.equals(SQLSharing.mycursor.getString(1))){
@@ -249,20 +249,12 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     private Date day;
     private String[] tempday;
     private String daycomparable;
-    private GregorianCalendar gc;
-    private Typeface arabic_typeface;
-    private TextView display_of_prayed_prayers_of_all_time;
     private TextView title_prayed_prayers_of_all_time;
-    private TextView display_prayed_prayers_past_month;
     private TextView title_prayed_prayers_past_month;
-    private TextView display_prayed_prayers_past_week;
     private TextView title_prayed_prayers_past_week;
-    private TextView display_prayed_prayers_past_six_months;
     private TextView title_prayed_prayers_past_six_months;
     private TextView title_prayed_prayers_past_year;
-    private TextView display_prayed_prayers_past_year;
     private TextView title_prayed_prayers_today;
-    private TextView display_prayed_prayers_today;
     private TextView statstitle;
     private TextView title;
     private int prayed_prayers = 0;

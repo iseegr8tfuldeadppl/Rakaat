@@ -30,7 +30,6 @@ public class HomeOrMosque extends Dialog {
     private LinearLayout selectionbackground;
     private TextView selectiontitle;
     private Button selectionmosque, selectionhome;
-    private Typeface arabic_typeface;
     private boolean darkmode;
     private String language;
     private boolean found_prayed_history_in_sql = false;
@@ -61,7 +60,7 @@ public class HomeOrMosque extends Dialog {
         selectionhome = findViewById(R.id.selectionhome);
 
         // Step 2: Fonts
-        arabic_typeface = Typeface.createFromAsset(c.getAssets(),  "Tajawal-Light.ttf");
+        Typeface arabic_typeface = Typeface.createFromAsset(c.getAssets(), "Tajawal-Light.ttf");
         selectionmosque.setTypeface(arabic_typeface);
         selectionhome.setTypeface(arabic_typeface);
         selectiontitle.setTypeface(arabic_typeface);

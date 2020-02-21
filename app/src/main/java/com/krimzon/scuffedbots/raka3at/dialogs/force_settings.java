@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,9 +23,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.krimzon.scuffedbots.raka3at.R;
@@ -60,9 +63,12 @@ public class force_settings extends BottomSheetDialogFragment {
         applyfont();
         sql_work();
         apply_selected_language();
+        apply_previous_settings();
         apply_adanSelections();
         onClickListeners();
         dark_light_mode();
+
+
 
         arrow.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
             if(!mouadineselectionpageison){
@@ -80,6 +86,14 @@ public class force_settings extends BottomSheetDialogFragment {
             }
         }});
         return v;
+    }
+
+    private void apply_previous_settings() {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (main_notification_sql.equals("yes")) {
+                notiswitch.setChecked(true);
+            }
+        }
     }
 
     private void dark_light_mode() {
@@ -111,6 +125,8 @@ public class force_settings extends BottomSheetDialogFragment {
             Typeface arabic_typeface = Typeface.createFromAsset(getContext().getAssets(), "Tajawal-Light.ttf");
             arrow.setTypeface(arabic_typeface);
             adantitle.setTypeface(arabic_typeface);
+            notitext.setTypeface(arabic_typeface);
+            settingstitle.setTypeface(arabic_typeface);
             for(int i=0; i<6; i++){
                 if(i!=1) {
                     adans.get(i).setTypeface(arabic_typeface);
@@ -120,7 +136,50 @@ public class force_settings extends BottomSheetDialogFragment {
         } catch(Exception ignored){}
     }
 
+    private void sql() {
+        if(SQLSharing.mycursor!=null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null)
+            SQLSharing.mydb.close();
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        SQLSharing.mydb = new SQL(getContext());
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+    }
+
+    private boolean once22 = true;
+    private void update_switch_setting_in_sql(String switch_setting){
+        sql();
+        if(once22){
+            once22 = false;
+            SQLSharing.mycursor.moveToFirst();
+            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToNext();
+            SWITCHSETTINGID = SQLSharing.mycursor.getString(0);
+        }
+        SQLSharing.mydb.updateData(switch_setting, ID);
+        SQLSharing.mydb.close();
+    }
+
+    private String SWITCHSETTINGID = "";
     private void onClickListeners() {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            notiswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked)
+                        update_switch_setting_in_sql("yes");
+                    else
+                        update_switch_setting_in_sql("no");
+                }
+            });
+        }
+
         adans.get(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -312,7 +371,7 @@ public class force_settings extends BottomSheetDialogFragment {
         adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
     }
 
-    private void playcorrespondingaudio(int i) {
+    private void playcorrespondingaudio(int i){
         if(!audioisplaying || currentlyplayingadan!=i){
             audioisplaying = true;
             if(darkmode) {
@@ -688,20 +747,6 @@ public class force_settings extends BottomSheetDialogFragment {
         }
     }
 
-    private void work_on_language() {
-        if(language.equals("en"))
-            english();
-    }
-
-    private void english(){
-        /*arrow.setText(save);*/
-        /*brightnesstitle.setText(setting1);
-        zero.setText(zeroseconds);
-        three.setText(threeseconds);
-        five.setText(fiveseconds);
-        delaytitle.setText(delaybeforecountingg);*/
-    }
-
     private void sql_work() {
         if(SQLSharing.mycursor!=null)
             SQLSharing.mycursor.close();
@@ -722,15 +767,15 @@ public class force_settings extends BottomSheetDialogFragment {
         SQLSharing.mycursor.moveToNext();
         adanSelections = SQLSharing.mycursor.getString(1);
         selections = adanSelections.split(" ");
+        SQLSharing.mycursor.moveToNext();
+        main_notification_sql = SQLSharing.mycursor.getString(1);
         SQLSharing.mycursor.close();
         SQLSharing.mydb.close();
     }
 
+    private String main_notification_sql = "yes";
     private void update_sql() {
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(getContext());
+        sql();
         if(once){
             once = false;
             SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
@@ -749,12 +794,24 @@ public class force_settings extends BottomSheetDialogFragment {
     }
 
     private LinearLayout selectionmenu, settingsmenu;
+    private Switch notiswitch;
+    private TextView settingstitle, notitext;
     private void prepare_variables() {
 
         selectionmenu = v.findViewById(R.id.selectionmenu);
         settingsmenu = v.findViewById(R.id.settingsmenu);
         arrow = v.findViewById(R.id.arrow);
         adantitle = v.findViewById(R.id.adantitle);
+
+        notiswitch = v.findViewById(R.id.notiswitch);
+        settingstitle = v.findViewById(R.id.settingstitle);
+        notitext = v.findViewById(R.id.notitext);
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            notiswitch.setVisibility(View.GONE);
+            settingstitle.setVisibility(View.GONE);
+            notitext.setVisibility(View.GONE);
+        }
 
         adans = new ArrayList<>();
         adans.add((TextView) v.findViewById(R.id.fajradan));

@@ -52,7 +52,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private int mAzimuth;
     private SensorManager mSensorManager;
     private Sensor mRotationV, mAccelerometer, mMagnetometer;
-    private boolean haveSensor = false, haveSensor2 = false;
+    private boolean haveSensor = false;
     private float[] rMat = new float[9];
     private float[] orientation = new float[3];
     private float[] mLastAccelerometer = new float[3];
@@ -66,7 +66,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private FrameLayout full;
     private RelativeLayout backarrowbackground;
     private RelativeLayout nightmodebackground;
-    private ImageView arrowback, nightmodebutton;
 
 
     @Override
@@ -74,8 +73,8 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kibla);
 
-        arrowback = findViewById(R.id.arrowback);
-        nightmodebutton = findViewById(R.id.nightmodebutton);
+        ImageView arrowback = findViewById(R.id.arrowback);
+        ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
         try {
             Glide.with(this).load(R.drawable.backarrowdark).into(arrowback);
         } catch (Exception ignored) {
@@ -225,7 +224,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
                 mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
                 mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
                 haveSensor = mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-                haveSensor2 = mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+                boolean haveSensor2 = mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
             }
         }
         else{
