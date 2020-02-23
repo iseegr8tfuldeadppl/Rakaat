@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -131,6 +130,7 @@ public class HomeOrMosque extends Dialog {
             // TODO: after adding a new collumn for confirmed prayers or not, add the check here
             set_prayer_without_using_detector();
             c.finish();
+            c.getIntent().putExtra("light_alert", "no");
             c.startActivity(c.getIntent());
             dismiss();
         }});
@@ -186,17 +186,11 @@ public class HomeOrMosque extends Dialog {
     }
 
     private void light_mode2(){
-        Drawable simpelbackground = c.getResources().getDrawable(R.drawable.simpelbackground);
-        Drawable buttons = c.getResources().getDrawable(R.drawable.buttons);
-        Drawable buttons2 = c.getResources().getDrawable(R.drawable.buttons);
-        selectionbackground.setBackground(simpelbackground);
+        selectionbackground.setBackground(c.getResources().getDrawable(R.drawable.simpelbackground));
         selectiontitle.setTextColor(Color.BLACK);
 
-        selectionmosque.setTextColor(Color.WHITE);
-        selectionhome.setTextColor(Color.WHITE);
-
-        selectionmosque.setBackground(buttons);
-        selectionhome.setBackground(buttons2);
+        selectionmosque.setBackground(c.getResources().getDrawable(R.drawable.buttons));
+        selectionhome.setBackground(c.getResources().getDrawable(R.drawable.buttons));
     }
 
     private void send(int prayer){
@@ -220,17 +214,11 @@ public class HomeOrMosque extends Dialog {
     }
 
     private void light_mode(){
-        Drawable simpelbackground = c.getResources().getDrawable(R.drawable.simpelbackground);
-        Drawable buttons = c.getResources().getDrawable(R.drawable.buttons);
-        Drawable buttons2 = c.getResources().getDrawable(R.drawable.buttons);
-        selectionbackground.setBackground(simpelbackground);
+        selectionbackground.setBackground(c.getResources().getDrawable(R.drawable.simpelbackground));
         selectiontitle.setTextColor(Color.BLACK);
 
-        selectionmosque.setTextColor(Color.WHITE);
-        selectionhome.setTextColor(Color.WHITE);
-
-        selectionmosque.setBackground(buttons);
-        selectionhome.setBackground(buttons2);
+        selectionmosque.setBackground(c.getResources().getDrawable(R.drawable.buttons));
+        selectionhome.setBackground(c.getResources().getDrawable(R.drawable.buttons));
     }
 
 }

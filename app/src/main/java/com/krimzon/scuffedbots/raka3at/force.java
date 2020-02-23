@@ -49,6 +49,8 @@ import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadc
 import com.krimzon.scuffedbots.raka3at.dialogs.HomeOrMosque;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
 import com.krimzon.scuffedbots.raka3at.dialogs.force_settings;
+import com.krimzon.scuffedbots.raka3at.dialogs.protected_apps_request;
+
 import net.time4j.PlainDate;
 import net.time4j.calendar.HijriCalendar;
 import java.io.IOException;
@@ -232,10 +234,25 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         location_shit(CurrentDisplayedDay);
 
+        // TODO; check if it show up correctly and if it doesn't show up when quickpraying after it said it before ofc, kinda keeps that value
         low_light_alert();
 
-        //longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
+        if(request_protected_menu)
+            protected_apps_request();
 
+        longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
+    }
+
+    private void protected_apps_request() {
+        try {
+            if ("huawei".equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
+                protected_apps_request request = new protected_apps_request(this, darkmode, language);
+                request.show();
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void live_updates() {
@@ -398,7 +415,10 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             calluse.sendEmptyMessage(0);
         }
         String temptime = String.valueOf(todayos).split(" ")[3];
-        temp_rightnowcomparable = rightnowcomparable;
+        if(rightnowcomparable!=null)
+            temp_rightnowcomparable = rightnowcomparable;
+        else
+            temp_rightnowcomparable = 0;
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
     }
 
@@ -675,9 +695,13 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         force = getString(R.string.force);
     }
 
+    private boolean request_protected_menu = true;
     private void load_data_from_slat_sql() {
         SQLSharing.mycursor.moveToPosition(6);
         language = SQLSharing.mycursor.getString(1);
+
+        SQLSharing.mycursor.moveToPosition(9);
+        request_protected_menu = SQLSharing.mycursor.getString(1).equals("yes");
 
         SQLSharing.mycursor.moveToPosition(1);
         if(SQLSharing.mycursor.getString(1).equals("no")) {
@@ -1912,6 +1936,8 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         if(temp_next_adan!=next_adan) {
             new_adan = true;
             next_adan = temp_next_adan;
+            if(next_adan>4)
+                next_adan = 0;
             //next_adan = 0;
             /*if (next_adan != 0) // so we don't assign -1 to previous_adan
                 previous_adan = next_adan - 1;*/

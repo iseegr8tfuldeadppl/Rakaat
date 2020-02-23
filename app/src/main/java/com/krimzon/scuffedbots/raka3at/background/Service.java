@@ -1,13 +1,20 @@
 package com.krimzon.scuffedbots.raka3at.background;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.format.DateFormat;
+import android.util.Log;
+import android.widget.RemoteViews;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.batoulapps.adhan.CalculationMethod;
@@ -17,11 +24,18 @@ import com.batoulapps.adhan.Madhab;
 import com.batoulapps.adhan.PrayerTimes;
 import com.batoulapps.adhan.data.DateComponents;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -33,14 +47,13 @@ import java.util.TimerTask;
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.background.utilities.Notification;
+import com.krimzon.scuffedbots.raka3at.force;
 
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
     private static Service mCurrentService;
     private CalculationParameters params;
     private int i = 0;
-    private List<String> lol;
     private int rightnowcomparable;
     private Date old_date, new_date;
     private boolean recent_adan = false;
@@ -57,6 +70,7 @@ public class Service extends android.app.Service {
     private boolean end_of_day = false;
     private boolean main_notification_switch = true;
     private SimpleExoPlayer simpleExoPlayer;
+    private String language = "en";
 
     public Service() {
         super();
@@ -69,30 +83,46 @@ public class Service extends android.app.Service {
 
         // check if switch for main notification is on
         sql("slat");
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToPosition(1);
+        darkmode = SQLSharing.mycursor.getString(1).equals("yes");
+        SQLSharing.mycursor.moveToPosition(6);
+        language = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursor.moveToPosition(8);
         main_notification_switch = SQLSharing.mycursor.getString(1).equals("yes");
-
         close_sql();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            restartForeground();
 
         sql("force");
         if(SQLSharing.mycursor.getCount()>0)
             startTimer();
         close_sql();
+
+        launch_stop_adan_button_listener();
     }
 
-    private String nextadan = "";
-    private String at = "";
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            assert action != null;
+            if(action.equals("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener")){
+                try{
+                    simpleExoPlayer.stop();
+                    simpleExoPlayer.release();
+                    playing = false;
+                    once = true;
+                } catch(Exception ignored){}
+            }
+        }
+    };
+
+    private void launch_stop_adan_button_listener() {
+        // https://stackoverflow.com/questions/9092134/broadcast-receiver-within-a-service
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"); //further more
+
+        registerReceiver(receiver, filter);
+    }
+
     private void launch_prayer_processing() {
         sql("force");
         if(SQLSharing.mycursor.getCount()>0) {
@@ -100,29 +130,18 @@ public class Service extends android.app.Service {
             params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
             params = CalculationMethod.EGYPTIAN.getParameters();
             params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
-            params.adjustments.fajr = 2; //2
+            params.adjustments.fajr = 2; //2 TODO change this one aswell
             //String pattern = "dd-MMM-yyyy";
             //SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
-            sql("slat");
-            SQLSharing.mycursor.moveToPosition(6);
-            String language = SQLSharing.mycursor.getString(1);
-            close_sql();
-
-            lol = new ArrayList<>();
+            List<String> lol = new ArrayList<>();
             if(language.equals("en")){
-                nextadan = getResources().getString(R.string.nextadan);
-                at = getResources().getString(R.string.at);
-
                 lol.add(getResources().getString(R.string.fajrtitle));
                 lol.add(getResources().getString(R.string.dohrtitle));
                 lol.add(getResources().getString(R.string.asrtitle));
                 lol.add(getResources().getString(R.string.maghrebtitle));
                 lol.add(getResources().getString(R.string.ishatitle));
             } else if(language.equals("ar")){
-                nextadan = getResources().getString(R.string.nextadan_arabe);
-                at = getResources().getString(R.string.at_arabe);
-
                 lol.add(getResources().getString(R.string.fajrtitle_arabe));
                 lol.add(getResources().getString(R.string.dohrtitle_arabe));
                 lol.add(getResources().getString(R.string.asrtitle_arabe));
@@ -140,8 +159,11 @@ public class Service extends android.app.Service {
     private void find_next_adan() {
         try {
             String temptime = String.valueOf(old_date).split(" ")[3];
-            int rightnowcomparable_old = rightnowcomparable;
+            //int rightnowcomparable_old = rightnowcomparable;
             rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
+
+            /*if(rightnowcomparable_old!=rightnowcomparable){
+            }*/
 
             //if(rightnowcomparable_old!=rightnowcomparable)
                 // displayed rightnowcomparable
@@ -159,6 +181,8 @@ public class Service extends android.app.Service {
                 end_of_day = true;
             } else
                 end_of_day = false;
+
+            display_notification(false);
         } catch(Exception ignored){}
     }
 
@@ -220,7 +244,7 @@ public class Service extends android.app.Service {
                 sql("force");
                 if(SQLSharing.mycursor.getCount()>0) {
                     if(main_notification_switch) {
-                        display_notification("Raka'at", "*Loading Next Adan*");
+                        display_notification(true);
                     }
                 }
             } catch (Exception ignored) {}
@@ -233,6 +257,7 @@ public class Service extends android.app.Service {
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
         stoptimertask();
+        unregisterReceiver(receiver);
     }
 
     @Override
@@ -248,10 +273,14 @@ public class Service extends android.app.Service {
         stoptimertask();
         timer = new Timer();
 
+        launch_prayer_processing();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            restartForeground();
+
         //initialize the TimerTask's job
         initializeTimerTask();
 
-        launch_prayer_processing();
 
         //schedule the timer, to wake up every 1 second
         timer.schedule(timerTask, 1000, 1000); //
@@ -268,18 +297,22 @@ public class Service extends android.app.Service {
                         location_shit(new_date);
                     old_date = new_date;
                     find_next_adan();
+                    /*Log.i("HH", "rightnowcomparable: " + String.valueOf(rightnowcomparable));
+                    Log.i("HH", "playing: " + String.valueOf(playing));
+                    Log.i("HH", "prayers.get(i): " + String.valueOf(prayers.get(i)));*/
 
                     if(!end_of_day) {
                         // Check if we reached the adan, if so, then switch i to the next adan
                         if (prayers.get(i) == rightnowcomparable) {
                             if (!recent_adan) {
                                 recent_adan = true;
+                                current_adding_playing = i;
 
                                 // Play adan audio
                                 if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                                    display_notification("New adan: " + lol.get(i) + " " + fajr, "");
+                                    display_notification(false);
                                 else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                                    display_notification("New adan: " + lol.get(i) + " " + fajr, "");
+                                    display_notification(true);
 
                                 playadan(pullselectedadanforthisprayerfromSQL(i));
 
@@ -290,64 +323,216 @@ public class Service extends android.app.Service {
                         } else recent_adan = false;
 
                     }
-                        if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                            display_notification(nextadan + " " + lol.get(i) + " " + at + " " + praytimesregularform.get(i), "");
-                        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                            display_notification(nextadan + " " + lol.get(i) + " " + praytimesregularform.get(i), "");
+                    if(!playing) {
+                        if (main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                            if (once)
+                                display_notification(false);
+                            notificationManager.notify(NOTIFICATION_ID, notification); // make sure notification is still displayed
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            if (once)
+                                display_notification(true);
+                            startForeground(NOTIFICATION_ID, notification);
+                        } else
+                            notificationManager.cancel(NOTIFICATION_ID);
+                    } else {  // if adan is playing then make sure the adan notification is displayed
 
-                } catch(Exception e){e.printStackTrace();}
+                        if (main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                            display_notification(false);
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            display_notification(true);
+                        } else
+                            notificationManager.cancel(NOTIFICATION_ID);
+                    }
+
+                } catch(Exception e){ e.printStackTrace(); }
             }
         };
     }
 
-    private int twentyfourhourtimeofnextadan = 0;
+    private int current_adding_playing = 0;
+    private boolean darkmode = true;
     private int pullselectedadanforthisprayerfromSQL(int prayedtobepopped) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
+        sql("slat");
+
+        SQLSharing.mycursor.moveToPosition(7);
         int selectedadan = Integer.valueOf(SQLSharing.mycursor.getString(1).split(" ")[prayedtobepopped].split(",")[0]) - 1;
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        close_sql();
         return selectedadan;
     }
 
-    private void display_notification(String title, String description) {
+    private boolean once = true;
+    private NotificationManager notificationManager;
+    private RemoteViews remoteViews;
+    private NotificationCompat.Builder builder;
+    private void display_notification(boolean is_it_over_android_O) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification notification = new Notification();
-            startForeground(NOTIFICATION_ID, notification.setNotification(this, title, description, R.drawable.ic_launcher_background));
-        } else {
-            Intent emptyIntent = new Intent();
-            int NOT_USED = 1338;
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), NOT_USED, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(getApplicationContext())
-                            .setSmallIcon(R.drawable.ic_launcher_background)
-                            .setContentTitle(title)
-                            .setContentText(description)
-                            .setContentIntent(pendingIntent); //Required on Gingerbread and below
+        try {
+            if (once && !playing) {
+                Context context = this;
+                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                builder = new NotificationCompat.Builder(this, "channel");
 
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            assert notificationManager != null;
-            int mId = 5565;
-            notificationManager.notify(mId, mBuilder.build());
+                if(darkmode)
+                    remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification2);
+                else
+                    remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification);
+
+                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+
+                if(language.equals("en")){
+                    remoteViews.setTextViewText(R.id.fajrtitle, getResources().getString(R.string.fajrtitle));
+                    remoteViews.setTextViewText(R.id.dhuhrtitle, getResources().getString(R.string.dohrtitle));
+                    remoteViews.setTextViewText(R.id.asrtitle, getResources().getString(R.string.asrtitle));
+                    remoteViews.setTextViewText(R.id.maghribtitle, getResources().getString(R.string.maghrebtitle));
+                    remoteViews.setTextViewText(R.id.ishatitle, getResources().getString(R.string.ishatitle));
+                }
+
+                Intent notification_intent = new Intent(context, force.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notification_intent, 0);
+                builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+                remoteViews.setTextViewText(R.id.fajrtime, praytimesregularform.get(0));
+                remoteViews.setTextViewText(R.id.dhuhrtime, praytimesregularform.get(1));
+                remoteViews.setTextViewText(R.id.asrtime, praytimesregularform.get(2));
+                remoteViews.setTextViewText(R.id.maghrebtime, praytimesregularform.get(3));
+                remoteViews.setTextViewText(R.id.ishatime, praytimesregularform.get(4));
+
+                once = false;
+            }
+
+
+
+            if(playing){
+                Log.i("HH", "playing: " + String.valueOf(playing));
+
+                // TODO add a button that appears in force and all activiteis that says adan is playing and a button to stop it
+                if(darkmode)
+                    remoteViews = new RemoteViews(getPackageName(), R.layout.adanondarkmode);
+                else
+                    remoteViews = new RemoteViews(getPackageName(), R.layout.adanonlightmode);
+
+
+                String current_adan = "Fajr";
+                String stop_it = getResources().getString(R.string.stop_it);
+                String time = getResources().getString(R.string.time);
+                if(language.equals("ar")) {
+                    time = getResources().getString(R.string.time_arabe);
+                    stop_it = getResources().getString(R.string.stop_it_arabe);
+                    switch (current_adding_playing) {
+                        case 0:
+                            current_adan = getResources().getString(R.string.fajrtitle_arabe);
+                            break;
+                        case 1:
+                            current_adan = getResources().getString(R.string.dohrtitle_arabe);
+                            break;
+                        case 2:
+                            current_adan = getResources().getString(R.string.asrtitle_arabe);
+                            break;
+                        case 3:
+                            current_adan = getResources().getString(R.string.maghrebtitle_arabe);
+                            break;
+                        case 4:
+                            current_adan = getResources().getString(R.string.ishatitle_arabe);
+                    }
+                    remoteViews.setTextViewText(R.id.adangoingon, time + " " + current_adan);
+                    remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
+                } else if(language.equals("en")){
+                    switch (current_adding_playing) {
+                        case 0:
+                            current_adan = getResources().getString(R.string.fajrtitle);
+                            break;
+                        case 1:
+                            current_adan = getResources().getString(R.string.dohrtitle);
+                            break;
+                        case 2:
+                            current_adan = getResources().getString(R.string.asrtitle);
+                            break;
+                        case 3:
+                            current_adan = getResources().getString(R.string.maghrebtitle);
+                            break;
+                        case 4:
+                            current_adan = getResources().getString(R.string.ishatitle);
+                    }
+                    remoteViews.setTextViewText(R.id.adangoingon, current_adan + " " + time);
+                    remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
+                }
+
+                Intent button_intent = new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener");
+                //button_intent.putExtra("id",NOTIFICATION_ID);
+                PendingIntent button_pending_event = PendingIntent.getBroadcast(this,NOTIFICATION_ID, button_intent,0);
+                remoteViews.setOnClickPendingIntent(R.id.cancelbutton,button_pending_event);
+                Intent notification_intent = new Intent(this, force.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notification_intent, 0);
+                builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+            } else {
+                switch (i) {
+                    case 0:
+                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.greenarrowdown);
+                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                        break;
+                    case 1:
+                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.greenarrowdown);
+                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                        break;
+                    case 2:
+                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.greenarrowdown);
+                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                        break;
+                    case 3:
+                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.greenarrowdown);
+                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                        break;
+                    case 4:
+                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.greenarrowdown);
+                }
+            }
+
+            notification = builder.build();
+            if(is_it_over_android_O)
+                startForeground(NOTIFICATION_ID, notification);
+            else
+                notificationManager.notify(NOTIFICATION_ID, notification);
+
+        } catch(Exception e){
+            e.printStackTrace();
         }
+    }
+
+    private Notification notification;
+    private void print(Object log){
+        Toast.makeText(this, String.valueOf(log), Toast.LENGTH_LONG).show();
     }
 
     private void location_shit(Date date) {
         if_theres_previous_info_load_it_n_display(date);
+
+        if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            display_notification(false);
+        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            display_notification(true);
     }
 
     private void if_theres_previous_info_load_it_n_display(Date date) {
@@ -375,6 +560,7 @@ public class Service extends android.app.Service {
         convert_prayertimes_into_milliseconds();
     }
 
+    private boolean playing = false;
     private void playadan(int adantag) {
         try{
             simpleExoPlayer.stop();
@@ -400,6 +586,8 @@ public class Service extends android.app.Service {
             case 5:
                 adan = "madani.mp3";
         }
+
+
         DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
                 this,
                 null,
@@ -419,9 +607,66 @@ public class Service extends android.app.Service {
                     null,
                     null
             );
+            playing = true;
+
+            simpleExoPlayer.addListener(new Player.EventListener() {
+
+                @Override
+                public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+                }
+
+                @Override
+                public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+                }
+
+                @Override
+                public void onLoadingChanged(boolean isLoading) {
+
+                }
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        playing = false;
+                        once = true;
+                    }
+                }
+
+                @Override
+                public void onRepeatModeChanged(int repeatMode) {
+
+                }
+
+                @Override
+                public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+                }
+
+                @Override
+                public void onPlayerError(ExoPlaybackException error) {
+
+                }
+
+                @Override
+                public void onPositionDiscontinuity(int reason) {
+
+                }
+
+                @Override
+                public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+                }
+
+                @Override
+                public void onSeekProcessed() {
+
+                }
+            });
             simpleExoPlayer.prepare(mediaSource);
             simpleExoPlayer.setPlayWhenReady(true);
-        } catch(Exception ignored){}
+            } catch(Exception ignored){}
     }
 
     private void convert_prayertimes_into_milliseconds() {
@@ -499,7 +744,6 @@ public class Service extends android.app.Service {
                 praytimesregularform.add(String.valueOf(Integer.valueOf(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(isha.split(" ")[0]);
-
     }
 
     private List<String> praytimesregularform;

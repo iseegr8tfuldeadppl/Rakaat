@@ -32,5 +32,8 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="soundimagesize">10dp</dimen>
     <dimen name="playbuttonsize">7dp</dimen>
     <dimen name="playbuttonheight">52dp</dimen>
+    <dimen name="notification_height">64dp</dimen>
+    <dimen name="arrowdownpadding">4dp</dimen>
+    <dimen name="notitextsize">12sp</dimen>
 
 </resources>

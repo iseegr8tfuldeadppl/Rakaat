@@ -100,7 +100,7 @@
     <string name="lol_arabe">قم بتحريك الهاتف على شكل الرقم 8 ثلاث مرات</string>
     <string name="howtouse_arabe">كيفية الإستعمال</string>
     <string name="zeroseconds_arabe">لا أحتاج</string>
-    <string name="noshow_arabe">لا تظهر مجددا</string>
+    <string name="noshow_arabe">لا تُظهِر مجددا</string>
     <string name="rakaat_arabe">الركعات</string>
     <string name="pm">م</string>
     <string name="am">ص</string>
@@ -287,5 +287,21 @@
     <string name="main_noti_arabe">إشعار التطبيق في شريط الإعلامات</string>
     <string name="settings">Settings</string>
     <string name="main_noti">App notification</string>
+    <string name="huawei_headline">HUAWEI</string>
+    <string name="huawei_text">pls gif permission</string>
+    <string name="go_to_protected">Go to protected</string>
+    <string name="nothanks">no thanks</string>
+    <string name="nothanks_arabe">لا شكرا</string>
+    <string name="request_text_arabe">لتأكيد عمل الآذان في هواتف هواوي، يتوجب فتح قائمة التطبيقات المحمية و تفعيل تطبيق ركعات</string>
+    <string name="request_text">For adan to work in Huawei phones, you must open Protected Apps menu and check Raka\'at in the list!</string>
+    <string name="go_to_protected_arabe">إفتح قائمة التطبيقات المحمية</string>
+    <string name="huaweisource">com.huawei.systemmanager</string>
+    <string name="huaweiactivity">com.huawei.systemmanager.optimize.process.ProtectActivity</string>
+    <string name="idid_arabe">قمت بذلك!</string>
+    <string name="idid">I already did that</string>
+    <string name="stop_it">Stop it</string>
+    <string name="time_arabe">وقت</string>
+    <string name="time">time</string>
+    <string name="stop_it_arabe">أوقف الآذان</string>
 
 </resources>

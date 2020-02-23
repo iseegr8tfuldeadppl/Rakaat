@@ -1,0 +1,185 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="114dp"
+    android:background="@drawable/simpelbackground"
+    android:orientation="horizontal"
+    android:weightSum="5"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp">
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/fajrtitle"
+            android:textSize="@dimen/notitextsize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:text="@string/fajrtitle_arabe"/>
+
+        <ImageView
+            android:padding="@dimen/arrowdownpadding"
+            android:layout_weight="1"
+            android:id="@+id/fajrarrow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/notitextsize"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="05:45"
+            android:id="@+id/fajrtime"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:gravity="center"
+            android:textSize="@dimen/notitextsize"
+            android:layout_weight="1"
+            android:id="@+id/dhuhrtitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:text="@string/dohrtitle_arabe"/>
+
+        <ImageView
+            android:padding="@dimen/arrowdownpadding"
+            android:layout_weight="1"
+            android:id="@+id/dhuhrarrow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:textSize="@dimen/notitextsize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="12:35"
+            android:id="@+id/dhuhrtime"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/asrtitle"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/notitextsize"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:text="@string/asrtitle_arabe"/>
+
+        <ImageView
+            android:padding="@dimen/arrowdownpadding"
+            android:layout_weight="1"
+            android:id="@+id/asrarrow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/notitextsize"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="13:22"
+            android:id="@+id/asrtime"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/maghribtitle"
+            android:textSize="@dimen/notitextsize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:text="@string/maghrebtitle_arabe"/>
+
+        <ImageView
+            android:padding="@dimen/arrowdownpadding"
+            android:layout_weight="1"
+            android:id="@+id/maghrebarrow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:textSize="@dimen/notitextsize"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="15:55"
+            android:id="@+id/maghrebtime"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/notitextsize"
+            android:id="@+id/ishatitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:text="@string/ishatitle_arabe"/>
+
+        <ImageView
+            android:padding="@dimen/arrowdownpadding"
+            android:layout_weight="1"
+            android:id="@+id/ishaarrow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:gravity="center"
+            android:textSize="@dimen/notitextsize"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="20:11"
+            android:id="@+id/ishatime"/>
+    </LinearLayout>
+
+</LinearLayout>

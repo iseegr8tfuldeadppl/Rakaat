@@ -1,11 +1,15 @@
 package com.krimzon.scuffedbots.raka3at;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -13,6 +17,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
@@ -22,7 +27,6 @@ import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
-
 import java.util.Locale;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -82,7 +86,18 @@ public class MainActivity extends AppCompatActivity {
         }});
 
         //showNavigationBar();
+
     }
+
+    /*private void permission_intents_test() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS, Uri.parse("package:" + getPackageName())));
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }*/
 
     private void light_mode() {
         darkmode = false;
@@ -207,12 +222,12 @@ public class MainActivity extends AppCompatActivity {
 
         // this is to avoid issues with added rows with google darkplay updates to avoid crashing users
         sql("slat");
-        if(SQLSharing.mycursor.getCount()<9)  // TODO always update this
+        if(SQLSharing.mycursor.getCount()<10)  // TODO always update this
             SQLSharing.mydb.delete(this);
         sql("slat");
         if (SQLSharing.mycursor.getCount() <= 0) {
             SQLSharing.mydb.insertData("");
-            SQLSharing.mydb.insertData("yes");
+            SQLSharing.mydb.insertData("yes"); // darkmode
             SQLSharing.mydb.insertData("3"); // scheme
             SQLSharing.mydb.insertData("0"); // scheme_light_mode
             SQLSharing.mydb.insertData("5"); // delay before starting detection
@@ -220,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydb.insertData("ar"); // language
             SQLSharing.mydb.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,2 => default adan, adan sounds fully on (1 is for vibrte, 0 is for no sounds)
             SQLSharing.mydb.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
+            SQLSharing.mydb.insertData("yes"); // do i ask for protected apps on launch?
             tutorial = true;
         } else {
             SQLSharing.mycursor.moveToPosition(0);

@@ -38,9 +38,9 @@
             android:gravity="center"
             android:text="@string/settings_arabe" />
         <LinearLayout
-            android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
             android:weightSum="1"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,6 +62,31 @@
                 android:gravity="center"
                 android:text="@string/main_noti_arabe" />
         </LinearLayout>
+        <!--<LinearLayout
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="17dp">
+            <Switch
+                android:id="@+id/adanswitch"
+                android:gravity="center"
+                android:layout_weight=".80"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_weight=".20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:id="@+id/adantext"
+                android:gravity="center"
+                android:text="Adan (decides whether to launch service or not)" />
+        </LinearLayout>-->
 
         <!--Mou'adin Title-->
         <TextView
@@ -70,7 +95,7 @@
             android:textSize="23sp"
             android:textColor="@color/white"
             android:id="@+id/adantitle"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="25dp"
             android:gravity="center"
             android:text="@string/adan_arabe" />
         <!--Fajr Selections-->
@@ -408,7 +433,7 @@
             android:id="@+id/ishaback"
             android:background="@drawable/selectorresposive"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="39dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="17dp"
             android:layout_marginEnd="17dp"
             android:gravity="center">

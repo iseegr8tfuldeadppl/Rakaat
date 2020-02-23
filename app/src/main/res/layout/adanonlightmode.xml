@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="114dp"
+    android:background="@drawable/simpelbackground"
+    android:orientation="horizontal"
+    android:weightSum="2"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:id="@+id/adangoingon"
+        android:textColor="@color/black"
+        android:textSize="19sp"
+        android:layout_weight="1.3"
+        android:gravity="center"/>
+    <Button
+        android:textSize="19sp"
+        android:layout_weight="0.7"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/buttons"
+        android:layout_margin="10dp"
+        android:id="@+id/cancelbutton"/>
+
+</LinearLayout>

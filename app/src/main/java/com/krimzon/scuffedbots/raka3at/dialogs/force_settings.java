@@ -33,6 +33,9 @@ import android.widget.Toast;
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +105,10 @@ public class force_settings extends BottomSheetDialogFragment {
             v.findViewById(R.id.arrow).setBackground(getResources().getDrawable(R.drawable.arrowbutton));
             for(TextView adan:adans)
                 adan.setBackgroundColor(getResources().getColor(R.color.typicallightbuttoncolors));
+
+            adantitle.setTextColor(getResources().getColor(R.color.dimmest));
+            settingstitle.setTextColor(getResources().getColor(R.color.dimmest));
+            notitext.setTextColor(getResources().getColor(R.color.dimmest));
         }
     }
 
@@ -140,34 +147,38 @@ public class force_settings extends BottomSheetDialogFragment {
         } catch(Exception ignored){}
     }
 
-    private void sql() {
+    private void sql(String table) {
         if(SQLSharing.mycursor!=null)
             SQLSharing.mycursor.close();
         if(SQLSharing.mydb!=null)
             SQLSharing.mydb.close();
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(getContext());
+        SQLSharing.TABLE_NAME_INPUTER = table;
+        SQLSharing.mydb = new SQL(context);
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
     }
 
     private boolean once22 = true;
     private void update_switch_setting_in_sql(String switch_setting){
-        sql();
+        sql("slat");
         if(once22){
             once22 = false;
-            SQLSharing.mycursor.moveToFirst();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToPosition(8);
             SWITCHSETTINGID = SQLSharing.mycursor.getString(0);
         }
         SQLSharing.mydb.updateData(switch_setting, SWITCHSETTINGID);
         SQLSharing.mydb.close();
+    }
+
+    private void protected_apps_request() {
+        try {
+            if ("huawei".equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
+                protected_apps_request request = new protected_apps_request(getActivity(), darkmode, language);
+                request.show();
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private String SWITCHSETTINGID = "";
@@ -176,9 +187,19 @@ public class force_settings extends BottomSheetDialogFragment {
             notiswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked)
+                    if (isChecked) {
                         update_switch_setting_in_sql("yes");
-                    else
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                            RestartServiceBroadcastReceiver.scheduleJob(context);
+                        } else {
+                            ProcessMainClass bck = new ProcessMainClass();
+                            bck.launchService(context);
+                        }
+
+                        if(request_protected_menu)
+                            protected_apps_request();
+                    }else
                         update_switch_setting_in_sql("no");
                 }
             });
@@ -363,7 +384,7 @@ public class force_settings extends BottomSheetDialogFragment {
     private void apply_lightmode_if_found_to_play_buttons() {
         for(ImageView audioplayers:audioplayer){
             try {
-                Glide.with(getContext()).load(R.drawable.playlightmode).into(audioplayers);
+                Glide.with(context).load(R.drawable.playlightmode).into(audioplayers);
             } catch (Exception ignored) {
                 audioplayers.setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
             }
@@ -380,23 +401,23 @@ public class force_settings extends BottomSheetDialogFragment {
             audioisplaying = true;
             if(darkmode) {
                 try {
-                    Glide.with(getContext()).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
+                    Glide.with(context).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
                 } catch (Exception ignored) {
                     audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
                 }
                 try {
-                    Glide.with(getContext()).load(R.drawable.pause).into(audioplayer.get(i));
+                    Glide.with(context).load(R.drawable.pause).into(audioplayer.get(i));
                 } catch (Exception ignored) {
                     audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pause));
                 }
             } else {
                 try {
-                    Glide.with(getContext()).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
+                    Glide.with(context).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
                 } catch (Exception ignored) {
                     audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
                 }
                 try {
-                    Glide.with(getContext()).load(R.drawable.pauselightmode).into(audioplayer.get(i));
+                    Glide.with(context).load(R.drawable.pauselightmode).into(audioplayer.get(i));
                 } catch (Exception ignored) {
                     audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pauselightmode));
                 }
@@ -407,7 +428,7 @@ public class force_settings extends BottomSheetDialogFragment {
             audioisplaying = false;
             stopadan();
             try {
-                Glide.with(getContext()).load(R.drawable.play).into(audioplayer.get(i));
+                Glide.with(context).load(R.drawable.play).into(audioplayer.get(i));
             } catch (Exception ignored) {
                 audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.play));
             }
@@ -752,45 +773,39 @@ public class force_settings extends BottomSheetDialogFragment {
     }
 
     private void sql_work() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(getContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
+        sql("slat");
+        SQLSharing.mycursor.moveToPosition(1);
         darkmode = SQLSharing.mycursor.getString(1).equals("yes");
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
+        SQLSharing.mycursor.moveToPosition(6);
         language = SQLSharing.mycursor.getString(1);
         SQLSharing.mycursor.moveToNext();
         adanSelections = SQLSharing.mycursor.getString(1);
         selections = adanSelections.split(" ");
         SQLSharing.mycursor.moveToNext();
         main_notification_sql = SQLSharing.mycursor.getString(1);
+
+        SQLSharing.mycursor.moveToNext();
+        request_protected_menu = SQLSharing.mycursor.getString(1).equals("yes");
+
         SQLSharing.mycursor.close();
         SQLSharing.mydb.close();
     }
 
+    private void close_sql() {
+        if(SQLSharing.mycursor!=null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null)
+            SQLSharing.mydb.close();
+    }
+
+    private boolean request_protected_menu;
     private String main_notification_sql = "yes";
     private void update_sql() {
-        sql();
+        sql("slat");
         if(once){
             once = false;
             SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
-            SQLSharing.mycursor.moveToFirst();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
-            SQLSharing.mycursor.moveToNext();
+            SQLSharing.mycursor.moveToPosition(7);
             ID = SQLSharing.mycursor.getString(0);
         }
         SQLSharing.mydb.updateData(adanSelections, ID);
@@ -800,7 +815,9 @@ public class force_settings extends BottomSheetDialogFragment {
     private LinearLayout selectionmenu, settingsmenu;
     private Switch notiswitch;
     private TextView settingstitle, notitext;
+    private Context context;
     private void prepare_variables() {
+        context = getContext();
 
         selectionmenu = v.findViewById(R.id.selectionmenu);
         settingsmenu = v.findViewById(R.id.settingsmenu);
