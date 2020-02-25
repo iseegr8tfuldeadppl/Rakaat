@@ -28,7 +28,7 @@
                 android:textColor="@color/white"
                 android:textSize="50sp" />
             <TextView
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:gravity="center"
                 android:layout_centerInParent="true"
                 android:id="@+id/tahia"
@@ -106,7 +106,7 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
-        android:visibility="invisible">
+        android:visibility="gone">
         <com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView
             android:paddingBottom="0dp"
             android:id="@+id/countdown"
@@ -126,7 +126,7 @@
         android:background="@drawable/forcefull"
         android:weightSum="1"
         android:id="@+id/donecover"
-        android:visibility="invisible">
+        android:visibility="gone">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

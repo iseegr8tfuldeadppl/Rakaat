@@ -142,7 +142,7 @@ public class slat_settings extends BottomSheetDialogFragment {
     private void sql_work() {
         SQLSharing.TABLE_NAME_INPUTER = "slat";
         SQLSharing.mydb = new SQL(getContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         it_is_nightmode_since_lightmode_shines_and_ruins_measurement = SQLSharing.mycursor.getString(1).equals("yes");

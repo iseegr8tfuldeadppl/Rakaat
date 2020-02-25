@@ -35,5 +35,11 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="notification_height">64dp</dimen>
     <dimen name="arrowdownpadding">4dp</dimen>
     <dimen name="notitextsize">12sp</dimen>
+    <dimen name="widgetbigtextsize">43sp</dimen>
+    <dimen name="widgettextsize">13sp</dimen>
+    <dimen name="widgetsmallitemsheight">30dp</dimen>
+    <dimen name="widgetsmallimageheight">10dp</dimen>
+    <dimen name="prayertitlepaddingbottom">10dp</dimen>
+    <dimen name="paddingstartandendofsliderer">15dp</dimen>
 
 </resources>

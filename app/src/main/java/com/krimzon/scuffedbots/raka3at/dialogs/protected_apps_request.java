@@ -83,7 +83,17 @@ public class protected_apps_request extends Dialog implements android.view.View.
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
         SQLSharing.mydb = new SQL(c.getApplicationContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        switch (table) {
+            case "slat":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                break;
+            case "force":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                break;
+            case "force3":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                break;
+        }
     }
 
 

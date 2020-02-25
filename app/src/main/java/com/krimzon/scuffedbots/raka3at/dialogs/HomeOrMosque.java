@@ -143,7 +143,7 @@ public class HomeOrMosque extends Dialog {
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = "force3";
         SQLSharing.mydb = new SQL(c);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
     }
 
     private void set_prayer_without_using_detector() {

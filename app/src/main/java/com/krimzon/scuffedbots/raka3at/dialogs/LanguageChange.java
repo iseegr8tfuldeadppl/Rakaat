@@ -41,7 +41,7 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = "slat";
         SQLSharing.mydb = new SQL(c.getApplicationContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
     }
 
 

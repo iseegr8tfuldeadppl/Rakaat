@@ -6,4 +6,5 @@ public class SQLSharing {
     public static SQL mydb;
     public static String TABLE_NAME_INPUTER;
     public static Cursor mycursor;
+    public static int params_adjustments_fajr = 2;
 }

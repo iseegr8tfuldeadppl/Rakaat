@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -112,13 +113,13 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private String[] todaysplittemparray;
     private boolean all_white = false, fill_all = false;
     private String athome = "00000";
-    private int next_adan = 0, temp_next_adan = 0;
+    private int next_adan = -1, temp_next_adan = -1;
     private boolean end_of_day = false, it_is_today = true, new_adan = false;
     private String verified = "";
     private List<TextView> praybuttons;
     private boolean allow_pray = false;
     private boolean friday = false;
-    private Integer rightnowcomparable;
+    private Integer rightnowcomparable = 0;
     private String prayed = "";
     private boolean one_of_previous_is_zero = false;
     private SnackBar mSnackBar;
@@ -132,7 +133,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     private Animation fromright1, fromright2, fromright3, fromright4, fromright5, fromright6, fromright7, fromright8, fromright9, fromright10, fromright11, fromright12;
     private int temp_negatifise = 1000, temp_positifise = 1000, negatifise = 1000, positifise = 1000;
     private Thread mythread;
-    private int current_displayed_next_adan = 0, temp_rightnowcomparable;
+    private int current_displayed_next_adan = -1, temp_rightnowcomparable = 1;
     private boolean running = true, initialdelayoncebrk = true, still_scoping_on_previous_adan = false, can_find_in = true;
     private int minute_limit_to_display_positifise = 100, minute_limit_to_display_negatifise = 20;
     private LinearLayout leftsideelementsbackground;
@@ -186,7 +187,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                     fade_slider_in();
 
                 clean_titles_and_times();
-                if(!end_of_day) {
+                if(next_adan!=-1) {
                     prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
                     prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
                 }
@@ -212,11 +213,13 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
-        params.adjustments.fajr = 2; //2
+        params.adjustments.fajr = SQLSharing.params_adjustments_fajr; //2
         /*String pattern = "dd-MMM-yyyy";*/
         /*SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);*/
 
         CurrentDisplayedDay = new Date();
+
+
 
         /*preparing_background_handler();*/
 
@@ -228,6 +231,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         load_data_from_slat_sql();
 
+        if(request_protected_menu)
+            protected_apps_request();
+
         languageshet();
 
         sql(resources.getString(R.string.justforce));
@@ -237,12 +243,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         // TODO; check if it show up correctly and if it doesn't show up when quickpraying after it said it before ofc, kinda keeps that value
         low_light_alert();
 
-        if(request_protected_menu)
-            protected_apps_request();
+        //longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
 
-        longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
     }
-
     private void protected_apps_request() {
         try {
             if ("huawei".equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
@@ -325,8 +328,10 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         clean_titles_and_times();
 
-        prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
-        prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
+        if(next_adan!=-1) {
+            prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
+            prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
+        }
 
         color_pray_buttons();
 
@@ -734,7 +739,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
     private void location_shit(final Date date) {
         sql(resources.getString(R.string.justforce));
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (SQLSharing.mycursor.getCount() > 0)
             if_theres_previous_info_load_it_n_display(date);
         else
@@ -765,7 +770,17 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
         SQLSharing.mydb = new SQL(getApplicationContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        switch (table) {
+            case "slat":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                break;
+            case "force":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                break;
+            case "force3":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                break;
+        }
     }
 
     @Override
@@ -926,12 +941,6 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             // work on date n then display
             work_on_date_n_display_it();
             display_dates();
-            return true; }});
-
-    private Handler retrieveAndy = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(@NonNull Message msg) {
-            // retrieve prayers array from sql so we color force buttons accordingly
             retrieveAndy();
             return true; }});
 
@@ -954,17 +963,17 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             // pull prayer times and shape them
             pull_prayer_times_and_shape_them();
 
-            display_prayer_times.sendEmptyMessage(0);
-
             // convert prayertimes into seconds for comparaison and save in prayers Array
             convert_prayertimes_into_seconds();
+
+            display_prayer_times.sendEmptyMessage(0);
+
 
             // pull location to display city or wtvr
             pull_location(longitude, latitude);
 
             work_on_date_n_display_it_and_display_dates.sendEmptyMessage(0);
 
-            retrieveAndy.sendEmptyMessage(0);
         } catch(Exception e){e.printStackTrace();} }};
 
         Thread useThread = new Thread(useRunnable);
@@ -994,7 +1003,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             String country = addresses.get(0).getCountryName();
             String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
             displaycity.sendEmptyMessage(0);
-        } catch(Exception e){ e.printStackTrace();}
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private String city = "";
@@ -1615,7 +1626,8 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     }
 
     private void print(Object dumps) {
-        Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
+        Log.i("HH", String.valueOf(dumps));
+        //Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
     }
 
     private void print2(Object s) {
@@ -1666,7 +1678,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             }
             // gray
             else {
-                if(prayer==next_adan && positifise<=30 && !still_scoping_on_previous_adan) {
+                if(prayer == next_adan && positifise <= 30 && !still_scoping_on_previous_adan) {
                     theres_still_until_this_prayer(prayer);
                 } else
                     too_early(prayer);
@@ -1861,7 +1873,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                         }
                     }
                 } else {
-                    if(darkmode) {
+                    if(darkmode && next_adan!=-1) {
                         for (int i = 0; i < next_adan; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0"))
                                 praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
@@ -1873,7 +1885,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                             praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
                         }
 
-                    } else {
+                    } else if(next_adan!=-1){
                         for (int i = 0; i < next_adan; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
                                 praybuttons.get(i).setTextColor(Color.WHITE);
@@ -1886,11 +1898,12 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
                         }
 
 
-                        for (int i = next_adan; i < 5; i++) {
-                            praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
-                            praybuttons.get(i).setBackground(null);
+                        if(next_adan!=-1) {
+                            for (int i = next_adan; i < 5; i++) {
+                                praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                                praybuttons.get(i).setBackground(null);
+                            }
                         }
-
                     }
 
                 }
@@ -1946,6 +1959,9 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
         if(changing_day)
             new_adan = true;
 
+        print("fajrmilis: " + prayers.get(0));
+        print("dhuhrmilis: " + prayers.get(1));
+        print("asrmilis: " + prayers.get(2));
     }
 
     private void process_prayed_request(int compareandy) {
@@ -1981,7 +1997,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     }
 
     private void animatenextadan() {
-        if(new_adan) { new_adan = false;
+        if(new_adan && next_adan!=-1) { new_adan = false;
             prayerdisplayviews.get(next_adan).setTextColor(Color.GREEN);
             prayerdisplayviews2.get(next_adan).setTextColor(Color.GREEN);
             slide_in_dem_dpz();
@@ -1989,7 +2005,7 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
     }
 
     private void slide_in_dem_dpz() {
-        if(it_is_today) {
+        if(it_is_today && next_adan!=-1) {
             temp_positifise = Math.round( Math.abs((prayers.get(next_adan) - rightnowcomparable)) );
 
             if(next_adan!=0)
@@ -2069,6 +2085,8 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
             temp = next_adaner;
         switch (temp) {
             case -1:
+                current_displayed_next_adan = -1;
+                break;
             case 0:
             case 5:
                 slider = findViewById(R.id.sliderfajr);
@@ -2167,34 +2185,34 @@ public class force extends AppCompatActivity implements force_settings.BottomShe
 
         // compare between current day and currently displayed day
 
-        if(year2 < year){
+        if(year2 < year){ // definitely future
             all_white = true;
             fill_all = false;
             it_is_today = false;
-        } else if(month2 < month && year2 <= year){
-            all_white = true;
-            fill_all = false;
-            it_is_today = false;
-        } else if(day2 < day && month2 <= month && year2 <= year){
-            all_white = true;
-            fill_all = false;
-            it_is_today = false;
-        } else if(day2 == day && month2 == month && year2 == year){
-            all_white = false;
-            fill_all = false;
-            it_is_today = true;
-        } else if(year2 > year){
+        } else if(year2 > year){ // definitely past
             all_white = false;
             fill_all = true;
             it_is_today = false;
-        } else if(month2 > month){
+        } else if(month2 < month){ // definitely future
+            all_white = true;
+            fill_all = false;
+            it_is_today = false;
+        } else if(month2 > month){ // definitely past
             all_white = false;
             fill_all = true;
+            it_is_today = false;
+        } else if(day2 > day){ // definitely past
+            all_white = false;
+            fill_all = true;
+            it_is_today = false;
+        } else if(day2 < day){ // definitely future
+            all_white = true;
+            fill_all = false;
             it_is_today = false;
         } else {
             all_white = false;
-            fill_all = true;
-            it_is_today = false;
+            fill_all = false;
+            it_is_today = true;
         }
 
     }

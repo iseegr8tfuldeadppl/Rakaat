@@ -2,6 +2,8 @@ package com.krimzon.scuffedbots.raka3at;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -11,6 +13,8 @@ import android.os.Build;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -125,7 +129,17 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
         SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        switch (table) {
+            case "slat":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                break;
+            case "force":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                break;
+            case "force3":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                break;
+        }
     }
 
     private void dark_mode() {
@@ -171,8 +185,6 @@ public class MainActivity extends AppCompatActivity {
             languagebutton.setImageDrawable(resources.getDrawable(R.drawable.blacklanguage));
         }
 
-        /*PrivacyPolicy = new Intent(this, PrivacyPolicy.class);*/
-        /*scuffedbots = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/scuffedbots"));*/
     }
 
     @Override

@@ -42,6 +42,7 @@ import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 import com.krimzon.scuffedbots.raka3at.dialogs.slat_settings;
 import java.util.Locale;
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static android.view.animation.AnimationUtils.*;
 
@@ -161,6 +162,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             exit();
 
         sql_work();
+        countdown.setText(String.valueOf(delaybeforecounting));
         work_on_language();
         work_on_text_brightness(); // must be after loading it_is_nightmode_since_lightmode_shines_and_ruins_measurement from SQL
         navigation_bar();
@@ -359,6 +361,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             e.printStackTrace();
             light_sensor_works = false;
         }
+        if(!light_sensor_works)
+            exit();
     }
 
 
@@ -369,15 +373,21 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             if (receiveandy.equals("force"))
                 back_to_force("no");
             else {
-                if(entered_praying_process)
+                if(entered_praying_process) {
                     reset();
-                else
+                } else
                     exit();
             }
         } else {
-            if(entered_praying_process)
+            if(entered_praying_process) {
+                countdownbackground.setVisibility(GONE);
+                countdown.setVisibility(GONE);
+                one.setVisibility(INVISIBLE);
+                two.setVisibility(INVISIBLE);
+                three.setVisibility(INVISIBLE);
+                four.setVisibility(INVISIBLE);
                 reset();
-            else
+            } else
                 exit();
         }
     }
@@ -423,8 +433,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         }
 
         // Step 0: hide back & questionmarkbuttons
-        backarrowbackground.setVisibility(View.INVISIBLE);
-        howtousebackground.setVisibility(View.INVISIBLE);
+        backarrowbackground.setVisibility(View.GONE);
+        howtousebackground.setVisibility(View.GONE);
 
         blackground.setVisibility(GONE);
         prepare_selection_and_countdown_things();
@@ -484,8 +494,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         else
             start.setText(stop_arabe);
         blackoutbutton.setVisibility(VISIBLE);
-        sajda_pre.setVisibility(View.INVISIBLE);
-        settings.setVisibility(View.INVISIBLE);
+        sajda_pre.setVisibility(INVISIBLE);
+        settings.setVisibility(View.GONE);
         slattitle.setVisibility(GONE);
 
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
@@ -529,9 +539,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                         if(delaybeforecounting==0){
                             go_in();
                         } else {
-                            nightmode.setVisibility(View.INVISIBLE);
+                            nightmode.setVisibility(View.GONE);
                             blackoutbutton.setVisibility(GONE);
-                            settings.setVisibility(View.INVISIBLE);
+                            settings.setVisibility(View.GONE);
                         }
                     }});
                 }});
@@ -601,8 +611,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     public void startClicked(View view){
         if(light_sensor_works)
             click_on_start();
-        else
+        else {
             print("Light sensor not found");
+            exit();
+        }
     }
 
 
@@ -730,7 +742,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             if(( (num_of_raka3at==2 && num_of_sajadat==0)
                     || (num_of_raka3at==4 && num_of_sajadat==0)
                     || (limit==3 && num_of_raka3at==3 && num_of_sajadat==0))
-                    && tahia.getVisibility()== View.INVISIBLE){
+                    && tahia.getVisibility()== View.GONE){
                 tahia_fading_started = true;
                 tahia.startAnimation(fade_in_tahia);
                 fade_in_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -741,7 +753,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 tahia_fading_started = true;
                 tahia.startAnimation(fade_out_tahia);
                 fade_out_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
-                    tahia.setVisibility(View.INVISIBLE);
+                    tahia.setVisibility(View.GONE);
                     tahia_fading_started = false;
                 }});
             }
@@ -770,6 +782,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             if(sounds && two_secs) {
                 initExoPlayer(beep);
                 two_secs = false;
+            } else {
+                stopExoPlayer();
             }
         } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 1000) {
             countdown.setText(String.valueOf(2));
@@ -777,10 +791,18 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             if(sounds && three_secs) {
                 initExoPlayer(beep);
                 three_secs = false;
+            } else {
+                stopExoPlayer();
             }
         }
     }
 
+    private void stopExoPlayer(){
+        try{
+            simpleExoPlayer.stop();
+            simpleExoPlayer.release();
+        } catch(Exception ignored){}
+    }
 
     private void five_second_delay() {
         if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 5000){
@@ -790,18 +812,24 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             if(sounds && two_secs) {
                 initExoPlayer(beep);
                 two_secs = false;
+            } else {
+                stopExoPlayer();
             }
         } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 3000) {
             countdown.setText(String.valueOf(2));
             if(sounds && three_secs) {
                 initExoPlayer(beep);
                 three_secs = false;
+            } else {
+                stopExoPlayer();
             }
         } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 2000) {
             countdown.setText(String.valueOf(3));
             if(sounds && four_secs) {
                 initExoPlayer(beep);
                 four_secs = false;
+            } else {
+                stopExoPlayer();
             }
         } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 1000) {
             countdown.setText(String.valueOf(4));
@@ -809,6 +837,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             if(sounds && five_secs) {
                 initExoPlayer(beep);
                 five_secs = false;
+            } else {
+                stopExoPlayer();
             }
         }
     }
@@ -819,7 +849,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         countdownbackground.setVisibility(GONE);
         blackground.setVisibility(VISIBLE);
         blackoutbutton.setVisibility(VISIBLE);
-        settings.setVisibility(View.INVISIBLE);
+        settings.setVisibility(View.GONE);
         nightmode.setEnabled(true);
         nightmodebuttonbackground.setEnabled(true);
         blackoutbutton.setEnabled(true);
@@ -827,7 +857,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         nightmode.setVisibility(VISIBLE);
         soundsbutton.setEnabled(false);
         soundsbuttonbackground.setEnabled(false);
-        soundsbutton.setVisibility(View.INVISIBLE);
+        soundsbutton.setVisibility(View.GONE);
     }
 
 
@@ -911,7 +941,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             start.setText(starth);
         else
             start.setText(start_arabe);
-        startclicked = false;
         original_light_saved = false;
         sajda_done = false;
         num_of_raka3at = 0;
@@ -977,7 +1006,17 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
         SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        switch (table) {
+            case "slat":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                break;
+            case "force":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                break;
+            case "force3":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                break;
+        }
     }
 
 
@@ -1022,7 +1061,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private void light_mode(){
         update_dimmness();
 
-
         // top buttons backgrounds
         backarrowbackground.setBackground(resources.getDrawable(R.drawable.lightbackback));
         howtousebackground.setBackground(resources.getDrawable(R.drawable.lightstatsback));
@@ -1044,7 +1082,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         SQLSharing.TABLE_NAME_INPUTER = "slat";
         SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);
@@ -1066,18 +1104,24 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             donetitle.setTextColor(resources.getColor(R.color.dimmest));
             countdown.setTextColor(resources.getColor(R.color.dimmest));
             tahia.setTextColor(resources.getColor(R.color.dimmest));
+            if(startclicked)
+                start.setTextColor(resources.getColor(R.color.dimmest));
         } else if (scheme_light_mode == 1) {
             raka3at.setTextColor(resources.getColor(R.color.dimmer));
             sajda.setTextColor(resources.getColor(R.color.dimmer));
             donetitle.setTextColor(resources.getColor(R.color.dimmer));
             countdown.setTextColor(resources.getColor(R.color.dimmer));
             tahia.setTextColor(resources.getColor(R.color.dimmer));
+            if(startclicked)
+                start.setTextColor(resources.getColor(R.color.dimmer));
         } else {
             raka3at.setTextColor(resources.getColor(R.color.dimm));
             sajda.setTextColor(resources.getColor(R.color.dimm));
             donetitle.setTextColor(resources.getColor(R.color.dimm));
             countdown.setTextColor(resources.getColor(R.color.dimm));
             tahia.setTextColor(resources.getColor(R.color.dimm));
+            if(startclicked)
+                start.setTextColor(resources.getColor(R.color.dimm));
         }
     }
 
@@ -1114,7 +1158,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         SQLSharing.TABLE_NAME_INPUTER = "slat";
         SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
         SQLSharing.mycursor.moveToFirst();
         SQLSharing.mycursor.moveToNext();
         ID = SQLSharing.mycursor.getString(0);
@@ -1136,18 +1180,24 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             countdown.setTextColor(resources.getColor(R.color.darkest));
             donetitle.setTextColor(resources.getColor(R.color.darkest));
             tahia.setTextColor(resources.getColor(R.color.darkest));
+            if(startclicked)
+                start.setTextColor(resources.getColor(R.color.darkest));
         } else if(scheme==1) {
             sajda.setTextColor(resources.getColor(R.color.dark));
             raka3at.setTextColor(resources.getColor(R.color.dark));
             countdown.setTextColor(resources.getColor(R.color.dark));
             donetitle.setTextColor(resources.getColor(R.color.dark));
             tahia.setTextColor(resources.getColor(R.color.dark));
+            if(startclicked)
+                start.setTextColor(resources.getColor(R.color.dark));
         } else {
             sajda.setTextColor(resources.getColor(R.color.white));
             raka3at.setTextColor(resources.getColor(R.color.white));
             countdown.setTextColor(resources.getColor(R.color.white));
             donetitle.setTextColor(resources.getColor(R.color.white));
             tahia.setTextColor(resources.getColor(R.color.white));
+            if(startclicked)
+                start.setTextColor(resources.getColor(R.color.white));
         }
     }
 
@@ -1244,7 +1294,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             }});
             blackground.setBackgroundColor(resources.getColor(R.color.black));
             blackout = true;
-            nightmode.setVisibility(View.INVISIBLE);
+            nightmode.setVisibility(View.GONE);
         } else {
             blackground.setOnClickListener(null);
             blackground.setClickable(false);
@@ -1262,6 +1312,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
+    private SimpleExoPlayer simpleExoPlayer;
     private void initExoPlayer(String lol) {
         DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
                 this,
@@ -1269,7 +1320,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
         );
         TrackSelector trackSelector = new DefaultTrackSelector();
-        SimpleExoPlayer simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
+        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
                 renderersFactory,
                 trackSelector
         );

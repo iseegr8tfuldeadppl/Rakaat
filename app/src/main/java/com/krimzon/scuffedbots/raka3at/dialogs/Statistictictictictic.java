@@ -44,7 +44,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = "force3";
         SQLSharing.mydb = new SQL(c.getApplicationContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
     }
 
 

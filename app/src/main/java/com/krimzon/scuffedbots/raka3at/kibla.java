@@ -137,7 +137,17 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
         SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        switch (table) {
+            case "slat":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                break;
+            case "force":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                break;
+            case "force3":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                break;
+        }
     }
 
     private void getLanguage(){

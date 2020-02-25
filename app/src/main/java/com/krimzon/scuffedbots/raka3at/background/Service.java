@@ -3,7 +3,9 @@ package com.krimzon.scuffedbots.raka3at.background;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,6 +14,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -48,6 +51,7 @@ import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.force;
+import com.krimzon.scuffedbots.raka3at.force_widget;
 
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
@@ -71,6 +75,15 @@ public class Service extends android.app.Service {
     private boolean main_notification_switch = true;
     private SimpleExoPlayer simpleExoPlayer;
     private String language = "en";
+    private int current_adding_playing = 0;
+    private boolean darkmode = true;
+    private boolean once = true;
+    private NotificationManager notificationManager;
+    private RemoteViews remoteViews;
+    private NotificationCompat.Builder builder;
+    private Notification notification;
+    private boolean playing = false;
+    private List<String> praytimesregularform;
 
     public Service() {
         super();
@@ -106,6 +119,8 @@ public class Service extends android.app.Service {
             assert action != null;
             if(action.equals("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener")){
                 try{
+                    if(playing)
+                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));
                     simpleExoPlayer.stop();
                     simpleExoPlayer.release();
                     playing = false;
@@ -130,29 +145,19 @@ public class Service extends android.app.Service {
             params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
             params = CalculationMethod.EGYPTIAN.getParameters();
             params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
-            params.adjustments.fajr = 2; //2 TODO change this one aswell
+            params.adjustments.fajr = SQLSharing.params_adjustments_fajr; //2 TODO change this one aswell
             //String pattern = "dd-MMM-yyyy";
             //SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-
-            List<String> lol = new ArrayList<>();
-            if(language.equals("en")){
-                lol.add(getResources().getString(R.string.fajrtitle));
-                lol.add(getResources().getString(R.string.dohrtitle));
-                lol.add(getResources().getString(R.string.asrtitle));
-                lol.add(getResources().getString(R.string.maghrebtitle));
-                lol.add(getResources().getString(R.string.ishatitle));
-            } else if(language.equals("ar")){
-                lol.add(getResources().getString(R.string.fajrtitle_arabe));
-                lol.add(getResources().getString(R.string.dohrtitle_arabe));
-                lol.add(getResources().getString(R.string.asrtitle_arabe));
-                lol.add(getResources().getString(R.string.maghrebtitle_arabe));
-                lol.add(getResources().getString(R.string.ishatitle_arabe));
-            }
 
             old_date = new Date();
             location_shit(old_date);
 
             find_next_adan();
+
+            if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+                display_notification(false);
+            else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                display_notification(true);
         }
     }
 
@@ -182,7 +187,6 @@ public class Service extends android.app.Service {
             } else
                 end_of_day = false;
 
-            display_notification(false);
         } catch(Exception ignored){}
     }
 
@@ -297,9 +301,17 @@ public class Service extends android.app.Service {
                         location_shit(new_date);
                     old_date = new_date;
                     find_next_adan();
-                    /*Log.i("HH", "rightnowcomparable: " + String.valueOf(rightnowcomparable));
-                    Log.i("HH", "playing: " + String.valueOf(playing));
-                    Log.i("HH", "prayers.get(i): " + String.valueOf(prayers.get(i)));*/
+                    if(i!=-1) {
+                        find_slider(i);
+                        calculate_negatifise_and_positifise();
+                        check_negatifise();
+                        then_check_positifise();
+                        if_new_slider_apply_it();
+                        cleaning = true;
+                        find_slider(i);
+                        cleaning = false;
+                    }
+
 
                     if(!end_of_day) {
                         // Check if we reached the adan, if so, then switch i to the next adan
@@ -349,8 +361,115 @@ public class Service extends android.app.Service {
         };
     }
 
-    private int current_adding_playing = 0;
-    private boolean darkmode = true;
+    private void then_check_positifise() {
+        /*if ((temp_positifise != positifise) && !still_scoping_on_previous_adan)*/
+            positifise = temp_positifise;
+    }
+
+    private int temp_positifise=1, positifise=0;
+    private void calculate_negatifise_and_positifise() {
+        if (i != 0)
+            temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(i - 1))));
+        else
+            still_scoping_on_previous_adan = false;
+
+        temp_positifise = Math.round((prayers.get(i) - rightnowcomparable));
+    }
+
+    private int minute_limit_to_display_positifise = 100, minute_limit_to_display_negatifise = 20;
+    private int temp_negatifise = 1, negatifise = 0;
+    private void check_negatifise() {
+        if((temp_negatifise != negatifise) && i!=0){
+            negatifise = temp_negatifise;
+            still_scoping_on_previous_adan = negatifise <= minute_limit_to_display_negatifise;
+        }
+    }
+
+    int lol = -3;
+    private void if_new_slider_apply_it() {
+        /*if(still_scoping_on_previous_adan)
+            lol = i-1;
+        else*/
+            lol = i;
+        if(lol!=current_displayed_slider){
+            switch(lol){
+                case 0:
+                    widgetViews.setViewVisibility(R.id.widgetsliderfajr, View.INVISIBLE);
+                    break;
+                case 1:
+                    widgetViews.setViewVisibility(R.id.widgetsliderdhuhr, View.INVISIBLE);
+                    break;
+                case 2:
+                    widgetViews.setViewVisibility(R.id.widgetsliderasr, View.INVISIBLE);
+                    break;
+                case 3:
+                    widgetViews.setViewVisibility(R.id.widgetslidermaghreb, View.INVISIBLE);
+                    break;
+                case 4:
+                    widgetViews.setViewVisibility(R.id.widgetsliderisha, View.INVISIBLE);
+            }
+            if(still_scoping_on_previous_adan){
+                widgetViews.setTextViewText(slider, "+ " + String.valueOf(negatifise));
+                widgetViews.setViewVisibility(slider, View.VISIBLE);
+            }
+            else if(positifise<=minute_limit_to_display_positifise){
+                widgetViews.setTextViewText(slider, "- " + String.valueOf(positifise));
+                widgetViews.setViewVisibility(slider, View.VISIBLE);
+            }
+
+            apply_widget_update();
+        }
+    }
+
+    private boolean still_scoping_on_previous_adan = false;
+    private int current_displayed_slider = -1;
+    private int slider = 0;
+    private boolean cleaning = false;
+    private void find_slider(final int next_adaner) {
+        int temp;
+        if (still_scoping_on_previous_adan)
+            temp = next_adaner - 1;
+        else
+            temp = next_adaner;
+        switch (temp) {
+            case -1:
+                if(cleaning)
+                    current_displayed_slider = -1;
+                break;
+            case 0:
+            case 5:
+                if(cleaning)
+                    current_displayed_slider = 0;
+                else
+                    slider = R.id.widgetsliderfajr;
+                break;
+            case 1:
+                if(cleaning)
+                    current_displayed_slider = 1;
+                else
+                    slider = R.id.widgetsliderdhuhr;
+                break;
+            case 2:
+                if(cleaning)
+                    current_displayed_slider = 2;
+                else
+                    slider = R.id.widgetsliderasr;
+                break;
+            case 3:
+                if(cleaning)
+                    current_displayed_slider = 3;
+                else
+                    slider = R.id.widgetslidermaghreb;
+                break;
+            case 4:
+                if(cleaning)
+                    current_displayed_slider = 4;
+                else
+                    slider = R.id.widgetsliderisha;
+                break;
+        }
+    }
+
     private int pullselectedadanforthisprayerfromSQL(int prayedtobepopped) {
         sql("slat");
 
@@ -360,155 +479,19 @@ public class Service extends android.app.Service {
         return selectedadan;
     }
 
-    private boolean once = true;
-    private NotificationManager notificationManager;
-    private RemoteViews remoteViews;
-    private NotificationCompat.Builder builder;
     private void display_notification(boolean is_it_over_android_O) {
 
         try {
             if (once && !playing) {
-                Context context = this;
-                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                builder = new NotificationCompat.Builder(this, "channel");
 
-                if(darkmode)
-                    remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification2);
-                else
-                    remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification);
-
-                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
-                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
-                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
-                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
-                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
-
-                if(language.equals("en")){
-                    remoteViews.setTextViewText(R.id.fajrtitle, getResources().getString(R.string.fajrtitle));
-                    remoteViews.setTextViewText(R.id.dhuhrtitle, getResources().getString(R.string.dohrtitle));
-                    remoteViews.setTextViewText(R.id.asrtitle, getResources().getString(R.string.asrtitle));
-                    remoteViews.setTextViewText(R.id.maghribtitle, getResources().getString(R.string.maghrebtitle));
-                    remoteViews.setTextViewText(R.id.ishatitle, getResources().getString(R.string.ishatitle));
-                }
-
-                Intent notification_intent = new Intent(context, force.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notification_intent, 0);
-                builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
-                remoteViews.setTextViewText(R.id.fajrtime, praytimesregularform.get(0));
-                remoteViews.setTextViewText(R.id.dhuhrtime, praytimesregularform.get(1));
-                remoteViews.setTextViewText(R.id.asrtime, praytimesregularform.get(2));
-                remoteViews.setTextViewText(R.id.maghrebtime, praytimesregularform.get(3));
-                remoteViews.setTextViewText(R.id.ishatime, praytimesregularform.get(4));
-
-                once = false;
+                update_widget_ui();
+                update_notification_ui();
             }
 
-
-
-            if(playing){
-                Log.i("HH", "playing: " + String.valueOf(playing));
-
-                // TODO add a button that appears in force and all activiteis that says adan is playing and a button to stop it
-                if(darkmode)
-                    remoteViews = new RemoteViews(getPackageName(), R.layout.adanondarkmode);
-                else
-                    remoteViews = new RemoteViews(getPackageName(), R.layout.adanonlightmode);
-
-
-                String current_adan = "Fajr";
-                String stop_it = getResources().getString(R.string.stop_it);
-                String time = getResources().getString(R.string.time);
-                if(language.equals("ar")) {
-                    time = getResources().getString(R.string.time_arabe);
-                    stop_it = getResources().getString(R.string.stop_it_arabe);
-                    switch (current_adding_playing) {
-                        case 0:
-                            current_adan = getResources().getString(R.string.fajrtitle_arabe);
-                            break;
-                        case 1:
-                            current_adan = getResources().getString(R.string.dohrtitle_arabe);
-                            break;
-                        case 2:
-                            current_adan = getResources().getString(R.string.asrtitle_arabe);
-                            break;
-                        case 3:
-                            current_adan = getResources().getString(R.string.maghrebtitle_arabe);
-                            break;
-                        case 4:
-                            current_adan = getResources().getString(R.string.ishatitle_arabe);
-                    }
-                    remoteViews.setTextViewText(R.id.adangoingon, time + " " + current_adan);
-                    remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
-                } else if(language.equals("en")){
-                    switch (current_adding_playing) {
-                        case 0:
-                            current_adan = getResources().getString(R.string.fajrtitle);
-                            break;
-                        case 1:
-                            current_adan = getResources().getString(R.string.dohrtitle);
-                            break;
-                        case 2:
-                            current_adan = getResources().getString(R.string.asrtitle);
-                            break;
-                        case 3:
-                            current_adan = getResources().getString(R.string.maghrebtitle);
-                            break;
-                        case 4:
-                            current_adan = getResources().getString(R.string.ishatitle);
-                    }
-                    remoteViews.setTextViewText(R.id.adangoingon, current_adan + " " + time);
-                    remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
-                }
-
-                Intent button_intent = new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener");
-                //button_intent.putExtra("id",NOTIFICATION_ID);
-                PendingIntent button_pending_event = PendingIntent.getBroadcast(this,NOTIFICATION_ID, button_intent,0);
-                remoteViews.setOnClickPendingIntent(R.id.cancelbutton,button_pending_event);
-                Intent notification_intent = new Intent(this, force.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notification_intent, 0);
-                builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
-            } else {
-                switch (i) {
-                    case 0:
-                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.greenarrowdown);
-                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
-                        break;
-                    case 1:
-                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.greenarrowdown);
-                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
-                        break;
-                    case 2:
-                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.greenarrowdown);
-                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
-                        break;
-                    case 3:
-                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.greenarrowdown);
-                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
-                        break;
-                    case 4:
-                        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
-                        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.greenarrowdown);
-                }
-            }
+            if(playing)// TODO add a button that appears in force and all activiteis that says adan is playing and a button to stop it
+                update_notification_ui_for_adan();
+            else
+                slight_update_notification_and_widget_ui();
 
             notification = builder.build();
             if(is_it_over_android_O)
@@ -516,12 +499,262 @@ public class Service extends android.app.Service {
             else
                 notificationManager.notify(NOTIFICATION_ID, notification);
 
+            apply_widget_update();
+
         } catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private Notification notification;
+    private RemoteViews widgetViews;
+    private void update_widget_ui() {
+
+        if(darkmode)
+            widgetViews = new RemoteViews(getPackageName(), R.layout.force_widget);
+        else
+            widgetViews = new RemoteViews(getPackageName(), R.layout.force_widget);
+
+        widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
+        widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
+        widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
+        widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
+        widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
+
+        if(language.equals("en")){
+            widgetViews.setTextViewText(R.id.widgetfajrtitle, getResources().getString(R.string.fajrtitle));
+            widgetViews.setTextViewText(R.id.widgetdhuhrtitle, getResources().getString(R.string.dohrtitle));
+            widgetViews.setTextViewText(R.id.widgetasrtitle, getResources().getString(R.string.asrtitle));
+            widgetViews.setTextViewText(R.id.widgetmaghribtitle, getResources().getString(R.string.maghrebtitle));
+            widgetViews.setTextViewText(R.id.widgetishatitle, getResources().getString(R.string.ishatitle));
+        }
+
+        widgetViews.setTextViewText(R.id.widgetfajrtime, praytimesregularform.get(0));
+        widgetViews.setTextViewText(R.id.widgetdhuhrtime, praytimesregularform.get(1));
+        widgetViews.setTextViewText(R.id.widgetasrtime, praytimesregularform.get(2));
+        widgetViews.setTextViewText(R.id.widgetmaghrebtime, praytimesregularform.get(3));
+        widgetViews.setTextViewText(R.id.widgetishatime, praytimesregularform.get(4));
+
+    }
+
+    private void apply_widget_update() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        appWidgetManager.updateAppWidget(new ComponentName(this.getPackageName(), force_widget.class.getName()), widgetViews);
+    }
+
+    private void slight_update_notification_and_widget_ui() {
+        // Notification
+        switch (i) {
+            case 0:
+                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.greenarrowdown);
+                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                break;
+            case 1:
+                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.greenarrowdown);
+                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                break;
+            case 2:
+                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.greenarrowdown);
+                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                break;
+            case 3:
+                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.greenarrowdown);
+                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                break;
+            case 4:
+                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.greenarrowdown);
+        }
+
+        // Widget
+        switch (i) {
+            case 0:
+                if(language.equals("en"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.fajrtitle));
+                else if(language.equals("ar"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.fajrtitle_arabe));
+
+                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(0));
+
+                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.greenarrowdown);
+                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
+                break;
+            case 1:
+                if(language.equals("en"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.dohrtitle));
+                else if(language.equals("ar"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.dohrtitle_arabe));
+
+                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(1));
+
+                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.greenarrowdown);
+                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
+                break;
+            case 2:
+                if(language.equals("en"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.asrtitle));
+                else if(language.equals("ar"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.asrtitle_arabe));
+
+                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(2));
+
+                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.greenarrowdown);
+                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
+                break;
+            case 3:
+                if(language.equals("en"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.maghrebtitle));
+                else if(language.equals("ar"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.maghrebtitle_arabe));
+
+                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(3));
+
+                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.greenarrowdown);
+                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
+                break;
+            case 4:
+                if(language.equals("en"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.ishatitle));
+                else if(language.equals("ar"))
+                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.ishatitle_arabe));
+
+                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(4));
+
+                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
+                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.greenarrowdown);
+        }
+    }
+
+    private void update_notification_ui_for_adan() {
+        if(darkmode)
+            remoteViews = new RemoteViews(getPackageName(), R.layout.adanondarkmode);
+        else
+            remoteViews = new RemoteViews(getPackageName(), R.layout.adanonlightmode);
+
+
+        String current_adan = "Fajr";
+        String stop_it = getResources().getString(R.string.stop_it);
+        String time = getResources().getString(R.string.time);
+        if(language.equals("ar")) {
+            time = getResources().getString(R.string.time_arabe);
+            stop_it = getResources().getString(R.string.stop_it_arabe);
+            switch (current_adding_playing) {
+                case 0:
+                    current_adan = getResources().getString(R.string.fajrtitle_arabe);
+                    break;
+                case 1:
+                    current_adan = getResources().getString(R.string.dohrtitle_arabe);
+                    break;
+                case 2:
+                    current_adan = getResources().getString(R.string.asrtitle_arabe);
+                    break;
+                case 3:
+                    current_adan = getResources().getString(R.string.maghrebtitle_arabe);
+                    break;
+                case 4:
+                    current_adan = getResources().getString(R.string.ishatitle_arabe);
+            }
+            remoteViews.setTextViewText(R.id.adangoingon, time + " " + current_adan);
+            remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
+        } else if(language.equals("en")){
+            switch (current_adding_playing) {
+                case 0:
+                    current_adan = getResources().getString(R.string.fajrtitle);
+                    break;
+                case 1:
+                    current_adan = getResources().getString(R.string.dohrtitle);
+                    break;
+                case 2:
+                    current_adan = getResources().getString(R.string.asrtitle);
+                    break;
+                case 3:
+                    current_adan = getResources().getString(R.string.maghrebtitle);
+                    break;
+                case 4:
+                    current_adan = getResources().getString(R.string.ishatitle);
+            }
+            remoteViews.setTextViewText(R.id.adangoingon, current_adan + " " + time);
+            remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
+        }
+
+        Intent button_intent = new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener");
+        //button_intent.putExtra("id",NOTIFICATION_ID);
+        PendingIntent button_pending_event = PendingIntent.getBroadcast(this,NOTIFICATION_ID, button_intent,0);
+        remoteViews.setOnClickPendingIntent(R.id.cancelbutton,button_pending_event);
+        Intent notification_intent = new Intent(this, force.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notification_intent, 0);
+        builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+    }
+
+    private void update_notification_ui() {
+        Context context = this;
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        builder = new NotificationCompat.Builder(this, "channel");
+
+        if(darkmode)
+            remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification2);
+        else
+            remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification);
+
+        remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+        remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+        remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+        remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+        remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+
+        if(language.equals("en")){
+            remoteViews.setTextViewText(R.id.fajrtitle, getResources().getString(R.string.fajrtitle));
+            remoteViews.setTextViewText(R.id.dhuhrtitle, getResources().getString(R.string.dohrtitle));
+            remoteViews.setTextViewText(R.id.asrtitle, getResources().getString(R.string.asrtitle));
+            remoteViews.setTextViewText(R.id.maghribtitle, getResources().getString(R.string.maghrebtitle));
+            remoteViews.setTextViewText(R.id.ishatitle, getResources().getString(R.string.ishatitle));
+        }
+
+        Intent notification_intent = new Intent(context, force.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notification_intent, 0);
+        builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+        remoteViews.setTextViewText(R.id.fajrtime, praytimesregularform.get(0));
+        remoteViews.setTextViewText(R.id.dhuhrtime, praytimesregularform.get(1));
+        remoteViews.setTextViewText(R.id.asrtime, praytimesregularform.get(2));
+        remoteViews.setTextViewText(R.id.maghrebtime, praytimesregularform.get(3));
+        remoteViews.setTextViewText(R.id.ishatime, praytimesregularform.get(4));
+
+        once = false;
+    }
+
     private void print(Object log){
         Toast.makeText(this, String.valueOf(log), Toast.LENGTH_LONG).show();
     }
@@ -529,10 +762,6 @@ public class Service extends android.app.Service {
     private void location_shit(Date date) {
         if_theres_previous_info_load_it_n_display(date);
 
-        if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            display_notification(false);
-        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            display_notification(true);
     }
 
     private void if_theres_previous_info_load_it_n_display(Date date) {
@@ -560,7 +789,6 @@ public class Service extends android.app.Service {
         convert_prayertimes_into_milliseconds();
     }
 
-    private boolean playing = false;
     private void playadan(int adantag) {
         try{
             simpleExoPlayer.stop();
@@ -631,6 +859,7 @@ public class Service extends android.app.Service {
                     if (playbackState == Player.STATE_ENDED) {
                         playing = false;
                         once = true;
+                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));
                     }
                 }
 
@@ -746,7 +975,6 @@ public class Service extends android.app.Service {
             praytimesregularform.add(isha.split(" ")[0]);
     }
 
-    private List<String> praytimesregularform;
     private void pull_prayer_times_and_shape_them() {
         PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, params);
         try {
@@ -768,7 +996,17 @@ public class Service extends android.app.Service {
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
         SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
+        switch (table) {
+            case "slat":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                break;
+            case "force":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                break;
+            case "force3":
+                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                break;
+        }
     }
 
     public void stoptimertask() {

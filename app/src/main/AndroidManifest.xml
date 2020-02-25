@@ -5,11 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_LAUNCH_BROADCASTS"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-    <!--required by Android 9-->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_LAUNCH_BROADCASTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- required by Android 9 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <supports-screens
         android:id="@+id/supports-screens"
@@ -28,6 +26,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver android:name=".force_widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/force_widget_info" />
+        </receiver>
+
         <activity
             android:name=".force"
             android:configChanges="orientation"
@@ -51,7 +59,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".background.restarter.JobService"
+        <service
+            android:name=".background.restarter.JobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
@@ -60,11 +69,12 @@
             android:exported="true"
             android:label="StartMyServiceAtBootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-                <action android:name="com.krimzon.scuffedbots.activity_recognition.sensor_service.RestartSensor"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="com.krimzon.scuffedbots.activity_recognition.sensor_service.RestartSensor" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
@@ -73,8 +83,7 @@
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
-            />
+            android:launchMode="singleInstance" />
 
     </application>
 

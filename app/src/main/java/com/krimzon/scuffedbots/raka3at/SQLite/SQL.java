@@ -85,13 +85,22 @@ public class SQL extends SQLiteOpenHelper {
     }
 
     //outputting data
-    public Cursor getAllDate() {
+    public Cursor getAllDateslat() {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "slat" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_2 + " TEXT" + ");");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "slat" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_2 + " TEXT" + ");");
+        return sqLiteDatabase.rawQuery("select * from " + "slat" + ";", null);
+    }
+
+    public Cursor getAllDateforce3() {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force3" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DAY + " TEXT, " + PRAYED + " TEXT, " + VERIFIED + " TEXT" + ");");
+        return sqLiteDatabase.rawQuery("select * from " + "force3" + ";", null);
+    }
+
+    public Cursor getAllDateforce() {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + "force" + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DAY + " TEXT, " + FAJR + " TEXT, " + RISE + " TEXT, " + DHUHR + " TEXT, " + ASR + " TEXT, " + MAGHRIB + " TEXT, " + ISHA + " TEXT" + ");");
-        //instance
-        return sqLiteDatabase.rawQuery("select * from " + SQLSharing.TABLE_NAME_INPUTER + ";", null);
+        return sqLiteDatabase.rawQuery("select * from " + "force" + ";", null);
     }
 
     //inputting data
