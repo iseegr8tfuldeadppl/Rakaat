@@ -617,6 +617,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
+            if(tam_page_visible)
+                warn_tahia2();
+
             // this quick check below is to limit sensor calculation to only once every 50ms
             // TODO: perform reallife tests on this check pls
             long currenttimetemp = System.currentTimeMillis();
@@ -786,18 +789,21 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void warn_tahia() {
-        Log.i("HH", "num_of_raka3at " + num_of_raka3at);
-        Log.i("HH", "num_of_sajadat " + num_of_sajadat);
-        Log.i("HH", "tahia_fading_started " + tahia_fading_started);
         if(!tahia_fading_started){
-            if(((limit==1 && num_of_raka3at==1 && num_of_sajadat==0) || (num_of_raka3at==2 && num_of_sajadat==0)
+            if(((num_of_raka3at==1 && num_of_sajadat==0) || (num_of_raka3at==2 && num_of_sajadat==0)
                     || (num_of_raka3at==4 && num_of_sajadat==0)
                     || (limit==3 && num_of_raka3at==3 && num_of_sajadat==0)) && tahia.getVisibility()==GONE) {
                 tahia_fading_started = true;
                 tahia.startAnimation(fade_in_tahia);
                 fade_in_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                    tahia.setVisibility(VISIBLE);
-                    tahia_fading_started = false;
+
+                    if(!startclicked){
+                        tahia.setVisibility(GONE);
+                        tahia_fading_started = false;
+                    } else {
+                        tahia.setVisibility(VISIBLE);
+                        tahia_fading_started = false;
+                    }
                 }});
             } else if(tahia.getVisibility()== VISIBLE) {
                 tahia_fading_started = true;
@@ -805,6 +811,34 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 fade_out_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
                     tahia.setVisibility(View.GONE);
                     tahia_fading_started = false;
+                }});
+            }
+        }
+    }
+
+
+
+    private boolean tahia_fading_started2 = false;
+    private void warn_tahia2() {
+        if(!tahia_fading_started2){
+            if(tahia.getVisibility()==GONE) {
+                tahia_fading_started2 = true;
+                tahia.startAnimation(fade_in_tahia);
+                fade_in_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
+                    if(!tam_page_visible){
+                        tahia.setVisibility(GONE);
+                        tahia_fading_started2 = false;
+                    } else {
+                        tahia.setVisibility(VISIBLE);
+                        tahia_fading_started2 = false;
+                    }
+                }});
+            } else if(tahia.getVisibility()== VISIBLE) {
+                tahia_fading_started2 = true;
+                tahia.startAnimation(fade_out_tahia);
+                fade_out_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
+                    tahia.setVisibility(View.GONE);
+                    tahia_fading_started2 = false;
                 }});
             }
         }
@@ -932,6 +966,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             changeInterruptionFiler(NotificationManager.INTERRUPTION_FILTER_NONE);
 
 
+        tahia_fading_started2 = false;
+        tam_page_visible = false;
         startclicked = false;
         start_was_just_clicked = false;
         between_raka3at_delay_started = false;
@@ -958,7 +994,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         start.setTextColor(Color.WHITE);
         not_clicked = true;
-        tahia.setVisibility(GONE);
         one.setEnabled(true);
         two.setEnabled(true);
         three.setEnabled(true);
@@ -1037,8 +1072,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         else
             SQLSharing.mydb.insertPrayed(todaycomparable, temper, verified, athome);
 
+        tahia_fading_started = false;
+        tahia_fading_started2 = false;
+        tam_page_visible = true;
+        warn_tahia2();
     }
 
+    private boolean tam_page_visible = false;
     private void check_if_prayed_exists_in_sql() {
         if(SQLSharing.mycursor.getCount()<=0)
             found_prayed_history_in_sql = false;
@@ -1293,6 +1333,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     public void tamClicked(View view) {
+        tam_page_visible = false;
         if(receiveandy==null)
             receiveandy = "main";
         if (receiveandy.equals("force"))
