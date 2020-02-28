@@ -1,44 +1,50 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="114dp"
+    android:gravity="center"
     android:background="@drawable/simpelbackground"
     android:orientation="vertical">
 
-    <TextView
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:paddingTop="15dp"
-        android:paddingBottom="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:id="@+id/didyoupraytitle"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2"
-        android:paddingBottom="15dp">
-        <Button
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:weightSum="3">
+        <TextView
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/buttons"
             android:layout_weight="1"
             android:textSize="15sp"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:text="@string/prayedit_arabe"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:id="@+id/iprayedit" />
-        <Button
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:id="@+id/didyoupraytitle"/>
+        <TextView
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center"
             android:textSize="15sp"
             android:text="@string/joinprayer_arabic"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/buttons"
             android:textColor="@color/white"
             android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/gopray" />
     </LinearLayout>

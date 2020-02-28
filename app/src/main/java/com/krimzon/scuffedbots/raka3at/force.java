@@ -1,9 +1,11 @@
 package com.krimzon.scuffedbots.raka3at;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -236,7 +238,23 @@ public class force extends AppCompatActivity  {
 
         //longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
 
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.krimzon.scuffedbots.raka3at.background.iprayeditmate"); //further more
+        registerReceiver(receiver, filter);
     }
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            assert action != null;
+            if(action.equals("com.krimzon.scuffedbots.raka3at.background.iprayeditmate")){
+                Intent restart = new Intent(getApplicationContext(), slat.class);
+                startActivity(restart);
+            }
+        }
+    };
 
     private void if_sent_from_slat_after_prayer_check_which_day_we_were_praying_and_display_that() {
         try {
@@ -411,7 +429,8 @@ public class force extends AppCompatActivity  {
             calluse.sendEmptyMessage(0);
         }
         String temptime = String.valueOf(todayos).split(" ")[3];
-        temp_rightnowcomparable = rightnowcomparable;
+        if(rightnowcomparable!=0)
+            temp_rightnowcomparable = rightnowcomparable;
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
     }
 
@@ -835,6 +854,7 @@ public class force extends AppCompatActivity  {
     @Override
     protected void onPause() {
         running = false;
+        unregisterReceiver(receiver);
 
         try {
             mythread.join();
@@ -848,6 +868,11 @@ public class force extends AppCompatActivity  {
     @Override
     protected void onResume() {
         super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.krimzon.scuffedbots.raka3at.background.iprayeditmate"); //further more
+
+        registerReceiver(receiver, filter);
 /*
 
         // this is to update the slider as it's weirdly not updating instantly after onresuming

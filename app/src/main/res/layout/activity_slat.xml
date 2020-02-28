@@ -148,7 +148,7 @@
         android:orientation="vertical">
         <TextView
             android:layout_weight="1"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:gravity="center"
             android:id="@+id/tahia"
             android:layout_width="match_parent"

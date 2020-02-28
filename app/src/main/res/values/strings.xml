@@ -324,5 +324,7 @@
     <string name="didyouprayasr">Did you pray Asr?</string>
     <string name="didyoupraymaghreb">Did you pray Maghreb?</string>
     <string name="didyouprayisha">Did you pray Isha?</string>
+    <string name="expandme">(expand me for the buttons)</string>
+    <string name="expandme_arabe">تمديد الإشعار يُظهِر الأزرار</string>
 
 </resources>

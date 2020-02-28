@@ -16,7 +16,7 @@
         android:layout_weight="1.3"
         android:gravity="center"/>
     <Button
-        android:textSize="19sp"
+        android:textSize="14sp"
         android:layout_weight="0.7"
         android:textAllCaps="false"
         android:textColor="@color/white"

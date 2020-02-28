@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.os.Build;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -82,7 +83,90 @@ public class MainActivity extends AppCompatActivity {
         }});
 
         //showNavigationBar();
+
     }
+
+
+    /*private void h(){
+
+        String didyoupray = "";
+        String gopray = "";
+        String iprayed = "";
+        String expandmefortext = "";
+
+        if (language.equals("en")) {
+            gopray = getResources().getString(R.string.prayedit);
+            iprayed = getResources().getString(R.string.joinprayer);
+            expandmefortext = getResources().getString(R.string.expandme);
+
+            switch (most_recent_unprayed) {
+                case 0:
+                    didyoupray = getResources().getString(R.string.didyouprayfajr);
+                    break;
+                case 1:
+                    didyoupray = getResources().getString(R.string.didyoupraydhuhr);
+                    break;
+                case 2:
+                    didyoupray = getResources().getString(R.string.didyouprayasr);
+                    break;
+                case 3:
+                    didyoupray = getResources().getString(R.string.didyoupraymaghreb);
+                    break;
+                case 4:
+                    didyoupray = getResources().getString(R.string.didyouprayisha);
+                    break;
+            }
+        } else if(language.equals("ar")){
+            gopray = getResources().getString(R.string.prayedit_arabe);
+            iprayed = getResources().getString(R.string.joinprayer_arabic);
+            expandmefortext = getResources().getString(R.string.expandme_arabe);
+
+            switch (most_recent_unprayed) {
+                case 0:
+                    didyoupray = getResources().getString(R.string.didyouprayfajr_arabe);
+                    break;
+                case 1:
+                    didyoupray = getResources().getString(R.string.didyoupraydhuhr_arabe);
+                    break;
+                case 2:
+                    didyoupray = getResources().getString(R.string.didyouprayasr_arabe);
+                    break;
+                case 3:
+                    didyoupray = getResources().getString(R.string.didyoupraymaghreb_arabe);
+                    break;
+                case 4:
+                    didyoupray = getResources().getString(R.string.didyouprayisha_arabe);
+                    break;
+            }
+        }
+
+
+
+        Intent goprayintent = new Intent("com.krimzon.scuffedbots.raka3at.background.gopraymate");
+        PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(getApplicationContext(),NOTIFICATION_ID2, goprayintent,0);
+
+        Intent iprayeditintent = new Intent("com.krimzon.scuffedbots.raka3at.background.iprayeditmate");
+        PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(getApplicationContext(),NOTIFICATION_ID2, iprayeditintent,0);
+
+        Intent notification_intent = new Intent(getApplicationContext(), force.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notification_intent, 0);
+        Notification noti = new Notification.Builder(this)
+                .setContentTitle(didyoupray)
+                .setContentText(expandmefortext).setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setPriority(Notification.PRIORITY_MAX)
+                .setWhen(0)
+                .addAction(R.mipmap.ic_launcher, iprayed, iprayedit_pending_event)
+                .addAction(R.mipmap.ic_launcher, gopray, goprayintent_pending_event).build();
+        try {
+            NotificationManager notificationManager2 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager2.notify(NOTIFICATION_ID2, noti);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 
 
     /*private void permission_intents_test() {
@@ -228,15 +312,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         // if user granted access else ask for permission
-        if ( notificationManager.isNotificationPolicyAccessGranted()) {
-            AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-        } else{
-            // Open Setting screen to ask for permisssion
-            Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-            startActivityForResult( intent, ON_DO_NOT_DISTURB_CALLBACK_CODE );
+            if ( notificationManager.isNotificationPolicyAccessGranted()) {
+                AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+            } else{
+                // Open Setting screen to ask for permisssion
+                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                startActivityForResult( intent, ON_DO_NOT_DISTURB_CALLBACK_CODE );
+            }
         }
     }
     @Override

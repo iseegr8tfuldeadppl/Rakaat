@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -144,10 +145,24 @@ public class Service extends android.app.Service {
                     once = true;
                 } catch(Exception ignored){}
             } else if(action.equals("com.krimzon.scuffedbots.raka3at.background.gopraymate")){
-                Intent openforce = new Intent(getApplicationContext(), force.class);
+                try {
+                    NotificationManager notificationManager3 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager3.cancel(NOTIFICATION_ID2);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+                check_unprayed_prayer_for_today();
+                Intent openforce = new Intent(c, force.class);
+                openforce.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(openforce);
             } else if(action.equals("com.krimzon.scuffedbots.raka3at.background.iprayeditmate")){
                 if(most_recent_unprayed!=-1) {
+                    try {
+                        NotificationManager notificationManager3 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        notificationManager3.cancel(NOTIFICATION_ID2);
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
                     StringBuilder strinkbilder = new StringBuilder(prayed);
                     strinkbilder.setCharAt(most_recent_unprayed, '1');
                     String temper = String.valueOf(strinkbilder);
@@ -164,6 +179,8 @@ public class Service extends android.app.Service {
         // https://stackoverflow.com/questions/9092134/broadcast-receiver-within-a-service
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"); //further more
+        filter.addAction("com.krimzon.scuffedbots.raka3at.background.gopraymate"); //further more
+        filter.addAction("com.krimzon.scuffedbots.raka3at.background.iprayeditmate"); //further more
 
         registerReceiver(receiver, filter);
     }
@@ -356,6 +373,7 @@ public class Service extends android.app.Service {
                                     display_notification(true);
 
                                 adan_exception = true;
+                                already_unmuted = true;
                                 unmuter();
                                 vibrate();
                                 playadan(pullselectedadanforthisprayerfromSQL(i));
@@ -804,9 +822,7 @@ public class Service extends android.app.Service {
         assert v != null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             v.vibrate(VibrationEffect.createOneShot(545, VibrationEffect.DEFAULT_AMPLITUDE));
-            v.vibrate(VibrationEffect.createOneShot(545, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
-            v.vibrate(545);
             v.vibrate(545);
         }
     }
@@ -844,7 +860,7 @@ public class Service extends android.app.Service {
                     break;
                 }
             }
-            if(unprayed)
+            if(!unprayed)
                 most_recent_unprayed = -1;
         }
     }
@@ -852,7 +868,7 @@ public class Service extends android.app.Service {
     private int most_recent_unprayed = -1;
     private boolean already_notified_recent_adan = false;
     private void prepare_a_custom_reminder_notification_and_send_it() {
-        if((positifise>=15 && positifise <=25 || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1) {
+        if(((positifise>=15 && positifise <=25) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1) {
             if(!already_notified_recent_adan) {
                 already_notified_recent_adan = true;
                 vibrate();
@@ -907,18 +923,23 @@ public class Service extends android.app.Service {
                 }
 
                 Intent goprayintent = new Intent("com.krimzon.scuffedbots.raka3at.background.gopraymate");
-                //button_intent.putExtra("id",NOTIFICATION_ID);
-                PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID, goprayintent,0);
+                //button_intent.putExtra("id",NOTIFICATION_ID2);
+                PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID2, goprayintent,0);
                 remoteViews2.setOnClickPendingIntent(R.id.gopray,goprayintent_pending_event);
 
                 Intent iprayeditintent = new Intent("com.krimzon.scuffedbots.raka3at.background.iprayeditmate");
-                //button_intent.putExtra("id",NOTIFICATION_ID);
-                PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID, iprayeditintent,0);
+                //button_intent.putExtra("id",NOTIFICATION_ID2);
+                PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID2, iprayeditintent,0);
                 remoteViews2.setOnClickPendingIntent(R.id.iprayedit,iprayedit_pending_event);
 
                 Intent notification_intent = new Intent(c, force.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, 0);
-                builder2.setSmallIcon(R.mipmap.ic_launcher).setContentIntent(pendingIntent).setCustomContentView(remoteViews2).setAutoCancel(true);
+                builder2
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentIntent(pendingIntent)
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setCustomContentView(remoteViews2)
+                        .setAutoCancel(true);
 
                 try {
                     notificationManager2.notify(NOTIFICATION_ID2, builder2.build());
@@ -1004,6 +1025,11 @@ public class Service extends android.app.Service {
 
     private void playadan(int adantag) {
         try{
+            // maximum  music audio to play this bitch
+            AudioManager audioManager;
+            audioManager = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 20, 0);
+
             simpleExoPlayer.stop();
             simpleExoPlayer.release();
         } catch(Exception ignored){}
