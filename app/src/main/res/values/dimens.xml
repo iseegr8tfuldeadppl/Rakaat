@@ -41,5 +41,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widgetsmallimageheight">10dp</dimen>
     <dimen name="prayertitlepaddingbottom">10dp</dimen>
     <dimen name="paddingstartandendofsliderer">15dp</dimen>
+    <dimen name="innertextsidepaddings">8dp</dimen>
 
 </resources>

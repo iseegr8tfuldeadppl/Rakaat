@@ -106,10 +106,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
         dismiss.setTypeface(arabic_typeface);
 
         if(!darkmode) {
-            LinearLayout full = findViewById(R.id.fulle);
-            Drawable simpelbackground = c.getResources().getDrawable(R.drawable.simpelbackground);
-            Drawable buttons = c.getResources().getDrawable(R.drawable.buttons);
-            full.setBackground(simpelbackground);
+            findViewById(R.id.fulle).setBackground(c.getResources().getDrawable(R.drawable.simpelbackground));
             title.setTextColor(Color.BLACK);
             statstitle.setTextColor(Color.BLACK);
             title_prayed_prayers_today.setTextColor(Color.BLACK);
@@ -124,7 +121,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
             display_prayed_prayers_past_year.setTextColor(Color.BLACK);
             title_prayed_prayers_of_all_time.setTextColor(Color.BLACK);
             display_of_prayed_prayers_of_all_time.setTextColor(Color.BLACK);
-            dismiss.setBackground(buttons);
+            dismiss.setBackground(c.getResources().getDrawable(R.drawable.buttons));
         }
 
 
@@ -174,7 +171,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     private void count_prayed_prayers_today() {
         day = new Date();
         tempday = day.toString().split(" ");
-        daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5].charAt(2) + tempday[5].charAt(3);
+        daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5];
 
         if(SQLSharing.mycursor.getCount()>0){
             while(SQLSharing.mycursor.moveToNext()) {
@@ -200,7 +197,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
             GregorianCalendar gc = new GregorianCalendar();
             day = gc.getTime();
             tempday = day.toString().split(" ");
-            daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5].charAt(2) + tempday[5].charAt(3);
+            daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5];
             count_prayed_prayers2();
 
 
@@ -209,7 +206,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
                 gc.add(Calendar.DATE, -(i+1));
                 day = gc.getTime();
                 tempday = day.toString().split(" ");
-                daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5].charAt(2) + tempday[5].charAt(3);
+                daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5];
                 count_prayed_prayers2();
             }
 

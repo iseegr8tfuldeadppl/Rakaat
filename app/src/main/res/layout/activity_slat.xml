@@ -27,19 +27,6 @@
                 android:includeFontPadding="false"
                 android:textColor="@color/white"
                 android:textSize="50sp" />
-            <TextView
-                android:visibility="gone"
-                android:gravity="center"
-                android:layout_centerInParent="true"
-                android:id="@+id/tahia"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tahia_arabe"
-                android:paddingBottom="0px"
-                android:paddingTop="0px"
-                android:includeFontPadding="false"
-                android:textColor="@color/white"
-                android:textSize="50sp" />
         </RelativeLayout>
 
         <com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView
@@ -133,12 +120,8 @@
             android:layout_weight=".5"
             android:gravity="center">
             <TextView
-                android:id="@+id/donetitle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="150sp"
-                android:text="@string/done_arabe"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -156,6 +139,34 @@
                 android:textColor="@color/white"
                 android:onClick="tamClicked"/>
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="3"
+        android:orientation="vertical">
+        <TextView
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:gravity="center"
+            android:id="@+id/tahia"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/tahia_arabe"
+            android:paddingBottom="0px"
+            android:paddingTop="0px"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:textSize="50sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
     </LinearLayout>
 
     <LinearLayout

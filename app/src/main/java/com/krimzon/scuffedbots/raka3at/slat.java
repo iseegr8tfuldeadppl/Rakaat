@@ -1,6 +1,8 @@
 package com.krimzon.scuffedbots.raka3at;
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -10,11 +12,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -104,7 +109,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private boolean animation_of_initial_five_seconds_started = false;
     private LinearLayout donecover;
     private Button donebutton;
-    private TextView donetitle;
     private ImageView nightmode;
     private boolean it_is_nightmode_since_lightmode_shines_and_ruins_measurement = true;
     private LinearLayout countdownbackground;
@@ -123,13 +127,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private Animation slide_out_from_right3;
     private Animation slide_in_from_right4;
     private Animation slide_out_from_right4;
-
-    private String rakaat, tahiah, sajadat, starth;
-    private String done, back2;
-    private String oneh, twoh, threeh, fourh, stop;
-
-    private String start_arabe, stop_arabe;
-
     private String language = "ar";
     private String receiveandy = "";
     private String todaycomparable = "";
@@ -144,6 +141,14 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private boolean entered_praying_process = false;
     private long futuretime4 = 0;
     private boolean found_prayed_history_in_sql = false;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unmuter();
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+            changeInterruptionFiler(NotificationManager.INTERRUPTION_FILTER_NONE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,10 +168,61 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         sql_work();
         countdown.setText(String.valueOf(delaybeforecounting));
-        work_on_language();
+        if(language.equals("en"))
+            english();
         work_on_text_brightness(); // must be after loading it_is_nightmode_since_lightmode_shines_and_ruins_measurement from SQL
         navigation_bar();
         check_if_sent_from_force();
+        /*check_do_not_disturb_permission();*/
+    }
+
+    private void muter() {
+        try{
+            AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+            am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+            //am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void check_do_not_disturb_permission(){
+        try{
+            if (Build.VERSION.SDK_INT >= 23)
+                this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    private void unmuter() {
+        try{
+            AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+            am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 6969;
+    private void requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            // if user granted access else ask for permission
+            if ( notificationManager.isNotificationPolicyAccessGranted()) {
+                AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+            } else{
+                // Open Setting screen to ask for permisssion
+                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                startActivityForResult( intent, ON_DO_NOT_DISTURB_CALLBACK_CODE );
+            }
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ON_DO_NOT_DISTURB_CALLBACK_CODE) {
+            this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
+        }
     }
 
 
@@ -190,16 +246,29 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void forceAndy() {
+        muter();
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+            changeInterruptionFiler(NotificationManager.INTERRUPTION_FILTER_ALL);
         click_on_start();
     }
 
 
-    private void work_on_language() {
-        getStrings();
-        if(language.equals("en"))
-            english();
-    }
 
+    private NotificationManager mNotificationManager;
+    protected void changeInterruptionFiler(int interruptionFilter){
+        /*try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // If notification policy access granted for this package
+                if (mNotificationManager.isNotificationPolicyAccessGranted()) {
+                    // Set the interruption filter
+                    mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    mNotificationManager.setInterruptionFilter(interruptionFilter);
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }*/
+    }
 
     private void work_on_text_brightness() {
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement)
@@ -214,37 +283,16 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         showNavigationBar();
     }
 
-
-    private void getStrings(){
-         if(language.equals("en")) {
-            rakaat = getString(R.string.rakaat);
-            tahiah = getString(R.string.tahia);
-            sajadat = getString(R.string.sajadat);
-            starth = getString(R.string.start);
-            done = getString(R.string.done);
-            back2 = getString(R.string.back2);
-            oneh = getString(R.string.one);
-            twoh = getString(R.string.two);
-            threeh = getString(R.string.three);
-            fourh = getString(R.string.four);
-        }
-         start_arabe = getString(R.string.start_arabe);
-         stop_arabe = getString(R.string.stop_arabe);
-         stop = getString(R.string.stop);
-    }
-
-
     private void english(){
-        four.setText(fourh);
-        three.setText(threeh);
-        two.setText(twoh);
-        one.setText(oneh);
-        slattitle.setText(rakaat);
-        tahia.setText(tahiah);
-        sajda_pre.setText(sajadat);
-        start.setText(starth);
-        donetitle.setText(done);
-        donebutton.setText(back2);
+        four.setText(resources.getString(R.string.four));
+        three.setText(resources.getString(R.string.three));
+        two.setText(resources.getString(R.string.two));
+        one.setText(resources.getString(R.string.one));
+        slattitle.setText(resources.getString(R.string.rakaat));
+        tahia.setText(resources.getString(R.string.tahia));
+        sajda_pre.setText(resources.getString(R.string.sajadat));
+        start.setText(resources.getString(R.string.start));
+        donebutton.setText(resources.getString(R.string.back2));
     }
 
 
@@ -319,7 +367,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         countdownbackground = findViewById(R.id.countdownbackground);
         donecover = findViewById(R.id.donecover);
         donebutton = findViewById(R.id.donebutton);
-        donetitle = findViewById(R.id.donetitle);
         coverer = findViewById(R.id.coverer);
         one = findViewById(R.id.one);
         two = findViewById(R.id.two);
@@ -344,7 +391,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         slattitle.setTypeface(font);
         start.setTypeface(font);
         sajda_pre.setTypeface(font);
-        donetitle.setTypeface(font);
         donebutton.setTypeface(font);
 
         //https://www.youtube.com/watch?v=ZL6s8TyHNOc
@@ -490,9 +536,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         else
             five_second_before_actually_starting_was_finished = true;
         if(language.equals("en"))
-            start.setText(stop);
+            start.setText(resources.getString(R.string.stop));
         else
-            start.setText(stop_arabe);
+            start.setText(resources.getString(R.string.stop_arabe));
         blackoutbutton.setVisibility(VISIBLE);
         sajda_pre.setVisibility(INVISIBLE);
         settings.setVisibility(View.GONE);
@@ -726,6 +772,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                     doitposse = true;
             }
         }
+        if(num_of_raka3at==limit)
+            doitposse = false;
     }
 
 
@@ -738,11 +786,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void warn_tahia() {
+        Log.i("HH", "num_of_raka3at " + num_of_raka3at);
+        Log.i("HH", "num_of_sajadat " + num_of_sajadat);
+        Log.i("HH", "tahia_fading_started " + tahia_fading_started);
         if(!tahia_fading_started){
-            if(( (num_of_raka3at==2 && num_of_sajadat==0)
+            if(((limit==1 && num_of_raka3at==1 && num_of_sajadat==0) || (num_of_raka3at==2 && num_of_sajadat==0)
                     || (num_of_raka3at==4 && num_of_sajadat==0)
-                    || (limit==3 && num_of_raka3at==3 && num_of_sajadat==0))
-                    && tahia.getVisibility()== View.GONE){
+                    || (limit==3 && num_of_raka3at==3 && num_of_sajadat==0)) && tahia.getVisibility()==GONE) {
                 tahia_fading_started = true;
                 tahia.startAnimation(fade_in_tahia);
                 fade_in_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -877,6 +927,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void reset(){
+        unmuter();
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+            changeInterruptionFiler(NotificationManager.INTERRUPTION_FILTER_NONE);
+
 
         startclicked = false;
         start_was_just_clicked = false;
@@ -938,9 +992,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         animation_of_initial_five_seconds_started = false;
         five_second_before_actually_starting_was_finished = false;
         if(language.equals("en"))
-            start.setText(starth);
+            start.setText(resources.getString(R.string.start));
         else
-            start.setText(start_arabe);
+            start.setText(resources.getString(R.string.start_arabe));
         original_light_saved = false;
         sajda_done = false;
         num_of_raka3at = 0;
@@ -1101,7 +1155,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if (scheme_light_mode == 0) {
             raka3at.setTextColor(resources.getColor(R.color.dimmest));
             sajda.setTextColor(resources.getColor(R.color.dimmest));
-            donetitle.setTextColor(resources.getColor(R.color.dimmest));
             countdown.setTextColor(resources.getColor(R.color.dimmest));
             tahia.setTextColor(resources.getColor(R.color.dimmest));
             if(startclicked)
@@ -1109,7 +1162,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         } else if (scheme_light_mode == 1) {
             raka3at.setTextColor(resources.getColor(R.color.dimmer));
             sajda.setTextColor(resources.getColor(R.color.dimmer));
-            donetitle.setTextColor(resources.getColor(R.color.dimmer));
             countdown.setTextColor(resources.getColor(R.color.dimmer));
             tahia.setTextColor(resources.getColor(R.color.dimmer));
             if(startclicked)
@@ -1117,7 +1169,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         } else {
             raka3at.setTextColor(resources.getColor(R.color.dimm));
             sajda.setTextColor(resources.getColor(R.color.dimm));
-            donetitle.setTextColor(resources.getColor(R.color.dimm));
             countdown.setTextColor(resources.getColor(R.color.dimm));
             tahia.setTextColor(resources.getColor(R.color.dimm));
             if(startclicked)
@@ -1178,7 +1229,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             sajda.setTextColor(resources.getColor(R.color.darkest));
             raka3at.setTextColor(resources.getColor(R.color.darkest));
             countdown.setTextColor(resources.getColor(R.color.darkest));
-            donetitle.setTextColor(resources.getColor(R.color.darkest));
             tahia.setTextColor(resources.getColor(R.color.darkest));
             if(startclicked)
                 start.setTextColor(resources.getColor(R.color.darkest));
@@ -1186,7 +1236,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             sajda.setTextColor(resources.getColor(R.color.dark));
             raka3at.setTextColor(resources.getColor(R.color.dark));
             countdown.setTextColor(resources.getColor(R.color.dark));
-            donetitle.setTextColor(resources.getColor(R.color.dark));
             tahia.setTextColor(resources.getColor(R.color.dark));
             if(startclicked)
                 start.setTextColor(resources.getColor(R.color.dark));
@@ -1194,7 +1243,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             sajda.setTextColor(resources.getColor(R.color.white));
             raka3at.setTextColor(resources.getColor(R.color.white));
             countdown.setTextColor(resources.getColor(R.color.white));
-            donetitle.setTextColor(resources.getColor(R.color.white));
             tahia.setTextColor(resources.getColor(R.color.white));
             if(startclicked)
                 start.setTextColor(resources.getColor(R.color.white));
@@ -1248,7 +1296,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if(receiveandy==null)
             receiveandy = "main";
         if (receiveandy.equals("force"))
-            back_to_force("no");
+            back_to_force_with_day_indication();
         else {
             donecover.setVisibility(GONE);
             reset();
@@ -1264,6 +1312,22 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         forceIntent.putExtra("light_alert", input); // yes for true
         startActivity(forceIntent);
         finish();
+    }
+
+    private void back_to_force_with_day_indication() {
+        close_sql();
+        Intent forceIntent = new Intent(this, force.class);
+        forceIntent.putExtra("todaycomparable", todaycomparable);
+        forceIntent.putExtra("light_alert", "no"); // yes for true
+        startActivity(forceIntent);
+        finish();
+    }
+
+    private void close_sql() {
+        if(SQLSharing.mycursor!=null)
+            SQLSharing.mycursor.close();
+        if(SQLSharing.mydb!=null)
+            SQLSharing.mydb.close();
     }
 
 

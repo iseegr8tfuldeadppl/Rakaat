@@ -7,116 +7,6 @@
     android:background="@drawable/forcefull"
     android:id="@+id/full">
 
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/backback"
-        android:id="@+id/leftsideelementsbackground"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true">
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:onClick="arrowbackClicked"
-            android:clickable="true"
-            android:focusable="true"
-            android:id="@+id/backarrowbackground"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/arrowback"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginStart="13dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="13dp"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="13dp"
-                android:onClick="arrowbackClicked"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="settingsClicked"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/settingsbutton"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="settingsClicked"
-                android:layout_marginStart="13dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="13dp"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="13dp"/>
-        </RelativeLayout>
-    </LinearLayout>
-
-
-
-
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/statsback"
-        android:id="@+id/rightsideelementsbackground"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true">
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:onClick="ShowStatisticsClicked"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/statslogo"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="13dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginTop="13dp"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:onClick="ShowStatisticsClicked"
-                android:layout_marginRight="13dp"
-                android:layout_marginLeft="16dp" />
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="nightmodeClicked"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/nightmodebutton"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="13dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginTop="13dp"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:onClick="nightmodeClicked"
-                android:layout_marginRight="13dp"
-                android:layout_marginLeft="16dp" />
-        </RelativeLayout>
-    </LinearLayout>
-
     <!--Contents together-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -170,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="3"
+                android:weightSum="2"
                 android:baselineAligned="false">
                 <RelativeLayout
                     android:focusable="true"
@@ -197,15 +87,6 @@
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/todo" />
                 </RelativeLayout>
-                <TextView
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/backtotoday"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:id="@+id/city"/>
                 <RelativeLayout
                     android:id="@+id/tommorowarrowbackground"
                     android:focusable="true"
@@ -241,15 +122,22 @@
                 android:focusable="true"
                 android:clickable="true"
                 android:onClick="backtotodayClicked"
-                android:id="@+id/doublearrowsbackground"
-                android:visibility="invisible"
-                android:paddingEnd="40dp"
-                android:paddingStart="40dp">
+                android:id="@+id/doublearrowsbackground">
+                <TextView
+                    android:layout_height="32dp"
+                    android:layout_width="160dp"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/white"
+                    android:id="@+id/city"/>
                 <ImageView
+                    android:visibility="invisible"
                     android:layout_marginTop="@dimen/multipledayarrowtopnbottompaddings"
                     android:layout_marginBottom="@dimen/multipledayarrowtopnbottompaddings"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_centerInParent="true"
                     android:focusable="true"
                     android:clickable="true"
                     android:onClick="backtotodayClicked"
@@ -751,6 +639,133 @@
 
             </LinearLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/backback"
+            android:id="@+id/leftsideelementsbackground"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:onClick="arrowbackClicked"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/backarrowbackground"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/arrowback"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="13dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="13dp"
+                    android:onClick="arrowbackClicked"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="settingsClicked"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/settingsbutton"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="settingsClicked"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="13dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="13dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+        <TextView
+            android:onClick="prayedthisdaybeforeClicked"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="10dp"
+            android:text="Prayed this\nday before?"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/prayedthisdaybefore"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/grayerthanwhite"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/delaydisplay"
+            android:textSize="13sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/statsback"
+        android:id="@+id/rightsideelementsbackground"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:onClick="ShowStatisticsClicked"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/statslogo"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="13dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="13dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:onClick="ShowStatisticsClicked"
+                android:layout_marginRight="13dp"
+                android:layout_marginLeft="16dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="nightmodeClicked"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/nightmodebutton"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="13dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="13dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:onClick="nightmodeClicked"
+                android:layout_marginRight="13dp"
+                android:layout_marginLeft="16dp" />
+        </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>

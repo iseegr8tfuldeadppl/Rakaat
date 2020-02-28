@@ -32,8 +32,9 @@ public class HomeOrMosque extends Dialog {
     private boolean darkmode;
     private String language;
     private boolean found_prayed_history_in_sql = false;
+    private boolean all_day = true;
 
-    public HomeOrMosque(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, String verified, String athome) {
+    public HomeOrMosque(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, String verified, String athome, boolean all_day) {
         super(a);
         this.c = a;
         this.friday = friday;
@@ -44,8 +45,10 @@ public class HomeOrMosque extends Dialog {
         this.language = language;
         this.verified = verified;
         this.athome = athome;
+        this.all_day = all_day;
     }
 
+    private Button dismiss;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +60,14 @@ public class HomeOrMosque extends Dialog {
         selectiontitle = findViewById(R.id.selectiontitle);
         selectionmosque = findViewById(R.id.selectionmosque);
         selectionhome = findViewById(R.id.selectionhome);
+        dismiss = findViewById(R.id.dismiss);
 
         // Step 2: Fonts
         Typeface arabic_typeface = Typeface.createFromAsset(c.getAssets(), "Tajawal-Light.ttf");
         selectionmosque.setTypeface(arabic_typeface);
         selectionhome.setTypeface(arabic_typeface);
         selectiontitle.setTypeface(arabic_typeface);
+        dismiss.setTypeface(arabic_typeface);
 
         // Step 3: display mode
         if(!darkmode)
@@ -74,24 +79,34 @@ public class HomeOrMosque extends Dialog {
 
         // Wait for selection
         selectionhome.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            selectionhome.setEnabled(false);
-            selectionmosque.setEnabled(false);
             at_home = true;
 
-            /*DetectorOrNot detectorOrNot=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
-            detectorOrNot.show();*/
-            detectorornot();
-            //dismiss();
+            if(all_day)
+                set_all_prayers_and_reload();
+            else
+                detectorornot();
         }});
         selectionmosque.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            selectionhome.setEnabled(false);
-            selectionmosque.setEnabled(false);
             at_home = false;
-            /*DetectorOrNot detectorOrNot=new DetectorOrNot(c, friday, prayed, todaycomparable, prayerer, darkmode, language, at_home, verified, athome);
-            detectorOrNot.show();*/
-            detectorornot();
-            //dismiss();
+
+            if(all_day)
+                set_all_prayers_and_reload();
+            else
+                detectorornot();
         }});
+        dismiss.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
+            dismiss();
+        }});
+    }
+
+    private void set_all_prayers_and_reload() {
+        set_all_prayers();
+
+        c.finish();
+        c.getIntent().putExtra("todaycomparable", todaycomparable);
+        c.getIntent().putExtra("light_alert", "no");
+        c.startActivity(c.getIntent());
+        dismiss();
     }
 
     private void detectorornot() {
@@ -102,12 +117,14 @@ public class HomeOrMosque extends Dialog {
         selectiontitle = findViewById(R.id.selectiontitle);
         selectionmosque = findViewById(R.id.selectionmosque);
         selectionhome = findViewById(R.id.selectionhome);
+        dismiss = findViewById(R.id.dismiss);
 
         // Step 2: Fonts
         Typeface arabic_typeface = Typeface.createFromAsset(c.getAssets(), "Tajawal-Light.ttf");
         selectionmosque.setTypeface(arabic_typeface);
         selectionhome.setTypeface(arabic_typeface);
         selectiontitle.setTypeface(arabic_typeface);
+        dismiss.setTypeface(arabic_typeface);
 
         // Step 3: display mode
         if(!darkmode)
@@ -119,19 +136,19 @@ public class HomeOrMosque extends Dialog {
 
         // Wait for selection
         selectionhome.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            selectionhome.setEnabled(false);
-            selectionmosque.setEnabled(false);
             send(prayerer);
         }});
         selectionmosque.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            selectionhome.setEnabled(false);
-            selectionmosque.setEnabled(false);
 
             // TODO: after adding a new collumn for confirmed prayers or not, add the check here
             set_prayer_without_using_detector();
             c.finish();
+            c.getIntent().putExtra("todaycomparable", todaycomparable);
             c.getIntent().putExtra("light_alert", "no");
             c.startActivity(c.getIntent());
+            dismiss();
+        }});
+        dismiss.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
             dismiss();
         }});
     }
@@ -166,6 +183,22 @@ public class HomeOrMosque extends Dialog {
             SQLSharing.mydb.insertPrayed(todaycomparable, temper, verified, athome);
     }
 
+    private void set_all_prayers() {
+
+        // set if at home or not
+        if(at_home)
+            athome = "11111";
+        else
+            athome = "00000";
+
+        sql();
+        check_if_prayed_exists_in_sql();
+        if(found_prayed_history_in_sql)
+            SQLSharing.mydb.updatePrayed(todaycomparable, "11111", "00000", athome);
+        else
+            SQLSharing.mydb.insertPrayed(todaycomparable, "11111", "00000", athome);
+    }
+
     private void check_if_prayed_exists_in_sql() {
         if(SQLSharing.mycursor.getCount()<=0)
             found_prayed_history_in_sql = false;
@@ -183,6 +216,7 @@ public class HomeOrMosque extends Dialog {
         selectiontitle.setText(c.getString(R.string.needdetector));
         selectionhome.setText(c.getString(R.string.detectoryes));
         selectionmosque.setText(c.getString(R.string.detectorno));
+        dismiss.setText(c.getResources().getString(R.string.closenglish));
     }
 
     private void light_mode2(){
@@ -191,6 +225,7 @@ public class HomeOrMosque extends Dialog {
 
         selectionmosque.setBackground(c.getResources().getDrawable(R.drawable.buttons));
         selectionhome.setBackground(c.getResources().getDrawable(R.drawable.buttons));
+        dismiss.setBackground(c.getResources().getDrawable(R.drawable.buttons));
     }
 
     private void send(int prayer){
@@ -211,9 +246,11 @@ public class HomeOrMosque extends Dialog {
         selectiontitle.setText(c.getString(R.string.selectiontitle));
         selectionhome.setText(c.getString(R.string.selectionhome));
         selectionmosque.setText(c.getString(R.string.selectionmosque));
+        dismiss.setText(c.getResources().getString(R.string.closenglish));
     }
 
     private void light_mode(){
+        dismiss.setBackground(c.getResources().getDrawable(R.drawable.buttons));
         selectionbackground.setBackground(c.getResources().getDrawable(R.drawable.simpelbackground));
         selectiontitle.setTextColor(Color.BLACK);
 

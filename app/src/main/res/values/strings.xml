@@ -303,5 +303,26 @@
     <string name="time_arabe">وقت</string>
     <string name="time">time</string>
     <string name="stop_it_arabe">أوقف الآذان</string>
+    <string name="afterdefaultcounter">35</string>
+    <string name="mutephonetitle">Mute Phone Periods</string>
+    <string name="mutephonetitle_arabe">مدّة كتْم رنّات الهاتف</string>
+    <string name="minutestomutebeforeadan">Minutes to mute before adan</string>
+    <string name="minutestomutebeforeadan_arabe">مدّة دقائق لكتْم رنّات الهاتف قبل الأذان</string>
+    <string name="minutestomuteafteradan">Minutes to mute before adan</string>
+    <string name="minutestomuteafteradan_arabe">مدّة دقائق لكتْم رنّات الهاتف بعد الأذان</string>
+    <string name="beforeadandefault">5</string>
+    <string name="afterdefaultcounter2">20</string>
+    <string name="prayedit_arabe">صلّيتُه</string>
+    <string name="prayedit">Prayed it</string>
+    <string name="didyouprayfajr_arabe">هل صليت الصُّبح؟</string>
+    <string name="didyoupraydhuhr_arabe">هل صليت الظُّهر؟</string>
+    <string name="didyouprayasr_arabe">هل صليت العصر؟</string>
+    <string name="didyoupraymaghreb_arabe">هل صليت المغرب؟</string>
+    <string name="didyouprayisha_arabe">هل صليت العشاء؟</string>
+    <string name="didyouprayfajr">Did you pray Fajr?</string>
+    <string name="didyoupraydhuhr">Did you pray Dhuhr?</string>
+    <string name="didyouprayasr">Did you pray Asr?</string>
+    <string name="didyoupraymaghreb">Did you pray Maghreb?</string>
+    <string name="didyouprayisha">Did you pray Isha?</string>
 
 </resources>

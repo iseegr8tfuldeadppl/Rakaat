@@ -9,15 +9,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.batoulapps.adhan.CalculationMethod;
@@ -28,7 +29,6 @@ import com.batoulapps.adhan.PrayerTimes;
 import com.batoulapps.adhan.data.DateComponents;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
@@ -53,12 +53,14 @@ import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.force;
 import com.krimzon.scuffedbots.raka3at.force_widget;
 
+import static java.lang.Math.abs;
+
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
+    protected static final int NOTIFICATION_ID2 = 1339;
     private static Service mCurrentService;
     private CalculationParameters params;
     private int i = 0;
-    private int rightnowcomparable;
     private Date old_date, new_date;
     private boolean recent_adan = false;
     private Coordinates coordinates;
@@ -84,16 +86,26 @@ public class Service extends android.app.Service {
     private Notification notification;
     private boolean playing = false;
     private List<String> praytimesregularform;
+    private Context c;
+    private int positifise=0;
+    private int negatifise = 0;
+    private boolean still_scoping_on_previous_adan = false;
+    private int current_displayed_slider = -1;
+    private int slider = 0;
+    private int rightnowcomparable_old = 0, rightnowcomparable = 1;
+    private RemoteViews widgetViews;
 
     public Service() {
         super();
     }
 
+    private String delays;
     @Override
     public void onCreate() {
         super.onCreate();
         mCurrentService = this;
 
+        c = getApplicationContext();
         // check if switch for main notification is on
         sql("slat");
         SQLSharing.mycursor.moveToPosition(1);
@@ -102,6 +114,9 @@ public class Service extends android.app.Service {
         language = SQLSharing.mycursor.getString(1);
         SQLSharing.mycursor.moveToPosition(8);
         main_notification_switch = SQLSharing.mycursor.getString(1).equals("yes");
+        SQLSharing.mycursor.moveToPosition(10);
+        delays = SQLSharing.mycursor.getString(1);
+        delayssplit = delays.split(" ");
         close_sql();
 
         sql("force");
@@ -112,6 +127,7 @@ public class Service extends android.app.Service {
         launch_stop_adan_button_listener();
     }
 
+    private String[] delayssplit;
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -124,8 +140,22 @@ public class Service extends android.app.Service {
                     simpleExoPlayer.stop();
                     simpleExoPlayer.release();
                     playing = false;
+                    adan_exception = false;
                     once = true;
                 } catch(Exception ignored){}
+            } else if(action.equals("com.krimzon.scuffedbots.raka3at.background.gopraymate")){
+                Intent openforce = new Intent(getApplicationContext(), force.class);
+                startActivity(openforce);
+            } else if(action.equals("com.krimzon.scuffedbots.raka3at.background.iprayeditmate")){
+                if(most_recent_unprayed!=-1) {
+                    StringBuilder strinkbilder = new StringBuilder(prayed);
+                    strinkbilder.setCharAt(most_recent_unprayed, '1');
+                    String temper = String.valueOf(strinkbilder);
+                    SQLSharing.mydb.updatePrayed(todaycomparable, temper, verified, athome);
+                    close_sql();
+                }
+
+                check_unprayed_prayer_for_today();
             }
         }
     };
@@ -164,7 +194,6 @@ public class Service extends android.app.Service {
     private void find_next_adan() {
         try {
             String temptime = String.valueOf(old_date).split(" ")[3];
-            //int rightnowcomparable_old = rightnowcomparable;
             rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
 
             /*if(rightnowcomparable_old!=rightnowcomparable){
@@ -186,7 +215,7 @@ public class Service extends android.app.Service {
                 end_of_day = true;
             } else
                 end_of_day = false;
-
+            
         } catch(Exception ignored){}
     }
 
@@ -212,7 +241,7 @@ public class Service extends android.app.Service {
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         if (intent == null) {
             ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(this);
+            bck.launchService(c);
         }
 
         // make sure you call the startForeground on onStartCommand because otherwise
@@ -302,14 +331,14 @@ public class Service extends android.app.Service {
                     old_date = new_date;
                     find_next_adan();
                     if(i!=-1) {
-                        find_slider(i);
+                        rightnowcomparable_old = rightnowcomparable;
                         calculate_negatifise_and_positifise();
                         check_negatifise();
-                        then_check_positifise();
-                        if_new_slider_apply_it();
-                        cleaning = true;
-                        find_slider(i);
-                        cleaning = false;
+                        if_change_needed_for_slider_apply_it();
+                        find_currently_displayed_adans_id(i);
+                        apply_mute_delays();
+                        check_unprayed_prayer_for_today();
+                        prepare_a_custom_reminder_notification_and_send_it();
                     }
 
 
@@ -326,6 +355,9 @@ public class Service extends android.app.Service {
                                 else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                                     display_notification(true);
 
+                                adan_exception = true;
+                                unmuter();
+                                vibrate();
                                 playadan(pullselectedadanforthisprayerfromSQL(i));
 
                                 // set i to the next adan
@@ -361,70 +393,106 @@ public class Service extends android.app.Service {
         };
     }
 
-    private void then_check_positifise() {
-        /*if ((temp_positifise != positifise) && !still_scoping_on_previous_adan)*/
-            positifise = temp_positifise;
+    private boolean adan_exception = false;
+    private String[] delaysplitsplit;
+    private boolean mute = false, already_muted = false, already_unmuted = true;
+    private void apply_mute_delays() {
+        delaysplitsplit = delayssplit[i].split(",");
+        mute = positifise <= Integer.valueOf(delaysplitsplit[0]) || negatifise <= Integer.valueOf(delaysplitsplit[1]);
+
+        if(mute && !already_muted && !adan_exception){
+            already_muted = true;
+            already_unmuted = false;
+            muter();
+        } else if(!mute && !already_unmuted && !adan_exception){
+            already_muted = false;
+            already_unmuted = true;
+            unmuter();
+        }
     }
 
-    private int temp_positifise=1, positifise=0;
+    private void unmuter() {
+        try{
+            AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+            am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        } catch(Exception e){
+            e.printStackTrace();
+            already_unmuted = false;
+        }
+    }
+
+    private void muter() {
+        try{
+            AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+            am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        } catch(Exception e){
+            e.printStackTrace();
+            already_muted = false;
+            mute = false;
+        }
+    }
+
     private void calculate_negatifise_and_positifise() {
         if (i != 0)
-            temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(i - 1))));
+            negatifise = Math.round(abs((rightnowcomparable - prayers.get(i - 1))));
         else
             still_scoping_on_previous_adan = false;
 
-        temp_positifise = Math.round((prayers.get(i) - rightnowcomparable));
+        positifise = Math.round(abs((prayers.get(i) - rightnowcomparable)));
     }
 
-    private int minute_limit_to_display_positifise = 100, minute_limit_to_display_negatifise = 20;
-    private int temp_negatifise = 1, negatifise = 0;
     private void check_negatifise() {
-        if((temp_negatifise != negatifise) && i!=0){
-            negatifise = temp_negatifise;
-            still_scoping_on_previous_adan = negatifise <= minute_limit_to_display_negatifise;
-        }
+        if(i!=0)
+            still_scoping_on_previous_adan = negatifise <= SQLSharing.minute_limit_to_display_negatifise;
     }
 
-    int lol = -3;
-    private void if_new_slider_apply_it() {
-        /*if(still_scoping_on_previous_adan)
+    private boolean change_happened = true;
+    private void if_change_needed_for_slider_apply_it() {
+        int lol = -3;
+        if(still_scoping_on_previous_adan)
             lol = i-1;
-        else*/
+        else
             lol = i;
-        if(lol!=current_displayed_slider){
-            switch(lol){
-                case 0:
-                    widgetViews.setViewVisibility(R.id.widgetsliderfajr, View.INVISIBLE);
-                    break;
-                case 1:
-                    widgetViews.setViewVisibility(R.id.widgetsliderdhuhr, View.INVISIBLE);
-                    break;
-                case 2:
-                    widgetViews.setViewVisibility(R.id.widgetsliderasr, View.INVISIBLE);
-                    break;
-                case 3:
-                    widgetViews.setViewVisibility(R.id.widgetslidermaghreb, View.INVISIBLE);
-                    break;
-                case 4:
-                    widgetViews.setViewVisibility(R.id.widgetsliderisha, View.INVISIBLE);
+        hide_slider_for_given_slat_number(current_displayed_slider);
+        if(still_scoping_on_previous_adan){
+            change_happened = true;
+            find_slider(i);
+            widgetViews.setTextViewText(slider, "+ " + String.valueOf(negatifise));
+            widgetViews.setViewVisibility(slider, View.VISIBLE);
+        }
+        else if(positifise<=SQLSharing.minute_limit_to_display_positifise){
+            change_happened = true;
+            find_slider(i);
+            widgetViews.setTextViewText(slider, "- " + String.valueOf(positifise));
+            widgetViews.setViewVisibility(slider, View.VISIBLE);
+        } else {
+            if(change_happened){ change_happened = false;
+                hide_slider_for_given_slat_number(current_displayed_slider);
             }
-            if(still_scoping_on_previous_adan){
-                widgetViews.setTextViewText(slider, "+ " + String.valueOf(negatifise));
-                widgetViews.setViewVisibility(slider, View.VISIBLE);
-            }
-            else if(positifise<=minute_limit_to_display_positifise){
-                widgetViews.setTextViewText(slider, "- " + String.valueOf(positifise));
-                widgetViews.setViewVisibility(slider, View.VISIBLE);
-            }
+        }
 
-            apply_widget_update();
+        apply_widget_update();
+    }
+
+    private void hide_slider_for_given_slat_number(int lol) {
+        switch(lol){
+            case 0:
+                widgetViews.setViewVisibility(R.id.widgetsliderfajr, View.INVISIBLE);
+                break;
+            case 1:
+                widgetViews.setViewVisibility(R.id.widgetsliderdhuhr, View.INVISIBLE);
+                break;
+            case 2:
+                widgetViews.setViewVisibility(R.id.widgetsliderasr, View.INVISIBLE);
+                break;
+            case 3:
+                widgetViews.setViewVisibility(R.id.widgetslidermaghreb, View.INVISIBLE);
+                break;
+            case 4:
+                widgetViews.setViewVisibility(R.id.widgetsliderisha, View.INVISIBLE);
         }
     }
 
-    private boolean still_scoping_on_previous_adan = false;
-    private int current_displayed_slider = -1;
-    private int slider = 0;
-    private boolean cleaning = false;
     private void find_slider(final int next_adaner) {
         int temp;
         if (still_scoping_on_previous_adan)
@@ -433,39 +501,51 @@ public class Service extends android.app.Service {
             temp = next_adaner;
         switch (temp) {
             case -1:
-                if(cleaning)
-                    current_displayed_slider = -1;
                 break;
             case 0:
             case 5:
-                if(cleaning)
-                    current_displayed_slider = 0;
-                else
-                    slider = R.id.widgetsliderfajr;
+                slider = R.id.widgetsliderfajr;
                 break;
             case 1:
-                if(cleaning)
-                    current_displayed_slider = 1;
-                else
-                    slider = R.id.widgetsliderdhuhr;
+                slider = R.id.widgetsliderdhuhr;
                 break;
             case 2:
-                if(cleaning)
-                    current_displayed_slider = 2;
-                else
-                    slider = R.id.widgetsliderasr;
+                slider = R.id.widgetsliderasr;
                 break;
             case 3:
-                if(cleaning)
-                    current_displayed_slider = 3;
-                else
-                    slider = R.id.widgetslidermaghreb;
+                slider = R.id.widgetslidermaghreb;
                 break;
             case 4:
-                if(cleaning)
-                    current_displayed_slider = 4;
-                else
-                    slider = R.id.widgetsliderisha;
+                slider = R.id.widgetsliderisha;
+                break;
+        }
+    }
+
+    private void find_currently_displayed_adans_id(final int next_adaner) {
+        int temp;
+        if (still_scoping_on_previous_adan)
+            temp = next_adaner - 1;
+        else
+            temp = next_adaner;
+        switch (temp) {
+            case -1:
+                current_displayed_slider = -1;
+                break;
+            case 0:
+            case 5:
+                current_displayed_slider = 0;
+                break;
+            case 1:
+                current_displayed_slider = 1;
+                break;
+            case 2:
+                current_displayed_slider = 2;
+                break;
+            case 3:
+                current_displayed_slider = 3;
+                break;
+            case 4:
+                current_displayed_slider = 4;
                 break;
         }
     }
@@ -483,7 +563,6 @@ public class Service extends android.app.Service {
 
         try {
             if (once && !playing) {
-
                 update_widget_ui();
                 update_notification_ui();
             }
@@ -499,14 +578,11 @@ public class Service extends android.app.Service {
             else
                 notificationManager.notify(NOTIFICATION_ID, notification);
 
-            apply_widget_update();
-
         } catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private RemoteViews widgetViews;
     private void update_widget_ui() {
 
         if(darkmode)
@@ -521,11 +597,11 @@ public class Service extends android.app.Service {
         widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
 
         if(language.equals("en")){
-            widgetViews.setTextViewText(R.id.widgetfajrtitle, getResources().getString(R.string.fajrtitle));
-            widgetViews.setTextViewText(R.id.widgetdhuhrtitle, getResources().getString(R.string.dohrtitle));
-            widgetViews.setTextViewText(R.id.widgetasrtitle, getResources().getString(R.string.asrtitle));
-            widgetViews.setTextViewText(R.id.widgetmaghribtitle, getResources().getString(R.string.maghrebtitle));
-            widgetViews.setTextViewText(R.id.widgetishatitle, getResources().getString(R.string.ishatitle));
+            widgetViews.setTextViewText(R.id.widgetfajrtitle, c.getResources().getString(R.string.fajrtitle));
+            widgetViews.setTextViewText(R.id.widgetdhuhrtitle, c.getResources().getString(R.string.dohrtitle));
+            widgetViews.setTextViewText(R.id.widgetasrtitle, c.getResources().getString(R.string.asrtitle));
+            widgetViews.setTextViewText(R.id.widgetmaghribtitle, c.getResources().getString(R.string.maghrebtitle));
+            widgetViews.setTextViewText(R.id.widgetishatitle, c.getResources().getString(R.string.ishatitle));
         }
 
         widgetViews.setTextViewText(R.id.widgetfajrtime, praytimesregularform.get(0));
@@ -537,8 +613,12 @@ public class Service extends android.app.Service {
     }
 
     private void apply_widget_update() {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        appWidgetManager.updateAppWidget(new ComponentName(this.getPackageName(), force_widget.class.getName()), widgetViews);
+        try {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(c);
+            appWidgetManager.updateAppWidget(new ComponentName(c.getPackageName(), force_widget.class.getName()), widgetViews);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void slight_update_notification_and_widget_ui() {
@@ -584,9 +664,9 @@ public class Service extends android.app.Service {
         switch (i) {
             case 0:
                 if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.fajrtitle));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.fajrtitle));
                 else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.fajrtitle_arabe));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.fajrtitle_arabe));
 
                 widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(0));
 
@@ -598,9 +678,9 @@ public class Service extends android.app.Service {
                 break;
             case 1:
                 if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.dohrtitle));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.dohrtitle));
                 else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.dohrtitle_arabe));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.dohrtitle_arabe));
 
                 widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(1));
 
@@ -612,9 +692,9 @@ public class Service extends android.app.Service {
                 break;
             case 2:
                 if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.asrtitle));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.asrtitle));
                 else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.asrtitle_arabe));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.asrtitle_arabe));
 
                 widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(2));
 
@@ -626,9 +706,9 @@ public class Service extends android.app.Service {
                 break;
             case 3:
                 if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.maghrebtitle));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.maghrebtitle));
                 else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.maghrebtitle_arabe));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.maghrebtitle_arabe));
 
                 widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(3));
 
@@ -640,9 +720,9 @@ public class Service extends android.app.Service {
                 break;
             case 4:
                 if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.ishatitle));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.ishatitle));
                 else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, getResources().getString(R.string.ishatitle_arabe));
+                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.ishatitle_arabe));
 
                 widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(4));
 
@@ -662,45 +742,45 @@ public class Service extends android.app.Service {
 
 
         String current_adan = "Fajr";
-        String stop_it = getResources().getString(R.string.stop_it);
-        String time = getResources().getString(R.string.time);
+        String stop_it = c.getResources().getString(R.string.stop_it);
+        String time = c.getResources().getString(R.string.time);
         if(language.equals("ar")) {
-            time = getResources().getString(R.string.time_arabe);
-            stop_it = getResources().getString(R.string.stop_it_arabe);
+            time = c.getResources().getString(R.string.time_arabe);
+            stop_it = c.getResources().getString(R.string.stop_it_arabe);
             switch (current_adding_playing) {
                 case 0:
-                    current_adan = getResources().getString(R.string.fajrtitle_arabe);
+                    current_adan = c.getResources().getString(R.string.fajrtitle_arabe);
                     break;
                 case 1:
-                    current_adan = getResources().getString(R.string.dohrtitle_arabe);
+                    current_adan = c.getResources().getString(R.string.dohrtitle_arabe);
                     break;
                 case 2:
-                    current_adan = getResources().getString(R.string.asrtitle_arabe);
+                    current_adan = c.getResources().getString(R.string.asrtitle_arabe);
                     break;
                 case 3:
-                    current_adan = getResources().getString(R.string.maghrebtitle_arabe);
+                    current_adan = c.getResources().getString(R.string.maghrebtitle_arabe);
                     break;
                 case 4:
-                    current_adan = getResources().getString(R.string.ishatitle_arabe);
+                    current_adan = c.getResources().getString(R.string.ishatitle_arabe);
             }
             remoteViews.setTextViewText(R.id.adangoingon, time + " " + current_adan);
             remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
         } else if(language.equals("en")){
             switch (current_adding_playing) {
                 case 0:
-                    current_adan = getResources().getString(R.string.fajrtitle);
+                    current_adan = c.getResources().getString(R.string.fajrtitle);
                     break;
                 case 1:
-                    current_adan = getResources().getString(R.string.dohrtitle);
+                    current_adan = c.getResources().getString(R.string.dohrtitle);
                     break;
                 case 2:
-                    current_adan = getResources().getString(R.string.asrtitle);
+                    current_adan = c.getResources().getString(R.string.asrtitle);
                     break;
                 case 3:
-                    current_adan = getResources().getString(R.string.maghrebtitle);
+                    current_adan = c.getResources().getString(R.string.maghrebtitle);
                     break;
                 case 4:
-                    current_adan = getResources().getString(R.string.ishatitle);
+                    current_adan = c.getResources().getString(R.string.ishatitle);
             }
             remoteViews.setTextViewText(R.id.adangoingon, current_adan + " " + time);
             remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
@@ -708,19 +788,152 @@ public class Service extends android.app.Service {
 
         Intent button_intent = new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener");
         //button_intent.putExtra("id",NOTIFICATION_ID);
-        PendingIntent button_pending_event = PendingIntent.getBroadcast(this,NOTIFICATION_ID, button_intent,0);
+        PendingIntent button_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID, button_intent,0);
         remoteViews.setOnClickPendingIntent(R.id.cancelbutton,button_pending_event);
-        Intent notification_intent = new Intent(this, force.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notification_intent, 0);
+        Intent notification_intent = new Intent(c, force.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, 0);
         builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
     }
 
+    private void vibrate() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if(v==null)
+            v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        assert v != null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(545, VibrationEffect.DEFAULT_AMPLITUDE));
+            v.vibrate(VibrationEffect.createOneShot(545, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(545);
+            v.vibrate(545);
+        }
+    }
+
+    private String prayed = "00000", verified = "00000", athome = "00000";
+    private String todaycomparable;
+    private void check_unprayed_prayer_for_today() {
+        boolean found = false;
+        Date today = new Date();
+        String[] temptoday = today.toString().split(" ");
+        todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
+
+        sql(getResources().getString(R.string.justforce2));
+        prayed = "00000";
+        athome = "00000";
+        verified = "00000";
+        while(SQLSharing.mycursor.moveToNext()) {
+            if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
+                prayed = SQLSharing.mycursor.getString(2);
+                verified = SQLSharing.mycursor.getString(3);
+                athome = SQLSharing.mycursor.getString(4);
+                found = true;
+                break;
+            }
+        }
+
+        if(!found){
+            SQLSharing.mydb.insertPrayed(todaycomparable, "00000", "00000", "11111");
+        } else {
+            boolean unprayed = false;
+            for(int g=0; g<5; g++){
+                if(String.valueOf(prayed.charAt(g)).equals("0")){
+                    most_recent_unprayed = g;
+                    unprayed = true;
+                    break;
+                }
+            }
+            if(unprayed)
+                most_recent_unprayed = -1;
+        }
+    }
+
+    private int most_recent_unprayed = -1;
+    private boolean already_notified_recent_adan = false;
+    private void prepare_a_custom_reminder_notification_and_send_it() {
+        if((positifise>=15 && positifise <=25 || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1) {
+            if(!already_notified_recent_adan) {
+                already_notified_recent_adan = true;
+                vibrate();
+                NotificationManager notificationManager2 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                NotificationCompat.Builder builder2 = new NotificationCompat.Builder(c, "channel2");
+                RemoteViews remoteViews2;
+                if (darkmode)
+                    remoteViews2 = new RemoteViews(getPackageName(), R.layout.reminder_notification_darkmode);
+                else
+                    remoteViews2 = new RemoteViews(getPackageName(), R.layout.reminder_notification_lightmode);
+
+                if (language.equals("en")) {
+                    remoteViews2.setTextViewText(R.id.iprayedit, c.getResources().getString(R.string.prayedit));
+                    remoteViews2.setTextViewText(R.id.gopray, c.getResources().getString(R.string.joinprayer));
+
+
+                    switch (most_recent_unprayed) {
+                        case 0:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayfajr));
+                            break;
+                        case 1:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraydhuhr));
+                            break;
+                        case 2:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayasr));
+                            break;
+                        case 3:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraymaghreb));
+                            break;
+                        case 4:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayisha));
+                            break;
+                    }
+                } else if(language.equals("ar")){
+                    switch (most_recent_unprayed) {
+                        case 0:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayfajr_arabe));
+                            break;
+                        case 1:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraydhuhr_arabe));
+                            break;
+                        case 2:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayasr_arabe));
+                            break;
+                        case 3:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraymaghreb_arabe));
+                            break;
+                        case 4:
+                            remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayisha_arabe));
+                            break;
+                    }
+                }
+
+                Intent goprayintent = new Intent("com.krimzon.scuffedbots.raka3at.background.gopraymate");
+                //button_intent.putExtra("id",NOTIFICATION_ID);
+                PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID, goprayintent,0);
+                remoteViews2.setOnClickPendingIntent(R.id.gopray,goprayintent_pending_event);
+
+                Intent iprayeditintent = new Intent("com.krimzon.scuffedbots.raka3at.background.iprayeditmate");
+                //button_intent.putExtra("id",NOTIFICATION_ID);
+                PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID, iprayeditintent,0);
+                remoteViews2.setOnClickPendingIntent(R.id.iprayedit,iprayedit_pending_event);
+
+                Intent notification_intent = new Intent(c, force.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, 0);
+                builder2.setSmallIcon(R.mipmap.ic_launcher).setContentIntent(pendingIntent).setCustomContentView(remoteViews2).setAutoCancel(true);
+
+                try {
+                    notificationManager2.notify(NOTIFICATION_ID2, builder2.build());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            already_notified_recent_adan = false;
+        }
+    }
+
     private void update_notification_ui() {
-        Context context = this;
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        builder = new NotificationCompat.Builder(this, "channel");
+        builder = new NotificationCompat.Builder(c, "channel");
 
         if(darkmode)
             remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification2);
@@ -734,15 +947,15 @@ public class Service extends android.app.Service {
         remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
 
         if(language.equals("en")){
-            remoteViews.setTextViewText(R.id.fajrtitle, getResources().getString(R.string.fajrtitle));
-            remoteViews.setTextViewText(R.id.dhuhrtitle, getResources().getString(R.string.dohrtitle));
-            remoteViews.setTextViewText(R.id.asrtitle, getResources().getString(R.string.asrtitle));
-            remoteViews.setTextViewText(R.id.maghribtitle, getResources().getString(R.string.maghrebtitle));
-            remoteViews.setTextViewText(R.id.ishatitle, getResources().getString(R.string.ishatitle));
+            remoteViews.setTextViewText(R.id.fajrtitle, c.getResources().getString(R.string.fajrtitle));
+            remoteViews.setTextViewText(R.id.dhuhrtitle, c.getResources().getString(R.string.dohrtitle));
+            remoteViews.setTextViewText(R.id.asrtitle, c.getResources().getString(R.string.asrtitle));
+            remoteViews.setTextViewText(R.id.maghribtitle, c.getResources().getString(R.string.maghrebtitle));
+            remoteViews.setTextViewText(R.id.ishatitle, c.getResources().getString(R.string.ishatitle));
         }
 
-        Intent notification_intent = new Intent(context, force.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notification_intent, 0);
+        Intent notification_intent = new Intent(c, force.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, 0);
         builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
@@ -756,7 +969,7 @@ public class Service extends android.app.Service {
     }
 
     private void print(Object log){
-        Toast.makeText(this, String.valueOf(log), Toast.LENGTH_LONG).show();
+        Toast.makeText(c, String.valueOf(log), Toast.LENGTH_LONG).show();
     }
 
     private void location_shit(Date date) {
@@ -781,7 +994,7 @@ public class Service extends android.app.Service {
         prayers = new ArrayList<>();
 
         /*String[] temptoday = today.toString().split(" ");
-        String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5].charAt(2) + temptoday[5].charAt(3);
+        String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
         */old_date = new Date();
 
         pull_date_and_shape_it(longitude, latitude, today);
@@ -817,7 +1030,7 @@ public class Service extends android.app.Service {
 
 
         DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
-                this,
+                c,
                 null,
                 DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
         );
@@ -826,11 +1039,11 @@ public class Service extends android.app.Service {
                 renderersFactory,
                 trackSelector
         );
-        String userAgent = Util.getUserAgent(this, getResources().getString(R.string.adanner));
+        String userAgent = Util.getUserAgent(c, c.getResources().getString(R.string.adanner));
         try {
             ExtractorMediaSource mediaSource = new ExtractorMediaSource(
-                    Uri.parse(getResources().getString(R.string.idek) + adan), // file audio ada di folder assets
-                    new DefaultDataSourceFactory(this, userAgent),
+                    Uri.parse(c.getResources().getString(R.string.idek) + adan), // file audio ada di folder assets
+                    new DefaultDataSourceFactory(c, userAgent),
                     new DefaultExtractorsFactory(),
                     null,
                     null
@@ -858,6 +1071,7 @@ public class Service extends android.app.Service {
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                     if (playbackState == Player.STATE_ENDED) {
                         playing = false;
+                        adan_exception = false;
                         once = true;
                         sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));
                     }
@@ -995,7 +1209,7 @@ public class Service extends android.app.Service {
         if(SQLSharing.mydb!=null)
             SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(this);
+        SQLSharing.mydb = new SQL(c);
         switch (table) {
             case "slat":
                 SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();

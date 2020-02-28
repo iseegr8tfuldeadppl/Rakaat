@@ -1,27 +1,21 @@
 package com.krimzon.scuffedbots.raka3at;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.os.Build;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
@@ -37,8 +31,8 @@ import static android.view.animation.AnimationUtils.loadAnimation;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 6969;
     private TextView maintitle;
-
     private Button slatjoin;
     private Button kiblajoin;
     private Button forcejoin;
@@ -46,12 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private Toast backToast;
     private Resources resources;
     private String language = "ar";
-
     private boolean tutorial = false;
     private LinearLayout botton, botton2;
     private Animation diagonal2;
     private FrameLayout full;
-
     private View view, view2;
     private String ID = "";
     private boolean darkmode = true;
@@ -90,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
         }});
 
         //showNavigationBar();
-
     }
+
 
     /*private void permission_intents_test() {
         try {
@@ -192,15 +184,69 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // adan service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-        } else {
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(getApplicationContext());
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+            } else {
+                ProcessMainClass bck = new ProcessMainClass();
+                bck.launchService(getApplicationContext());
+            }
         }
-
-
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
+
+
+
+    private void muter() {
+        try{
+
+            if (Build.VERSION.SDK_INT >= 23)
+                this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
+            else {
+
+                AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+                am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                //am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void unmuter() {
+        try{
+            if (Build.VERSION.SDK_INT >= 23)
+                this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
+            else {
+                AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    private void requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp() {
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        // if user granted access else ask for permission
+        if ( notificationManager.isNotificationPolicyAccessGranted()) {
+            AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        } else{
+            // Open Setting screen to ask for permisssion
+            Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+            startActivityForResult( intent, ON_DO_NOT_DISTURB_CALLBACK_CODE );
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ON_DO_NOT_DISTURB_CALLBACK_CODE) {
+            this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
+        }
+    }
+
 
     private void set_fonts() {
         Typeface font = Typeface.createFromAsset(getAssets(), "Tajawal-Light.ttf");
@@ -234,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
 
         // this is to avoid issues with added rows with google darkplay updates to avoid crashing users
         sql("slat");
-        if(SQLSharing.mycursor.getCount()<10)  // TODO always update this
+        if(SQLSharing.mycursor.getCount()<11)  // TODO always update this
             SQLSharing.mydb.delete(this);
         sql("slat");
         if (SQLSharing.mycursor.getCount() <= 0) {
@@ -248,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydb.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,2 => default adan, adan sounds fully on (1 is for vibrte, 0 is for no sounds)
             SQLSharing.mydb.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
             SQLSharing.mydb.insertData("yes"); // do i ask for protected apps on launch?
+            SQLSharing.mydb.insertData("5,35 5,35 5,35 5,20 5,35"); // delaysbeforeandafterdan to mute ringtones
             tutorial = true;
         } else {
             SQLSharing.mycursor.moveToPosition(0);

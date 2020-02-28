@@ -42,10 +42,6 @@ import java.util.Locale;
 
 public class kibla extends AppCompatActivity implements SensorEventListener {
 
-    // TODO work on translation settexts and shit for me
-    // TODO and my popup menu
-    // TODO and on force.java
-
     private String language;
     private ImageView compass_img;
     private Button fix;
@@ -62,7 +58,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private TextView kiblatitle;
     private String kibla, kiblatitleh, betterquality, backh;
     private TextView maintitle;
-    private Typeface custom_font;
     private FrameLayout full;
     private RelativeLayout backarrowbackground;
     private RelativeLayout nightmodebackground;
@@ -99,9 +94,10 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         maintitle = findViewById(R.id.maintitle);
         full = findViewById(R.id.full);
         fix = findViewById(R.id.fix);
-        custom_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
+        Typeface custom_font = Typeface.createFromAsset(getAssets(),  "Tajawal-Light.ttf");
         fix.setTypeface(custom_font);
         kiblatitle.setTypeface(custom_font);
+        maintitle.setTypeface(custom_font);
 
 
         resources = getResources();
@@ -175,7 +171,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         maintitle.setText(kibla);
         kiblatitle.setText(kiblatitleh);
         fix.setText(betterquality);
-        maintitle.setTypeface(custom_font);
     }
 
     @Override

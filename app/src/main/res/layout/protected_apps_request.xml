@@ -22,8 +22,8 @@
         android:textSize="27sp"
         android:textAllCaps="false"
         android:text="@string/request_text_arabe"/>
-    <Button
-        android:id="@+id/gotoprotected"
+    <TextView
+        android:id="@+id/gotoprotectedd"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:textSize="17sp"
         android:textAllCaps="false"
         android:text="@string/go_to_protected_arabe"/>
-    <Button
+    <TextView
         android:id="@+id/dismiss"
         android:gravity="center"
         android:layout_marginTop="20dp"
@@ -47,7 +47,7 @@
         android:textSize="17sp"
         android:textAllCaps="false"
         android:text="@string/nothanks_arabe"/>
-    <Button
+    <TextView
         android:id="@+id/idid"
         android:gravity="center"
         android:layout_marginTop="20dp"

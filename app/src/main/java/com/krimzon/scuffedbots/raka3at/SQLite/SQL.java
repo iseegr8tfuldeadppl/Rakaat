@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SQL extends SQLiteOpenHelper {
 
     //variables
-    private static final String DATABASE_NAME = "raka3at.db"; //not case sensitive
+    private static final String DATABASE_NAME = "rakaat.db"; //not case sensitive
     private static final String COL_1 = "_ID";
     private static final String COL_2 = "_SETTING";
     private static final String DAY = "_DAY";
