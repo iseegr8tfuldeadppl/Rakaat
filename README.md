@@ -1,4 +1,4 @@
-# Rakaat
+# Rakaat (Art by (Amel Bensisaid)[https://www.instagram.com/bensisaid.amel18/?hl=fr]
 Raka'at Development Project (scroll below for some explanation)
 
 Raka'at is a revolutionary app for muslims around the world, this simple and compact app with 9280 lines of code under its belt contains three pages:
