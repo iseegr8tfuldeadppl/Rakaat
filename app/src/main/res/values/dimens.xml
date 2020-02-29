@@ -42,5 +42,9 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="prayertitlepaddingbottom">10dp</dimen>
     <dimen name="paddingstartandendofsliderer">15dp</dimen>
     <dimen name="innertextsidepaddings">8dp</dimen>
+    <dimen name="previousandnexttutorial">19sp</dimen>
+    <dimen name="previousnextpaddingtutorial">15dp</dimen>
+    <dimen name="explanationpadding">20dp</dimen>
+    <dimen name="tutorialimagespaddings">40dp</dimen>
 
 </resources>

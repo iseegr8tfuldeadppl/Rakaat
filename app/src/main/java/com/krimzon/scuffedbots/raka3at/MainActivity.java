@@ -24,7 +24,6 @@ import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
-import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
 import java.util.Locale;
 
@@ -366,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
 
         // this is to avoid issues with added rows with google darkplay updates to avoid crashing users
         sql("slat");
-        if(SQLSharing.mycursor.getCount()<11)  // TODO always update this
+        if(SQLSharing.mycursor.getCount()<12)  // TODO always update this
             SQLSharing.mydb.delete(this);
         sql("slat");
         if (SQLSharing.mycursor.getCount() <= 0) {
@@ -381,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydb.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
             SQLSharing.mydb.insertData("yes"); // do i ask for protected apps on launch?
             SQLSharing.mydb.insertData("5,35 5,35 5,35 5,20 5,35"); // delaysbeforeandafterdan to mute ringtones
+            SQLSharing.mydb.insertData(""); // tutorial for force
             tutorial = true;
         } else {
             SQLSharing.mycursor.moveToPosition(0);
@@ -389,6 +389,8 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mycursor.moveToPosition(6);
             language = SQLSharing.mycursor.getString(1);
 
+            SQLSharing.mycursor.moveToPosition(11);
+            forcetutorial = SQLSharing.mycursor.getString(1);
 
             SQLSharing.mycursor.moveToPosition(1);
             if(SQLSharing.mycursor.getString(1).equals("no"))
@@ -400,6 +402,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private String forcetutorial = "";
     @Override
     public void onBackPressed() {
         if (backPressedTime + 2000 > System.currentTimeMillis()) {
@@ -427,8 +430,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void salatClicked(View view) {
         if(tutorial) {
-            SlatCustomDialogClass cddd = new SlatCustomDialogClass(this, true, language);
-            cddd.show();
+            Intent tutorial = new Intent(this, Tutorial.class);
+            tutorial.putExtra("sender", "main");
+            startActivity(tutorial);
+            finish();
         } else {
             Intent slatIntent = new Intent(this, slat.class);
             slatIntent.putExtra("sender", "main");
@@ -444,10 +449,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void forceClicked(View view) {
-        Intent forceIntent = new Intent(this, force.class);
-        forceIntent.putExtra("light_alert", "no");
-        startActivity(forceIntent);
-        finish(); }
+        if(!forcetutorial.equals("1")){
+            Intent forceIntent = new Intent(this, forceTutorial.class);
+            startActivity(forceIntent);
+            finish();
+        } else {
+            Intent forceIntent = new Intent(this, force.class);
+            forceIntent.putExtra("light_alert", "no");
+            startActivity(forceIntent);
+            finish();
+        }
+    }
 
     /*private void showNavigationBar() {
 

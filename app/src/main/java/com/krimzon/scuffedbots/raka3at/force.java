@@ -126,7 +126,7 @@ public class force extends AppCompatActivity  {
     private Animation fromright1, fromright2, fromright3, fromright4, fromright5, fromright6, fromright7, fromright8, fromright9, fromright10, fromright11, fromright12;
     private int temp_negatifise = 1000, temp_positifise = 1000, negatifise = 1000, positifise = 1000;
     private Thread mythread;
-    private int current_displayed_next_adan = -1, temp_rightnowcomparable = 1, rightnowcomparable = 0;
+    private int current_displayed_next_adan = -1, rightnowcomparable = 0;
     private boolean running = true, initialdelayoncebrk = true, still_scoping_on_previous_adan = false, can_find_in = true;
     private LinearLayout leftsideelementsbackground;
 
@@ -288,39 +288,37 @@ public class force extends AppCompatActivity  {
                     if(!praybuttonsdone)
                         color_pray_buttonshandler.sendEmptyMessage(0);
 
-                    if(rightnowcomparable!=temp_rightnowcomparable || rightnowcomparable==0) {
 
-                        temp_positifise = Math.round((prayers.get(next_adan) - rightnowcomparable));
+                    temp_positifise = Math.round((prayers.get(next_adan) - rightnowcomparable));
 
-                        check_next_adan();
-                        // this check is to fix the glitch of changing time from 3AM to 11PM instantly, gets stuck on fajr
-                        // TODO: might remove idk
-                        if(temp_positifise<0) {
-                            handler5.sendEmptyMessage(0);
-                            temp_positifise = Math.abs(temp_positifise);
-                        }
+                    check_next_adan();
+                    // this check is to fix the glitch of changing time from 3AM to 11PM instantly, gets stuck on fajr
+                    // TODO: might remove idk
+                    if(temp_positifise<0) {
+                        handler5.sendEmptyMessage(0);
+                        temp_positifise = Math.abs(temp_positifise);
+                    }
 
-                        if (next_adan != 0)
-                            temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(next_adan - 1))));
-                        else
-                            still_scoping_on_previous_adan = false;
+                    if (next_adan != 0)
+                        temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(next_adan - 1))));
+                    else
+                        still_scoping_on_previous_adan = false;
 
-                        /*handlos.sendEmptyMessage(0);*/
+                    /*handlos.sendEmptyMessage(0);*/
 
-                        // move to next adan if available
-                        if (next_adan!=current_displayed_next_adan || end_of_day)
-                            handler5.sendEmptyMessage(0);
+                    // move to next adan if available
+                    if (next_adan!=current_displayed_next_adan || end_of_day)
+                        handler5.sendEmptyMessage(0);
 
-                        if(next_adan==0 && current_displayed_next_adan==0)
-                            checkonfajr.sendEmptyMessage(0);
+                    if(next_adan==0 && current_displayed_next_adan==0)
+                        checkonfajr.sendEmptyMessage(0);
 
-                        display_neg_if_possible();
+                    display_neg_if_possible();
 
 
-                        if ((temp_positifise != positifise || changing_day) && !still_scoping_on_previous_adan) {
-                            positifise = temp_positifise;
-                            handler3.sendEmptyMessage(0);
-                        }
+                    if ((temp_positifise != positifise || changing_day) && !still_scoping_on_previous_adan) {
+                        positifise = temp_positifise;
+                        handler3.sendEmptyMessage(0);
                     }
 
                 }
@@ -429,8 +427,6 @@ public class force extends AppCompatActivity  {
             calluse.sendEmptyMessage(0);
         }
         String temptime = String.valueOf(todayos).split(" ")[3];
-        if(rightnowcomparable!=0)
-            temp_rightnowcomparable = rightnowcomparable;
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
     }
 

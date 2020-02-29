@@ -22,7 +22,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".force_settings"
+        <activity android:name=".forceTutorial"></activity>
+        <activity android:name=".Tutorial" />
+        <activity
+            android:name=".force_settings"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
 

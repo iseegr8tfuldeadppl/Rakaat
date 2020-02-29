@@ -43,7 +43,6 @@ import com.google.android.exoplayer2.util.Util;
 import com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
-import com.krimzon.scuffedbots.raka3at.dialogs.SlatCustomDialogClass;
 import com.krimzon.scuffedbots.raka3at.dialogs.slat_settings;
 import java.util.Locale;
 import static android.view.View.GONE;
@@ -1145,8 +1144,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     public void howtouseClicked(View view) {
-        SlatCustomDialogClass cdddd=new SlatCustomDialogClass(this, false, language);
-        cdddd.show();
+        Intent tutorial = new Intent(this, Tutorial.class);
+        tutorial.putExtra("sender", "slat");
+        startActivity(tutorial);
+        finish();
     }
 
 
