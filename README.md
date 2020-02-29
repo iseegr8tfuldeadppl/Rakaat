@@ -1,4 +1,4 @@
-# Rakaat (Art by [Amel Bensisaid](https://www.instagram.com/bensisaid.amel18/?hl=fr))
+# Rakaat (Art by [Amel Bensissaid](https://www.instagram.com/bensisaid.amel18/?hl=fr))
 
 Raka'at Development Project (scroll below for some explanation)
 
