@@ -333,9 +333,9 @@
     <string name="explanation3">And a sajadat counter in the current Rak\'a</string>
     <string name="explanation4">We use your light sensor to count your Raka\'at</string>
 
-    <string name="explanation1_arabe">لِدقّة جيّدة، من المُفضّل وضع الهاتف حيث يحجب من الإضاءة عند السجود</string>
-    <string name="explanation2_arabe">المستشعر يحوي عدّاد للركعات</string>
-    <string name="explanation3_arabe">يحوي أيضا عدّاد للسجدات في السجدة الحاليّة</string>
+    <string name="explanation1_arabe">لِدقّة جيّدة، من المُفضّل وضع الهاتف في مكان حيث يُحجَب من الإضاءة عند السجود</string>
+    <string name="explanation2_arabe">المستشعر يحتوي على عدّاد للركعات</string>
+    <string name="explanation3_arabe">يحوي أيضا عدّاد للسجدات في الركعة الحاليّة</string>
     <string name="explanation4_arabe">نستعمل مستشعر الإضائة في هاتفك لتعداد ركعاتك</string>
 
     <string name="next_arabe">التالي</string>
@@ -347,6 +347,6 @@
     <string name="explanation4force">To pray, you put your phone down and press the corresponding button</string>
     <string name="explanation4force_arabe">للصلاة قم بوضع الهاتف على السجادة و إضغط على الزر المناسب</string>
     <string name="prayallquestion">Prayed this\nday before?</string>
-    <string name="prayallquestion_arabe">صليت هذا اليوم\nمن قبل؟</string>
+    <string name="prayallquestion_arabe">صليت هذا\nاليوم من قبل؟</string>
 
 </resources>

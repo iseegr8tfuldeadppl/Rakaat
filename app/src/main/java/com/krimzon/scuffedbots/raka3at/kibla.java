@@ -111,11 +111,11 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         /*hideNavigationBar();*/
 
         sql("slat");
-        SQLSharing.mycursor.moveToPosition(6);
-        language = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursorslat.moveToPosition(6);
+        language = SQLSharing.mycursorslat.getString(1);
 
-        SQLSharing.mycursor.moveToPosition(1);
-        if(SQLSharing.mycursor.getString(1).equals("no"))
+        SQLSharing.mycursorslat.moveToPosition(1);
+        if(SQLSharing.mycursorslat.getString(1).equals("no"))
             light_mode();
     }
 
@@ -127,21 +127,19 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     }
 
     private void sql(String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(this);
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
     }
@@ -149,14 +147,9 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private void getLanguage(){
         sql("slat");
 
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        language = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursorslat.moveToFirst();
+        SQLSharing.mycursorslat.moveToPosition(6);
+        language = SQLSharing.mycursorslat.getString(1);
     }
 
     private void getStrings(){
@@ -264,6 +257,25 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     protected void onPause() {
         super.onPause();
         stop();
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     @Override
@@ -339,9 +351,9 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
         // update coordinates in sql folks
         if(new_coordinates)
-            SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
+            SQLSharing.mydbforce.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
         else
-            SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
+            SQLSharing.mydbforce.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
 
         coordinates = new Coordinates(latitude, longitude);
         qibla = new Qibla(coordinates);
@@ -351,9 +363,9 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     protected double longitude = 0, latitude = 0;
     private void if_theres_previous_info_load_it_n_display() {
         new_coordinates = false;
-        SQLSharing.mycursor.moveToFirst();
-        longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
-        latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
+        SQLSharing.mycursorforce.moveToFirst();
+        longitude = Double.valueOf(SQLSharing.mycursorforce.getString(1));
+        latitude = Double.valueOf(SQLSharing.mycursorforce.getString(2));
         wegotcoordsboiz(longitude, latitude);
     }
 
@@ -361,7 +373,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private void location_shit() {
         sql("force");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if(SQLSharing.mycursor.getCount()>0)
+        if(SQLSharing.mycursorforce.getCount()>0)
             if_theres_previous_info_load_it_n_display();
         if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date();
     }
@@ -446,12 +458,10 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         full.setBackground(forcefull);
 
         sql("slat");
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("yes", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mycursorslat.moveToFirst();
+        SQLSharing.mycursorslat.moveToNext();
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("yes", ID);
     }
 
 
@@ -484,12 +494,9 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         full.setBackground(simpelbackground);
 
         sql("slat");
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("no", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mycursorslat.moveToPosition(1);
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("no", ID);
     }
 
 }

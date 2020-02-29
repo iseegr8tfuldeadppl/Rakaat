@@ -820,21 +820,19 @@ public class force_settings extends AppCompatActivity {
     }
 
     private void sql(String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(context);
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
     }
@@ -844,11 +842,10 @@ public class force_settings extends AppCompatActivity {
         sql("slat");
         if(once22){
             once22 = false;
-            SQLSharing.mycursor.moveToPosition(8);
-            SWITCHSETTINGID = SQLSharing.mycursor.getString(0);
+            SQLSharing.mycursorslat.moveToPosition(8);
+            SWITCHSETTINGID = SQLSharing.mycursorslat.getString(0);
         }
-        SQLSharing.mydb.updateData(switch_setting, SWITCHSETTINGID);
-        SQLSharing.mydb.close();
+        SQLSharing.mydbslat.updateData(switch_setting, SWITCHSETTINGID);
     }
 
     private void protected_apps_request() {
@@ -1121,13 +1118,21 @@ public class force_settings extends AppCompatActivity {
         super.onPause();
         stopadan();
         save_delays_of_changed();
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
+
 
     private void save_delays_of_changed() {
         sql("slat");
-        SQLSharing.mycursor.moveToPosition(10);
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData(fajrbeforecounter+","+fajraftercounter + " " + dhuhrbeforecounter+","+dhuhraftercounter + " " + asrbeforecounter+","+asraftercounter + " " + maghrebbeforecounter+","+maghrebaftercounter + " " + ishabeforecounter+","+ishaaftercounter ,ID);
+        SQLSharing.mycursorslat.moveToPosition(10);
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData(fajrbeforecounter+","+fajraftercounter + " " + dhuhrbeforecounter+","+dhuhraftercounter + " " + asrbeforecounter+","+asraftercounter + " " + maghrebbeforecounter+","+maghrebaftercounter + " " + ishabeforecounter+","+ishaaftercounter ,ID);
     }
 
     private void stopadan(){
@@ -1458,30 +1463,24 @@ public class force_settings extends AppCompatActivity {
     private String delays;
     private void sql_work() {
         sql("slat");
-        SQLSharing.mycursor.moveToPosition(1);
-        darkmode = SQLSharing.mycursor.getString(1).equals("yes");
-        SQLSharing.mycursor.moveToPosition(6);
-        language = SQLSharing.mycursor.getString(1);
-        SQLSharing.mycursor.moveToNext();
-        adanSelections = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursorslat.moveToPosition(1);
+        darkmode = SQLSharing.mycursorslat.getString(1).equals("yes");
+        SQLSharing.mycursorslat.moveToPosition(6);
+        language = SQLSharing.mycursorslat.getString(1);
+        SQLSharing.mycursorslat.moveToNext();
+        adanSelections = SQLSharing.mycursorslat.getString(1);
         selections = adanSelections.split(" ");
-        SQLSharing.mycursor.moveToNext();
-        main_notification_sql = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursorslat.moveToNext();
+        main_notification_sql = SQLSharing.mycursorslat.getString(1);
 
-        SQLSharing.mycursor.moveToNext();
-        request_protected_menu = SQLSharing.mycursor.getString(1).equals("yes");
-        SQLSharing.mycursor.moveToNext();
-        delays = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursorslat.moveToNext();
+        request_protected_menu = SQLSharing.mycursorslat.getString(1).equals("yes");
+        SQLSharing.mycursorslat.moveToNext();
+        delays = SQLSharing.mycursorslat.getString(1);
 
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
     }
 
     private void close_sql() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
     }
 
     private boolean request_protected_menu;
@@ -1490,11 +1489,10 @@ public class force_settings extends AppCompatActivity {
         sql("slat");
         if(once){
             once = false;
-            SQLSharing.mycursor.moveToPosition(7);
-            ID = SQLSharing.mycursor.getString(0);
+            SQLSharing.mycursorslat.moveToPosition(7);
+            ID = SQLSharing.mycursorslat.getString(0);
         }
-        SQLSharing.mydb.updateData(adanSelections, ID);
-        SQLSharing.mydb.close();
+        SQLSharing.mydbslat.updateData(adanSelections, ID);
     }
 
     private LinearLayout selectionmenu, settingsmenu;
@@ -1592,6 +1590,7 @@ public class force_settings extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         stopadan();
         close_sql();
         save_delays_of_changed();
@@ -1600,5 +1599,13 @@ public class force_settings extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.saved_arabe), Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 }

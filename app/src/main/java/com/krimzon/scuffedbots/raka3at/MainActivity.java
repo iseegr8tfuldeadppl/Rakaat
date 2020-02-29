@@ -188,31 +188,27 @@ public class MainActivity extends AppCompatActivity {
         forcejoin.setBackground(resources.getDrawable(R.drawable.buttons));
         maintitle.setTextColor(resources.getColor(R.color.black));
         sql(resources.getString(R.string.slat));
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("no", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mycursorslat.moveToFirst();
+        SQLSharing.mycursorslat.moveToNext();
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("no", ID);
 
     }
 
     private void sql(String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(this);
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
     }
@@ -228,12 +224,9 @@ public class MainActivity extends AppCompatActivity {
         maintitle.setTextColor(resources.getColor(R.color.white));
 
         sql(resources.getString(R.string.slat));
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("yes", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mycursorslat.moveToPosition(1);
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("yes", ID);
 
     }
 
@@ -324,6 +317,29 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -349,6 +365,16 @@ public class MainActivity extends AppCompatActivity {
         slatjoin.setText(resources.getString(R.string.prayer));
     }
 
+    private void close_sql() {
+        if(SQLSharing.servicemydbforce!=null)
+            SQLSharing.servicemydbforce.close();
+        if(SQLSharing.servicemydbslat!=null)
+            SQLSharing.servicemydbslat.close();
+        if(SQLSharing.servicemydbforce3!=null)
+            SQLSharing.servicemydbforce3.close();
+
+    }
+
     private void sql_work() {
 
 
@@ -365,35 +391,35 @@ public class MainActivity extends AppCompatActivity {
 
         // this is to avoid issues with added rows with google darkplay updates to avoid crashing users
         sql("slat");
-        if(SQLSharing.mycursor.getCount()<12)  // TODO always update this
-            SQLSharing.mydb.delete(this);
+        if(SQLSharing.mycursorslat.getCount()<12)  // TODO always update this
+            SQLSharing.mydbslat.delete(this);
         sql("slat");
-        if (SQLSharing.mycursor.getCount() <= 0) {
-            SQLSharing.mydb.insertData("");
-            SQLSharing.mydb.insertData("yes"); // darkmode
-            SQLSharing.mydb.insertData("3"); // scheme
-            SQLSharing.mydb.insertData("0"); // scheme_light_mode
-            SQLSharing.mydb.insertData("5"); // delay before starting detection
-            SQLSharing.mydb.insertData("1"); // sounds default: on
-            SQLSharing.mydb.insertData("ar"); // language
-            SQLSharing.mydb.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,2 => default adan, adan sounds fully on (1 is for vibrte, 0 is for no sounds)
-            SQLSharing.mydb.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
-            SQLSharing.mydb.insertData("yes"); // do i ask for protected apps on launch?
-            SQLSharing.mydb.insertData("5,35 5,35 5,35 5,20 5,35"); // delaysbeforeandafterdan to mute ringtones
-            SQLSharing.mydb.insertData(""); // tutorial for force
+        if (SQLSharing.mycursorslat.getCount() <= 0) {
+            SQLSharing.mydbslat.insertData("");
+            SQLSharing.mydbslat.insertData("yes"); // darkmode
+            SQLSharing.mydbslat.insertData("3"); // scheme
+            SQLSharing.mydbslat.insertData("0"); // scheme_light_mode
+            SQLSharing.mydbslat.insertData("5"); // delay before starting detection
+            SQLSharing.mydbslat.insertData("1"); // sounds default: on
+            SQLSharing.mydbslat.insertData("ar"); // language
+            SQLSharing.mydbslat.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,2 => default adan, adan sounds fully on (1 is for vibrte, 0 is for no sounds)
+            SQLSharing.mydbslat.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
+            SQLSharing.mydbslat.insertData("yes"); // do i ask for protected apps on launch?
+            SQLSharing.mydbslat.insertData("5,35 5,35 5,35 5,20 5,35"); // delaysbeforeandafterdan to mute ringtones
+            SQLSharing.mydbslat.insertData(""); // tutorial for force
             tutorial = true;
         } else {
-            SQLSharing.mycursor.moveToPosition(0);
-            if(SQLSharing.mycursor.getString(1).equals(""))
+            SQLSharing.mycursorslat.moveToPosition(0);
+            if(SQLSharing.mycursorslat.getString(1).equals(""))
                 tutorial = true;
-            SQLSharing.mycursor.moveToPosition(6);
-            language = SQLSharing.mycursor.getString(1);
+            SQLSharing.mycursorslat.moveToPosition(6);
+            language = SQLSharing.mycursorslat.getString(1);
 
-            SQLSharing.mycursor.moveToPosition(11);
-            forcetutorial = SQLSharing.mycursor.getString(1);
+            SQLSharing.mycursorslat.moveToPosition(11);
+            forcetutorial = SQLSharing.mycursorslat.getString(1);
 
-            SQLSharing.mycursor.moveToPosition(1);
-            if(SQLSharing.mycursor.getString(1).equals("no"))
+            SQLSharing.mycursorslat.moveToPosition(1);
+            if(SQLSharing.mycursorslat.getString(1).equals("no"))
                 light_mode();
             else
                 darkmode = true;

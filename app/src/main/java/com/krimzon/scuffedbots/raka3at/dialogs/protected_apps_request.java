@@ -71,21 +71,19 @@ public class protected_apps_request extends Dialog {
 
 
     private void sql(String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(c.getApplicationContext());
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.mydbslat = new SQL(getContext());
+                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.mydbforce = new SQL(getContext());
+                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.mydbforce3 = new SQL(getContext());
+                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
     }
@@ -115,8 +113,8 @@ public class protected_apps_request extends Dialog {
                 catch(Exception e){
                     e.printStackTrace();
                     sql("slat");
-                    SQLSharing.mycursor.moveToPosition(9);
-                    SQLSharing.mydb.updateData("no", SQLSharing.mycursor.getString(0));
+                    SQLSharing.mycursorslat.moveToPosition(9);
+                    SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));
                     close_sql();
                 }
             }
@@ -125,8 +123,8 @@ public class protected_apps_request extends Dialog {
             @Override
             public void onClick(View v) {
                 sql("slat");
-                SQLSharing.mycursor.moveToPosition(9);
-                SQLSharing.mydb.updateData("no", SQLSharing.mycursor.getString(0));
+                SQLSharing.mycursorslat.moveToPosition(9);
+                SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));
                 close_sql();
                 dismiss();
             }
@@ -151,10 +149,6 @@ public class protected_apps_request extends Dialog {
     }
 
     private void close_sql() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
     }
 
 

@@ -154,13 +154,9 @@ public class HomeOrMosque extends Dialog {
     }
 
     private void sql() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = "force3";
-        SQLSharing.mydb = new SQL(c);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+        SQLSharing.mydbforce3 = new SQL(c);
+        SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
     }
 
     private void set_prayer_without_using_detector() {
@@ -178,9 +174,9 @@ public class HomeOrMosque extends Dialog {
         String temper = String.valueOf(strinkbilder);
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable, temper, verified, athome);
+            SQLSharing.mydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, temper, verified, athome);
+            SQLSharing.mydbforce3.insertPrayed(todaycomparable, temper, verified, athome);
     }
 
     private void set_all_prayers() {
@@ -195,17 +191,17 @@ public class HomeOrMosque extends Dialog {
         sql();
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable, "11111", verified, athome);
+            SQLSharing.mydbforce3.updatePrayed(todaycomparable, "11111", verified, athome);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, "11111", verified, athome);
+            SQLSharing.mydbforce3.insertPrayed(todaycomparable, "11111", verified, athome);
     }
 
     private void check_if_prayed_exists_in_sql() {
-        if(SQLSharing.mycursor.getCount()<=0)
+        if(SQLSharing.mycursorforce3.getCount()<=0)
             found_prayed_history_in_sql = false;
         else {
-            while(SQLSharing.mycursor.moveToNext()) {
-                if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
+            while(SQLSharing.mycursorforce3.moveToNext()) {
+                if (todaycomparable.equals(SQLSharing.mycursorforce3.getString(1))){
                     found_prayed_history_in_sql = true;
                     break;
                 }

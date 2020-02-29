@@ -35,13 +35,9 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
 
 
     private void sql() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(c.getApplicationContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+        SQLSharing.mydbslat = new SQL(c.getApplicationContext());
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
     }
 
 
@@ -94,16 +90,8 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
                     dismiss();
                 else {
                     sql();
-                    SQLSharing.mycursor.moveToFirst();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mydb.updateData("en", SQLSharing.mycursor.getString(0));
-                    SQLSharing.mycursor.close();
-                    SQLSharing.mydb.close();
+                    SQLSharing.mycursorslat.moveToPosition(6);
+                    SQLSharing.mydbslat.updateData("en", SQLSharing.mycursorslat.getString(0));
                     dismiss();
                     Intent main = new Intent(c.getApplicationContext(), MainActivity.class);
                     c.startActivity(main);
@@ -115,16 +103,8 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
                     dismiss();
                 else {
                     sql();
-                    SQLSharing.mycursor.moveToFirst();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mycursor.moveToNext();
-                    SQLSharing.mydb.updateData("ar", SQLSharing.mycursor.getString(0));
-                    SQLSharing.mycursor.close();
-                    SQLSharing.mydb.close();
+                    SQLSharing.mycursorslat.moveToPosition(6);
+                    SQLSharing.mydbslat.updateData("ar", SQLSharing.mycursorslat.getString(0));
                     dismiss();
                     Intent mainer = new Intent(c.getApplicationContext(), MainActivity.class);
                     c.startActivity(mainer);

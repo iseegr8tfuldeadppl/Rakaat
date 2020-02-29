@@ -206,6 +206,9 @@ public class force extends AppCompatActivity  {
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
         params.adjustments.fajr = SQLSharing.params_adjustments_fajr; //2
+        params.fajrAngle = SQLSharing.fajrangle;
+        params.ishaAngle = SQLSharing.ishaangle;
+        //params.adjustments.isha = SQLSharing.params_adjustments_isha; //2
         /*String pattern = "dd-MMM-yyyy";*/
         /*SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);*/
 
@@ -696,14 +699,14 @@ public class force extends AppCompatActivity  {
 
     private boolean request_protected_menu = true;
     private void load_data_from_slat_sql() {
-        SQLSharing.mycursor.moveToPosition(6);
-        language = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursorslat.moveToPosition(6);
+        language = SQLSharing.mycursorslat.getString(1);
 
-        SQLSharing.mycursor.moveToPosition(9);
-        request_protected_menu = SQLSharing.mycursor.getString(1).equals("yes");
+        SQLSharing.mycursorslat.moveToPosition(9);
+        request_protected_menu = SQLSharing.mycursorslat.getString(1).equals("yes");
 
-        SQLSharing.mycursor.moveToPosition(1);
-        if(SQLSharing.mycursor.getString(1).equals("no")) {
+        SQLSharing.mycursorslat.moveToPosition(1);
+        if(SQLSharing.mycursorslat.getString(1).equals("no")) {
             lmfaoimage = findViewById(R.id.lmfao);
             light_mode();
         }
@@ -734,7 +737,7 @@ public class force extends AppCompatActivity  {
     private void location_shit(final Date date) {
         sql(resources.getString(R.string.justforce));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (SQLSharing.mycursor.getCount() > 0)
+        if (SQLSharing.mycursorforce.getCount() > 0)
             if_theres_previous_info_load_it_n_display(date);
         else
             new_coordinates = true;
@@ -751,28 +754,26 @@ public class force extends AppCompatActivity  {
 
     private void if_theres_previous_info_load_it_n_display(Date date) {
         new_coordinates = false;
-        SQLSharing.mycursor.moveToFirst();
-        longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
-        latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
+        SQLSharing.mycursorforce.moveToFirst();
+        longitude = Double.valueOf(SQLSharing.mycursorforce.getString(1));
+        latitude = Double.valueOf(SQLSharing.mycursorforce.getString(2));
         use(longitude, latitude, new_coordinates, date);
     }
 
     private void sql(final String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(getApplicationContext());
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
     }
@@ -855,6 +856,14 @@ public class force extends AppCompatActivity  {
         running = false;
         unregisterReceiver(receiver);
 
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
+
         try {
             mythread.join();
         } catch (InterruptedException e) {
@@ -904,7 +913,7 @@ public class force extends AppCompatActivity  {
         handlerer = new Handler(handlerThread.getLooper());*/
 
         sql("force");
-        if(SQLSharing.mycursor.getCount()>0){
+        if(SQLSharing.mycursorforce.getCount()>0){
             // adan service
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                 RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
@@ -980,6 +989,18 @@ public class force extends AppCompatActivity  {
         useThread.start();
         /*datedisplay.setText(datin);*/
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     private void pull_location(double longitude, double latitude) {
@@ -1392,10 +1413,11 @@ public class force extends AppCompatActivity  {
     }
 
     private void update_coords_in_sql(double longitude, double latitude, boolean new_coordinates) {
-        if(new_coordinates)
-            SQLSharing.mydb.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
+        SQLSharing.mycursorforce.moveToFirst();
+        if(SQLSharing.mycursorforce.getCount()<=0)
+            SQLSharing.mydbforce.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
         else
-            SQLSharing.mydb.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
+            SQLSharing.mydbforce.updateMawa9it(SQLSharing.mycursorforce.getString(0), String.valueOf(longitude), String.valueOf(latitude));
     }
 
     private void pull_date_and_shape_it(double longitude, double latitude, Date today) {
@@ -1799,7 +1821,7 @@ public class force extends AppCompatActivity  {
 
         // if theres smt in sql then  look up  prayed
         sql(resources.getString(R.string.justforce2));
-        if (SQLSharing.mycursor.getCount() > 0) {
+        if (SQLSharing.mycursorforce3.getCount() > 0) {
             pull_prayed_one_hot_encoding_from_sql();
             check_if_prayed_or_verified_are_empty();
             for (int i = 0; i < 5; i++) {
@@ -1977,10 +1999,6 @@ public class force extends AppCompatActivity  {
     }
 
     private void clean_up() {
-        if(SQLSharing.mycursor!=null && SQLSharing.mydb!=null) {
-            SQLSharing.mycursor.close();
-            SQLSharing.mydb.close();
-        }
         one_of_previous_is_zero = false;
         allow_pray = false;
     }
@@ -1990,11 +2008,11 @@ public class force extends AppCompatActivity  {
         prayed = "00000";
         verified = "00000";
         athome = "00000";
-        while(SQLSharing.mycursor.moveToNext()) {
-            if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
-                prayed = SQLSharing.mycursor.getString(2);
-                verified = SQLSharing.mycursor.getString(3);
-                athome = SQLSharing.mycursor.getString(4);
+        while(SQLSharing.mycursorforce3.moveToNext()) {
+            if (todaycomparable.equals(SQLSharing.mycursorforce3.getString(1))){
+                prayed = SQLSharing.mycursorforce3.getString(2);
+                verified = SQLSharing.mycursorforce3.getString(3);
+                athome = SQLSharing.mycursorforce3.getString(4);
                 /*print(SQLSharing.mycursor.getColumnCount());*/
                 break;
             }
@@ -2281,12 +2299,10 @@ public class force extends AppCompatActivity  {
         }
 
         sql(resources.getString(R.string.slat));
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("no", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mycursorslat.moveToFirst();
+        SQLSharing.mycursorslat.moveToNext();
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("no", ID);
     }
 
     private void dark_mode() {
@@ -2356,12 +2372,9 @@ public class force extends AppCompatActivity  {
         }
 
         sql(resources.getString(R.string.slat));
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("yes", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mycursorslat.moveToPosition(1);
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("yes", ID);
     }
 
     private void back_to_main() {

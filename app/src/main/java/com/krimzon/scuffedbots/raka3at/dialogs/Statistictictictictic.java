@@ -38,13 +38,9 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
 
     private void sql() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = "force3";
-        SQLSharing.mydb = new SQL(c.getApplicationContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+        SQLSharing.mydbforce3 = new SQL(c.getApplicationContext());
+        SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
     }
 
 
@@ -173,10 +169,10 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
         tempday = day.toString().split(" ");
         daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5];
 
-        if(SQLSharing.mycursor.getCount()>0){
-            while(SQLSharing.mycursor.moveToNext()) {
-                if (daycomparable.equals(SQLSharing.mycursor.getString(1))) {
-                    temper = SQLSharing.mycursor.getString(2);
+        if(SQLSharing.mycursorforce3.getCount()>0){
+            while(SQLSharing.mycursorforce3.moveToNext()) {
+                if (daycomparable.equals(SQLSharing.mycursorforce3.getString(1))) {
+                    temper = SQLSharing.mycursorforce3.getString(2);
                     for (int i = 0; i < temper.length(); i++)
                         if (String.valueOf(temper.charAt(i)).equals("1"))
                             prayed_prayers += 1;
@@ -192,7 +188,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
 
         sql();
-        if(SQLSharing.mycursor.getCount()>0){
+        if(SQLSharing.mycursorforce3.getCount()>0){
             // we do one day on its own since it's today and can't be looped like others look below
             GregorianCalendar gc = new GregorianCalendar();
             day = gc.getTime();
@@ -218,17 +214,17 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
     private void count_prayed_prayers2() {
 
-        SQLSharing.mycursor.moveToFirst();
-        if (daycomparable.equals(SQLSharing.mycursor.getString(1))){
-            temper = SQLSharing.mycursor.getString(2);
+        SQLSharing.mycursorforce3.moveToFirst();
+        if (daycomparable.equals(SQLSharing.mycursorforce3.getString(1))){
+            temper = SQLSharing.mycursorforce3.getString(2);
             for(int i=0;i<temper.length();i++)
                 if(String.valueOf(temper.charAt(i)).equals("1"))
                     prayed_prayers += 1;
         }
 
-        while(SQLSharing.mycursor.moveToNext()) {
-            if (daycomparable.equals(SQLSharing.mycursor.getString(1))){
-                temper = SQLSharing.mycursor.getString(2);
+        while(SQLSharing.mycursorforce3.moveToNext()) {
+            if (daycomparable.equals(SQLSharing.mycursorforce3.getString(1))){
+                temper = SQLSharing.mycursorforce3.getString(2);
                 for(int i=0;i<temper.length();i++)
                     if(String.valueOf(temper.charAt(i)).equals("1"))
                         prayed_prayers += 1;
@@ -258,9 +254,9 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     private String temper;
 
     private void count_prayed_prayers_of_all_time() {
-        if(SQLSharing.mycursor.getCount()>0){
-                while(SQLSharing.mycursor.moveToNext()) {
-                        temper = SQLSharing.mycursor.getString(2);
+        if(SQLSharing.mycursorforce3.getCount()>0){
+                while(SQLSharing.mycursorforce3.moveToNext()) {
+                        temper = SQLSharing.mycursorforce3.getString(2);
                         for(int i=0;i<temper.length();i++)
                             if(String.valueOf(temper.charAt(i)).equals("1"))
                                 prayed_prayers += 1;

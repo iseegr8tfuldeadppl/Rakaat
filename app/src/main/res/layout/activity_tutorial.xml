@@ -8,25 +8,25 @@
         android:id="@+id/firstpagebackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#9A11E5"/>
+        android:background="@color/tutorialpurple"/>
     <FrameLayout
         android:visibility="invisible"
         android:id="@+id/secondpagebackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#E80767"/>
+        android:background="@color/tutorialpinkish"/>
     <FrameLayout
         android:visibility="invisible"
         android:id="@+id/thirdpagebackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#2C7CF7"/>
+        android:background="@color/tutorialcyanish"/>
     <FrameLayout
         android:visibility="invisible"
         android:id="@+id/fourthpagebackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#D26413"/>
+        android:background="@color/tutorialorange"/>
 
     <!--Display 1-->
     <ImageView

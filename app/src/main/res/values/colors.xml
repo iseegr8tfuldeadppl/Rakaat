@@ -31,4 +31,8 @@
     <color name="forcefullbackground">#121212</color>
     <color name="coolbright">#404040</color>
     <color name="slightlydarkercoolbright">#393939</color>
+    <color name="tutorialpurple">#9A11E5</color>
+    <color name="tutorialpinkish">#E80767</color>
+    <color name="tutorialcyanish">#2C7CF7</color>
+    <color name="tutorialorange">#D26413</color>
 </resources>

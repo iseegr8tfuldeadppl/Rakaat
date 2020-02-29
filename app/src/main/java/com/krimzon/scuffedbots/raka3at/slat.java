@@ -19,7 +19,6 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -145,6 +144,12 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     protected void onDestroy() {
         super.onDestroy();
         unmuter();
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
             changeInterruptionFiler(NotificationManager.INTERRUPTION_FILTER_NONE);
     }
@@ -184,6 +189,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             e.printStackTrace();
         }
     }
+
 
     private void check_do_not_disturb_permission(){
         try{
@@ -297,19 +303,19 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private void sql_work() {
         sql("slat");
 
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        String is_it_dark_mode_in_sql = SQLSharing.mycursor.getString(1);
-        SQLSharing.mycursor.moveToNext();
-        scheme = Integer.parseInt(SQLSharing.mycursor.getString(1));
-        SQLSharing.mycursor.moveToNext();
-        scheme_light_mode = Integer.parseInt(SQLSharing.mycursor.getString(1));
-        SQLSharing.mycursor.moveToNext();
-        delaybeforecounting = Integer.parseInt(SQLSharing.mycursor.getString(1));
-        SQLSharing.mycursor.moveToNext();
-        int soundstempint = Integer.parseInt(SQLSharing.mycursor.getString(1));
-        SQLSharing.mycursor.moveToNext();
-        language = SQLSharing.mycursor.getString(1);
+        SQLSharing.mycursorslat.moveToFirst();
+        SQLSharing.mycursorslat.moveToNext();
+        String is_it_dark_mode_in_sql = SQLSharing.mycursorslat.getString(1);
+        SQLSharing.mycursorslat.moveToNext();
+        scheme = Integer.parseInt(SQLSharing.mycursorslat.getString(1));
+        SQLSharing.mycursorslat.moveToNext();
+        scheme_light_mode = Integer.parseInt(SQLSharing.mycursorslat.getString(1));
+        SQLSharing.mycursorslat.moveToNext();
+        delaybeforecounting = Integer.parseInt(SQLSharing.mycursorslat.getString(1));
+        SQLSharing.mycursorslat.moveToNext();
+        int soundstempint = Integer.parseInt(SQLSharing.mycursorslat.getString(1));
+        SQLSharing.mycursorslat.moveToNext();
+        language = SQLSharing.mycursorslat.getString(1);
 
         if(soundstempint ==1)
             sounds = true;
@@ -328,9 +334,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         else
             it_is_nightmode_since_lightmode_shines_and_ruins_measurement = true;
 
-        assert SQLSharing.mycursor != null;
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
     }
 
     private void resources(){
@@ -609,6 +612,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     @Override
@@ -628,7 +638,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
             boolean gg = tahia.getVisibility()==INVISIBLE;
-            Log.i("HH", "tam_page_visible " + tam_page_visible + " tahia.getVisibility()==INVISIBLE " + gg);
             if(tam_page_visible)
                 warn_tahia2();
 
@@ -999,7 +1008,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             blackground.setEnabled(false);
             blackground.setBackground(null);
             blackout = false;
-            nightmode.setVisibility(VISIBLE);
         }
 
         // allow to just close praying selections and praying shit when backpressed, and not just close out of activity
@@ -1021,6 +1029,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         blackground.setVisibility(VISIBLE);
         soundsbutton.setEnabled(true);
         soundsbuttonbackground.setEnabled(true);
+        nightmode.setVisibility(VISIBLE);
         soundsbutton.setVisibility(View.VISIBLE);
         settings.setEnabled(true);
         settingsbuttonbackground.setEnabled(true);
@@ -1060,6 +1069,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         else
             start.setBackground(resources.getDrawable(R.drawable.buttons));
 
+
+
         receiveandy = "main";
     }
 
@@ -1087,9 +1098,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable, temper, verified, athome);
+            SQLSharing.mydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, temper, verified, athome);
+            SQLSharing.mydbforce3.insertPrayed(todaycomparable, temper, verified, athome);
 
         tam_page_visible = true;
         warn_tahia2();
@@ -1097,11 +1108,11 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private boolean tam_page_visible = false;
     private void check_if_prayed_exists_in_sql() {
-        if(SQLSharing.mycursor.getCount()<=0)
+        if(SQLSharing.mycursorforce3.getCount()<=0)
             found_prayed_history_in_sql = false;
         else {
-            while(SQLSharing.mycursor.moveToNext()) {
-                if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
+            while(SQLSharing.mycursorforce3.moveToNext()) {
+                if (todaycomparable.equals(SQLSharing.mycursorforce3.getString(1))){
                     found_prayed_history_in_sql = true;
                     break;
                 }
@@ -1111,21 +1122,19 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void sql(String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(this);
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
     }
@@ -1194,14 +1203,12 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         four.setBackground(resources.getDrawable(R.drawable.buttons));
 
         SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("no", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mydbslat = new SQL(this);
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
+        SQLSharing.mycursorslat.moveToFirst();
+        SQLSharing.mycursorslat.moveToNext();
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("no", ID);
 
         if(five_second_before_actually_starting_was_finished)
             start.setBackground(null);
@@ -1267,14 +1274,11 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         four.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
 
         SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(this);
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mydb.updateData("yes", ID);
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.mydbslat = new SQL(this);
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
+        SQLSharing.mycursorslat.moveToPosition(1);
+        ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mydbslat.updateData("yes", ID);
 
         if(five_second_before_actually_starting_was_finished)
             start.setBackground(null);
@@ -1364,10 +1368,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
     private void back_to_force(String input) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         Intent forceIntent = new Intent(this, force.class);
         forceIntent.putExtra("light_alert", input); // yes for true
         startActivity(forceIntent);
@@ -1384,10 +1384,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
     private void close_sql() {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
     }
 
 
@@ -1472,7 +1468,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
             }
             sounds = false;
-            SQLSharing.mydb.updateData("0", "6");
+            SQLSharing.mydbslat.updateData("0", "6");
         } else {
             try {
                 Glide.with(this).load(R.drawable.soundson).into(soundsbutton);
@@ -1480,7 +1476,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundson));
             }
             sounds = true;
-            SQLSharing.mydb.updateData("1", "6");
+            SQLSharing.mydbslat.updateData("1", "6");
         }
     }
 

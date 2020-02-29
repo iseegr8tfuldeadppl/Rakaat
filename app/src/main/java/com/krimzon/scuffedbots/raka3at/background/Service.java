@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,7 +16,6 @@ import android.os.IBinder;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.format.DateFormat;
-import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
@@ -68,6 +66,7 @@ public class Service extends android.app.Service {
     private DateComponents date;
     private List<Integer> prayers;
     private String fajr;
+    private String rise;
     private String dhuhr;
     private String asr;
     private String maghrib;
@@ -91,10 +90,7 @@ public class Service extends android.app.Service {
     private int positifise=0;
     private int negatifise = 0;
     private boolean still_scoping_on_previous_adan = false;
-    private int current_displayed_slider = -1;
-    private int slider = 0;
     private int rightnowcomparable_old = 0, rightnowcomparable = 1;
-    private RemoteViews widgetViews;
 
     public Service() {
         super();
@@ -109,19 +105,19 @@ public class Service extends android.app.Service {
         c = getApplicationContext();
         // check if switch for main notification is on
         sql("slat");
-        SQLSharing.mycursor.moveToPosition(1);
-        darkmode = SQLSharing.mycursor.getString(1).equals("yes");
-        SQLSharing.mycursor.moveToPosition(6);
-        language = SQLSharing.mycursor.getString(1);
-        SQLSharing.mycursor.moveToPosition(8);
-        main_notification_switch = SQLSharing.mycursor.getString(1).equals("yes");
-        SQLSharing.mycursor.moveToPosition(10);
-        delays = SQLSharing.mycursor.getString(1);
+        SQLSharing.servicemycursorslat.moveToPosition(1);
+        darkmode = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+        SQLSharing.servicemycursorslat.moveToPosition(6);
+        language = SQLSharing.servicemycursorslat.getString(1);
+        SQLSharing.servicemycursorslat.moveToPosition(8);
+        main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+        SQLSharing.servicemycursorslat.moveToPosition(10);
+        delays = SQLSharing.servicemycursorslat.getString(1);
         delayssplit = delays.split(" ");
         close_sql();
 
         sql("force");
-        if(SQLSharing.mycursor.getCount()>0)
+        if(SQLSharing.servicemycursorforce.getCount()>0)
             startTimer();
         close_sql();
 
@@ -164,9 +160,12 @@ public class Service extends android.app.Service {
                         e.printStackTrace();
                     }
                     StringBuilder strinkbilder = new StringBuilder(prayed);
-                    strinkbilder.setCharAt(most_recent_unprayed, '1');
+                    if(most_recent_unprayed>1)
+                        strinkbilder.setCharAt(most_recent_unprayed-1, '1');
+                    else
+                        strinkbilder.setCharAt(most_recent_unprayed, '1');
                     String temper = String.valueOf(strinkbilder);
-                    SQLSharing.mydb.updatePrayed(todaycomparable, temper, verified, athome);
+                    SQLSharing.servicemydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
                     close_sql();
                 }
 
@@ -187,12 +186,15 @@ public class Service extends android.app.Service {
 
     private void launch_prayer_processing() {
         sql("force");
-        if(SQLSharing.mycursor.getCount()>0) {
+        if(SQLSharing.servicemycursorforce.getCount()>0) {
 
             params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
             params = CalculationMethod.EGYPTIAN.getParameters();
             params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
             params.adjustments.fajr = SQLSharing.params_adjustments_fajr; //2 TODO change this one aswell
+            params.fajrAngle = SQLSharing.fajrangle;
+            params.ishaAngle = SQLSharing.ishaangle;
+            //params.adjustments.isha = SQLSharing.params_adjustments_isha; //2
             //String pattern = "dd-MMM-yyyy";
             //SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
@@ -218,7 +220,7 @@ public class Service extends android.app.Service {
 
             //if(rightnowcomparable_old!=rightnowcomparable)
                 // displayed rightnowcomparable
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 6; j++) {
                 if(rightnowcomparable<prayers.get(0)) {
                     i = 0;
                     break;
@@ -227,7 +229,7 @@ public class Service extends android.app.Service {
                     i = j + 1;
                 }
             }
-            if(i>=5){
+            if(i>=6){
                 i = 0;
                 end_of_day = true;
             } else
@@ -242,18 +244,8 @@ public class Service extends android.app.Service {
 
         // check if switch for main notification is on
         sql("slat");
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        main_notification_switch = SQLSharing.mycursor.getString(1).equals("yes");
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
+        SQLSharing.servicemycursorslat.moveToPosition(8);
+        main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
 
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         if (intent == null) {
@@ -267,7 +259,7 @@ public class Service extends android.app.Service {
             restartForeground();
 
         sql("force");
-        if(SQLSharing.mycursor.getCount()>0)
+        if(SQLSharing.servicemycursorforce.getCount()>0)
             startTimer();
         close_sql();
 
@@ -276,10 +268,13 @@ public class Service extends android.app.Service {
     }
 
     private void close_sql() {
-        if(SQLSharing.mycursor==null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb==null)
-            SQLSharing.mydb.close();
+        if(SQLSharing.servicemydbforce!=null)
+            SQLSharing.servicemydbforce.close();
+        if(SQLSharing.servicemydbslat!=null)
+            SQLSharing.servicemydbslat.close();
+        if(SQLSharing.servicemydbforce3!=null)
+            SQLSharing.servicemydbforce3.close();
+
     }
 
     @Nullable
@@ -291,12 +286,14 @@ public class Service extends android.app.Service {
     public void restartForeground() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
+                close_sql();
                 sql("force");
-                if(SQLSharing.mycursor.getCount()>0) {
+                if(SQLSharing.servicemycursorforce.getCount()>0) {
                     if(main_notification_switch) {
                         display_notification(true);
                     }
                 }
+                close_sql();
             } catch (Exception ignored) {}
         }
     }
@@ -348,20 +345,21 @@ public class Service extends android.app.Service {
                     old_date = new_date;
                     find_next_adan();
                     if(i!=-1) {
-                        rightnowcomparable_old = rightnowcomparable;
                         calculate_negatifise_and_positifise();
                         check_negatifise();
-                        if_change_needed_for_slider_apply_it();
-                        find_currently_displayed_adans_id(i);
                         apply_mute_delays();
-                        check_unprayed_prayer_for_today();
-                        prepare_a_custom_reminder_notification_and_send_it();
+                        if(rightnowcomparable_old!=rightnowcomparable) {
+                            check_unprayed_prayer_for_today();
+                            prepare_a_custom_reminder_notification_and_send_it();
+                            apply_widget_update();
+                            rightnowcomparable_old = rightnowcomparable;
+                        }
                     }
 
 
                     if(!end_of_day) {
                         // Check if we reached the adan, if so, then switch i to the next adan
-                        if (prayers.get(i) == rightnowcomparable) {
+                        if (prayers.get(i) == rightnowcomparable && i!=1) {
                             if (!recent_adan) {
                                 recent_adan = true;
                                 current_adding_playing = i;
@@ -380,7 +378,7 @@ public class Service extends android.app.Service {
 
                                 // set i to the next adan
                                 i++;
-                                if (i >= 5) i = 0;
+                                if (i >= 6) i = 0;
                             }
                         } else recent_adan = false;
 
@@ -464,115 +462,11 @@ public class Service extends android.app.Service {
             still_scoping_on_previous_adan = negatifise <= SQLSharing.minute_limit_to_display_negatifise;
     }
 
-    private boolean change_happened = true;
-    private void if_change_needed_for_slider_apply_it() {
-        int lol = -3;
-        if(still_scoping_on_previous_adan)
-            lol = i-1;
-        else
-            lol = i;
-        hide_slider_for_given_slat_number(current_displayed_slider);
-        if(still_scoping_on_previous_adan){
-            change_happened = true;
-            find_slider(i);
-            widgetViews.setTextViewText(slider, "+ " + String.valueOf(negatifise));
-            widgetViews.setViewVisibility(slider, View.VISIBLE);
-        }
-        else if(positifise<=SQLSharing.minute_limit_to_display_positifise){
-            change_happened = true;
-            find_slider(i);
-            widgetViews.setTextViewText(slider, "- " + String.valueOf(positifise));
-            widgetViews.setViewVisibility(slider, View.VISIBLE);
-        } else {
-            if(change_happened){ change_happened = false;
-                hide_slider_for_given_slat_number(current_displayed_slider);
-            }
-        }
-
-        apply_widget_update();
-    }
-
-    private void hide_slider_for_given_slat_number(int lol) {
-        switch(lol){
-            case 0:
-                widgetViews.setViewVisibility(R.id.widgetsliderfajr, View.INVISIBLE);
-                break;
-            case 1:
-                widgetViews.setViewVisibility(R.id.widgetsliderdhuhr, View.INVISIBLE);
-                break;
-            case 2:
-                widgetViews.setViewVisibility(R.id.widgetsliderasr, View.INVISIBLE);
-                break;
-            case 3:
-                widgetViews.setViewVisibility(R.id.widgetslidermaghreb, View.INVISIBLE);
-                break;
-            case 4:
-                widgetViews.setViewVisibility(R.id.widgetsliderisha, View.INVISIBLE);
-        }
-    }
-
-    private void find_slider(final int next_adaner) {
-        int temp;
-        if (still_scoping_on_previous_adan)
-            temp = next_adaner - 1;
-        else
-            temp = next_adaner;
-        switch (temp) {
-            case -1:
-                break;
-            case 0:
-            case 5:
-                slider = R.id.widgetsliderfajr;
-                break;
-            case 1:
-                slider = R.id.widgetsliderdhuhr;
-                break;
-            case 2:
-                slider = R.id.widgetsliderasr;
-                break;
-            case 3:
-                slider = R.id.widgetslidermaghreb;
-                break;
-            case 4:
-                slider = R.id.widgetsliderisha;
-                break;
-        }
-    }
-
-    private void find_currently_displayed_adans_id(final int next_adaner) {
-        int temp;
-        if (still_scoping_on_previous_adan)
-            temp = next_adaner - 1;
-        else
-            temp = next_adaner;
-        switch (temp) {
-            case -1:
-                current_displayed_slider = -1;
-                break;
-            case 0:
-            case 5:
-                current_displayed_slider = 0;
-                break;
-            case 1:
-                current_displayed_slider = 1;
-                break;
-            case 2:
-                current_displayed_slider = 2;
-                break;
-            case 3:
-                current_displayed_slider = 3;
-                break;
-            case 4:
-                current_displayed_slider = 4;
-                break;
-        }
-    }
-
     private int pullselectedadanforthisprayerfromSQL(int prayedtobepopped) {
         sql("slat");
 
-        SQLSharing.mycursor.moveToPosition(7);
-        int selectedadan = Integer.valueOf(SQLSharing.mycursor.getString(1).split(" ")[prayedtobepopped].split(",")[0]) - 1;
+        SQLSharing.servicemycursorslat.moveToPosition(7);
+        int selectedadan = Integer.valueOf(SQLSharing.servicemycursorslat.getString(1).split(" ")[prayedtobepopped].split(",")[0]) - 1;
         close_sql();
         return selectedadan;
     }
@@ -580,15 +474,13 @@ public class Service extends android.app.Service {
     private void display_notification(boolean is_it_over_android_O) {
 
         try {
-            if (once && !playing) {
-                update_widget_ui();
+            if (once && !playing)
                 update_notification_ui();
-            }
 
             if(playing)// TODO add a button that appears in force and all activiteis that says adan is playing and a button to stop it
                 update_notification_ui_for_adan();
             else
-                slight_update_notification_and_widget_ui();
+                slight_update_notification();
 
             notification = builder.build();
             if(is_it_over_android_O)
@@ -601,49 +493,26 @@ public class Service extends android.app.Service {
         }
     }
 
-    private void update_widget_ui() {
-
-        if(darkmode)
-            widgetViews = new RemoteViews(getPackageName(), R.layout.force_widget);
-        else
-            widgetViews = new RemoteViews(getPackageName(), R.layout.force_widget);
-
-        widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
-        widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
-        widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
-        widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
-        widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
-
-        if(language.equals("en")){
-            widgetViews.setTextViewText(R.id.widgetfajrtitle, c.getResources().getString(R.string.fajrtitle));
-            widgetViews.setTextViewText(R.id.widgetdhuhrtitle, c.getResources().getString(R.string.dohrtitle));
-            widgetViews.setTextViewText(R.id.widgetasrtitle, c.getResources().getString(R.string.asrtitle));
-            widgetViews.setTextViewText(R.id.widgetmaghribtitle, c.getResources().getString(R.string.maghrebtitle));
-            widgetViews.setTextViewText(R.id.widgetishatitle, c.getResources().getString(R.string.ishatitle));
-        }
-
-        widgetViews.setTextViewText(R.id.widgetfajrtime, praytimesregularform.get(0));
-        widgetViews.setTextViewText(R.id.widgetdhuhrtime, praytimesregularform.get(1));
-        widgetViews.setTextViewText(R.id.widgetasrtime, praytimesregularform.get(2));
-        widgetViews.setTextViewText(R.id.widgetmaghrebtime, praytimesregularform.get(3));
-        widgetViews.setTextViewText(R.id.widgetishatime, praytimesregularform.get(4));
-
-    }
-
     private void apply_widget_update() {
         try {
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(c);
-            appWidgetManager.updateAppWidget(new ComponentName(c.getPackageName(), force_widget.class.getName()), widgetViews);
+            //AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+            //appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext().getPackageName(), force_widget.class.getName()), widgetViews);
+
+            Intent intent = new Intent(this, force_widget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            sendBroadcast(intent);
+
         } catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private void slight_update_notification_and_widget_ui() {
+    private void slight_update_notification() {
         // Notification
         switch (i) {
             case 0:
                 remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.greenarrowdown);
+                remoteViews.setImageViewResource(R.id.risearrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
@@ -651,104 +520,43 @@ public class Service extends android.app.Service {
                 break;
             case 1:
                 remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.risearrow, R.drawable.greenarrowdown);
+                remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
+                break;
+            case 2:
+                remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.risearrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.greenarrowdown);
                 remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
                 break;
-            case 2:
+            case 3:
                 remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.risearrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.greenarrowdown);
                 remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
                 break;
-            case 3:
+            case 4:
                 remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.risearrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.greenarrowdown);
                 remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.arrowdown);
                 break;
-            case 4:
+            case 5:
                 remoteViews.setImageViewResource(R.id.fajrarrow, R.drawable.arrowdown);
+                remoteViews.setImageViewResource(R.id.risearrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.dhuhrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.asrarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.maghrebarrow, R.drawable.arrowdown);
                 remoteViews.setImageViewResource(R.id.ishaarrow, R.drawable.greenarrowdown);
-        }
-
-        // Widget
-        switch (i) {
-            case 0:
-                if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.fajrtitle));
-                else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.fajrtitle_arabe));
-
-                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(0));
-
-                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.greenarrowdown);
-                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
-                break;
-            case 1:
-                if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.dohrtitle));
-                else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.dohrtitle_arabe));
-
-                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(1));
-
-                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.greenarrowdown);
-                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
-                break;
-            case 2:
-                if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.asrtitle));
-                else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.asrtitle_arabe));
-
-                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(2));
-
-                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.greenarrowdown);
-                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
-                break;
-            case 3:
-                if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.maghrebtitle));
-                else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.maghrebtitle_arabe));
-
-                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(3));
-
-                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.greenarrowdown);
-                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.arrowdown);
-                break;
-            case 4:
-                if(language.equals("en"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.ishatitle));
-                else if(language.equals("ar"))
-                    widgetViews.setTextViewText(R.id.nextprayertitle, c.getResources().getString(R.string.ishatitle_arabe));
-
-                widgetViews.setTextViewText(R.id.nextprayertime, praytimesregularform.get(4));
-
-                widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetdhuhrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetasrarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetmaghrebarrow, R.drawable.arrowdown);
-                widgetViews.setImageViewResource(R.id.widgetishaarrow, R.drawable.greenarrowdown);
         }
     }
 
@@ -769,16 +577,16 @@ public class Service extends android.app.Service {
                 case 0:
                     current_adan = c.getResources().getString(R.string.fajrtitle_arabe);
                     break;
-                case 1:
+                case 2:
                     current_adan = c.getResources().getString(R.string.dohrtitle_arabe);
                     break;
-                case 2:
+                case 3:
                     current_adan = c.getResources().getString(R.string.asrtitle_arabe);
                     break;
-                case 3:
+                case 4:
                     current_adan = c.getResources().getString(R.string.maghrebtitle_arabe);
                     break;
-                case 4:
+                case 5:
                     current_adan = c.getResources().getString(R.string.ishatitle_arabe);
             }
             remoteViews.setTextViewText(R.id.adangoingon, time + " " + current_adan);
@@ -788,16 +596,16 @@ public class Service extends android.app.Service {
                 case 0:
                     current_adan = c.getResources().getString(R.string.fajrtitle);
                     break;
-                case 1:
+                case 2:
                     current_adan = c.getResources().getString(R.string.dohrtitle);
                     break;
-                case 2:
+                case 3:
                     current_adan = c.getResources().getString(R.string.asrtitle);
                     break;
-                case 3:
+                case 4:
                     current_adan = c.getResources().getString(R.string.maghrebtitle);
                     break;
-                case 4:
+                case 5:
                     current_adan = c.getResources().getString(R.string.ishatitle);
             }
             remoteViews.setTextViewText(R.id.adangoingon, current_adan + " " + time);
@@ -835,40 +643,44 @@ public class Service extends android.app.Service {
         String[] temptoday = today.toString().split(" ");
         todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
 
-        sql(getResources().getString(R.string.justforce2));
         prayed = "00000";
         athome = "00000";
         verified = "00000";
-        while(SQLSharing.mycursor.moveToNext()) {
-            if (todaycomparable.equals(SQLSharing.mycursor.getString(1))){
-                prayed = SQLSharing.mycursor.getString(2);
-                verified = SQLSharing.mycursor.getString(3);
-                athome = SQLSharing.mycursor.getString(4);
+        close_sql();
+        sql(getResources().getString(R.string.justforce2));
+        while(SQLSharing.servicemycursorforce3.moveToNext()) {
+            if (todaycomparable.equals(SQLSharing.servicemycursorforce3.getString(1))){
+                prayed = SQLSharing.servicemycursorforce3.getString(2);
+                verified = SQLSharing.servicemycursorforce3.getString(3);
+                athome = SQLSharing.servicemycursorforce3.getString(4);
                 found = true;
                 break;
             }
         }
 
         if(!found){
-            SQLSharing.mydb.insertPrayed(todaycomparable, "00000", "00000", "11111");
+            SQLSharing.servicemydbforce3.insertPrayed(todaycomparable, "00000", "00000", "11111");
         } else {
             boolean unprayed = false;
-            for(int g=0; g<5; g++){
+            for(int g=0; g<6; g++){
                 if(String.valueOf(prayed.charAt(g)).equals("0")){
-                    most_recent_unprayed = g;
-                    unprayed = true;
-                    break;
+                    if(g!=1) {
+                        most_recent_unprayed = g;
+                        unprayed = true;
+                        break;
+                    }
                 }
             }
             if(!unprayed)
                 most_recent_unprayed = -1;
         }
+        close_sql();
     }
 
     private int most_recent_unprayed = -1;
     private boolean already_notified_recent_adan = false;
     private void prepare_a_custom_reminder_notification_and_send_it() {
-        if(((positifise>=15 && positifise <=25) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1) {
+        if(((positifise>=15 && positifise <=25) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1 && most_recent_unprayed<i) {
             if(!already_notified_recent_adan) {
                 already_notified_recent_adan = true;
                 vibrate();
@@ -889,16 +701,16 @@ public class Service extends android.app.Service {
                         case 0:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayfajr));
                             break;
-                        case 1:
+                        case 2:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraydhuhr));
                             break;
-                        case 2:
+                        case 3:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayasr));
                             break;
-                        case 3:
+                        case 4:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraymaghreb));
                             break;
-                        case 4:
+                        case 5:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayisha));
                             break;
                     }
@@ -907,16 +719,16 @@ public class Service extends android.app.Service {
                         case 0:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayfajr_arabe));
                             break;
-                        case 1:
+                        case 2:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraydhuhr_arabe));
                             break;
-                        case 2:
+                        case 3:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayasr_arabe));
                             break;
-                        case 3:
+                        case 4:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyoupraymaghreb_arabe));
                             break;
-                        case 4:
+                        case 5:
                             remoteViews2.setTextViewText(R.id.didyoupraytitle, getResources().getString(R.string.didyouprayisha_arabe));
                             break;
                     }
@@ -969,6 +781,7 @@ public class Service extends android.app.Service {
 
         if(language.equals("en")){
             remoteViews.setTextViewText(R.id.fajrtitle, c.getResources().getString(R.string.fajrtitle));
+            remoteViews.setTextViewText(R.id.fajrtitle, c.getResources().getString(R.string.rise));
             remoteViews.setTextViewText(R.id.dhuhrtitle, c.getResources().getString(R.string.dohrtitle));
             remoteViews.setTextViewText(R.id.asrtitle, c.getResources().getString(R.string.asrtitle));
             remoteViews.setTextViewText(R.id.maghribtitle, c.getResources().getString(R.string.maghrebtitle));
@@ -981,10 +794,11 @@ public class Service extends android.app.Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
         remoteViews.setTextViewText(R.id.fajrtime, praytimesregularform.get(0));
-        remoteViews.setTextViewText(R.id.dhuhrtime, praytimesregularform.get(1));
-        remoteViews.setTextViewText(R.id.asrtime, praytimesregularform.get(2));
-        remoteViews.setTextViewText(R.id.maghrebtime, praytimesregularform.get(3));
-        remoteViews.setTextViewText(R.id.ishatime, praytimesregularform.get(4));
+        remoteViews.setTextViewText(R.id.risetime, praytimesregularform.get(1));
+        remoteViews.setTextViewText(R.id.dhuhrtime, praytimesregularform.get(2));
+        remoteViews.setTextViewText(R.id.asrtime, praytimesregularform.get(3));
+        remoteViews.setTextViewText(R.id.maghrebtime, praytimesregularform.get(4));
+        remoteViews.setTextViewText(R.id.ishatime, praytimesregularform.get(5));
 
         once = false;
     }
@@ -1000,9 +814,9 @@ public class Service extends android.app.Service {
 
     private void if_theres_previous_info_load_it_n_display(Date date) {
         sql("force");
-        SQLSharing.mycursor.moveToFirst();
-        double longitude = Double.valueOf(SQLSharing.mycursor.getString(1));
-        double latitude = Double.valueOf(SQLSharing.mycursor.getString(2));
+        SQLSharing.servicemycursorforce.moveToFirst();
+        double longitude = Double.valueOf(SQLSharing.servicemycursorforce.getString(1));
+        double latitude = Double.valueOf(SQLSharing.servicemycursorforce.getString(2));
         use(longitude, latitude, date);
     }
 
@@ -1142,7 +956,9 @@ public class Service extends android.app.Service {
         int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
         if(fajr.split(" ")[1].equals("PM"))
             fajrtemp += 720; //12*60
-        //Integer risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(rise.split(" ")[0].split(":")[1])*60;
+        int risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(rise.split(" ")[0].split(":")[1]);
+        if(rise.split(" ")[1].equals("PM"))
+            risetemp += 720; //12*60
         int dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]);
         if(dhuhr.split(" ")[1].equals("PM") && !dhuhr.split(":")[0].equals("12"))
             dhuhrtemp += 720; //12*60
@@ -1165,6 +981,7 @@ public class Service extends android.app.Service {
 
 
         prayers.add(fajrtemp);
+        prayers.add(risetemp);
         prayers.add(dhuhrtemp);
         prayers.add(asrtemp);
         prayers.add(maghribtemp);
@@ -1181,6 +998,14 @@ public class Service extends android.app.Service {
                 praytimesregularform.add(String.valueOf(Integer.valueOf(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(fajr.split(" ")[0]);
+
+        if(rise.split(" ")[1].equals("PM")) {
+            if(Integer.valueOf(rise.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + rise.split(" ")[0].split(":")[1]);
+            else
+                praytimesregularform.add(String.valueOf(Integer.valueOf(rise.split(" ")[0].split(":")[0]) + 12) + ":" + rise.split(" ")[0].split(":")[1]);
+        } else
+            praytimesregularform.add(rise.split(" ")[0]);
 
         if(dhuhr.split(" ")[1].equals("PM")){
             if(Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])==12)
@@ -1220,6 +1045,7 @@ public class Service extends android.app.Service {
         try {
             String timeshape = "hh:mm a";
             fajr = DateFormat.format(timeshape, new Date(prayerTimes.fajr.getTime())).toString();
+            rise = DateFormat.format(timeshape, new Date(prayerTimes.sunrise.getTime())).toString();
             dhuhr = DateFormat.format(timeshape, new Date(prayerTimes.dhuhr.getTime())).toString();
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
             maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
@@ -1230,21 +1056,20 @@ public class Service extends android.app.Service {
     }
 
     private void sql(String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
+        close_sql();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(c);
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.servicemydbslat = new SQL(c);
+                SQLSharing.servicemycursorslat = SQLSharing.servicemydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.servicemydbforce = new SQL(c);
+                SQLSharing.servicemycursorforce = SQLSharing.servicemydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.servicemydbforce3 = new SQL(c);
+                SQLSharing.servicemycursorforce3 = SQLSharing.servicemydbforce3.getAllDateforce3();
                 break;
         }
     }

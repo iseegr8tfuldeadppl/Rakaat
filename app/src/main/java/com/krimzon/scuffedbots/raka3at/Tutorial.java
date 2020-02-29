@@ -30,23 +30,45 @@ public class Tutorial extends AppCompatActivity {
     private String language;
 
     private void sql(final String table) {
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
         SQLSharing.TABLE_NAME_INPUTER = table;
-        SQLSharing.mydb = new SQL(getApplicationContext());
         switch (table) {
             case "slat":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
+                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce();
+                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mycursor = SQLSharing.mydb.getAllDateforce3();
+                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     @Override
@@ -89,12 +111,8 @@ public class Tutorial extends AppCompatActivity {
         previous.setTypeface(arabic_typeface2);
 
         sql("slat");
-        SQLSharing.mycursor.moveToPosition(6);
-        language = SQLSharing.mycursor.getString(1);
-        if(SQLSharing.mycursor!=null)
-            SQLSharing.mycursor.close();
-        if(SQLSharing.mydb!=null)
-            SQLSharing.mydb.close();
+        SQLSharing.mycursorslat.moveToPosition(6);
+        language = SQLSharing.mycursorslat.getString(1);
 
         if(language.equals("ar")){
             explanation1.setText(getResources().getString(R.string.explanation1_arabe));
@@ -166,13 +184,8 @@ public class Tutorial extends AppCompatActivity {
             }
         } else if(page==totalpages){
             sql("slat");
-            SQLSharing.mycursor.moveToFirst();
-            SQLSharing.mydb.updateData("1", SQLSharing.mycursor.getString(0));
-
-            if(SQLSharing.mycursor!=null)
-                SQLSharing.mycursor.close();
-            if(SQLSharing.mydb!=null)
-                SQLSharing.mydb.close();
+            SQLSharing.mycursorslat.moveToFirst();
+            SQLSharing.mydbslat.updateData("1", SQLSharing.mycursorslat.getString(0));
 
             Intent slatter = new Intent(this, slat.class);
             slatter.putExtra("sender", "main");

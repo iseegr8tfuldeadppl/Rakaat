@@ -99,7 +99,7 @@ public class slat_settings extends BottomSheetDialogFragment {
 
     private void select_three() {
         delaybeforecounting = 3;
-        SQLSharing.mydb.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
+        SQLSharing.mydbslat.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
             zero.setBackground(resources.getDrawable(R.drawable.darkzerodelayunselected));
             three.setBackground(resources.getDrawable(R.drawable.darkthreedelayselected));
@@ -113,7 +113,7 @@ public class slat_settings extends BottomSheetDialogFragment {
 
     private void select_five() {
         delaybeforecounting = 5;
-        SQLSharing.mydb.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
+        SQLSharing.mydbslat.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
             zero.setBackground(resources.getDrawable(R.drawable.darkzerodelayunselected));
             three.setBackground(resources.getDrawable(R.drawable.darkthreedelayunselected));
@@ -127,7 +127,7 @@ public class slat_settings extends BottomSheetDialogFragment {
 
     private void select_zero() {
         delaybeforecounting = 0;
-        SQLSharing.mydb.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
+        SQLSharing.mydbslat.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
             zero.setBackground(resources.getDrawable(R.drawable.darkzerodelayselected));
             three.setBackground(resources.getDrawable(R.drawable.darkthreedelayunselected));
@@ -141,19 +141,19 @@ public class slat_settings extends BottomSheetDialogFragment {
 
     private void sql_work() {
         SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydb = new SQL(getContext());
-        SQLSharing.mycursor = SQLSharing.mydb.getAllDateslat();
-        SQLSharing.mycursor.moveToFirst();
-        SQLSharing.mycursor.moveToNext();
-        it_is_nightmode_since_lightmode_shines_and_ruins_measurement = SQLSharing.mycursor.getString(1).equals("yes");
-        SQLSharing.mycursor.moveToNext();
-        SCHEME_ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mycursor.moveToNext();
-        SCHEME_LIGHT_MODE_ID = SQLSharing.mycursor.getString(0);
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        SQLSharing.mycursor.moveToNext();
-        language = SQLSharing.mycursor.getString(1);
+        SQLSharing.mydbslat = new SQL(getContext());
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
+        SQLSharing.mycursorslat.moveToFirst();
+        SQLSharing.mycursorslat.moveToNext();
+        it_is_nightmode_since_lightmode_shines_and_ruins_measurement = SQLSharing.mycursorslat.getString(1).equals("yes");
+        SQLSharing.mycursorslat.moveToNext();
+        SCHEME_ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mycursorslat.moveToNext();
+        SCHEME_LIGHT_MODE_ID = SQLSharing.mycursorslat.getString(0);
+        SQLSharing.mycursorslat.moveToNext();
+        SQLSharing.mycursorslat.moveToNext();
+        SQLSharing.mycursorslat.moveToNext();
+        language = SQLSharing.mycursorslat.getString(1);
     }
 
     private void update_brightness(int progress) {
@@ -165,7 +165,7 @@ public class slat_settings extends BottomSheetDialogFragment {
                 /*raka3at.setTextColor(darkest);
                 sajda.setTextColor(darkest);
                 brightnesstitle.setTextColor(darkest);*/
-                SQLSharing.mydb.updateData(String.valueOf(scheme), SCHEME_ID);
+                SQLSharing.mydbslat.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
                 brightness.setThumb(resources.getDrawable(R.drawable.dimmest_thumb));
                 brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimmest_volume_control));
@@ -173,7 +173,7 @@ public class slat_settings extends BottomSheetDialogFragment {
                 /*raka3at.setTextColor(dimmest);
                 sajda.setTextColor(dimmest);
                 brightnesstitle.setTextColor(dimmest);*/
-                SQLSharing.mydb.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
+                SQLSharing.mydbslat.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
             }
         } else if(progress<=69){
             if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement){
@@ -183,7 +183,7 @@ public class slat_settings extends BottomSheetDialogFragment {
                 /*raka3at.setTextColor(dark);
                 sajda.setTextColor(dark);
                 brightnesstitle.setTextColor(dark);*/
-                SQLSharing.mydb.updateData(String.valueOf(scheme), SCHEME_ID);
+                SQLSharing.mydbslat.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
                 brightness.setThumb(resources.getDrawable(R.drawable.dimmer_thumb));
                 brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimmer_volume_control));
@@ -191,7 +191,7 @@ public class slat_settings extends BottomSheetDialogFragment {
                 /*raka3at.setTextColor(dimmer);
                 sajda.setTextColor(dimmer);
                 brightnesstitle.setTextColor(dimmer);*/
-                SQLSharing.mydb.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
+                SQLSharing.mydbslat.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
             }
         } else {
             if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
@@ -201,7 +201,7 @@ public class slat_settings extends BottomSheetDialogFragment {
                 /*raka3at.setTextColor(white);
                 sajda.setTextColor(white);
                 brightnesstitle.setTextColor(white);*/
-                SQLSharing.mydb.updateData(String.valueOf(scheme), SCHEME_ID);
+                SQLSharing.mydbslat.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
                 brightness.setThumb(resources.getDrawable(R.drawable.dimm_thumb));
                 brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimm_volume_control));
@@ -209,7 +209,7 @@ public class slat_settings extends BottomSheetDialogFragment {
                 /*raka3at.setTextColor(dimm);
                 sajda.setTextColor(dimm);
                 brightnesstitle.setTextColor(dimm);*/
-                SQLSharing.mydb.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
+                SQLSharing.mydbslat.updateData(String.valueOf(scheme_light_mode), SCHEME_LIGHT_MODE_ID);
             }
         }
     }
@@ -300,8 +300,6 @@ public class slat_settings extends BottomSheetDialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        SQLSharing.mycursor.close();
-        SQLSharing.mydb.close();
         if(language.equals("ar"))
             Toast.makeText(getContext(), getString(R.string.saved_arabe), Toast.LENGTH_SHORT).show();
         else
