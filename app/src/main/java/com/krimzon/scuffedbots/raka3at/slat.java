@@ -415,10 +415,23 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private boolean light_sensor_works = true;
     @Override
     public void onBackPressed() {
-        if(receiveandy!=null) {
-            if (receiveandy.equals("force"))
-                back_to_force("no");
-            else {
+        try{
+            if(receiveandy!=null) {
+                if (receiveandy.equals("force"))
+                    back_to_force("no");
+                else {
+                    if(entered_praying_process) {
+                        countdownbackground.setVisibility(GONE);
+                        countdown.setVisibility(GONE);
+                        one.setVisibility(INVISIBLE);
+                        two.setVisibility(INVISIBLE);
+                        three.setVisibility(INVISIBLE);
+                        four.setVisibility(INVISIBLE);
+                        reset();
+                    } else
+                        exit();
+                }
+            } else {
                 if(entered_praying_process) {
                     countdownbackground.setVisibility(GONE);
                     countdown.setVisibility(GONE);
@@ -430,17 +443,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 } else
                     exit();
             }
-        } else {
-            if(entered_praying_process) {
-                countdownbackground.setVisibility(GONE);
-                countdown.setVisibility(GONE);
-                one.setVisibility(INVISIBLE);
-                two.setVisibility(INVISIBLE);
-                three.setVisibility(INVISIBLE);
-                four.setVisibility(INVISIBLE);
-                reset();
-            } else
-                exit();
+        } catch(Exception e){
+            e.printStackTrace();
         }
     }
 

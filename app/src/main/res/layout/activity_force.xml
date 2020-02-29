@@ -702,7 +702,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="10dp"
-            android:text="Prayed this\nday before?"
+            android:text="@string/prayallquestion_arabe"
             android:layout_marginBottom="5dp"
             android:id="@+id/prayedthisdaybefore"
             android:gravity="center"

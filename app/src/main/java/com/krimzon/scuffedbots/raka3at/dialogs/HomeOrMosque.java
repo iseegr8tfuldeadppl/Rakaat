@@ -186,6 +186,7 @@ public class HomeOrMosque extends Dialog {
     private void set_all_prayers() {
 
         // set if at home or not
+
         if(at_home)
             athome = "11111";
         else
@@ -194,9 +195,9 @@ public class HomeOrMosque extends Dialog {
         sql();
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
-            SQLSharing.mydb.updatePrayed(todaycomparable, "11111", "00000", athome);
+            SQLSharing.mydb.updatePrayed(todaycomparable, "11111", verified, athome);
         else
-            SQLSharing.mydb.insertPrayed(todaycomparable, "11111", "00000", athome);
+            SQLSharing.mydb.insertPrayed(todaycomparable, "11111", verified, athome);
     }
 
     private void check_if_prayed_exists_in_sql() {

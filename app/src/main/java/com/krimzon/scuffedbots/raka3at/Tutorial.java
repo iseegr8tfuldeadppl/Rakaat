@@ -141,7 +141,6 @@ public class Tutorial extends AppCompatActivity {
             switch (page) {
                 case 2:
                     clicked = true;
-                    arrowleft.setVisibility(View.VISIBLE);
                     if(language.equals("ar"))
                         previous.setText(getResources().getString(R.string.previous_arabe));
                     else if(language.equals("en"))
@@ -175,9 +174,9 @@ public class Tutorial extends AppCompatActivity {
             if(SQLSharing.mydb!=null)
                 SQLSharing.mydb.close();
 
-            Intent slat = new Intent(this, slat.class);
-            slat.putExtra("sender", "main");
-            startActivity(slat);
+            Intent slatter = new Intent(this, slat.class);
+            slatter.putExtra("sender", "main");
+            startActivity(slatter);
             finish();
         }
     }
@@ -192,13 +191,16 @@ public class Tutorial extends AppCompatActivity {
                 startActivity(MainActivityy);
                 finish();
             } else if(sender.equals("slat")){
-                Intent slat = new Intent(this, slat.class);
-                slat.putExtra("sender", "main");
-                startActivity(slat);
+                Intent slatter = new Intent(this, slat.class);
+                slatter.putExtra("sender", "main");
+                startActivity(slatter);
                 finish();
             }
         } catch(Exception e){
             e.printStackTrace();
+            Intent MainActivityy = new Intent(this, MainActivity.class);
+            startActivity(MainActivityy);
+            finish();
         }
 
     }
@@ -210,7 +212,6 @@ public class Tutorial extends AppCompatActivity {
             switch (page) {
                 case 1:
                     clicked = true;
-                    arrowleft.setVisibility(View.INVISIBLE);
                     if(language.equals("ar"))
                         previous.setText(getResources().getString(R.string.back_arabe));
                     else if(language.equals("en"))
@@ -236,9 +237,24 @@ public class Tutorial extends AppCompatActivity {
                     break;
             }
         } else if(page==1){
-            Intent MainActivityy = new Intent(this, MainActivity.class);
-            startActivity(MainActivityy);
-            finish();
+            try{
+                String sender = getIntent().getStringExtra("sender");
+                if(sender.equals("main")){
+                    Intent MainActivityy = new Intent(this, MainActivity.class);
+                    startActivity(MainActivityy);
+                    finish();
+                } else if(sender.equals("slat")){
+                    Intent slatter = new Intent(this, slat.class);
+                    slatter.putExtra("sender", "main");
+                    startActivity(slatter);
+                    finish();
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+                Intent MainActivityy = new Intent(this, MainActivity.class);
+                startActivity(MainActivityy);
+                finish();
+            }
         }
     }
 

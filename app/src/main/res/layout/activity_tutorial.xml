@@ -184,7 +184,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/previous"/>
             <ImageView
-                android:visibility="invisible"
                 android:onClick="previousClicked"
                 android:clickable="true"
                 android:focusable="true"
@@ -193,8 +192,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_gravity="start|center_vertical"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/arrowleft"/>
+                android:layout_height="20dp"/>
         </FrameLayout>
         <FrameLayout
             android:onClick="nextClicked"
@@ -226,8 +224,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_gravity="end|center_vertical"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/arrowright"/>
+                android:layout_height="20dp"/>
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

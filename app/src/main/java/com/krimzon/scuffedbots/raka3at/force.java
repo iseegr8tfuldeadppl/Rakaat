@@ -443,9 +443,10 @@ public class force extends AppCompatActivity  {
         }
     }
 
+    private TextView prayedthisdaybefore;
     private void variables_setup() {
 
-
+        prayedthisdaybefore = findViewById(R.id.prayedthisdaybefore);
         ImageView arrowback = findViewById(R.id.arrowback);
         ImageView statslogo = findViewById(R.id.statslogo);
         ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
@@ -661,6 +662,7 @@ public class force extends AppCompatActivity  {
 
         title.setTypeface(arabic_typeface);
         daterr.setTypeface(arabic_typeface);
+        prayedthisdaybefore.setTypeface(arabic_typeface);
 
         for(TextView praybutton:praybuttons)
             praybutton.setTypeface(arabic_typeface);
@@ -688,6 +690,7 @@ public class force extends AppCompatActivity  {
             for(TextView praybutton:praybuttons)
                 praybutton.setText(resources.getString(R.string.joinprayer));
             title.setText(resources.getString(R.string.force));
+            prayedthisdaybefore.setText(resources.getString(R.string.prayallquestion));
         }
     }
 

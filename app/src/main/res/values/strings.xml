@@ -346,5 +346,7 @@
     <string name="explanation1force_arabe">يمكنك مراجعة الأيام السابقة و صلاتها بإستعمال الأسهُم</string>
     <string name="explanation4force">To pray, you put your phone down and press the corresponding button</string>
     <string name="explanation4force_arabe">للصلاة قم بوضع الهاتف على السجادة و إضغط على الزر المناسب</string>
+    <string name="prayallquestion">Prayed this\nday before?</string>
+    <string name="prayallquestion_arabe">صليت هذا اليوم\nمن قبل؟</string>
 
 </resources>

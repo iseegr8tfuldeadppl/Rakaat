@@ -166,7 +166,6 @@ public class forceTutorial extends AppCompatActivity {
                 next.setText(getResources().getString(R.string.next));
                 previous.setText(getResources().getString(R.string.back));
             }
-            arrowleft.setVisibility(View.INVISIBLE);
 
             slide_page_four_out_to_right();
             slide_page_one_in_from_left();
