@@ -288,40 +288,42 @@ public class force extends AppCompatActivity  {
                 if (it_is_today) {
 
                     calculate_rightnowcomparable();
-                    if(!praybuttonsdone)
+                    if (!praybuttonsdone)
                         color_pray_buttonshandler.sendEmptyMessage(0);
 
 
-                    temp_positifise = Math.round((prayers.get(next_adan) - rightnowcomparable));
+                    if (rightnowcomparable != rightnowcomparable_temp || (next_adan==0 && positifise > SQLSharing.minute_limit_to_display_positifise+1)){
+                        temp_positifise = Math.round((prayers.get(next_adan) - rightnowcomparable));
 
-                    check_next_adan();
-                    // this check is to fix the glitch of changing time from 3AM to 11PM instantly, gets stuck on fajr
-                    // TODO: might remove idk
-                    if(temp_positifise<0) {
-                        handler5.sendEmptyMessage(0);
-                        temp_positifise = Math.abs(temp_positifise);
-                    }
+                        check_next_adan();
+                        // this check is to fix the glitch of changing time from 3AM to 11PM instantly, gets stuck on fajr
+                        // TODO: might remove idk
+                        if (temp_positifise < 0) {
+                            handler5.sendEmptyMessage(0);
+                            temp_positifise = Math.abs(temp_positifise);
+                        }
 
-                    if (next_adan != 0)
-                        temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(next_adan - 1))));
-                    else
-                        still_scoping_on_previous_adan = false;
+                        if (next_adan != 0)
+                            temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(next_adan - 1))));
+                        else
+                            still_scoping_on_previous_adan = false;
 
-                    /*handlos.sendEmptyMessage(0);*/
+                        /*handlos.sendEmptyMessage(0);*/
 
-                    // move to next adan if available
-                    if (next_adan!=current_displayed_next_adan || end_of_day)
-                        handler5.sendEmptyMessage(0);
+                        // move to next adan if available
+                        if (next_adan != current_displayed_next_adan || end_of_day)
+                            handler5.sendEmptyMessage(0);
 
-                    if(next_adan==0 && current_displayed_next_adan==0)
-                        checkonfajr.sendEmptyMessage(0);
+                        if (next_adan == 0 && current_displayed_next_adan == 0)
+                            checkonfajr.sendEmptyMessage(0);
 
-                    display_neg_if_possible();
+                        display_neg_if_possible();
 
 
-                    if ((temp_positifise != positifise || changing_day) && !still_scoping_on_previous_adan) {
-                        positifise = temp_positifise;
-                        handler3.sendEmptyMessage(0);
+                        if ((temp_positifise != positifise || changing_day) && !still_scoping_on_previous_adan) {
+                            positifise = temp_positifise;
+                            handler3.sendEmptyMessage(0);
+                        }
                     }
 
                 }
@@ -421,6 +423,7 @@ public class force extends AppCompatActivity  {
         }
     }
 
+    private int rightnowcomparable_temp=-1;
     private void calculate_rightnowcomparable() {
         Date todayos = new Date();
         if(!String.valueOf(todayos).split(" ")[2].equals(String.valueOf(CurrentDisplayedDay).split(" ")[2]) || rightnowcomparable==0 || next_adan == -1) {
@@ -430,6 +433,7 @@ public class force extends AppCompatActivity  {
             calluse.sendEmptyMessage(0);
         }
         String temptime = String.valueOf(todayos).split(" ")[3];
+        rightnowcomparable_temp = rightnowcomparable;
         rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
     }
 

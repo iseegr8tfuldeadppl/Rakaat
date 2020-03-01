@@ -67,6 +67,7 @@ public class force_settings extends AppCompatActivity {
         apply_previous_settings();
         apply_adanSelections();
         apply_previous_delays();
+        apply_enabled_and_disabled_on_delays();
         onClickListeners();
         plusminusonclicklisteners();
         dark_light_mode();
@@ -91,6 +92,49 @@ public class force_settings extends AppCompatActivity {
         }});
     }
 
+    private void apply_enabled_and_disabled_on_delays() {
+        if(fajrmuteenabled){
+            mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            fajrmuteenabled = false;
+        } else {
+            mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            fajrmenu.setVisibility(View.INVISIBLE);
+            fajrmuteenabled = true;
+        }
+        if(dhuhrmuteenabled){
+            mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            dhuhrmuteenabled = false;
+        } else {
+            mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            dhuhrmenu.setVisibility(View.INVISIBLE);
+            dhuhrmuteenabled = true;
+        }
+        if(asrmuteenabled){
+            muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            asrmuteenabled = false;
+        } else {
+            muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            asrmenu.setVisibility(View.INVISIBLE);
+            asrmuteenabled = true;
+        }
+        if(maghrebmuteenabled){
+            mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            maghrebmuteenabled = false;
+        } else {
+            mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            maghrebmenu.setVisibility(View.INVISIBLE);
+            maghrebmuteenabled = true;
+        }
+        if(ishamuteenabled){
+            muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            ishamuteenabled = false;
+        } else {
+            muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            ishamenu.setVisibility(View.INVISIBLE);
+            ishamuteenabled = true;
+        }
+    }
+
     private void apply_previous_delays() {
         String[] delays_split_to_five = delays.split(" ");
         String[] current_prayer_delays_split = delays_split_to_five[0].split(",");
@@ -98,26 +142,31 @@ public class force_settings extends AppCompatActivity {
         fajrbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
         fajraftercounterdisplay.setText(current_prayer_delays_split[1]);
         fajraftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        fajrmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[1].split(",");
         dhuhrbeforecounterdisplay.setText(current_prayer_delays_split[0]);
         dhuhrbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
         dhuhraftercounterdisplay.setText(current_prayer_delays_split[1]);
         dhuhraftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        dhuhrmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[2].split(",");
         asrbeforecounterdisplay.setText(current_prayer_delays_split[0]);
         asrbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
         asraftercounterdisplay.setText(current_prayer_delays_split[1]);
         asraftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        asrmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[3].split(",");
         maghrebbeforecounterdisplay.setText(current_prayer_delays_split[0]);
         maghrebbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
         maghrebaftercounterdisplay.setText(current_prayer_delays_split[1]);
         maghrebaftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        maghrebmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[4].split(",");
         ishabeforecounterdisplay.setText(current_prayer_delays_split[0]);
         ishabeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
         ishaaftercounterdisplay.setText(current_prayer_delays_split[1]);
         ishaaftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        ishamuteenabled = current_prayer_delays_split[2].equals("1");
     }
 
     private boolean delays_modified = false;
@@ -1132,7 +1181,28 @@ public class force_settings extends AppCompatActivity {
         sql("slat");
         SQLSharing.mycursorslat.moveToPosition(10);
         ID = SQLSharing.mycursorslat.getString(0);
-        SQLSharing.mydbslat.updateData(fajrbeforecounter+","+fajraftercounter + " " + dhuhrbeforecounter+","+dhuhraftercounter + " " + asrbeforecounter+","+asraftercounter + " " + maghrebbeforecounter+","+maghrebaftercounter + " " + ishabeforecounter+","+ishaaftercounter ,ID);
+        String one, two, three, four, five;
+        if(fajrmuteenabled)
+            one = "1";
+        else
+            one = "0";
+        if(dhuhrmuteenabled)
+            two = "1";
+        else
+            two = "0";
+        if(asrmuteenabled)
+            three = "1";
+        else
+            three = "0";
+        if(maghrebmuteenabled)
+            four = "1";
+        else
+            four = "0";
+        if(ishamuteenabled)
+            five = "1";
+        else
+            five = "0";
+        SQLSharing.mydbslat.updateData(fajrbeforecounter+","+fajraftercounter+","+one + " " + dhuhrbeforecounter+","+dhuhraftercounter+","+two + " " + asrbeforecounter+","+asraftercounter+","+three + " " + maghrebbeforecounter+","+maghrebaftercounter+","+four + " " + ishabeforecounter+","+ishaaftercounter+","+five ,ID);
     }
 
     private void stopadan(){
@@ -1499,12 +1569,19 @@ public class force_settings extends AppCompatActivity {
     private Switch notiswitch;
     private TextView settingstitle, notitext, mutetitle;
     private Context context;
+    private LinearLayout fajrmenu, dhuhrmenu, asrmenu, maghrebmenu, ishamenu;
     private TextView fajrmutebeforeadantitle, fajrmuteafteradantitle, dhuhrmutebeforeadantitle, dhuhrafteradantitle, asrbeforeadantitle, asrafteradantitle;
     private TextView maghrebbeforeadantitle, maghrebafteradantitle, ishabeforeadantitle, ishaafteradantitle;
     private TextView mutefajrtitle, mutedhuhrtitle, muteasrtitle, mutemaghrebtitle, muteishatitle;
     private TextView fajrbeforecounterdisplay, fajraftercounterdisplay, dhuhrbeforecounterdisplay, dhuhraftercounterdisplay, asrbeforecounterdisplay, asraftercounterdisplay, maghrebbeforecounterdisplay, maghrebaftercounterdisplay, ishabeforecounterdisplay, ishaaftercounterdisplay;
     private void prepare_variables() {
         context = this;
+
+        fajrmenu = findViewById(R.id.fajrmenu);
+        dhuhrmenu = findViewById(R.id.dhuhrmenu);
+        asrmenu = findViewById(R.id.asrmenu);
+        maghrebmenu = findViewById(R.id.maghrebmenu);
+        ishamenu = findViewById(R.id.ishamenu);
 
         fajrbeforecounterdisplay = findViewById(R.id.fajrbeforecounter);
         fajraftercounterdisplay= findViewById(R.id.fajraftercounter);
@@ -1608,4 +1685,66 @@ public class force_settings extends AppCompatActivity {
         if(SQLSharing.mydbforce3!=null)
             SQLSharing.mydbforce3.close();
     }
+
+    private boolean fajrmuteenabled = true, dhuhrmuteenabled = true, asrmuteenabled = true, maghrebmuteenabled = true, ishamuteenabled = true;
+    public void fajrmuteClicked(View view) {
+        if(fajrmuteenabled){
+            mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            fajrmenu.setVisibility(View.INVISIBLE);
+            fajrmuteenabled = false;
+        } else {
+            mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            fajrmenu.setVisibility(View.VISIBLE);
+            fajrmuteenabled = true;
+        }
+    }
+
+    public void dhuhrmuteClicked(View view) {
+        if(dhuhrmuteenabled){
+            mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            dhuhrmenu.setVisibility(View.INVISIBLE);
+            dhuhrmuteenabled = false;
+        } else {
+            mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            dhuhrmenu.setVisibility(View.VISIBLE);
+            dhuhrmuteenabled = true;
+        }
+    }
+
+    public void asrmuteClicked(View view) {
+        if(asrmuteenabled){
+            muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            asrmenu.setVisibility(View.INVISIBLE);
+            asrmuteenabled = false;
+        } else {
+            muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            asrmenu.setVisibility(View.VISIBLE);
+            asrmuteenabled = true;
+        }
+    }
+
+    public void maghrebmuteClicked(View view) {
+        if(maghrebmuteenabled){
+            mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            maghrebmenu.setVisibility(View.INVISIBLE);
+            maghrebmuteenabled = false;
+        } else {
+            mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            maghrebmenu.setVisibility(View.VISIBLE);
+            maghrebmuteenabled = true;
+        }
+    }
+
+    public void ishamuteClicked(View view) {
+        if(ishamuteenabled){
+            muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
+            ishamenu.setVisibility(View.INVISIBLE);
+            ishamuteenabled = false;
+        } else {
+            muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            ishamenu.setVisibility(View.VISIBLE);
+            ishamuteenabled = true;
+        }
+    }
+
 }

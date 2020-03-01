@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydbslat.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,2 => default adan, adan sounds fully on (1 is for vibrte, 0 is for no sounds)
             SQLSharing.mydbslat.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
             SQLSharing.mydbslat.insertData("yes"); // do i ask for protected apps on launch?
-            SQLSharing.mydbslat.insertData("5,35 5,35 5,35 5,20 5,35"); // delaysbeforeandafterdan to mute ringtones
+            SQLSharing.mydbslat.insertData("5,35,1 5,35,1 5,35,1 5,20,1 5,35,1"); // delaysbeforeandafterdan to mute ringtones before adan/after adan/enabled or not
             SQLSharing.mydbslat.insertData(""); // tutorial for force
             tutorial = true;
         } else {

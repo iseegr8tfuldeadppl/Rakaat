@@ -457,6 +457,7 @@
                         android:layout_height="wrap_content"/>
                 </FrameLayout>
             </LinearLayout>
+
             <!--Mute Phone Period Title-->
             <TextView
                 android:layout_width="match_parent"
@@ -476,6 +477,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="fajrmuteClicked"
                     android:id="@+id/mutefajrtitle"
                     android:paddingTop="8dp"
                     android:paddingBottom="11dp"
@@ -485,9 +489,10 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/adanselectiontextsize"/>
                 <LinearLayout
+                    android:id="@+id/fajrmenu"
                     android:paddingBottom="11dp"
                     android:paddingTop="8dp"
                     android:background="@drawable/mutebody"
@@ -614,6 +619,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="dhuhrmuteClicked"
                     android:id="@+id/mutedhuhrtitle"
                     android:paddingTop="8dp"
                     android:paddingBottom="11dp"
@@ -626,6 +634,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/adanselectiontextsize"/>
                 <LinearLayout
+                    android:id="@+id/dhuhrmenu"
                     android:paddingBottom="11dp"
                     android:paddingTop="8dp"
                     android:background="@drawable/mutebody"
@@ -752,6 +761,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="asrmuteClicked"
                     android:id="@+id/muteasrtitle"
                     android:paddingTop="8dp"
                     android:paddingBottom="11dp"
@@ -761,9 +773,10 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/adanselectiontextsize"/>
                 <LinearLayout
+                    android:id="@+id/asrmenu"
                     android:paddingBottom="11dp"
                     android:paddingTop="8dp"
                     android:background="@drawable/mutebody"
@@ -890,6 +903,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="maghrebmuteClicked"
                     android:id="@+id/mutemaghrebtitle"
                     android:paddingTop="8dp"
                     android:paddingBottom="11dp"
@@ -899,9 +915,10 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/adanselectiontextsize"/>
                 <LinearLayout
+                    android:id="@+id/maghrebmenu"
                     android:paddingBottom="11dp"
                     android:paddingTop="8dp"
                     android:background="@drawable/mutebody"
@@ -1029,6 +1046,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="ishamuteClicked"
                     android:id="@+id/muteishatitle"
                     android:paddingTop="8dp"
                     android:paddingBottom="11dp"
@@ -1038,9 +1058,10 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/adanselectiontextsize"/>
                 <LinearLayout
+                    android:id="@+id/ishamenu"
                     android:paddingBottom="11dp"
                     android:paddingTop="8dp"
                     android:background="@drawable/mutebody"
