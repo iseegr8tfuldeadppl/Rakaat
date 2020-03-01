@@ -9,7 +9,7 @@ This Raka'at counter uses a very sophisticated algorithm made specifically for p
 # A Kibla compass
 a seemless Kibla compass that just works
 
-# A Prayer Times Police
+# A Prayer Times Tool With Cop Functionality (tracks your prayers)
 -> yes as you read, using the Raka'at counter tool the app is able to track your prayers and is able to know whether you have prayed or not, when you use the detector in a certain prayer, it will add a green checkmark on it.
 
 -> This Prayer Cop allows you to pray previously missed prayers in previous days/weeks/months/years you can finally repray ANY missed prayer without having to keep track all the time
