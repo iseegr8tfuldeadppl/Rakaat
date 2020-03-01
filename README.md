@@ -2,10 +2,10 @@
 
 Raka'at Development Project (scroll below for some explanation)
 
-Raka'at is a revolutionary app for muslims around the world, this simple and compact app with 9280 lines of code under its belt contains three pages:
+Raka'at is a revolutionary app for muslims around the world, this simple and compact app with 9280 lines of code under its belt contains three tools:
 
 # A Raka'at counter tool
-that works seemlessly by detecting your sajadat over the phone, allowing you to know which rak'a you're in at anytime, it reminds you to Tahia aswell
+ It works seemlessly by detecting your sajadat using your phone's light sensor, all you have to do is place your phone down, allowing you to know which rak'a you're in at anytime, it reminds you at Tahia aswell
 This Raka'at counter uses a very sophisticated algorithm made specifically for prayers, it only counts a sajda if it thinks it's a proper physical sajda, it also knows and predicts when you're going to do a sajda using general knowledge (you can't possiblity do more than 2 sajdat within 5 seconds)
 
 # A Kibla compass
