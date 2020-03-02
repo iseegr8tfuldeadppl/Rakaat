@@ -42,7 +42,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:weightSum="2"
-            android:paddingBottom="11dp"
+            android:paddingBottom="@dimen/widgettitlespaddingbottom"
             >
             <TextView
                 android:layout_width="0dp"
