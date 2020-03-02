@@ -17,7 +17,6 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.format.DateFormat;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.batoulapps.adhan.CalculationMethod;
@@ -42,8 +41,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import com.krimzon.scuffedbots.raka3at.R;
@@ -89,14 +90,20 @@ public class Service extends android.app.Service {
     private Context c;
     private int positifise=0;
     private int negatifise = 0;
-    private boolean still_scoping_on_previous_adan = false;
     private int rightnowcomparable_old = 0, rightnowcomparable = 1;
+    private boolean adan_exception = false;
+    private boolean mute = false, already_muted = false, already_unmuted = true;
+    private String[] delayssplit;
+    private String prayed = "00000", verified = "00000", athome = "00000";
+    private String todaycomparable;
+    private int most_recent_unprayed = -1;
+    private boolean already_notified_recent_adan = false;
+    //private boolean still_scoping_on_previous_adan = false;
 
     public Service() {
         super();
     }
 
-    private String delays;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -112,7 +119,7 @@ public class Service extends android.app.Service {
         SQLSharing.servicemycursorslat.moveToPosition(8);
         main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
         SQLSharing.servicemycursorslat.moveToPosition(10);
-        delays = SQLSharing.servicemycursorslat.getString(1);
+        String delays = SQLSharing.servicemycursorslat.getString(1);
         delayssplit = delays.split(" ");
         close_sql();
 
@@ -124,7 +131,6 @@ public class Service extends android.app.Service {
         launch_stop_adan_button_listener();
     }
 
-    private String[] delayssplit;
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -132,13 +138,14 @@ public class Service extends android.app.Service {
             assert action != null;
             if(action.equals("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener")){
                 try{
-                    if(playing)
-                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));
+                    /*if(playing)
+                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));*/
                     simpleExoPlayer.stop();
                     simpleExoPlayer.release();
                     playing = false;
                     adan_exception = false;
                     once = true;
+                    apply_mute_delays();
                 } catch(Exception ignored){}
             } else if(action.equals("com.krimzon.scuffedbots.raka3at.background.gopraymate")){
                 try {
@@ -198,7 +205,8 @@ public class Service extends android.app.Service {
             //String pattern = "dd-MMM-yyyy";
             //SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
-            old_date = new Date();
+            Calendar cal = Calendar.getInstance(Locale.US);
+            old_date = new Date(cal.getTimeInMillis());
             location_shit(old_date);
 
             find_next_adan();
@@ -213,7 +221,7 @@ public class Service extends android.app.Service {
     private void find_next_adan() {
         try {
             String temptime = String.valueOf(old_date).split(" ")[3];
-            rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
+            rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
 
             /*if(rightnowcomparable_old!=rightnowcomparable){
             }*/
@@ -339,14 +347,15 @@ public class Service extends android.app.Service {
                 try {
 
                     // Check if we are still in the same day, if not then calculate new day's prayertimes
-                    new_date = new Date();
+                    Calendar cal = Calendar.getInstance(Locale.US);
+                    new_date = new Date(cal.getTimeInMillis());
                     if(!String.valueOf(old_date).split(" ")[2].equals(String.valueOf(new_date).split(" ")[2]))
                         location_shit(new_date);
                     old_date = new_date;
                     find_next_adan();
                     if(i!=-1) {
                         calculate_negatifise_and_positifise();
-                        check_negatifise();
+                        //check_negatifise();
                         apply_mute_delays();
                         if(rightnowcomparable_old!=rightnowcomparable) {
                             check_unprayed_prayer_for_today();
@@ -373,7 +382,6 @@ public class Service extends android.app.Service {
                                 adan_exception = true;
                                 already_unmuted = true;
                                 unmuter();
-                                vibrate();
                                 playadan(pullselectedadanforthisprayerfromSQL(i));
 
                                 // set i to the next adan
@@ -409,12 +417,9 @@ public class Service extends android.app.Service {
         };
     }
 
-    private boolean adan_exception = false;
-    private String[] delaysplitsplit;
-    private boolean mute = false, already_muted = false, already_unmuted = true;
     private void apply_mute_delays() {
-        delaysplitsplit = delayssplit[i].split(",");
-        mute = positifise <= Integer.valueOf(delaysplitsplit[0]) || negatifise <= Integer.valueOf(delaysplitsplit[1]);
+        String[] delaysplitsplit = delayssplit[i].split(",");
+        mute = (positifise <= Integer.parseInt(delaysplitsplit[0]) || negatifise <= Integer.parseInt(delaysplitsplit[1])) && delayssplit[2].equals("1") && Integer.parseInt(delaysplitsplit[1])>3 && Integer.parseInt(delaysplitsplit[0]) > 1;
 
         if(mute && !already_muted && !adan_exception){
             already_muted = true;
@@ -451,22 +456,22 @@ public class Service extends android.app.Service {
     private void calculate_negatifise_and_positifise() {
         if (i != 0)
             negatifise = Math.round(abs((rightnowcomparable - prayers.get(i - 1))));
-        else
-            still_scoping_on_previous_adan = false;
+        /*else
+            still_scoping_on_previous_adan = false;*/
 
         positifise = Math.round(abs((prayers.get(i) - rightnowcomparable)));
     }
 
-    private void check_negatifise() {
+    /*private void check_negatifise() {
         if(i!=0)
             still_scoping_on_previous_adan = negatifise <= SQLSharing.minute_limit_to_display_negatifise;
-    }
+    }*/
 
     private int pullselectedadanforthisprayerfromSQL(int prayedtobepopped) {
         sql("slat");
 
         SQLSharing.servicemycursorslat.moveToPosition(7);
-        int selectedadan = Integer.valueOf(SQLSharing.servicemycursorslat.getString(1).split(" ")[prayedtobepopped].split(",")[0]) - 1;
+        int selectedadan = Integer.parseInt(SQLSharing.servicemycursorslat.getString(1).split(" ")[prayedtobepopped].split(",")[0]) - 1;
         close_sql();
         return selectedadan;
     }
@@ -623,7 +628,7 @@ public class Service extends android.app.Service {
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
     }
 
-    private void vibrate() {
+    /*private void vibrate() {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if(v==null)
             v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -633,13 +638,12 @@ public class Service extends android.app.Service {
         } else {
             v.vibrate(545);
         }
-    }
+    }*/
 
-    private String prayed = "00000", verified = "00000", athome = "00000";
-    private String todaycomparable;
     private void check_unprayed_prayer_for_today() {
         boolean found = false;
-        Date today = new Date();
+        Calendar cal = Calendar.getInstance(Locale.US);
+        Date today = new Date(cal.getTimeInMillis());
         String[] temptoday = today.toString().split(" ");
         todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
 
@@ -677,15 +681,12 @@ public class Service extends android.app.Service {
         close_sql();
     }
 
-    private int most_recent_unprayed = -1;
-    private boolean already_notified_recent_adan = false;
     private void prepare_a_custom_reminder_notification_and_send_it() {
         if(((positifise>=15 && positifise <=25) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1 && most_recent_unprayed<i) {
             if(!already_notified_recent_adan) {
                 already_notified_recent_adan = true;
-                vibrate();
                 NotificationManager notificationManager2 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                NotificationCompat.Builder builder2 = new NotificationCompat.Builder(c, "channel2");
+                NotificationCompat.Builder builder2 = new NotificationCompat.Builder(c, "channel2").setVibrate(new long[]{100, 300, 100, 300});
                 RemoteViews remoteViews2;
                 if (darkmode)
                     remoteViews2 = new RemoteViews(getPackageName(), R.layout.reminder_notification_darkmode);
@@ -781,7 +782,7 @@ public class Service extends android.app.Service {
 
         if(language.equals("en")){
             remoteViews.setTextViewText(R.id.fajrtitle, c.getResources().getString(R.string.fajrtitle));
-            remoteViews.setTextViewText(R.id.fajrtitle, c.getResources().getString(R.string.rise));
+            remoteViews.setTextViewText(R.id.risetitle, c.getResources().getString(R.string.rise));
             remoteViews.setTextViewText(R.id.dhuhrtitle, c.getResources().getString(R.string.dohrtitle));
             remoteViews.setTextViewText(R.id.asrtitle, c.getResources().getString(R.string.asrtitle));
             remoteViews.setTextViewText(R.id.maghribtitle, c.getResources().getString(R.string.maghrebtitle));
@@ -803,10 +804,6 @@ public class Service extends android.app.Service {
         once = false;
     }
 
-    private void print(Object log){
-        Toast.makeText(c, String.valueOf(log), Toast.LENGTH_LONG).show();
-    }
-
     private void location_shit(Date date) {
         if_theres_previous_info_load_it_n_display(date);
 
@@ -815,8 +812,8 @@ public class Service extends android.app.Service {
     private void if_theres_previous_info_load_it_n_display(Date date) {
         sql("force");
         SQLSharing.servicemycursorforce.moveToFirst();
-        double longitude = Double.valueOf(SQLSharing.servicemycursorforce.getString(1));
-        double latitude = Double.valueOf(SQLSharing.servicemycursorforce.getString(2));
+        double longitude = Double.parseDouble(SQLSharing.servicemycursorforce.getString(1));
+        double latitude = Double.parseDouble(SQLSharing.servicemycursorforce.getString(2));
         use(longitude, latitude, date);
     }
 
@@ -830,7 +827,9 @@ public class Service extends android.app.Service {
 
         /*String[] temptoday = today.toString().split(" ");
         String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
-        */old_date = new Date();
+        */
+        Calendar cal = Calendar.getInstance(Locale.US);
+        old_date = new Date(cal.getTimeInMillis());
 
         pull_date_and_shape_it(longitude, latitude, today);
         pull_prayer_times_and_shape_them();
@@ -913,6 +912,7 @@ public class Service extends android.app.Service {
                         playing = false;
                         adan_exception = false;
                         once = true;
+                        apply_mute_delays();
                         sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));
                     }
                 }
@@ -953,30 +953,35 @@ public class Service extends android.app.Service {
     }
 
     private void convert_prayertimes_into_milliseconds() {
-        int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
-        if(fajr.split(" ")[1].equals("PM"))
+
+
+        String pm = getResources().getString(R.string.pm);
+
+        int fajrtemp = Integer.parseInt(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
+        if(fajr.split(" ")[1].equals(getResources().getString(R.string.pmer))|| fajr.split(" ")[1].equals(pm))
             fajrtemp += 720; //12*60
-        int risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(rise.split(" ")[0].split(":")[1]);
-        if(rise.split(" ")[1].equals("PM"))
+        int risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(rise.split(" ")[0].split(":")[1]);
+        if(rise.split(" ")[1].equals("PM") || rise.split(" ")[1].equals(pm))
             risetemp += 720; //12*60
-        int dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]);
-        if(dhuhr.split(" ")[1].equals("PM") && !dhuhr.split(":")[0].equals("12"))
+        //Integer risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0])*3600 + Integer.parseInt(rise.split(" ")[0].split(":")[1])*60;
+        int dhuhrtemp = Integer.parseInt(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(dhuhr.split(" ")[0].split(":")[1]);
+        if((dhuhr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || dhuhr.split(" ")[1].equals(pm)) && !dhuhr.split(":")[0].equals("12"))
             dhuhrtemp += 720; //12*60
-        int asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(asr.split(" ")[0].split(":")[1]);
-        if(asr.split(" ")[1].equals("PM"))
+        int asrtemp = Integer.parseInt(asr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(asr.split(" ")[0].split(":")[1]);
+        if(asr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || asr.split(" ")[1].equals(pm))
             asrtemp += 720; //12*60
-        int maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1]);
-        if(maghrib.split(" ")[1].equals("PM"))
+        int maghribtemp = Integer.parseInt(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
+        if(maghrib.split(" ")[1].equals(getResources().getString(R.string.pmer)) || maghrib.split(" ")[1].equals(pm))
             maghribtemp += 720; //12*60
-        int ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(isha.split(" ")[0].split(":")[1]);
-        if(isha.split(" ")[1].equals("PM"))
+        int ishatemp = Integer.parseInt(isha.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(isha.split(" ")[0].split(":")[1]);
+        if(isha.split(" ")[1].equals(getResources().getString(R.string.pmer)) || isha.split(" ")[1].equals(pm))
             ishatemp += 720; //12*60
 
 
 
         /*// TODO:  for testing purposes
         temptime = String.valueOf(old_date).split(" ")[3];
-        rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
+        rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 3600 + Integer.parseInt(temptime.split(":")[1]) * 60 + Integer.parseInt(temptime.split(":")[2]);
         fajrtemp = rightnowcomparable + 10;*/
 
 
@@ -992,50 +997,50 @@ public class Service extends android.app.Service {
         praytimesregularform = new ArrayList<>();
 
         if(fajr.split(" ")[1].equals("PM")) {
-            if(Integer.valueOf(fajr.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(fajr.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + fajr.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(fajr.split(" ")[0]);
 
         if(rise.split(" ")[1].equals("PM")) {
-            if(Integer.valueOf(rise.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(rise.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + rise.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(rise.split(" ")[0].split(":")[0]) + 12) + ":" + rise.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(rise.split(" ")[0].split(":")[0]) + 12) + ":" + rise.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(rise.split(" ")[0]);
 
         if(dhuhr.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + dhuhr.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(dhuhr.split(" ")[0]);
 
         if(asr.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(asr.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(asr.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(asr.split(" ")[0]);
 
         if(maghrib.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
+            if(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + maghrib.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(maghrib.split(" ")[0]);
 
         if(isha.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(isha.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + isha.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(isha.split(" ")[0]);
     }

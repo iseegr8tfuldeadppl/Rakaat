@@ -7,7 +7,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 14
+        versionCode 15
         versionName "3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -16,10 +16,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-
-    dexOptions {
-        incremental true
     }
 }
 
@@ -33,6 +29,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     implementation 'com.batoulapps.adhan:adhan:1.1.0'
     implementation 'com.google.android.gms:play-services:12.0.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.X.X'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.X.X'
@@ -41,7 +39,5 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.X.X'
     implementation 'net.time4j:time4j-android:4.4.2-2019c'
     implementation 'com.github.mrengineer13:snackbar:1.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'com.google.android.material:material:1.0.0'
 }

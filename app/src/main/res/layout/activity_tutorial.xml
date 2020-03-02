@@ -55,7 +55,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"/>
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <!--Display 2-->
@@ -87,7 +87,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"/>
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <!--Display 3-->
@@ -152,7 +152,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"/>
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <LinearLayout
@@ -177,7 +177,7 @@
                 android:layout_gravity="center"
                 android:textSize="@dimen/previousandnexttutorial"
                 android:text="@string/back"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginTop="@dimen/previousnextpaddingtutorial"
                 android:layout_marginBottom="@dimen/previousnextpaddingtutorial"
                 android:layout_width="wrap_content"
@@ -208,7 +208,7 @@
                 android:focusable="true"
                 android:layout_gravity="center"
                 android:textSize="@dimen/previousandnexttutorial"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginTop="@dimen/previousnextpaddingtutorial"
                 android:layout_marginBottom="@dimen/previousnextpaddingtutorial"
                 android:layout_width="wrap_content"

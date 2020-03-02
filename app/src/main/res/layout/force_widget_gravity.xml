@@ -2,13 +2,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/main"
-    android:background="@drawable/widgetsimpelbackground"
+    android:background="@drawable/darksimpelbackground"
     android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/widgettitlesheight">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +19,7 @@
             android:paddingTop="@dimen/widgetdatetopnbottompaddings"
             android:paddingBottom="@dimen/widgetdatetopnbottompaddings">
             <TextView
-                android:gravity="start"
+                android:gravity="end"
                 android:id="@+id/miladidisplay"
                 android:layout_width="0dp"
                 android:textColor="@color/white"
@@ -28,7 +27,7 @@
                 android:textSize="@dimen/widgetdatetextsize"
                 android:layout_weight="1" />
             <TextView
-                android:gravity="end"
+                android:gravity="start"
                 android:textColor="@color/white"
                 android:id="@+id/hijridisplay"
                 android:layout_width="0dp"
@@ -51,15 +50,15 @@
                 android:textSize="@dimen/widgetbigtextsize"
                 android:gravity="center"
                 android:text="@string/wait"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:layout_weight="1"/>
             <TextView
                 android:textSize="@dimen/widgetbigtextsize"
-                android:text="@string/wait_arabe"
                 android:gravity="center"
+                android:text="@string/wait_arabe"
                 android:id="@+id/nextprayertitle"
                 android:layout_width="0dp"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
         </LinearLayout>
@@ -162,7 +161,7 @@
                 android:paddingBottom="@dimen/prayertitlepaddingbottom"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:text="@string/fajrtitle_arabe"/>
             <ImageView
                 android:id="@+id/widgetfajrarrow"
@@ -171,7 +170,7 @@
             <TextView
                 android:gravity="center"
                 android:textSize="@dimen/widgettextsize"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/widgetsmallitemsheight"
                 android:id="@+id/widgetfajrtime"/>
@@ -190,7 +189,7 @@
                 android:paddingBottom="@dimen/prayertitlepaddingbottom"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:text="@string/rise_arabe"/>
             <ImageView
                 android:id="@+id/widgetrisearrow"
@@ -199,7 +198,7 @@
             <TextView
                 android:gravity="center"
                 android:textSize="@dimen/widgettextsize"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/widgetsmallitemsheight"
                 android:id="@+id/widgetrisetime"/>
@@ -218,7 +217,7 @@
                 android:paddingBottom="@dimen/prayertitlepaddingbottom"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:text="@string/dohrtitle_arabe"/>
             <ImageView
                 android:id="@+id/widgetdhuhrarrow"
@@ -226,7 +225,7 @@
                 android:layout_height="@dimen/widgetsmallimageheight"/>
             <TextView
                 android:gravity="center"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:textSize="@dimen/widgettextsize"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/widgetsmallitemsheight"
@@ -246,7 +245,7 @@
                 android:paddingBottom="@dimen/prayertitlepaddingbottom"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:text="@string/asrtitle_arabe"/>
             <ImageView
                 android:id="@+id/widgetasrarrow"
@@ -255,7 +254,7 @@
             <TextView
                 android:gravity="center"
                 android:textSize="@dimen/widgettextsize"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/widgetsmallitemsheight"
                 android:id="@+id/widgetasrtime"/>
@@ -274,7 +273,7 @@
                 android:paddingBottom="@dimen/prayertitlepaddingbottom"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:text="@string/maghrebtitle_arabe"/>
             <ImageView
                 android:id="@+id/widgetmaghrebarrow"
@@ -283,7 +282,7 @@
             <TextView
                 android:textSize="@dimen/widgettextsize"
                 android:gravity="center"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/widgetsmallitemsheight"
                 android:id="@+id/widgetmaghrebtime"/>
@@ -302,7 +301,7 @@
                 android:paddingBottom="@dimen/prayertitlepaddingbottom"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:text="@string/ishatitle_arabe"/>
             <ImageView
                 android:id="@+id/widgetishaarrow"
@@ -311,7 +310,7 @@
             <TextView
                 android:gravity="center"
                 android:textSize="@dimen/widgettextsize"
-                android:textColor="@color/lightelement"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/widgetsmallitemsheight"
                 android:id="@+id/widgetishatime"/>

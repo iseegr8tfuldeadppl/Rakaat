@@ -3,6 +3,7 @@ package com.krimzon.scuffedbots.raka3at;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -158,6 +159,8 @@ public class Tutorial extends AppCompatActivity {
 
             switch (page) {
                 case 2:
+                    previous.setTextColor(Color.BLACK);
+                    next.setTextColor(Color.BLACK);
                     clicked = true;
                     if(language.equals("ar"))
                         previous.setText(getResources().getString(R.string.previous_arabe));
@@ -168,11 +171,15 @@ public class Tutorial extends AppCompatActivity {
                     slide_page_two_in_from_right();
                     break;
                 case 3:
+                    next.setTextColor(Color.WHITE);
+                    previous.setTextColor(Color.WHITE);
                     clicked = true;
                     slide_page_two_out_to_left();
                     slide_page_three_in_from_right();
                     break;
                 case 4:
+                    next.setTextColor(Color.BLACK);
+                    previous.setTextColor(Color.BLACK);
                     if(language.equals("ar"))
                         next.setText(getResources().getString(R.string.enter_arabe));
                     else if(language.equals("en"))
@@ -224,6 +231,8 @@ public class Tutorial extends AppCompatActivity {
 
             switch (page) {
                 case 1:
+                    previous.setTextColor(Color.BLACK);
+                    next.setTextColor(Color.BLACK);
                     clicked = true;
                     if(language.equals("ar"))
                         previous.setText(getResources().getString(R.string.back_arabe));
@@ -234,11 +243,15 @@ public class Tutorial extends AppCompatActivity {
                     slide_page_one_in_from_left();
                     break;
                 case 2:
+                    next.setTextColor(Color.BLACK);
+                    previous.setTextColor(Color.BLACK);
                     clicked = true;
                     slide_page_three_out_from_right();
                     slide_page_two_in_from_left();
                     break;
                 case 3:
+                    previous.setTextColor(Color.WHITE);
+                    next.setTextColor(Color.WHITE);
                     clicked = true;
                     if(language.equals("ar"))
                         next.setText(getResources().getString(R.string.next_arabe));

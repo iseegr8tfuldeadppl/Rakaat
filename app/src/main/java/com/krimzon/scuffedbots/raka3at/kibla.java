@@ -364,8 +364,8 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private void if_theres_previous_info_load_it_n_display() {
         new_coordinates = false;
         SQLSharing.mycursorforce.moveToFirst();
-        longitude = Double.valueOf(SQLSharing.mycursorforce.getString(1));
-        latitude = Double.valueOf(SQLSharing.mycursorforce.getString(2));
+        longitude = Double.parseDouble(SQLSharing.mycursorforce.getString(1));
+        latitude = Double.parseDouble(SQLSharing.mycursorforce.getString(2));
         wegotcoordsboiz(longitude, latitude);
     }
 

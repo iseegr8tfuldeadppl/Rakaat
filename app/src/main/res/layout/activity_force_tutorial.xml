@@ -8,13 +8,13 @@
         android:id="@+id/firstpagebackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/tutorialpinkish"/>
+        android:background="@color/tutorialpurple"/>
     <FrameLayout
         android:visibility="invisible"
         android:id="@+id/fourthpagebackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/tutorialorange"/>
+        android:background="@color/tutorialpinkish"/>
 
     <!--Display 1-->
     <ImageView
@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"/>
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <!--Display 4-->
@@ -75,7 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"/>
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <LinearLayout
@@ -100,7 +100,7 @@
                 android:layout_gravity="center"
                 android:text="@string/back"
                 android:textSize="@dimen/previousandnexttutorial"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginTop="@dimen/previousnextpaddingtutorial"
                 android:layout_marginBottom="@dimen/previousnextpaddingtutorial"
                 android:layout_width="wrap_content"
@@ -131,7 +131,7 @@
                 android:focusable="true"
                 android:layout_gravity="center"
                 android:textSize="@dimen/previousandnexttutorial"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginTop="@dimen/previousnextpaddingtutorial"
                 android:layout_marginBottom="@dimen/previousnextpaddingtutorial"
                 android:layout_width="wrap_content"

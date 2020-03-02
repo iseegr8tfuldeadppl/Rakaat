@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private String ID = "";
     private boolean darkmode = true;
 
+    private void print(Object dumps) {
+        Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

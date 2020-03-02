@@ -20,7 +20,7 @@
             android:paddingTop="@dimen/widgetdatetopnbottompaddings"
             android:paddingBottom="@dimen/widgetdatetopnbottompaddings">
             <TextView
-                android:gravity="start"
+                android:gravity="end"
                 android:id="@+id/miladidisplay"
                 android:layout_width="0dp"
                 android:textColor="@color/white"
@@ -28,7 +28,7 @@
                 android:textSize="@dimen/widgetdatetextsize"
                 android:layout_weight="1" />
             <TextView
-                android:gravity="end"
+                android:gravity="start"
                 android:textColor="@color/white"
                 android:id="@+id/hijridisplay"
                 android:layout_width="0dp"

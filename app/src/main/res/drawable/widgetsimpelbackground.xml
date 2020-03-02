@@ -3,7 +3,7 @@
     <item>
         <shape>
             <solid
-                android:color="#C0C5C1"/>
+                android:color="@color/widgetlightmodebackground"/>
         </shape>
     </item>
 </selector>

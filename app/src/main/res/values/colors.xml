@@ -24,15 +24,17 @@
     <color name="lighterred">#FF1414</color>
     <color name="lighterlighterred">#e60000</color>
     <color name="grayerthanwhite">#989898</color>
-    <color name="lightelement">#595959</color>
+    <color name="lightelement">#121E26</color>
     <color name="lightmodestroke">#b3b3b3</color>
     <color name="selectedadanbackground">#6BC916</color>
     <color name="darkbackground">#262626</color>
     <color name="forcefullbackground">#121212</color>
     <color name="coolbright">#404040</color>
     <color name="slightlydarkercoolbright">#393939</color>
-    <color name="tutorialpurple">#9A11E5</color>
-    <color name="tutorialpinkish">#E80767</color>
-    <color name="tutorialcyanish">#2C7CF7</color>
-    <color name="tutorialorange">#D26413</color>
+    <color name="tutorialpurple">#DB8F75</color>
+    <color name="tutorialpinkish">#E9B3CE</color>
+    <color name="tutorialcyanish">#403F4C</color>
+    <color name="tutorialorange">#9E788F</color>
+    <color name="widgetlightmodebackground">#CCC0C5C1</color>
+    <color name="widgetdarkmodebackground">#CC262626</color>
 </resources>

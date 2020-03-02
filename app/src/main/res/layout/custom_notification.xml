@@ -3,7 +3,7 @@
     android:layout_height="114dp"
     android:background="@drawable/simpelbackground"
     android:orientation="horizontal"
-    android:weightSum="5"
+    android:weightSum="6"
     android:paddingTop="7dp"
     android:paddingBottom="7dp">
 
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:text="@string/fajrtitle_arabe"/>
 
         <ImageView
@@ -35,11 +35,44 @@
             android:gravity="center"
             android:layout_weight="1"
             android:textSize="@dimen/notitextsize"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="05:45"
             android:id="@+id/fajrtime"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/risetitle"
+            android:textSize="@dimen/notitextsize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:textColor="@color/lightelement"
+            android:text="@string/rise_arabe"/>
+
+        <ImageView
+            android:padding="@dimen/arrowdownpadding"
+            android:layout_weight="1"
+            android:id="@+id/risearrow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/notitextsize"
+            android:textColor="@color/lightelement"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/risetime"/>
     </LinearLayout>
 
     <LinearLayout
@@ -56,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:text="@string/dohrtitle_arabe"/>
 
         <ImageView
@@ -69,11 +102,10 @@
         <TextView
             android:gravity="center"
             android:layout_weight="1"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:textSize="@dimen/notitextsize"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="12:35"
             android:id="@+id/dhuhrtime"/>
     </LinearLayout>
 
@@ -91,7 +123,7 @@
             android:textSize="@dimen/notitextsize"
             android:layout_height="match_parent"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:text="@string/asrtitle_arabe"/>
 
         <ImageView
@@ -105,10 +137,9 @@
             android:gravity="center"
             android:layout_weight="1"
             android:textSize="@dimen/notitextsize"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="13:22"
             android:id="@+id/asrtime"/>
     </LinearLayout>
 
@@ -126,7 +157,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:text="@string/maghrebtitle_arabe"/>
 
         <ImageView
@@ -140,10 +171,9 @@
             android:textSize="@dimen/notitextsize"
             android:gravity="center"
             android:layout_weight="1"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="15:55"
             android:id="@+id/maghrebtime"/>
     </LinearLayout>
 
@@ -161,7 +191,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:text="@string/ishatitle_arabe"/>
 
         <ImageView
@@ -175,10 +205,9 @@
             android:gravity="center"
             android:textSize="@dimen/notitextsize"
             android:layout_weight="1"
-            android:textColor="@color/black"
+            android:textColor="@color/lightelement"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="20:11"
             android:id="@+id/ishatime"/>
     </LinearLayout>
 

@@ -2,8 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid
-                android:color="#C0C5C1"/>
+            <solid android:color="@color/widgetdarkmodebackground"/>
         </shape>
     </item>
 </selector>

@@ -237,7 +237,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             receiveandy = "main";
         if (receiveandy.equals("force")) {
             Intent sender = getIntent();
-            prayer = Integer.valueOf(sender.getStringExtra("prayer"));
+            prayer = Integer.parseInt(sender.getStringExtra("prayer"));
             todaycomparable = sender.getStringExtra("todaycomparable");
             prayed = sender.getStringExtra("prayed");
             verified = sender.getStringExtra("verified");

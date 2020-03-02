@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -95,43 +96,43 @@ public class force_settings extends AppCompatActivity {
     private void apply_enabled_and_disabled_on_delays() {
         if(fajrmuteenabled){
             mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
-            fajrmuteenabled = false;
+            mutefajrtitle.setTextColor(Color.BLACK);
         } else {
             mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            fajrmenu.setVisibility(View.INVISIBLE);
-            fajrmuteenabled = true;
+            mutefajrtitle.setTextColor(Color.WHITE);
+            fajrmenu.setVisibility(View.GONE);
         }
         if(dhuhrmuteenabled){
             mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
-            dhuhrmuteenabled = false;
+            mutedhuhrtitle.setTextColor(Color.BLACK);
         } else {
             mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            dhuhrmenu.setVisibility(View.INVISIBLE);
-            dhuhrmuteenabled = true;
+            mutedhuhrtitle.setTextColor(Color.WHITE);
+            dhuhrmenu.setVisibility(View.GONE);
         }
         if(asrmuteenabled){
             muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
-            asrmuteenabled = false;
+            muteasrtitle.setTextColor(Color.BLACK);
         } else {
             muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            asrmenu.setVisibility(View.INVISIBLE);
-            asrmuteenabled = true;
+            muteasrtitle.setTextColor(Color.WHITE);
+            asrmenu.setVisibility(View.GONE);
         }
-        if(maghrebmuteenabled){
+        if(maghrebmuteenabled) {
             mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
-            maghrebmuteenabled = false;
+            mutemaghrebtitle.setTextColor(Color.BLACK);
         } else {
             mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            maghrebmenu.setVisibility(View.INVISIBLE);
-            maghrebmuteenabled = true;
+            mutemaghrebtitle.setTextColor(Color.WHITE);
+            maghrebmenu.setVisibility(View.GONE);
         }
-        if(ishamuteenabled){
+        if(ishamuteenabled) {
             muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
-            ishamuteenabled = false;
+            muteishatitle.setTextColor(Color.BLACK);
         } else {
             muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            ishamenu.setVisibility(View.INVISIBLE);
-            ishamuteenabled = true;
+            muteishatitle.setTextColor(Color.WHITE);
+            ishamenu.setVisibility(View.GONE);
         }
     }
 
@@ -139,33 +140,33 @@ public class force_settings extends AppCompatActivity {
         String[] delays_split_to_five = delays.split(" ");
         String[] current_prayer_delays_split = delays_split_to_five[0].split(",");
         fajrbeforecounterdisplay.setText(current_prayer_delays_split[0]);
-        fajrbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
+        fajrbeforecounter = Integer.parseInt(current_prayer_delays_split[0]);
         fajraftercounterdisplay.setText(current_prayer_delays_split[1]);
-        fajraftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        fajraftercounter = Integer.parseInt(current_prayer_delays_split[1]);
         fajrmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[1].split(",");
         dhuhrbeforecounterdisplay.setText(current_prayer_delays_split[0]);
-        dhuhrbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
+        dhuhrbeforecounter = Integer.parseInt(current_prayer_delays_split[0]);
         dhuhraftercounterdisplay.setText(current_prayer_delays_split[1]);
-        dhuhraftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        dhuhraftercounter = Integer.parseInt(current_prayer_delays_split[1]);
         dhuhrmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[2].split(",");
         asrbeforecounterdisplay.setText(current_prayer_delays_split[0]);
-        asrbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
+        asrbeforecounter = Integer.parseInt(current_prayer_delays_split[0]);
         asraftercounterdisplay.setText(current_prayer_delays_split[1]);
-        asraftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        asraftercounter = Integer.parseInt(current_prayer_delays_split[1]);
         asrmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[3].split(",");
         maghrebbeforecounterdisplay.setText(current_prayer_delays_split[0]);
-        maghrebbeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
+        maghrebbeforecounter = Integer.parseInt(current_prayer_delays_split[0]);
         maghrebaftercounterdisplay.setText(current_prayer_delays_split[1]);
-        maghrebaftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        maghrebaftercounter = Integer.parseInt(current_prayer_delays_split[1]);
         maghrebmuteenabled = current_prayer_delays_split[2].equals("1");
         current_prayer_delays_split = delays_split_to_five[4].split(",");
         ishabeforecounterdisplay.setText(current_prayer_delays_split[0]);
-        ishabeforecounter = Integer.valueOf(current_prayer_delays_split[0]);
+        ishabeforecounter = Integer.parseInt(current_prayer_delays_split[0]);
         ishaaftercounterdisplay.setText(current_prayer_delays_split[1]);
-        ishaaftercounter = Integer.valueOf(current_prayer_delays_split[1]);
+        ishaaftercounter = Integer.parseInt(current_prayer_delays_split[1]);
         ishamuteenabled = current_prayer_delays_split[2].equals("1");
     }
 
@@ -1119,7 +1120,7 @@ public class force_settings extends AppCompatActivity {
     }
 
     private void apply_already_selected_mouadin(int prayertobemodified) {
-        selectedadan = Integer.valueOf(selections[prayertobemodified].split(",")[0]) - 1;
+        selectedadan = Integer.parseInt(selections[prayertobemodified].split(",")[0]) - 1;
         adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
     }
 
@@ -1690,10 +1691,12 @@ public class force_settings extends AppCompatActivity {
     public void fajrmuteClicked(View view) {
         if(fajrmuteenabled){
             mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            fajrmenu.setVisibility(View.INVISIBLE);
+            mutefajrtitle.setTextColor(Color.WHITE);
+            fajrmenu.setVisibility(View.GONE);
             fajrmuteenabled = false;
         } else {
             mutefajrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            mutefajrtitle.setTextColor(Color.BLACK);
             fajrmenu.setVisibility(View.VISIBLE);
             fajrmuteenabled = true;
         }
@@ -1702,10 +1705,12 @@ public class force_settings extends AppCompatActivity {
     public void dhuhrmuteClicked(View view) {
         if(dhuhrmuteenabled){
             mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            dhuhrmenu.setVisibility(View.INVISIBLE);
+            mutedhuhrtitle.setTextColor(Color.WHITE);
+            dhuhrmenu.setVisibility(View.GONE);
             dhuhrmuteenabled = false;
         } else {
             mutedhuhrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            mutedhuhrtitle.setTextColor(Color.BLACK);
             dhuhrmenu.setVisibility(View.VISIBLE);
             dhuhrmuteenabled = true;
         }
@@ -1714,10 +1719,12 @@ public class force_settings extends AppCompatActivity {
     public void asrmuteClicked(View view) {
         if(asrmuteenabled){
             muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            asrmenu.setVisibility(View.INVISIBLE);
+            muteasrtitle.setTextColor(Color.WHITE);
+            asrmenu.setVisibility(View.GONE);
             asrmuteenabled = false;
         } else {
             muteasrtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            muteasrtitle.setTextColor(Color.BLACK);
             asrmenu.setVisibility(View.VISIBLE);
             asrmuteenabled = true;
         }
@@ -1726,10 +1733,12 @@ public class force_settings extends AppCompatActivity {
     public void maghrebmuteClicked(View view) {
         if(maghrebmuteenabled){
             mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            maghrebmenu.setVisibility(View.INVISIBLE);
+            mutemaghrebtitle.setTextColor(Color.WHITE);
+            maghrebmenu.setVisibility(View.GONE);
             maghrebmuteenabled = false;
         } else {
             mutemaghrebtitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            mutemaghrebtitle.setTextColor(Color.BLACK);
             maghrebmenu.setVisibility(View.VISIBLE);
             maghrebmuteenabled = true;
         }
@@ -1738,10 +1747,12 @@ public class force_settings extends AppCompatActivity {
     public void ishamuteClicked(View view) {
         if(ishamuteenabled){
             muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitleoff));
-            ishamenu.setVisibility(View.INVISIBLE);
+            muteishatitle.setTextColor(Color.WHITE);
+            ishamenu.setVisibility(View.GONE);
             ishamuteenabled = false;
         } else {
             muteishatitle.setBackground(getResources().getDrawable(R.drawable.mutetitle));
+            muteishatitle.setTextColor(Color.BLACK);
             ishamenu.setVisibility(View.VISIBLE);
             ishamuteenabled = true;
         }

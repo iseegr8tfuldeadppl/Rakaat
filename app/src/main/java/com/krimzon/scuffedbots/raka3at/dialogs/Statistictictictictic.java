@@ -20,6 +20,7 @@ import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 public class Statistictictictictic extends Dialog implements android.view.View.OnClickListener {
@@ -165,7 +166,8 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
     }
 
     private void count_prayed_prayers_today() {
-        day = new Date();
+        Calendar cal = Calendar.getInstance(Locale.US);
+        day = new Date(cal.getTimeInMillis());
         tempday = day.toString().split(" ");
         daycomparable = tempday[1] + " " + tempday[2] + " " + tempday[5];
 

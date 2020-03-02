@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import com.batoulapps.adhan.CalculationMethod;
@@ -17,20 +18,23 @@ import com.batoulapps.adhan.PrayerTimes;
 import com.batoulapps.adhan.data.DateComponents;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+
+import net.time4j.PlainDate;
+import net.time4j.calendar.HijriCalendar;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static java.lang.Math.abs;
 
 public class force_widget extends AppWidgetProvider {
 
-    private boolean darkmode  = true;
-    private String language;
     private CalculationParameters params;
     private int i = 0;
     private Date old_date;
-    private boolean recent_adan = false;
     private Coordinates coordinates;
     private DateComponents date;
     private List<Integer> prayers;
@@ -40,17 +44,14 @@ public class force_widget extends AppWidgetProvider {
     private String asr;
     private String maghrib;
     private String isha;
-    private boolean end_of_day = false;
-    private int current_adding_playing = 0;
     private List<String> praytimesregularform;
-    private Context c;
     private int positifise=0;
     private int negatifise = 0;
     private boolean still_scoping_on_previous_adan = false;
-    private int current_displayed_slider = -1;
     private int slider = 0;
     private int rightnowcomparable = 1;
     private RemoteViews widgetViews;
+    private boolean change_happened = true;
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -79,18 +80,29 @@ public class force_widget extends AppWidgetProvider {
                 close_sql();
                 sql("slat", context);
                 SQLSharing.mycursorslater.moveToPosition(1);
-                darkmode = SQLSharing.mycursorslater.getString(1).equals("yes");
+                boolean darkmode = SQLSharing.mycursorslater.getString(1).equals("yes");
                 SQLSharing.mycursorslater.moveToPosition(6);
-                language = SQLSharing.mycursorslater.getString(1);
+                String language = SQLSharing.mycursorslater.getString(1);
                 SQLSharing.mycursorslater.moveToPosition(10);
                 close_sql();
 
                 launch_prayer_processing(context);
 
-                if(darkmode)
-                    widgetViews = new RemoteViews(context.getPackageName(), R.layout.force_widget);
-                else
-                    widgetViews = new RemoteViews(context.getPackageName(), R.layout.force_widget_lightmode); // TODO make a light mode
+                if(language.equals("en")){
+                    if(darkmode)
+                        widgetViews = new RemoteViews(context.getPackageName(), R.layout.force_widget);
+                    else
+                        widgetViews = new RemoteViews(context.getPackageName(), R.layout.force_widget_lightmode); // TODO make a light mode
+                } else if(language.equals("ar")){
+                    if(darkmode)
+                        widgetViews = new RemoteViews(context.getPackageName(), R.layout.force_widget_gravity);
+                    else
+                        widgetViews = new RemoteViews(context.getPackageName(), R.layout.force_widget_lightmode_gravity); // TODO make a light mode
+                }
+
+                prepare_and_apply_hijri_date(language, context);
+                widgetViews.setTextViewText(R.id.hijridisplay, hijri);
+                widgetViews.setTextViewText(R.id.miladidisplay, datin);
 
                 widgetViews.setImageViewResource(R.id.widgetfajrarrow, R.drawable.arrowdown);
                 widgetViews.setImageViewResource(R.id.widgetrisearrow, R.drawable.arrowdown);
@@ -102,10 +114,18 @@ public class force_widget extends AppWidgetProvider {
                 if(language.equals("en")){
                     widgetViews.setTextViewText(R.id.widgetfajrtitle, context.getResources().getString(R.string.fajrtitle));
                     widgetViews.setTextViewText(R.id.widgetrisetitle, context.getResources().getString(R.string.rise));
-                    widgetViews.setTextViewText(R.id.widgetdhuhrtitle, context.getResources().getString(R.string.dohrtitle));
+                    if(friday)
+                        widgetViews.setTextViewText(R.id.widgetdhuhrtitle, context.getResources().getString(R.string.Jamo3a));
+                    else
+                        widgetViews.setTextViewText(R.id.widgetdhuhrtitle, context.getResources().getString(R.string.dohrtitle));
                     widgetViews.setTextViewText(R.id.widgetasrtitle, context.getResources().getString(R.string.asrtitle));
                     widgetViews.setTextViewText(R.id.widgetmaghribtitle, context.getResources().getString(R.string.maghrebtitle));
                     widgetViews.setTextViewText(R.id.widgetishatitle, context.getResources().getString(R.string.ishatitle));
+                } else if(language.equals("ar")){
+                    if(friday)
+                        widgetViews.setTextViewText(R.id.widgetdhuhrtitle, context.getResources().getString(R.string.friarabe));
+                    else
+                        widgetViews.setTextViewText(R.id.widgetdhuhrtitle, context.getResources().getString(R.string.dohrtitle_arabe));
                 }
 
 
@@ -122,7 +142,6 @@ public class force_widget extends AppWidgetProvider {
                     calculate_negatifise_and_positifise();
                     check_negatifise();
                     if_change_needed_for_slider_apply_it();
-                    find_currently_displayed_adans_id(i);
                 }
 
 
@@ -247,34 +266,335 @@ public class force_widget extends AppWidgetProvider {
             }
         super.onReceive(context, intent);
     }
-    private void find_currently_displayed_adans_id(final int next_adaner) {
-        int temp;
-        if (still_scoping_on_previous_adan)
-            temp = next_adaner - 1;
-        else
-            temp = next_adaner;
-        switch (temp) {
-            case -1:
-                current_displayed_slider = -1;
-                break;
-            case 0:
-            case 6:
-                current_displayed_slider = 0;
-                break;
-            case 1:
-                current_displayed_slider = 1;
-                break;
-            case 2:
-                current_displayed_slider = 2;
-                break;
-            case 3:
-                current_displayed_slider = 3;
-                break;
-            case 4:
-                current_displayed_slider = 4;
-                break;
-            case 5:
-                current_displayed_slider = 5;
+
+    private int hijri_month = 0, hijri_year = 0, hijri_day = 0;
+    private int miladi_month = 0;
+    private String hijri = "";
+    private boolean friday = false;
+    private String[] temptoday;
+    private String todaycomparable = "";
+    private void prepare_and_apply_hijri_date(String language, Context context) {
+        Calendar cal = Calendar.getInstance(Locale.US);
+        Date today = new Date(cal.getTimeInMillis());
+        temptoday = today.toString().split(" ");
+        todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
+        work_on_date(language, context);
+    }
+
+    private String datin = "";
+    private void work_on_date(String language, Context context) {
+        datin = "";
+        String tempdatin;
+        if(language.equals(context.getResources().getString(R.string.en))) {
+            tempdatin = temptoday[0];
+
+
+            if (tempdatin.equals(context.getResources().getString(R.string.satu))) {
+                datin += context.getResources().getString(R.string.sat);
+                friday = false;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.sunu))) {
+                datin += context.getResources().getString(R.string.sun);
+                friday = false;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.monu))) {
+                datin += context.getResources().getString(R.string.mon);
+                friday = false;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.tueu))) {
+                datin += context.getResources().getString(R.string.tue);
+                friday = false;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.wedu))) {
+                datin += context.getResources().getString(R.string.wed);
+                friday = false;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.thuru))) {
+                datin += context.getResources().getString(R.string.thu);
+                friday = false;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.fridu))) {
+                datin += context.getResources().getString(R.string.fri);
+                friday = true;
+            }
+
+
+            // add week day to hijri date
+            //hijri += datin + " ";
+
+            datin += " ";
+            tempdatin = temptoday[1];
+            if (tempdatin.equals(context.getResources().getString(R.string.jan))) {
+                datin += context.getResources().getString(R.string.january);
+                miladi_month = 1;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.feb))) {
+                datin += context.getResources().getString(R.string.february);
+                miladi_month = 2;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.mar))) {
+                datin += context.getResources().getString(R.string.march);
+                miladi_month = 3;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.apr))) {
+                datin += context.getResources().getString(R.string.april);
+                miladi_month = 4;
+            }
+            else if (tempdatin.contains(context.getResources().getString(R.string.mao))) {
+                datin += context.getResources().getString(R.string.may);
+                miladi_month = 5;
+            }
+            else if (tempdatin.contains(context.getResources().getString(R.string.june))) {
+                datin += context.getResources().getString(R.string.junee);
+                miladi_month = 6;
+            }
+            else if (tempdatin.contains(context.getResources().getString(R.string.july))) {
+                datin += context.getResources().getString(R.string.julyy);
+
+                miladi_month = 7;
+            }
+            else if (tempdatin.equals(context.getResources().getString(R.string.aug))) {
+                miladi_month = 8;
+                datin += context.getResources().getString(R.string.august);
+            }
+            else if (tempdatin.equals("Sep")) {
+                miladi_month = 9;
+                datin += context.getResources().getString(R.string.september);
+            }
+            else if (tempdatin.equals("Oct")) {
+                miladi_month = 10;
+                datin += context.getResources().getString(R.string.october);
+            }
+            else if (tempdatin.equals("Nov")) {
+                miladi_month = 11;
+                datin += context.getResources().getString(R.string.november);
+            }
+            else if (tempdatin.equals("Dec")) {
+                miladi_month = 12;
+                datin += context.getResources().getString(R.string.december);
+            }
+
+            tempdatin = temptoday[2];
+            int temper = Integer.parseInt(tempdatin);
+            datin += " " + temper;
+            if (temper==2 || temper==22)
+                datin += context.getResources().getString(R.string.nd);
+            else if (temper==3 || temper==23)
+                datin += context.getResources().getString(R.string.rd);
+            else if (temper==1 || temper==21)
+                datin += context.getResources().getString(R.string.st);
+            else
+                datin += context.getResources().getString(R.string.th);
+
+        } else if(language.equals(context.getResources().getString(R.string.ar))){
+            tempdatin = temptoday[0];
+
+
+            switch (tempdatin) {
+                case "Sat":
+                    datin += context.getResources().getString(R.string.satarabe);
+                    friday = false;
+                    break;
+                case "Sun":
+                    datin += context.getResources().getString(R.string.sunarabe);
+                    friday = false;
+                    break;
+                case "Mon":
+                    datin += context.getResources().getString(R.string.monarabe);
+                    friday = false;
+
+                    break;
+                case "Tue":
+                    datin += context.getResources().getString(R.string.tuearabe);
+                    friday = false;
+                    break;
+                case "Wed":
+                    datin += context.getResources().getString(R.string.wedarabe);
+                    friday = false;
+                    break;
+                case "Thu":
+                    datin += context.getResources().getString(R.string.thurarabe);
+                    friday = false;
+                    break;
+                case "Fri":
+                    datin += context.getResources().getString(R.string.friarabe);
+                    friday = true;
+                    break;
+            }
+
+            //hijri += datin + " ";
+
+            tempdatin = temptoday[2];
+            int temper = Integer.parseInt(tempdatin);
+            datin += " " + temper;
+
+            datin += " ";
+            tempdatin = temptoday[1];
+            if (tempdatin.equals("Jan")) {
+                miladi_month = 1;
+                datin += context.getResources().getString(R.string.janarabe);
+            }
+            else if (tempdatin.equals("Feb")) {
+                miladi_month = 2;
+                datin += context.getResources().getString(R.string.febarabe);
+            }
+            else if (tempdatin.equals("Mar")) {
+                miladi_month = 3;
+                datin += context.getResources().getString(R.string.mararabe);
+            }
+            else if (tempdatin.equals("Apr")) {
+                miladi_month = 4;
+                datin += context.getResources().getString(R.string.aprarabe);
+            }
+            else if (tempdatin.contains("Ma")) {
+                miladi_month = 5;
+                datin += context.getResources().getString(R.string.maarabe);
+            }
+            else if (tempdatin.contains("Jun")) {
+                miladi_month = 6;
+                datin += context.getResources().getString(R.string.junarabe);
+            }
+            else if (tempdatin.contains("Jul")) {
+                miladi_month = 7;
+                datin += context.getResources().getString(R.string.jularabe);
+            }
+            else if (tempdatin.equals("Aug")) {
+                miladi_month = 8;
+                datin += context.getResources().getString(R.string.augusarabe);
+            }
+            else if (tempdatin.equals("Sep")) {
+                miladi_month = 9;
+                datin += context.getResources().getString(R.string.separabe);
+            }
+            else if (tempdatin.equals("Oct")) {
+                miladi_month = 10;
+                datin += context.getResources().getString(R.string.octarabe);
+            }
+            else if (tempdatin.equals("Nov")) {
+                miladi_month = 11;
+                datin += context.getResources().getString(R.string.novarabe);
+            }
+            else if (tempdatin.equals("Dec")) {
+                miladi_month = 12;
+                datin += context.getResources().getString(R.string.decarabe);
+            }
+
+        }
+        datin += " " + temptoday[5];
+
+
+        hijri_date_setup(language, context);
+    }
+
+    private void hijri_date_setup(String language, Context context) {
+        if(miladi_month!=0) {
+            String[] lel = todaycomparable.split(" ");
+            String[] t = PlainDate.of(Integer.parseInt(temptoday[5]), miladi_month, Integer.parseInt(lel[1])) // TODO: fix me Integer.parseInt(lel[5]) + 2000
+                    .transform(HijriCalendar.class, HijriCalendar.VARIANT_UMALQURA).toString().split("-");
+            t[3] = t[3].replace("[islamic", "");
+            hijri_year = Integer.parseInt(t[1]);
+            hijri_month = Integer.parseInt(t[2]);
+            hijri_day = Integer.parseInt(t[3]);
+            convert_hijri_to_cute(language, context);
+        }
+    }
+
+    private void convert_hijri_to_cute(String language, Context context) {
+        if(language.equals(context.getResources().getString(R.string.ar))){
+            hijri = "";
+            hijri += hijri_day + " ";
+            switch(hijri_month) {
+                case 1:
+                    hijri += context.getResources().getString(R.string.muharram_arabe);
+                    break;
+                case 2:
+                    hijri += context.getResources().getString(R.string.safar_arabe);
+                    break;
+                case 3:
+                    hijri += context.getResources().getString(R.string.rabialawwal_arabe);
+                    break;
+                case 4:
+                    hijri += context.getResources().getString(R.string.rabialthani_arabe);
+                    break;
+                case 5:
+                    hijri += context.getResources().getString(R.string.jumadialawwal_arabe);
+                    break;
+                case 6:
+                    hijri += context.getResources().getString(R.string.jumadialthani_arabe);
+                    break;
+                case 7:
+                    hijri += context.getResources().getString(R.string.rajab_arabe);
+                    break;
+                case 8:
+                    hijri += context.getResources().getString(R.string.chaaban_arabe);
+                    break;
+                case 9:
+                    hijri += context.getResources().getString(R.string.ramadhan_arabe);
+                    break;
+                case 10:
+                    hijri += context.getResources().getString(R.string.shawwal_arabe);
+                    break;
+                case 11:
+                    hijri += context.getResources().getString(R.string.dhualqaada_arabe);
+                    break;
+                case 12:
+                    hijri += context.getResources().getString(R.string.dhualhijja_arabe);
+                    break;
+            }
+
+            hijri += " " + hijri_year;
+        } else {
+            hijri = "";
+            switch(hijri_month) {
+                case 1:
+                    hijri += context.getResources().getString(R.string.muharram);
+                    break;
+                case 2:
+                    hijri += context.getResources().getString(R.string.safar);
+                    break;
+                case 3:
+                    hijri += context.getResources().getString(R.string.rabialawwal);
+                    break;
+                case 4:
+                    hijri += context.getResources().getString(R.string.rabialthani);
+                    break;
+                case 5:
+                    hijri += context.getResources().getString(R.string.jumadialawwal);
+                    break;
+                case 6:
+                    hijri += context.getResources().getString(R.string.jumadialthani);
+                    break;
+                case 7:
+                    hijri += context.getResources().getString(R.string.rajab);
+                    break;
+                case 8:
+                    hijri += context.getResources().getString(R.string.chaaban);
+                    break;
+                case 9:
+                    hijri += context.getResources().getString(R.string.ramadhan);
+                    break;
+                case 10:
+                    hijri += context.getResources().getString(R.string.shawwal);
+                    break;
+                case 11:
+                    hijri += context.getResources().getString(R.string.dhualqaada);
+                    break;
+                case 12:
+                    hijri += context.getResources().getString(R.string.dhualhijja);
+                    break;
+            }
+
+            hijri += " " + hijri_day;
+            if (hijri_day==2 || hijri_day==22)
+                hijri += "nd";
+            else if (hijri_day==3 || hijri_day==23)
+                hijri += "rd";
+            else if (hijri_day==1 || hijri_day==21)
+                hijri += "st";
+            else
+                hijri += "th";
+
+            hijri += " " + hijri_year;
         }
     }
 
@@ -291,7 +611,8 @@ public class force_widget extends AppWidgetProvider {
             //String pattern = "dd-MMM-yyyy";
             //SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
-            old_date = new Date();
+            Calendar cal = Calendar.getInstance(Locale.US);
+            old_date = new Date(cal.getTimeInMillis());
             location_shit(old_date, context);
 
             find_next_adan();
@@ -308,43 +629,48 @@ public class force_widget extends AppWidgetProvider {
         date = DateComponents.from(today);
     }
 
-    private void use(double longitude, double latitude, Date today) {
+    private void use(double longitude, double latitude, Date today, Context context) {
         prayers = new ArrayList<>();
 
         /*String[] temptoday = today.toString().split(" ");
         String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
-        */old_date = new Date();
+        */
+        Calendar cal = Calendar.getInstance(Locale.US);
+        old_date = new Date(cal.getTimeInMillis());
 
         pull_date_and_shape_it(longitude, latitude, today);
         pull_prayer_times_and_shape_them();
-        convert_prayertimes_into_milliseconds();
+        convert_prayertimes_into_milliseconds(context);
     }
 
-    private void convert_prayertimes_into_milliseconds() {
-        int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
-        if(fajr.split(" ")[1].equals("PM"))
+    private void convert_prayertimes_into_milliseconds(Context context) {
+        String pm = context.getResources().getString(R.string.pm);
+
+        int fajrtemp = Integer.parseInt(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
+        if(fajr.split(" ")[1].equals(context.getResources().getString(R.string.pmer))|| fajr.split(" ")[1].equals(pm))
             fajrtemp += 720; //12*60
-        int risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(rise.split(" ")[0].split(":")[1]);
-        if(rise.split(" ")[1].equals("PM"))
+        int risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(rise.split(" ")[0].split(":")[1]);
+        if(rise.split(" ")[1].equals("PM") || rise.split(" ")[1].equals(pm))
             risetemp += 720; //12*60
-        int dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]);
-        if(dhuhr.split(" ")[1].equals("PM") && !dhuhr.split(":")[0].equals("12"))
+        //Integer risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0])*3600 + Integer.parseInt(rise.split(" ")[0].split(":")[1])*60;
+        int dhuhrtemp = Integer.parseInt(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(dhuhr.split(" ")[0].split(":")[1]);
+        if((dhuhr.split(" ")[1].equals(context.getResources().getString(R.string.pmer)) || dhuhr.split(" ")[1].equals(pm)) && !dhuhr.split(":")[0].equals("12"))
             dhuhrtemp += 720; //12*60
-        int asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(asr.split(" ")[0].split(":")[1]);
-        if(asr.split(" ")[1].equals("PM"))
+        int asrtemp = Integer.parseInt(asr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(asr.split(" ")[0].split(":")[1]);
+        if(asr.split(" ")[1].equals(context.getResources().getString(R.string.pmer)) || asr.split(" ")[1].equals(pm))
             asrtemp += 720; //12*60
-        int maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1]);
-        if(maghrib.split(" ")[1].equals("PM"))
+        int maghribtemp = Integer.parseInt(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
+        if(maghrib.split(" ")[1].equals(context.getResources().getString(R.string.pmer)) || maghrib.split(" ")[1].equals(pm))
             maghribtemp += 720; //12*60
-        int ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(isha.split(" ")[0].split(":")[1]);
-        if(isha.split(" ")[1].equals("PM"))
+        int ishatemp = Integer.parseInt(isha.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(isha.split(" ")[0].split(":")[1]);
+        if(isha.split(" ")[1].equals(context.getResources().getString(R.string.pmer)) || isha.split(" ")[1].equals(pm))
             ishatemp += 720; //12*60
 
 
 
         /*// TODO:  for testing purposes
         temptime = String.valueOf(old_date).split(" ")[3];
-        rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 3600 + Integer.valueOf(temptime.split(":")[1]) * 60 + Integer.valueOf(temptime.split(":")[2]);
+        rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 3600 + Integer.parseInt(temptime.split(":")[1]) * 60 + Integer.parseInt(temptime.split(":")[2]);
         fajrtemp = rightnowcomparable + 10;*/
 
 
@@ -358,50 +684,50 @@ public class force_widget extends AppWidgetProvider {
         praytimesregularform = new ArrayList<>();
 
         if(fajr.split(" ")[1].equals("PM")) {
-            if(Integer.valueOf(fajr.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(fajr.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + fajr.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(fajr.split(" ")[0]);
 
         if(rise.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(rise.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(rise.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + rise.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(rise.split(" ")[0].split(":")[0])+12) + ":" + rise.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(rise.split(" ")[0].split(":")[0])+12) + ":" + rise.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(rise.split(" ")[0]);
 
         if(dhuhr.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + dhuhr.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(dhuhr.split(" ")[0]);
 
         if(asr.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(asr.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(asr.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(asr.split(" ")[0]);
 
         if(maghrib.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
+            if(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])==12)
+                praytimesregularform.add("00" + ":" + maghrib.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(maghrib.split(" ")[0]);
 
         if(isha.split(" ")[1].equals("PM")){
-            if(Integer.valueOf(maghrib.split(" ")[0].split(":")[0])==12)
+            if(Integer.parseInt(isha.split(" ")[0].split(":")[0])==12)
                 praytimesregularform.add("00" + ":" + isha.split(" ")[0].split(":")[1]);
             else
-                praytimesregularform.add(String.valueOf(Integer.valueOf(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
+                praytimesregularform.add(String.valueOf(Integer.parseInt(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(isha.split(" ")[0]);
     }
@@ -424,9 +750,9 @@ public class force_widget extends AppWidgetProvider {
     private void if_theres_previous_info_load_it_n_display(Date date, Context context) {
         sql("force", context);
         SQLSharing.mycursorforceer.moveToFirst();
-        double longitude = Double.valueOf(SQLSharing.mycursorforceer.getString(1));
-        double latitude = Double.valueOf(SQLSharing.mycursorforceer.getString(2));
-        use(longitude, latitude, date);
+        double longitude = Double.parseDouble(SQLSharing.mycursorforceer.getString(1));
+        double latitude = Double.parseDouble(SQLSharing.mycursorforceer.getString(2));
+        use(longitude, latitude, date, context);
     }
 
     private void calculate_negatifise_and_positifise() {
@@ -440,57 +766,43 @@ public class force_widget extends AppWidgetProvider {
 
     private void check_negatifise() {
         if(i!=0)
-            still_scoping_on_previous_adan = negatifise <= SQLSharing.minute_limit_to_display_negatifise;
+            still_scoping_on_previous_adan = negatifise < SQLSharing.minute_limit_to_display_negatifise;
     }
 
-    private boolean change_happened = true;
     private void if_change_needed_for_slider_apply_it() {
         int lol = -3;
         if(still_scoping_on_previous_adan)
             lol = i-1;
         else
             lol = i;
-        hide_slider_for_given_slat_number(current_displayed_slider);
+        hide_all_sliders_fuck_it();
         if(still_scoping_on_previous_adan){
             change_happened = true;
-            find_slider(i);
-                widgetViews.setTextViewText(slider, "+ " + String.valueOf(negatifise));
-                widgetViews.setViewVisibility(slider, View.VISIBLE);
+            find_slider(lol);
+            widgetViews.setTextViewText(slider, "+ " + String.valueOf(negatifise));
+            widgetViews.setViewVisibility(slider, View.VISIBLE);
         }
-        else if(positifise<=SQLSharing.minute_limit_to_display_positifise){
+        else if(positifise<SQLSharing.minute_limit_to_display_positifise){
             change_happened = true;
-            find_slider(i);
+            find_slider(lol);
             widgetViews.setTextViewText(slider, "- " + String.valueOf(positifise));
             widgetViews.setViewVisibility(slider, View.VISIBLE);
         } else {
             if(change_happened){ change_happened = false;
-                hide_slider_for_given_slat_number(current_displayed_slider);
+                hide_all_sliders_fuck_it();
             }
         }
 
         //update_widget_ui();
     }
 
-    private void hide_slider_for_given_slat_number(int lol) {
-        switch(lol){
-            case 0:
-                widgetViews.setViewVisibility(R.id.widgetsliderfajr, View.INVISIBLE);
-                break;
-            case 1:
-                widgetViews.setViewVisibility(R.id.widgetsliderrise, View.INVISIBLE);
-                break;
-            case 2:
-                widgetViews.setViewVisibility(R.id.widgetsliderdhuhr, View.INVISIBLE);
-                break;
-            case 3:
-                widgetViews.setViewVisibility(R.id.widgetsliderasr, View.INVISIBLE);
-                break;
-            case 4:
-                widgetViews.setViewVisibility(R.id.widgetslidermaghreb, View.INVISIBLE);
-                break;
-            case 5:
-                widgetViews.setViewVisibility(R.id.widgetsliderisha, View.INVISIBLE);
-        }
+    private void hide_all_sliders_fuck_it() {
+        widgetViews.setViewVisibility(R.id.widgetsliderfajr, View.INVISIBLE);
+        widgetViews.setViewVisibility(R.id.widgetsliderrise, View.INVISIBLE);
+        widgetViews.setViewVisibility(R.id.widgetsliderdhuhr, View.INVISIBLE);
+        widgetViews.setViewVisibility(R.id.widgetsliderasr, View.INVISIBLE);
+        widgetViews.setViewVisibility(R.id.widgetslidermaghreb, View.INVISIBLE);
+        widgetViews.setViewVisibility(R.id.widgetsliderisha, View.INVISIBLE);
     }
 
     private void find_slider(final int next_adaner) {
@@ -527,7 +839,7 @@ public class force_widget extends AppWidgetProvider {
     private void find_next_adan() {
         try {
             String temptime = String.valueOf(old_date).split(" ")[3];
-            rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
+            rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
 
             /*if(rightnowcomparable_old!=rightnowcomparable){
             }*/
@@ -543,6 +855,7 @@ public class force_widget extends AppWidgetProvider {
                     i = j + 1;
                 }
             }
+            boolean end_of_day = false;
             if(i>=6){
                 i = 0;
                 end_of_day = true;

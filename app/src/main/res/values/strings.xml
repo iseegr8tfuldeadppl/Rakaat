@@ -348,5 +348,7 @@
     <string name="explanation4force_arabe">للصلاة قم بوضع الهاتف على السجادة و إضغط على الزر المناسب</string>
     <string name="prayallquestion">Prayed this\nday before?</string>
     <string name="prayallquestion_arabe">صليت هذا\nاليوم من قبل؟</string>
+    <string name="wait">Wait..</string>
+    <string name="wait_arabe">تحميل..</string>
 
 </resources>

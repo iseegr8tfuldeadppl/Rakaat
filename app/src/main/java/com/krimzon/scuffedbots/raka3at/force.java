@@ -142,7 +142,9 @@ public class force extends AppCompatActivity  {
         public boolean handleMessage(@NonNull Message msg) { if(slider!=null) { if(positifise!=0) slider.setText("- " + positifise);else begonethot(); }return true;}});
     private Handler calluse = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(@NonNull Message msg) { use(longitude, latitude, new_coordinates, new Date()); return true;}});
+        public boolean handleMessage(@NonNull Message msg) {
+            Calendar cal = Calendar.getInstance(Locale.US);
+            use(longitude, latitude, new_coordinates, new Date(cal.getTimeInMillis())); return true;}});
     private Handler handler7 = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) { find_slider(next_adan, false);return true; }});
@@ -212,7 +214,8 @@ public class force extends AppCompatActivity  {
         /*String pattern = "dd-MMM-yyyy";*/
         /*SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);*/
 
-        CurrentDisplayedDay = new Date();
+        Calendar cal = Calendar.getInstance(Locale.US);
+        CurrentDisplayedDay = new Date(cal.getTimeInMillis());
 
 
 
@@ -253,8 +256,9 @@ public class force extends AppCompatActivity  {
             String action = intent.getAction();
             assert action != null;
             if(action.equals("com.krimzon.scuffedbots.raka3at.background.iprayeditmate")){
-                Intent restart = new Intent(getApplicationContext(), slat.class);
+                Intent restart = new Intent(getApplicationContext(), force.class);
                 startActivity(restart);
+                finish();
             }
         }
     };
@@ -265,7 +269,7 @@ public class force extends AppCompatActivity  {
             assert gtodaycomparable != null;
             String[] todaycomparablesplit = gtodaycomparable.split(" ");
             if(todaycomparablesplit.length==3)
-                gotoday(Integer.valueOf(todaycomparablesplit[1]), get_month(todaycomparablesplit[1]), Integer.valueOf(todaycomparablesplit[2]));
+                gotoday(Integer.parseInt(todaycomparablesplit[1]), get_month(todaycomparablesplit[1]), Integer.parseInt(todaycomparablesplit[2]));
         } catch(Exception e){e.printStackTrace();}
     }
     private void protected_apps_request() {
@@ -425,7 +429,9 @@ public class force extends AppCompatActivity  {
 
     private int rightnowcomparable_temp=-1;
     private void calculate_rightnowcomparable() {
-        Date todayos = new Date();
+
+        Calendar cal = Calendar.getInstance(Locale.US);
+        Date todayos = new Date(cal.getTimeInMillis());
         if(!String.valueOf(todayos).split(" ")[2].equals(String.valueOf(CurrentDisplayedDay).split(" ")[2]) || rightnowcomparable==0 || next_adan == -1) {
             CurrentDisplayedDay = todayos;
             end_of_day = false;
@@ -434,7 +440,7 @@ public class force extends AppCompatActivity  {
         }
         String temptime = String.valueOf(todayos).split(" ")[3];
         rightnowcomparable_temp = rightnowcomparable;
-        rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
+        rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
     }
 
     private void wait_1_second() {
@@ -554,12 +560,12 @@ public class force extends AppCompatActivity  {
     private void hijri_date_setup() {
         if(miladi_month!=0) {
             String[] lel = todaycomparable.split(" ");
-            String[] t = PlainDate.of(Integer.valueOf(temptoday[5]), miladi_month, Integer.valueOf(lel[1])) // TODO: fix me Integer.valueOf(lel[5]) + 2000
+            String[] t = PlainDate.of(Integer.parseInt(temptoday[5]), miladi_month, Integer.parseInt(lel[1])) // TODO: fix me Integer.parseInt(lel[5]) + 2000
                     .transform(HijriCalendar.class, HijriCalendar.VARIANT_UMALQURA).toString().split("-");
             t[3] = t[3].replace("[islamic", "");
-            hijri_year = Integer.valueOf(t[1]);
-            hijri_month = Integer.valueOf(t[2]);
-            hijri_day = Integer.valueOf(t[3]);
+            hijri_year = Integer.parseInt(t[1]);
+            hijri_month = Integer.parseInt(t[2]);
+            hijri_day = Integer.parseInt(t[3]);
             convert_hijri_to_cute();
         }
     }
@@ -759,8 +765,8 @@ public class force extends AppCompatActivity  {
     private void if_theres_previous_info_load_it_n_display(Date date) {
         new_coordinates = false;
         SQLSharing.mycursorforce.moveToFirst();
-        longitude = Double.valueOf(SQLSharing.mycursorforce.getString(1));
-        latitude = Double.valueOf(SQLSharing.mycursorforce.getString(2));
+        longitude = Double.parseDouble(SQLSharing.mycursorforce.getString(1));
+        latitude = Double.parseDouble(SQLSharing.mycursorforce.getString(2));
         use(longitude, latitude, new_coordinates, date);
     }
 
@@ -1035,22 +1041,27 @@ public class force extends AppCompatActivity  {
 
     private String city = "";
     private void convert_prayertimes_into_seconds() {
-        int fajrtemp = Integer.valueOf(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(fajr.split(" ")[0].split(":")[1]);
-        if(fajr.split(" ")[1].equals(resources.getString(R.string.pmer)))
+
+        String pm = resources.getString(R.string.pm);
+
+        int fajrtemp = Integer.parseInt(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
+        if(fajr.split(" ")[1].equals(resources.getString(R.string.pmer))|| fajr.split(" ")[1].equals(pm))
             fajrtemp += 720; //12*60
-        //Integer risetemp = Integer.valueOf(rise.split(" ")[0].split(":")[0])*3600 + Integer.valueOf(rise.split(" ")[0].split(":")[1])*60;
-        int dhuhrtemp = Integer.valueOf(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(dhuhr.split(" ")[0].split(":")[1]);
-        if(dhuhr.split(" ")[1].equals(resources.getString(R.string.pmer)) && !dhuhr.split(":")[0].equals("12"))
+        //Integer risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0])*3600 + Integer.parseInt(rise.split(" ")[0].split(":")[1])*60;
+        int dhuhrtemp = Integer.parseInt(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(dhuhr.split(" ")[0].split(":")[1]);
+        if((dhuhr.split(" ")[1].equals(resources.getString(R.string.pmer)) || dhuhr.split(" ")[1].equals(pm)) && !dhuhr.split(":")[0].equals("12"))
             dhuhrtemp += 720; //12*60
-        int asrtemp = Integer.valueOf(asr.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(asr.split(" ")[0].split(":")[1]);
-        if(asr.split(" ")[1].equals(resources.getString(R.string.pmer)))
+        int asrtemp = Integer.parseInt(asr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(asr.split(" ")[0].split(":")[1]);
+        if(asr.split(" ")[1].equals(resources.getString(R.string.pmer)) || asr.split(" ")[1].equals(pm))
             asrtemp += 720; //12*60
-        int maghribtemp = Integer.valueOf(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(maghrib.split(" ")[0].split(":")[1]);
-        if(maghrib.split(" ")[1].equals(resources.getString(R.string.pmer)))
+        int maghribtemp = Integer.parseInt(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
+        if(maghrib.split(" ")[1].equals(resources.getString(R.string.pmer)) || maghrib.split(" ")[1].equals(pm))
             maghribtemp += 720; //12*60
-        int ishatemp = Integer.valueOf(isha.split(" ")[0].split(":")[0]) * 60 + Integer.valueOf(isha.split(" ")[0].split(":")[1]);
-        if(isha.split(" ")[1].equals(resources.getString(R.string.pmer)))
+        int ishatemp = Integer.parseInt(isha.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(isha.split(" ")[0].split(":")[1]);
+        if(isha.split(" ")[1].equals(resources.getString(R.string.pmer)) || isha.split(" ")[1].equals(pm))
             ishatemp += 720; //12*60
+
+
         prayers.add(fajrtemp);
         prayers.add(dhuhrtemp);
         prayers.add(asrtemp);
@@ -1405,14 +1416,20 @@ public class force extends AppCompatActivity  {
 
 
         if(language.equals(resources.getString(R.string.ar))){ // the arabic am and pm
-            String pm = getString(R.string.pm);
-            String am = getString(R.string.am);
-            if(fajr.split(" ")[1].equals("AM")) tfajr = fajr.split(" ")[0] + " " + am;else tfajr = fajr.split(" ")[0] + " " + pm;
-            if(rise.split(" ")[1].equals("AM")) trise = rise.split(" ")[0] + " " + am;else trise = rise.split(" ")[0] + " " + pm;
-            if(dhuhr.split(" ")[1].equals("AM")) tdhuhr = dhuhr.split(" ")[0] + " " + am;else tdhuhr = dhuhr.split(" ")[0] + " " + pm;
-            if(asr.split(" ")[1].equals("AM")) tasr = asr.split(" ")[0] + " " + am;else tasr = asr.split(" ")[0] + " " + pm;
-            if(maghrib.split(" ")[1].equals("AM")) tmaghrib = maghrib.split(" ")[0] + " " + am;else tmaghrib = maghrib.split(" ")[0] + " " + pm;
-            if(isha.split(" ")[1].equals("AM")) tisha = isha.split(" ")[0] + " " + am;else tisha = isha.split(" ")[0] + " " + pm;
+            String pm = resources.getString(R.string.pm);
+            String am = resources.getString(R.string.am);
+            if(fajr.split(" ")[1].equals("AM") || fajr.split(" ")[1].equals(am)) tfajr = fajr.split(" ")[0] + " " + am;
+            else tfajr = fajr.split(" ")[0] + " " + pm;
+            if(rise.split(" ")[1].equals("AM") || rise.split(" ")[1].equals(am)) trise = rise.split(" ")[0] + " " + am;
+            else trise = rise.split(" ")[0] + " " + pm;
+            if(dhuhr.split(" ")[1].equals("AM") || dhuhr.split(" ")[1].equals(am)) tdhuhr = dhuhr.split(" ")[0] + " " + am;
+            else tdhuhr = dhuhr.split(" ")[0] + " " + pm;
+            if(asr.split(" ")[1].equals("AM") || asr.split(" ")[1].equals(am)) tasr = asr.split(" ")[0] + " " + am;
+            else tasr = asr.split(" ")[0] + " " + pm;
+            if(maghrib.split(" ")[1].equals("AM") || maghrib.split(" ")[1].equals(am)) tmaghrib = maghrib.split(" ")[0] + " " + am;
+            else tmaghrib = maghrib.split(" ")[0] + " " + pm;
+            if(isha.split(" ")[1].equals("AM") || isha.split(" ")[1].equals(am)) tisha = isha.split(" ")[0] + " " + am;
+            else tisha = isha.split(" ")[0] + " " + pm;
         }
     }
 
@@ -1533,7 +1550,7 @@ public class force extends AppCompatActivity  {
             }
 
             tempdatin = temptoday[2];
-            int temper = Integer.valueOf(tempdatin);
+            int temper = Integer.parseInt(tempdatin);
             datin += " " + temper;
             if (temper==2 || temper==22)
                 datin += resources.getString(R.string.nd);
@@ -1590,7 +1607,7 @@ public class force extends AppCompatActivity  {
             //hijri += datin + " ";
 
             tempdatin = temptoday[2];
-            int temper = Integer.valueOf(tempdatin);
+            int temper = Integer.parseInt(tempdatin);
             datin += " " + temper;
 
             datin += " ";
@@ -1959,8 +1976,9 @@ public class force extends AppCompatActivity  {
     }
 
     private void what_is_soon_adan_and_one_before_it() {
-        String temptime = String.valueOf(new Date()).split(" ")[3];
-        rightnowcomparable = Integer.valueOf(temptime.split(":")[0]) * 60 + Integer.valueOf(temptime.split(":")[1]);
+        Calendar cal = Calendar.getInstance(Locale.US);
+        String temptime = String.valueOf(new Date(cal.getTimeInMillis())).split(" ")[3];
+        rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
 
         for(int i=0;i<prayers.size();i++){
             if(rightnowcomparable<prayers.get(0)) {
@@ -2205,9 +2223,10 @@ public class force extends AppCompatActivity  {
     }
 
     public void is_it_future_present_or_past(int day, int month, int year){
-        todaysplittemparray = String.valueOf((new Date())).split(" ");
-        int day2 = Integer.valueOf(todaysplittemparray[2]);
-        int year2 = Integer.valueOf(todaysplittemparray[5]);
+        Calendar cal = Calendar.getInstance(Locale.US);
+        todaysplittemparray = String.valueOf((new Date(cal.getTimeInMillis()))).split(" ");
+        int day2 = Integer.parseInt(todaysplittemparray[2]);
+        int year2 = Integer.parseInt(todaysplittemparray[5]);
         int month2 = get_month(todaysplittemparray[1]);
 
         // compare between current day and currently displayed day
@@ -2413,7 +2432,9 @@ public class force extends AppCompatActivity  {
             can_find_in = false;
             changing_day = true;
             new_adan = true;
-            CurrentDisplayedDay = new Date();
+
+            Calendar cal = Calendar.getInstance(Locale.US);
+            CurrentDisplayedDay = new Date(cal.getTimeInMillis());
             it_is_today = true;
             all_white = false;
             fill_all = false;
@@ -2438,8 +2459,8 @@ public class force extends AppCompatActivity  {
         going_right = true;
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
+        day = Integer.parseInt(todaysplittemparray[2]);
+        year = Integer.parseInt(todaysplittemparray[5]);
         month = get_month(todaysplittemparray[1]);
 
         gc = new GregorianCalendar(year, month-1, day);
@@ -2447,8 +2468,8 @@ public class force extends AppCompatActivity  {
         CurrentDisplayedDay = gc.getTime();
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
+        day = Integer.parseInt(todaysplittemparray[2]);
+        year = Integer.parseInt(todaysplittemparray[5]);
         month = get_month(todaysplittemparray[1]);
 
         is_it_future_present_or_past(day, month, year);
@@ -2573,8 +2594,8 @@ public class force extends AppCompatActivity  {
         going_right = false;
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
+        day = Integer.parseInt(todaysplittemparray[2]);
+        year = Integer.parseInt(todaysplittemparray[5]);
         month = get_month(todaysplittemparray[1]);
 
         gc = new GregorianCalendar(year, month-1, day);
@@ -2582,8 +2603,8 @@ public class force extends AppCompatActivity  {
         CurrentDisplayedDay = gc.getTime();
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
-        day = Integer.valueOf(todaysplittemparray[2]);
-        year = Integer.valueOf(todaysplittemparray[5]);
+        day = Integer.parseInt(todaysplittemparray[2]);
+        year = Integer.parseInt(todaysplittemparray[5]);
         month = get_month(todaysplittemparray[1]);
 
         is_it_future_present_or_past(day, month, year);
@@ -2652,7 +2673,9 @@ public class force extends AppCompatActivity  {
     }
 
     public void prayedthisdaybeforeClicked(View view) {
-        HomeOrMosque mosqueorhome=new HomeOrMosque(this, friday, prayed, todaycomparable, 1, darkmode, language, verified, athome, true);
-        mosqueorhome.show();
+        if((it_is_today && end_of_day) || fill_all) {
+            HomeOrMosque mosqueorhome = new HomeOrMosque(this, friday, prayed, todaycomparable, 1, darkmode, language, verified, athome, true);
+            mosqueorhome.show();
+        }
     }
 }
