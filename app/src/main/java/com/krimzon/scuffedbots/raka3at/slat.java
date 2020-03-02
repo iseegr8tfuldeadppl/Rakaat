@@ -499,8 +499,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         prepare_selection_and_countdown_things();
         coverer.setVisibility(VISIBLE);
         settings.setEnabled(false);
-        settingsbuttonbackground.setEnabled(false);
         nightmode.setEnabled(false);
+        settingsbuttonbackground.setEnabled(false);
         nightmodebuttonbackground.setEnabled(false);
         blackoutbutton.setEnabled(false);
         blackoutbuttonbackground.setEnabled(false);
@@ -993,8 +993,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             changeInterruptionFiler(NotificationManager.INTERRUPTION_FILTER_NONE);
 
 
+        settings.setEnabled(true);
+        nightmode.setEnabled(true);
+
         oncerr = true;
-        tam_page_visible = false;
         tam_page_visible = false;
         startclicked = false;
         start_was_just_clicked = false;
@@ -1188,10 +1190,10 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         howtousebackground.setBackground(resources.getDrawable(R.drawable.lightstatsback));
 
         it_is_nightmode_since_lightmode_shines_and_ruins_measurement = false;
-        slattitle.setTextColor(resources.getColor(R.color.typicallightbuttoncolors));
+        slattitle.setTextColor(resources.getColor(R.color.lightelement));
         countdownbackground.setBackground(resources.getDrawable(R.drawable.simpelbackground));
         full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
-        sajda_pre.setTextColor(resources.getColor(R.color.typicallightbuttoncolors));
+        sajda_pre.setTextColor(resources.getColor(R.color.lightelement));
         coverer.setBackground(resources.getDrawable(R.drawable.simpelbackground));
 
         donecover.setBackground(resources.getDrawable(R.drawable.simpelbackground));

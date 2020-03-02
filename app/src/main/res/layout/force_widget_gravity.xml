@@ -2,7 +2,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/main"
-    android:background="@drawable/darksimpelbackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/widgetdarksimpelbackground"
     android:orientation="vertical">
 
     <FrameLayout

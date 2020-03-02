@@ -1187,7 +1187,7 @@
         android:visibility="gone"
         android:id="@+id/selectionmenu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
         <!--Adan Selection Title-->
         <TextView
@@ -1213,8 +1213,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/playbuttonsize"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playbuttonheight"
-                android:src="@drawable/play"/>
+                android:layout_height="@dimen/playbuttonheight"/>
             <TextView
                 android:layout_weight=".15"
                 android:clickable="true"
@@ -1244,8 +1243,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/playbuttonsize"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playbuttonheight"
-                android:src="@drawable/play"/>
+                android:layout_height="@dimen/playbuttonheight"/>
             <TextView
                 android:layout_weight=".15"
                 android:clickable="true"
@@ -1275,8 +1273,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/playbuttonsize"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playbuttonheight"
-                android:src="@drawable/play"/>
+                android:layout_height="@dimen/playbuttonheight"/>
             <TextView
                 android:layout_weight=".15"
                 android:clickable="true"
@@ -1306,8 +1303,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/playbuttonsize"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playbuttonheight"
-                android:src="@drawable/play"/>
+                android:layout_height="@dimen/playbuttonheight"/>
             <TextView
                 android:layout_weight=".15"
                 android:clickable="true"
@@ -1337,8 +1333,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/playbuttonsize"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playbuttonheight"
-                android:src="@drawable/play"/>
+                android:layout_height="@dimen/playbuttonheight"/>
             <TextView
                 android:layout_weight=".15"
                 android:clickable="true"
@@ -1369,8 +1364,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/playbuttonsize"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playbuttonheight"
-                android:src="@drawable/play"/>
+                android:layout_height="@dimen/playbuttonheight"/>
             <TextView
                 android:layout_weight=".15"
                 android:clickable="true"

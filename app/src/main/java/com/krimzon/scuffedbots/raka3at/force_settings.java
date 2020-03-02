@@ -1106,15 +1106,25 @@ public class force_settings extends AppCompatActivity {
             }
         });
 
-        apply_lightmode_if_found_to_play_buttons();
+            apply_lightmode_if_found_to_play_buttons();
     }
 
     private void apply_lightmode_if_found_to_play_buttons() {
-        for(ImageView audioplayers:audioplayer){
-            try {
-                Glide.with(context).load(R.drawable.playlightmode).into(audioplayers);
-            } catch (Exception ignored) {
-                audioplayers.setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
+        if(darkmode){
+            for (ImageView audioplayers : audioplayer) {
+                try {
+                    Glide.with(context).load(R.drawable.play).into(audioplayers);
+                } catch (Exception ignored) {
+                    audioplayers.setImageDrawable(resources.getDrawable(R.drawable.play));
+                }
+            }
+        } else {
+            for (ImageView audioplayers : audioplayer) {
+                try {
+                    Glide.with(context).load(R.drawable.playlightmode).into(audioplayers);
+                } catch (Exception ignored) {
+                    audioplayers.setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
+                }
             }
         }
     }
@@ -1155,10 +1165,18 @@ public class force_settings extends AppCompatActivity {
         } else {
             audioisplaying = false;
             stopadan();
-            try {
-                Glide.with(context).load(R.drawable.play).into(audioplayer.get(i));
-            } catch (Exception ignored) {
-                audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.play));
+            if(darkmode) {
+                try {
+                    Glide.with(context).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
+                } catch (Exception ignored) {
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
+                }
+            } else {
+                try {
+                    Glide.with(context).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
+                } catch (Exception ignored) {
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
+                }
             }
         }
     }

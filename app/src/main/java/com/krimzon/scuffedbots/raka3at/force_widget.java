@@ -1,5 +1,6 @@
 package com.krimzon.scuffedbots.raka3at;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -99,6 +100,10 @@ public class force_widget extends AppWidgetProvider {
                     else
                         widgetViews = new RemoteViews(context.getPackageName(), R.layout.force_widget_lightmode_gravity); // TODO make a light mode
                 }
+
+                Intent launchingforce = new Intent(context, force.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchingforce, 0);
+                widgetViews.setOnClickPendingIntent(R.id.main, pendingIntent);
 
                 prepare_and_apply_hijri_date(language, context);
                 widgetViews.setTextViewText(R.id.hijridisplay, hijri);
@@ -806,12 +811,7 @@ public class force_widget extends AppWidgetProvider {
     }
 
     private void find_slider(final int next_adaner) {
-        int temp;
-        if (still_scoping_on_previous_adan)
-            temp = next_adaner - 1;
-        else
-            temp = next_adaner;
-        switch (temp) {
+        switch (next_adaner) {
             case -1:
                 break;
             case 0:

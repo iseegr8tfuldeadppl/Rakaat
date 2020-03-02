@@ -2,6 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/main"
+    android:clickable="true"
+    android:focusable="true"
     android:background="@drawable/widgetsimpelbackground"
     android:orientation="vertical">
 

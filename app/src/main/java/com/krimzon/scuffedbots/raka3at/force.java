@@ -136,6 +136,16 @@ public class force extends AppCompatActivity  {
         public boolean handleMessage(@NonNull Message msg) {
             citydisplay.setText(city);
             return true;}});
+    private Handler hide_prayallbutton = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            prayedthisdaybefore.setVisibility(GONE);
+            return true;}});
+    private Handler show_prayallbutton = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            prayedthisdaybefore.setVisibility(VISIBLE);
+            return true;}});
 
     private Handler handler3 = new Handler(new Handler.Callback() {
         @Override
@@ -295,9 +305,13 @@ public class force extends AppCompatActivity  {
                     if (!praybuttonsdone)
                         color_pray_buttonshandler.sendEmptyMessage(0);
 
-
                     if (rightnowcomparable != rightnowcomparable_temp || (next_adan==0 && positifise > SQLSharing.minute_limit_to_display_positifise+1)){
                         temp_positifise = Math.round((prayers.get(next_adan) - rightnowcomparable));
+
+                        if(end_of_day)
+                            show_prayallbutton.sendEmptyMessage(0);
+                        else
+                            hide_prayallbutton.sendEmptyMessage(0);
 
                         check_next_adan();
                         // this check is to fix the glitch of changing time from 3AM to 11PM instantly, gets stuck on fajr
@@ -2439,6 +2453,11 @@ public class force extends AppCompatActivity  {
             all_white = false;
             fill_all = false;
 
+            if(end_of_day)
+                prayedthisdaybefore.setVisibility(VISIBLE);
+            else
+                prayedthisdaybefore.setVisibility(GONE);
+
             going_right = !going_right;
             going_left = !going_left;
 
@@ -2473,6 +2492,11 @@ public class force extends AppCompatActivity  {
         month = get_month(todaysplittemparray[1]);
 
         is_it_future_present_or_past(day, month, year);
+
+        if((it_is_today && end_of_day) || fill_all)
+            prayedthisdaybefore.setVisibility(VISIBLE);
+        else if(it_is_today || all_white)
+            prayedthisdaybefore.setVisibility(GONE);
 
         location_shit(CurrentDisplayedDay);
 
@@ -2522,6 +2546,11 @@ public class force extends AppCompatActivity  {
         CurrentDisplayedDay = gc.getTime();
 
         is_it_future_present_or_past(day, month, year);
+
+        if(end_of_day)
+            prayedthisdaybefore.setVisibility(VISIBLE);
+        else
+            prayedthisdaybefore.setVisibility(GONE);
 
         if(fill_all){
             can_find_in = false;
@@ -2608,6 +2637,11 @@ public class force extends AppCompatActivity  {
         month = get_month(todaysplittemparray[1]);
 
         is_it_future_present_or_past(day, month, year);
+
+        if((it_is_today && end_of_day) || fill_all)
+            prayedthisdaybefore.setVisibility(VISIBLE);
+        else if(it_is_today || all_white)
+            prayedthisdaybefore.setVisibility(GONE);
 
         location_shit(CurrentDisplayedDay);
 

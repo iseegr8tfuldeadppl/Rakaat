@@ -201,6 +201,7 @@
         android:layout_height="wrap_content"
         android:textSize="17sp"
         android:id="@+id/dismiss"
+        android:textAllCaps="false"
         android:text="@string/close"
         android:textColor="@color/white"
         android:background="@drawable/darkbuttons"/>
