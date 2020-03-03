@@ -368,27 +368,38 @@ public class Service extends android.app.Service {
 
                     if(!end_of_day) {
                         // Check if we reached the adan, if so, then switch i to the next adan
-                        if (prayers.get(i) == rightnowcomparable && i!=1) {
-                            if (!recent_adan) {
-                                recent_adan = true;
-                                current_adding_playing = i;
+                        if (prayers.get(i) == rightnowcomparable) {
+                            if(i!=1) {
+                                if (!recent_adan) {
+                                    recent_adan = true;
+                                    current_adding_playing = i;
 
-                                // Play adan audio
-                                if(main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                                    display_notification(false);
-                                else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                                    display_notification(true);
+                                    // Play adan audio
+                                    if (main_notification_switch && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+                                        display_notification(false);
+                                    else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                                        display_notification(true);
 
-                                adan_exception = true;
-                                already_unmuted = true;
-                                unmuter();
-                                playadan(pullselectedadanforthisprayerfromSQL(i));
+                                    adan_exception = true;
+                                    already_unmuted = true;
+                                    unmuter();
+                                    playadan(pullselectedadanforthisprayerfromSQL(i));
 
-                                // set i to the next adan
-                                i++;
-                                if (i >= 6) i = 0;
+                                    // set i to the next adan
+                                    i++;
+                                    if (i >= 6) i = 0;
+                                }
+                            } else {
+                                if (!recent_adan) {
+                                    recent_adan = true;
+                                    current_adding_playing = i;
+
+                                    adan_exception = true;
+                                    // set i to the next adan
+                                    i = 2;
+                                }
                             }
-                        } else recent_adan = false;
+                        } else if(prayers.get(i) != rightnowcomparable) recent_adan = false;
 
                     }
                     if(!playing) {
@@ -418,17 +429,32 @@ public class Service extends android.app.Service {
     }
 
     private void apply_mute_delays() {
-        String[] delaysplitsplit = delayssplit[i].split(",");
-        mute = (positifise <= Integer.parseInt(delaysplitsplit[0]) || negatifise <= Integer.parseInt(delaysplitsplit[1])) && delayssplit[2].equals("1") && Integer.parseInt(delaysplitsplit[1])>3 && Integer.parseInt(delaysplitsplit[0]) > 1;
+        if(i>1) {
+            String[] delaysplitsplit = delayssplit[i-1].split(",");
+            mute = (positifise <= Integer.parseInt(delaysplitsplit[0]) || negatifise <= Integer.parseInt(delaysplitsplit[1])) && delaysplitsplit[2].equals("1") && Integer.parseInt(delaysplitsplit[1]) > 3 && Integer.parseInt(delaysplitsplit[0]) > 1;
 
-        if(mute && !already_muted && !adan_exception){
-            already_muted = true;
-            already_unmuted = false;
-            muter();
-        } else if(!mute && !already_unmuted && !adan_exception){
-            already_muted = false;
-            already_unmuted = true;
-            unmuter();
+            if (mute && !already_muted && !adan_exception) {
+                already_muted = true;
+                already_unmuted = false;
+                muter();
+            } else if (!mute && !already_unmuted && !adan_exception) {
+                already_muted = false;
+                already_unmuted = true;
+                unmuter();
+            }
+        } else if(i==0){
+            String[] delaysplitsplit = delayssplit[i].split(",");
+            mute = (positifise <= Integer.parseInt(delaysplitsplit[0]) || negatifise <= Integer.parseInt(delaysplitsplit[1])) && delaysplitsplit[2].equals("1") && Integer.parseInt(delaysplitsplit[1]) > 3 && Integer.parseInt(delaysplitsplit[0]) > 1;
+
+            if (mute && !already_muted && !adan_exception) {
+                already_muted = true;
+                already_unmuted = false;
+                muter();
+            } else if (!mute && !already_unmuted && !adan_exception) {
+                already_muted = false;
+                already_unmuted = true;
+                unmuter();
+            }
         }
     }
 
@@ -760,7 +786,7 @@ public class Service extends android.app.Service {
                     e.printStackTrace();
                 }
             }
-        } else {
+        } else if((positifise>=15 && positifise <=25) || (end_of_day && negatifise<=70 && negatifise>=45)){
             already_notified_recent_adan = false;
         }
     }
@@ -1055,6 +1081,24 @@ public class Service extends android.app.Service {
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
             maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
             isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
+            int gg = Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
+            int ggg =  Integer.parseInt(fajr.split(" ")[0].split(":")[0]);
+            gg -= 2;
+            if(gg<0) {
+                ggg -= 1;
+                gg = 60 + gg;
+            }
+            fajr = ggg + ":" + gg + " " + fajr.split(" ")[1];
+
+
+            int ff = Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
+            int fff =  Integer.parseInt(maghrib.split(" ")[0].split(":")[0]);
+            ff += 5;
+            if(ff>59) {
+                fff += 1;
+                ff = ff - 60;
+            }
+            maghrib = fff + ":" + ff + " " + maghrib.split(" ")[1];
 
         } catch(Exception ignored){}
 

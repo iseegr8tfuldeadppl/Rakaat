@@ -52,7 +52,6 @@ public class force_widget extends AppWidgetProvider {
     private int slider = 0;
     private int rightnowcomparable = 1;
     private RemoteViews widgetViews;
-    private boolean change_happened = true;
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -148,20 +147,6 @@ public class force_widget extends AppWidgetProvider {
                     check_negatifise();
                     if_change_needed_for_slider_apply_it();
                 }
-
-
-                /*if(!end_of_day) {
-                    // Check if we reached the adan, if so, then switch i to the next adan
-                    if (prayers.get(i) == rightnowcomparable) {
-                        if (!recent_adan) {
-                            recent_adan = true;
-                            current_adding_playing = i;
-                            i++;
-                            if (i >= 5) i = 0;
-                        }
-                    } else recent_adan = false;
-
-                }*/
 
                 // Widget
                 switch (i) {
@@ -747,6 +732,24 @@ public class force_widget extends AppWidgetProvider {
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
             maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
             isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
+            int gg = Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
+            int ggg =  Integer.parseInt(fajr.split(" ")[0].split(":")[0]);
+            gg -= 2;
+            if(gg<0) {
+                ggg -= 1;
+                gg = 60 + gg;
+            }
+            fajr = ggg + ":" + gg + " " + fajr.split(" ")[1];
+
+
+            int ff = Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
+            int fff =  Integer.parseInt(maghrib.split(" ")[0].split(":")[0]);
+            ff += 5;
+            if(ff>59) {
+                fff += 1;
+                ff = ff - 60;
+            }
+            maghrib = fff + ":" + ff + " " + maghrib.split(" ")[1];
 
         } catch(Exception ignored){}
 
@@ -764,38 +767,36 @@ public class force_widget extends AppWidgetProvider {
         if (i != 0)
             negatifise = Math.round(abs((rightnowcomparable - prayers.get(i - 1))));
         else
-            still_scoping_on_previous_adan = false;
+            negatifise = Math.round(abs((rightnowcomparable - prayers.get(5))));
 
         positifise = Math.round(abs((prayers.get(i) - rightnowcomparable)));
     }
 
     private void check_negatifise() {
-        if(i!=0)
-            still_scoping_on_previous_adan = negatifise < SQLSharing.minute_limit_to_display_negatifise;
+        still_scoping_on_previous_adan = negatifise < SQLSharing.minute_limit_to_display_negatifise && negatifise > 0;
     }
 
     private void if_change_needed_for_slider_apply_it() {
         int lol = -3;
-        if(still_scoping_on_previous_adan)
-            lol = i-1;
-        else
+        if(still_scoping_on_previous_adan) {
+            if(i==0)
+                lol = 5;
+            else
+                lol = i - 1;
+        } else
             lol = i;
         hide_all_sliders_fuck_it();
         if(still_scoping_on_previous_adan){
-            change_happened = true;
             find_slider(lol);
             widgetViews.setTextViewText(slider, "+ " + String.valueOf(negatifise));
             widgetViews.setViewVisibility(slider, View.VISIBLE);
         }
-        else if(positifise<SQLSharing.minute_limit_to_display_positifise){
-            change_happened = true;
+        else if(positifise<SQLSharing.minute_limit_to_display_positifise && positifise>0){
             find_slider(lol);
             widgetViews.setTextViewText(slider, "- " + String.valueOf(positifise));
             widgetViews.setViewVisibility(slider, View.VISIBLE);
         } else {
-            if(change_happened){ change_happened = false;
                 hide_all_sliders_fuck_it();
-            }
         }
 
         //update_widget_ui();
@@ -836,6 +837,7 @@ public class force_widget extends AppWidgetProvider {
         }
     }
 
+    private boolean end_of_day = false;
     private void find_next_adan() {
         try {
             String temptime = String.valueOf(old_date).split(" ")[3];
@@ -855,7 +857,7 @@ public class force_widget extends AppWidgetProvider {
                     i = j + 1;
                 }
             }
-            boolean end_of_day = false;
+            end_of_day = false;
             if(i>=6){
                 i = 0;
                 end_of_day = true;

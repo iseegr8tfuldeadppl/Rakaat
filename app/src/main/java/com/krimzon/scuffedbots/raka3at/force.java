@@ -324,7 +324,7 @@ public class force extends AppCompatActivity  {
                         if (next_adan != 0)
                             temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(next_adan - 1))));
                         else
-                            still_scoping_on_previous_adan = false;
+                            temp_negatifise = Math.round(Math.abs((rightnowcomparable - prayers.get(4))));
 
                         /*handlos.sendEmptyMessage(0);*/
 
@@ -1426,6 +1426,24 @@ public class force extends AppCompatActivity  {
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
             maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
             isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
+            int gg = Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
+            int ggg =  Integer.parseInt(fajr.split(" ")[0].split(":")[0]);
+            gg -= 2;
+            if(gg<0) {
+                ggg -= 1;
+                gg = 60 + gg;
+            }
+            fajr = ggg + ":" + gg + " " + fajr.split(" ")[1];
+
+
+            int ff = Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
+            int fff =  Integer.parseInt(maghrib.split(" ")[0].split(":")[0]);
+            ff += 5;
+            if(ff>59) {
+                fff += 1;
+                ff = ff - 60;
+            }
+            maghrib = fff + ":" + ff + " " + maghrib.split(" ")[1];
         } catch(Exception e){e.printStackTrace();}
 
 
@@ -1440,8 +1458,8 @@ public class force extends AppCompatActivity  {
             else tdhuhr = dhuhr.split(" ")[0] + " " + pm;
             if(asr.split(" ")[1].equals("AM") || asr.split(" ")[1].equals(am)) tasr = asr.split(" ")[0] + " " + am;
             else tasr = asr.split(" ")[0] + " " + pm;
-            if(maghrib.split(" ")[1].equals("AM") || maghrib.split(" ")[1].equals(am)) tmaghrib = maghrib.split(" ")[0] + " " + am;
-            else tmaghrib = maghrib.split(" ")[0] + " " + pm;
+            if(maghrib.split(" ")[1].equals("AM") || maghrib.split(" ")[1].equals(am)) tmaghrib = maghrib.split(" ")[0]  + " " + am;
+            else tmaghrib = maghrib.split(" ")[0]  + " " + pm;
             if(isha.split(" ")[1].equals("AM") || isha.split(" ")[1].equals(am)) tisha = isha.split(" ")[0] + " " + am;
             else tisha = isha.split(" ")[0] + " " + pm;
         }
@@ -2069,6 +2087,8 @@ public class force extends AppCompatActivity  {
 
             if(next_adan!=0)
                 temp_negatifise = Math.round( Math.abs((rightnowcomparable - prayers.get(next_adan-1))) );
+            else
+                temp_negatifise = Math.round( Math.abs((rightnowcomparable - prayers.get(4))) );
 
             String lol;
             if((temp_negatifise != negatifise || changing_day) && next_adan!=0){
@@ -2138,9 +2158,12 @@ public class force extends AppCompatActivity  {
 
     private void find_slider(final int next_adaner, boolean just_cleaning) {
         int temp;
-        if (still_scoping_on_previous_adan)
-            temp = next_adaner - 1;
-        else
+        if (still_scoping_on_previous_adan) {
+            if(next_adaner==0)
+                temp = 4;
+            else
+                temp = next_adaner - 1;
+        } else
             temp = next_adaner;
         switch (temp) {
             case -1:
