@@ -1,6 +1,7 @@
 package com.krimzon.scuffedbots.raka3at;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,6 +49,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.background.Service;
 import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
 import com.krimzon.scuffedbots.raka3at.dialogs.HomeOrMosque;
 import com.krimzon.scuffedbots.raka3at.dialogs.Statistictictictictic;
@@ -255,6 +257,9 @@ public class force extends AppCompatActivity  {
         //longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
 
 
+        if(Build.VERSION.SDK_INT > 28){
+            settingsbutton.setVisibility(GONE);
+        }
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.krimzon.scuffedbots.raka3at.background.iprayeditmate"); //further more
         registerReceiver(receiver, filter);
@@ -279,18 +284,19 @@ public class force extends AppCompatActivity  {
             assert gtodaycomparable != null;
             String[] todaycomparablesplit = gtodaycomparable.split(" ");
             if(todaycomparablesplit.length==3)
-                gotoday(Integer.parseInt(todaycomparablesplit[1]), get_month(todaycomparablesplit[1]), Integer.parseInt(todaycomparablesplit[2]));
+                gotoday(Integer.parseInt(todaycomparablesplit[1]), get_month2(todaycomparablesplit[0]), Integer.parseInt(todaycomparablesplit[2]));
         } catch(Exception e){e.printStackTrace();}
     }
     private void protected_apps_request() {
-        try {
-            if ("huawei".equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
-                protected_apps_request request = new protected_apps_request(this, darkmode, language);
-                request.show();
+        if(Build.VERSION.SDK_INT < 28) {
+            try {
+                if ("huawei".equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
+                    protected_apps_request request = new protected_apps_request(this, darkmode, language);
+                    request.show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
-        catch(Exception e){
-            e.printStackTrace();
         }
     }
 
@@ -457,6 +463,7 @@ public class force extends AppCompatActivity  {
         rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
     }
 
+    private ImageView settingsbutton;
     private void wait_1_second() {
         long futuretime = System.currentTimeMillis() + 1000;
 
@@ -479,7 +486,7 @@ public class force extends AppCompatActivity  {
         ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
         ImageView arrowright = findViewById(R.id.arrowright);
         ImageView arrowleft = findViewById(R.id.arrowleft);
-        ImageView settingsbutton = findViewById(R.id.settingsbutton);
+        settingsbutton = findViewById(R.id.settingsbutton);
         try {
             Glide.with(this).load(R.drawable.backarrowdark).into(arrowback);
         } catch (Exception ignored) {
@@ -936,20 +943,50 @@ public class force extends AppCompatActivity  {
         handlerThread.start();
         handlerer = new Handler(handlerThread.getLooper());*/
 
-        sql("force");
-        if(SQLSharing.mycursorforce.getCount()>0){
-            // adan service
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-            } else {
-                ProcessMainClass bck = new ProcessMainClass();
-                bck.launchService(getApplicationContext());
+        try {
+            close_sql();
+            sql("force");
+            if(SQLSharing.servicemycursorforce.getCount()>0) {
+                if(Build.VERSION.SDK_INT >= 28){
+                    final Context context = this;
+                    /*final Handler handler = new Handler();
+                    Runnable r = new Runnable(){
+                        public void run(){
+                            try{
+                                startService(new Intent(context, Service.class));}
+                                 catch(Exception e){
+                                     e.printStackTrace();
+                                }
+                        }
+                    };
+                    handler.postDelayed(r, 200);*/
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                } else {
+                    ProcessMainClass bck = new ProcessMainClass();
+                    bck.launchService(getApplicationContext());
+                }
             }
+            close_sql();
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
 
 
         if(an_alert_to_turn_location_on_was_displayed)
             AttemptToGetLocationCoordinates();
+
+    }
+
+    private void close_sql() {
+        if(SQLSharing.servicemydbforce!=null)
+            SQLSharing.servicemydbforce.close();
+        if(SQLSharing.servicemydbslat!=null)
+            SQLSharing.servicemydbslat.close();
+        if(SQLSharing.servicemydbforce3!=null)
+            SQLSharing.servicemydbforce3.close();
 
     }
 
@@ -2257,6 +2294,38 @@ public class force extends AppCompatActivity  {
                 return 12;
         }
         return 1;
+    }
+
+    private int get_month2(String month){
+        Log.i("HH", month);
+        switch (month) {
+            case "Jan":
+                return 0;
+            case "Feb":
+                return 1;
+            case "Mar":
+                return 2;
+            case "Apr":
+                return 3;
+            case "May":
+                return 4;
+            case "Jun":
+                return 5;
+            case "Jul":
+                return 6;
+            case "Aug":
+                return 7;
+            case "Sep":
+                return 8;
+            case "Oct":
+                return 9;
+            case "Nov":
+                return 10;
+            case "Dec":
+                return 11;
+            default:
+                return 0;
+        }
     }
 
     public void is_it_future_present_or_past(int day, int month, int year){

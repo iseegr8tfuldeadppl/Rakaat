@@ -51,14 +51,28 @@ public class JobService extends android.app.job.JobService {
                 // see onDestroy of Service
                 IntentFilter filter = new IntentFilter();
                 filter.addAction(Globals.RESTART_INTENT);
-                try {
-                    registerReceiver(restartSensorServiceReceiver, filter);
-                } catch (Exception e) {
+                try{
+                    unregisterReceiver(restartSensorServiceReceiver);
                     try {
-                        getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
-                    } catch (Exception ignored) {
+                        registerReceiver(restartSensorServiceReceiver, filter);
+                    } catch (Exception e) {
+                        try {
+                            getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
+                        } catch (Exception ignored) {
 
+                        }
                     }
+                } catch(Exception e){
+                    try {
+                        registerReceiver(restartSensorServiceReceiver, filter);
+                    } catch (Exception ee) {
+                        try {
+                            getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+
                 }
             }
         }, 1000);

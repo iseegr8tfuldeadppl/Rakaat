@@ -1,5 +1,6 @@
 package com.krimzon.scuffedbots.raka3at;
 
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.media.AudioManager;
 import android.os.Build;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.view.animation.Animation;
@@ -23,8 +25,11 @@ import com.bumptech.glide.Glide;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
+import com.krimzon.scuffedbots.raka3at.background.Service;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
+
+import java.util.List;
 import java.util.Locale;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -265,12 +270,31 @@ public class MainActivity extends AppCompatActivity {
 
         // adan service
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-            } else {
-                ProcessMainClass bck = new ProcessMainClass();
-                bck.launchService(getApplicationContext());
+            close_sql();
+            sql("force");
+            if(SQLSharing.servicemycursorforce.getCount()>0) {
+                if(Build.VERSION.SDK_INT >= 28){
+                    final Context context = this;
+                    /*final Handler handler = new Handler();
+                    Runnable r = new Runnable(){
+                        public void run(){
+                            try{
+                                startService(new Intent(context, Service.class));}
+                            catch(Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    handler.postDelayed(r, 200);*/
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                } else {
+                    ProcessMainClass bck = new ProcessMainClass();
+                    bck.launchService(getApplicationContext());
+                }
             }
+            close_sql();
         }
         catch(Exception e){
             e.printStackTrace();

@@ -221,13 +221,9 @@ public class Service extends android.app.Service {
     private void find_next_adan() {
         try {
             String temptime = String.valueOf(old_date).split(" ")[3];
+            rightnowcomparable_old = rightnowcomparable;
             rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
 
-            /*if(rightnowcomparable_old!=rightnowcomparable){
-            }*/
-
-            //if(rightnowcomparable_old!=rightnowcomparable)
-                // displayed rightnowcomparable
             for (int j = 0; j < 6; j++) {
                 if(rightnowcomparable<prayers.get(0)) {
                     i = 0;
@@ -250,22 +246,23 @@ public class Service extends android.app.Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-        // check if switch for main notification is on
+        // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                restartForeground();
+            } else {
+                ProcessMainClass bck = new ProcessMainClass();
+                bck.launchService(getApplicationContext());
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
         sql("slat");
         SQLSharing.servicemycursorslat.moveToPosition(8);
         main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
 
-        // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
-        if (intent == null) {
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(c);
-        }
-
-        // make sure you call the startForeground on onStartCommand because otherwise
-        // when we hide the notification on onScreen it will nto restart in Android 6 and 7
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            restartForeground();
-
+        close_sql();
         sql("force");
         if(SQLSharing.servicemycursorforce.getCount()>0)
             startTimer();
@@ -292,18 +289,8 @@ public class Service extends android.app.Service {
     }
 
     public void restartForeground() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                close_sql();
-                sql("force");
-                if(SQLSharing.servicemycursorforce.getCount()>0) {
-                    if(main_notification_switch) {
-                        display_notification(true);
-                    }
-                }
-                close_sql();
-            } catch (Exception ignored) {}
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                display_notification(true);
     }
 
     @Override
@@ -329,9 +316,6 @@ public class Service extends android.app.Service {
         timer = new Timer();
 
         launch_prayer_processing();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            restartForeground();
 
         //initialize the TimerTask's job
         initializeTimerTask();
@@ -360,9 +344,9 @@ public class Service extends android.app.Service {
                         if(rightnowcomparable_old!=rightnowcomparable) {
                             check_unprayed_prayer_for_today();
                             prepare_a_custom_reminder_notification_and_send_it();
-                            apply_widget_update();
                             rightnowcomparable_old = rightnowcomparable;
                         }
+                        apply_widget_update();
                     }
 
 
@@ -785,6 +769,10 @@ public class Service extends android.app.Service {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+
+
+                check_unprayed_prayer_for_today();
             }
         } else if((positifise>=15 && positifise <=25) || (end_of_day && negatifise<=70 && negatifise>=45)){
             already_notified_recent_adan = false;
