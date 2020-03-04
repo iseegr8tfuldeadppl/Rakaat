@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             close_sql();
             sql("force");
-            if(SQLSharing.servicemycursorforce.getCount()>0) {
+            if(SQLSharing.mycursorforce.getCount()>0) {
                 if(Build.VERSION.SDK_INT >= 28){
                     final Context context = this;
                     /*final Handler handler = new Handler();

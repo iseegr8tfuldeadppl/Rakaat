@@ -946,7 +946,9 @@ public class force extends AppCompatActivity  {
         try {
             close_sql();
             sql("force");
-            if(SQLSharing.servicemycursorforce.getCount()>0) {
+            SQLSharing.mydbforce = new SQL(this);
+            SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
+            if(SQLSharing.mycursorforce.getCount()>0) {
                 if(Build.VERSION.SDK_INT >= 28){
                     final Context context = this;
                     /*final Handler handler = new Handler();

@@ -246,6 +246,10 @@ public class Service extends android.app.Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
+        sql("slat");
+        SQLSharing.servicemycursorslat.moveToPosition(8);
+        main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -258,9 +262,6 @@ public class Service extends android.app.Service {
             e.printStackTrace();
         }
 
-        sql("slat");
-        SQLSharing.servicemycursorslat.moveToPosition(8);
-        main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
 
         close_sql();
         sql("force");
