@@ -82,7 +82,6 @@ public class force extends AppCompatActivity  {
     private double longitude;
     private double latitude;
     private CalculationParameters params;
-    private boolean an_alert_to_turn_location_on_was_displayed = false;
     private String todaycomparable;
     private DateComponents date;
     private int hijri_month = 0, hijri_year = 0, hijriD = 0;
@@ -116,7 +115,7 @@ public class force extends AppCompatActivity  {
     private int day, year, month = 0;
     private String[] todaysplittemparray;
     private boolean all_white = false, fill_all = false;
-    private String athome = "00000";
+    private String athome = "11111";
     private int next_adan = -1, temp_next_adan = -1;
     private boolean end_ofD = false, it_is_today = true, new_adan = false;
     private String verified = "";
@@ -151,11 +150,17 @@ public class force extends AppCompatActivity  {
             } else if(SQLSharing.mycursorslat.getString(1)!=null){
                 citydisplay.setText(SQLSharing.mycursorslat.getString(1));
             }
+            close_sql();
             return true;}});
     private Handler hide_prayallbutton = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             prayedthisdaybefore.setVisibility(GONE);
+            return true;}});
+    private Handler locationshett = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            location_shit(CurrentDisplayedDay);
             return true;}});
     private Handler show_prayallbutton = new Handler(new Handler.Callback() {
         @Override
@@ -189,7 +194,23 @@ public class force extends AppCompatActivity  {
         public boolean handleMessage(@NonNull Message msg) { if(it_is_today) animatenextadan(); return true; }});
     private Handler color_pray_buttonshandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(@NonNull Message msg) { color_pray_buttons(); return true; }});
+        public boolean handleMessage(@NonNull Message msg) {
+            try {
+                color_pray_buttons();
+            } catch(Exception e){
+                e.printStackTrace();
+
+            } return true; }});
+
+    private Handler updatepraybuttons = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            try {
+                retrieveAndy();
+            } catch(Exception e){
+                e.printStackTrace();
+
+            } return true; }});
 
 
     private Handler checkonfajr = new Handler(new Handler.Callback() {
@@ -243,6 +264,8 @@ public class force extends AppCompatActivity  {
 
         Calendar cal = Calendar.getInstance(Locale.US);
         CurrentDisplayedDay = new Date(cal.getTimeInMillis());
+        String[] temptoday = CurrentDisplayedDay.toString().split(" ");
+        currentdisplayeddaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
 
 
 
@@ -256,12 +279,13 @@ public class force extends AppCompatActivity  {
 
         load_data_from_slat_sql();
 
+        close_sql();
+
         if(request_protected_menu)
             protected_apps_request();
 
         languageshet();
 
-        sql(resources.getString(R.string.justforce));
 
         location_shit(CurrentDisplayedDay);
 
@@ -277,22 +301,13 @@ public class force extends AppCompatActivity  {
             settingsbutton.setVisibility(GONE);
         }
 
-        mapActivity();
-
         check_firebase_if_updated_today();
 
     }
 
-
-    private void mapActivity() {
-        Intent dd = new Intent(this, MapActivity.class);
-        startActivity(dd);
-    }
-
-    private FirebaseAuth mAuth;
-    private DatabaseReference lastupdatedRef, userRef;
+    private DatabaseReference  userRef;
     private void check_firebase_if_updated_today() {
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             FirebaseUser user = mAuth.getCurrentUser();
             String refinedemail = getUserEmail(user);
@@ -312,124 +327,149 @@ public class force extends AppCompatActivity  {
         return null;
     }
 
-    private void sync_SQL_and_Firebase(String email, String uid) {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            userRef = database.getReference("users").child(uid).child(email).child("p");
-            /*lastupdatedRef = database.getReference("users").child(email).child("lastupdated");*/
-            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    //mostrecentrequest = String.valueOf(dataSnapshot.child("appside").child("mostrecentrequest").getValue());
-                    close_sql();
-                    sql("force3");
+    private void sync_SQL_and_Firebase(final String email, final String uid) {
+        Runnable r=new Runnable() {
+            @Override
+            public void run() {
+                synchronized (this) {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    userRef = database.getReference("users").child(uid).child(email).child("p");
+                    /*lastupdatedRef = database.getReference("users").child(email).child("lastupdated");*/
+                    userRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            //mostrecentrequest = String.valueOf(dataSnapshot.child("appside").child("mostrecentrequest").getValue());
 
-                    if(SQLSharing.mycursorforce3.moveToFirst()) {
-                        do {
-                            boolean found = false;
+                            boolean newstuff = false;
+
                             try {
-                                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    if (child.child("D").getValue() != null) {
-                                        if (child.child("D").getValue().equals(SQLSharing.mycursorforce3.getString(1))) {
-                                            if (child.child("P").getValue() != null && child.child("V").getValue() != null && child.child("H").getValue() != null) {
+                            close_sql();
+                            sql(resources.getString(R.string.justforce3));
+
+                            if (SQLSharing.mycursorforce3.moveToFirst()) {
+                                do {
+                                    boolean found = false;
+                                        if (dataSnapshot.getChildrenCount() != 0) {
+                                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                                if (!found) {
+                                                    if (child.child("D").getValue() != null) {
+                                                        String day = child.child("D").getValue().toString();
+                                                        if (day.equals(SQLSharing.mycursorforce3.getString(1))) {
+                                                            if (child.child("P").getValue() != null && child.child("V").getValue() != null && child.child("H").getValue() != null) {
 
 
-                                                if (child.getKey() != null) {
-                                                    String yes = child.child("P").getValue().toString();
-                                                    String yes2 = SQLSharing.mycursorforce3.getString(2);
-                                                    StringBuilder yesser = new StringBuilder();
-                                                    for (int i = 0; i < 5; i++) {
-                                                        if (String.valueOf(yes.charAt(i)).equals("1")) {
-                                                            yesser.append("1");
-                                                        } else if (String.valueOf(yes2.charAt(i)).equals("1")) {
-                                                            yesser.append("1");
-                                                        } else {
-                                                            yesser.append("0");
+                                                                if (child.getKey() != null) {
+                                                                    String prayedfb = child.child("P").getValue().toString();
+                                                                    String prayedsql = SQLSharing.mycursorforce3.getString(2);
+                                                                    String verifiedfb = child.child("V").getValue().toString();
+                                                                    String verifiedsql = SQLSharing.mycursorforce3.getString(3);
+                                                                    String homefb = child.child("H").getValue().toString();
+                                                                    String homesql = SQLSharing.mycursorforce3.getString(4);
+                                                                    StringBuilder yesser = new StringBuilder();
+                                                                    StringBuilder yesser3 = new StringBuilder();
+                                                                    StringBuilder yesser4 = new StringBuilder();
+                                                                    for (int i = 0; i < 5; i++) {
+                                                                        if (String.valueOf(prayedfb.charAt(i)).equals("1")) {
+                                                                            yesser.append("1");
+                                                                        } else if (String.valueOf(prayedsql.charAt(i)).equals("1")) {
+                                                                            yesser.append("1");
+                                                                        } else {
+                                                                            yesser.append("0");
+                                                                        }
+                                                                    }
+
+                                                                    for (int i = 0; i < 5; i++) {
+                                                                        if (String.valueOf(verifiedfb.charAt(i)).equals("1")) {
+                                                                            yesser3.append("1");
+                                                                        } else if (String.valueOf(verifiedsql.charAt(i)).equals("1")) {
+                                                                            yesser3.append("1");
+                                                                        } else {
+                                                                            yesser3.append("0");
+                                                                        }
+                                                                    }
+
+                                                                    for (int i = 0; i < 5; i++) {
+                                                                        if (String.valueOf(homefb.charAt(i)).equals("0")) {
+                                                                            yesser4.append("0");
+                                                                        } else if (String.valueOf(homesql.charAt(i)).equals("0")) {
+                                                                            yesser4.append("0");
+                                                                        } else {
+                                                                            yesser4.append("1");
+                                                                        }
+                                                                    }
+                                                                    if (day.equals(currentdisplayeddaycomparable)) {
+                                                                        if (!yesser.toString().equals(prayed) || !yesser3.toString().equals(verified) || !yesser4.toString().equals(athome)) {
+                                                                            newstuff = true;
+                                                                        }
+                                                                    }
+                                                                    userRef.child(child.getKey()).child("H").setValue(yesser4.toString());
+                                                                    userRef.child(child.getKey()).child("V").setValue(yesser3.toString());
+                                                                    userRef.child(child.getKey()).child("P").setValue(yesser.toString());
+                                                                    SQLSharing.mydbforce3.updatePrayed(day, yesser.toString(), yesser3.toString(), yesser4.toString());
+                                                                }
+                                                            }
+                                                            found = true;
                                                         }
                                                     }
-                                                    SQLSharing.mydbforce3.updatePrayed(child.child("D").getValue().toString(), yesser.toString(), SQLSharing.mycursorforce3.getString(3), SQLSharing.mycursorforce3.getString(4));
-                                                    userRef.child(child.getKey()).child("P").setValue(yesser.toString());
-
-
-                                                    yes = child.child("V").getValue().toString();
-                                                    yes2 = SQLSharing.mycursorforce3.getString(3);
-                                                    yesser = new StringBuilder();
-                                                    for (int i = 0; i < 5; i++) {
-                                                        if (String.valueOf(yes.charAt(i)).equals("1")) {
-                                                            yesser.append("1");
-                                                        } else if (String.valueOf(yes2.charAt(i)).equals("1")) {
-                                                            yesser.append("1");
-                                                        } else {
-                                                            yesser.append("0");
-                                                        }
-                                                    }
-                                                    SQLSharing.mydbforce3.updatePrayed(child.child("D").getValue().toString(), SQLSharing.mycursorforce3.getString(2), yesser.toString(), SQLSharing.mycursorforce3.getString(4));
-                                                    userRef.child(child.getKey()).child("V").setValue(yesser.toString());
-
-                                                    yes = child.child("H").getValue().toString();
-                                                    yes2 = SQLSharing.mycursorforce3.getString(4);
-                                                    yesser = new StringBuilder();
-                                                    for (int i = 0; i < 5; i++) {
-                                                        if (String.valueOf(yes.charAt(i)).equals("1")) {
-                                                            yesser.append("0");
-                                                        } else if (String.valueOf(yes2.charAt(i)).equals("1")) {
-                                                            yesser.append("0");
-                                                        } else {
-                                                            yesser.append("1");
-                                                        }
-                                                    }
-                                                    SQLSharing.mydbforce3.updatePrayed(child.child("D").getValue().toString(), SQLSharing.mycursorforce3.getString(2), SQLSharing.mycursorforce3.getString(3), yesser.toString());
-                                                    userRef.child(child.getKey()).child("H").setValue(yesser.toString());
                                                 }
-                                                found = true;
-                                                break;
                                             }
+                                    }
+                                    if (!found) {
+                                        String ingredientKey = userRef.push().getKey();
+                                        if (ingredientKey != null) {
+                                            userRef.child(ingredientKey).child("D").setValue(SQLSharing.mycursorforce3.getString(1));
+                                            userRef.child(ingredientKey).child("P").setValue(SQLSharing.mycursorforce3.getString(2));
+                                            userRef.child(ingredientKey).child("V").setValue(SQLSharing.mycursorforce3.getString(3));
+                                            userRef.child(ingredientKey).child("H").setValue(SQLSharing.mycursorforce3.getString(4));
                                         }
                                     }
+                                } while (SQLSharing.mycursorforce3.moveToNext());
+                            }
+
+                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                boolean found = false;
+                                if (child.child("D").getValue() != null) {
+                                String day = child.child("D").getValue().toString();
+                                if (SQLSharing.mycursorforce3.moveToFirst()) {
+                                    do {
+                                        if (day.equals(SQLSharing.mycursorforce3.getString(1))) {
+                                            found = true;
+                                        }
+                                    } while (SQLSharing.mycursorforce3.moveToNext() && !found);
                                 }
+                                }
+
+                                if (!found) {
+                                    SQLSharing.mydbforce3.insertPrayed(child.child("D").getValue().toString(), child.child("P").getValue().toString(), child.child("V").getValue().toString(), child.child("H").getValue().toString());
+                                }
+                            }
+
+                            close_sql();
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            if (!found) {
-                                String ingredientKey = userRef.push().getKey();
-                                if (ingredientKey != null) {
-                                    userRef.child(ingredientKey).child("D").setValue(SQLSharing.mycursorforce3.getString(1));
-                                    userRef.child(ingredientKey).child("P").setValue(SQLSharing.mycursorforce3.getString(2));
-                                    userRef.child(ingredientKey).child("V").setValue(SQLSharing.mycursorforce3.getString(3));
-                                    userRef.child(ingredientKey).child("H").setValue(SQLSharing.mycursorforce3.getString(4));
-                                }
-                            }
-                        } while (SQLSharing.mycursorforce3.moveToNext());
-                    }
 
-                    for(DataSnapshot child: dataSnapshot.getChildren()){
-                        boolean found = false;
-                        if(SQLSharing.mycursorforce3.moveToFirst()){
-                            do{
-                                if(child.child("D").getValue()!=null) {
-                                    if (!child.child("D").getValue().toString().equals(SQLSharing.mycursorforce3.getString(1))) {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                            }while(SQLSharing.mycursorforce3.moveToNext());
+                            if (newstuff)
+                                updatepraybuttons.sendEmptyMessage(0);
+
+
                         }
 
-                        if(!found){
-                            SQLSharing.mydbforce3.insertPrayed(child.child("D").getValue().toString(), child.child("P").getValue().toString(), child.child("V").getValue().toString(), child.child("H").getValue().toString());
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //print("loading data failed");
+                            close_sql();
                         }
-                    }
+                    });
 
-                    /*Date today = new Date();
-                    String[] temptoday = today.toString().split(" ");
-                    String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
-                    lastupdatedRef.setValue(todaycomparable);*/
                 }
+            }
+        };
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    print("loading data failed");
-                }
-            });
+        //anti lag
+        Thread mythread = new Thread(r); //to thread the runnable object we launched
+        mythread.start();
     }
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -450,9 +490,13 @@ public class force extends AppCompatActivity  {
             String gtodaycomparable = getIntent().getStringExtra("todaycomparable");
             assert gtodaycomparable != null;
             String[] todaycomparablesplit = gtodaycomparable.split(" ");
-            if(todaycomparablesplit.length==3)
+            if(todaycomparablesplit.length==3) {
                 gotoday(Integer.parseInt(todaycomparablesplit[1]), get_month2(todaycomparablesplit[0]), Integer.parseInt(todaycomparablesplit[2]));
+            } else {
+                mapActivity();
+            }
         } catch(Exception ignored){
+            mapActivity();
         }
     }
     private void protected_apps_request() {
@@ -468,21 +512,10 @@ public class force extends AppCompatActivity  {
         }
     }
 
-
-    private void close_service_sql() {
-        if(SQLSharing.servicemydbforce!=null)
-            SQLSharing.servicemydbforce.close();
-        if(SQLSharing.servicemydbslat!=null)
-            SQLSharing.servicemydbslat.close();
-        if(SQLSharing.servicemydbforce3!=null)
-            SQLSharing.servicemydbforce3.close();
-    }
-
     private void load_service() {
         // adan service
         if (Build.VERSION.SDK_INT < 28) {
             try {
-                close_service_sql();
                 close_sql();
                 sql("force");
                 if (SQLSharing.mycursorforce.getCount() > 0) {
@@ -500,11 +533,19 @@ public class force extends AppCompatActivity  {
         }
     }
 
+    private int delay = 0;
     private void live_updates() {
         Runnable r=new Runnable() {@Override public void run() { try {
             while(running) {
 
                 wait_1_second();
+                if(delay<3){
+                    delay+=1;
+                } else if(delay==3){
+                    delay+=1;
+                    locationshett.sendEmptyMessage(0);
+                }
+
                 if (it_is_today) {
 
                     calculate_rightnowcomparable();
@@ -657,6 +698,8 @@ public class force extends AppCompatActivity  {
         Date todayos = new Date(cal.getTimeInMillis());
         if(!String.valueOf(todayos).split(" ")[2].equals(String.valueOf(CurrentDisplayedDay).split(" ")[2]) || rightnowcomparable==0 || next_adan == -1) {
             CurrentDisplayedDay = todayos;
+            String[] temptoday = CurrentDisplayedDay.toString().split(" ");
+            currentdisplayeddaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
             end_ofD = false;
             /*no_newDs = false;*/
             calluse.sendEmptyMessage(0);
@@ -976,6 +1019,7 @@ public class force extends AppCompatActivity  {
         else
             new_coordinates = true;
         if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(date);
+        close_sql();
     }
 
     private void if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date(Date date) {
@@ -998,15 +1042,15 @@ public class force extends AppCompatActivity  {
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.mydbslat = new SQL(getApplicationContext());
+                SQLSharing.mydbslat = SQL.getInstance(getApplicationContext());
                 SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mydbforce = new SQL(getApplicationContext());
+                SQLSharing.mydbforce = SQL.getInstance(getApplicationContext());
                 SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mydbforce3 = new SQL(getApplicationContext());
+                SQLSharing.mydbforce3 = SQL.getInstance(getApplicationContext());
                 SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
@@ -1164,8 +1208,9 @@ public class force extends AppCompatActivity  {
         load_service();
 
 
-        if(an_alert_to_turn_location_on_was_displayed)
-            AttemptToGetLocationCoordinates();
+        //boolean an_alert_to_turn_location_on_was_displayed = false;
+        //if(an_alert_to_turn_location_on_was_displayed)
+        //    AttemptToGetLocationCoordinates();
 
     }
 
@@ -1984,6 +2029,12 @@ public class force extends AppCompatActivity  {
 
     }
 
+
+    private void mapActivity() {
+        Intent dd = new Intent(this, MapActivity.class);
+        startActivity(dd);
+    }
+
     private void print(Object dumps) {
         Toast.makeText(getApplicationContext(), String.valueOf(dumps), Toast.LENGTH_SHORT).show();
     }
@@ -2123,10 +2174,10 @@ public class force extends AppCompatActivity  {
             verified = "00000";
 
         if(athome == null)
-            athome = "00000";
+            athome = "11111";
 
         if(athome.equals(""))
-            athome = "00000";
+            athome = "11111";
 
     }
 
@@ -2152,7 +2203,7 @@ public class force extends AppCompatActivity  {
     private void retrieveAndy(){
 
         // if theres smt in sql then  look up  prayed
-        sql(resources.getString(R.string.justforce2));
+        sql(resources.getString(R.string.justforce3));
         if (SQLSharing.mycursorforce3.getCount() > 0) {
             pullP_one_hot_encoding_from_sql();
             check_ifP_orV_are_empty();
@@ -2171,12 +2222,17 @@ public class force extends AppCompatActivity  {
             check_ifP_orV_are_empty();
             /*SQLSharing.mydb.insertPrayed(todaycomparable, prayed, verified, athome);*/
         }
+        close_sql();
 
         // what is soon adan
         what_is_soon_adan_and_one_before_it();
 
         // color pray buttons
-        color_pray_buttons();
+        try {
+            color_pray_buttons();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
 
         // don't display time till next adan if it's at end of day
         if(it_is_today)
@@ -2339,12 +2395,12 @@ public class force extends AppCompatActivity  {
     }
 
     private void pullP_one_hot_encoding_from_sql() {
-        sql(resources.getString(R.string.justforce2));
+        sql(resources.getString(R.string.justforce3));
         prayed = "00000";
         verified = "00000";
-        athome = "00000";
+        athome = "11111";
         while(SQLSharing.mycursorforce3.moveToNext()) {
-            if (todaycomparable.equals(SQLSharing.mycursorforce3.getString(1))){
+            if (currentdisplayeddaycomparable.equals(SQLSharing.mycursorforce3.getString(1))){
                 prayed = SQLSharing.mycursorforce3.getString(2);
                 verified = SQLSharing.mycursorforce3.getString(3);
                 athome = SQLSharing.mycursorforce3.getString(4);
@@ -2352,6 +2408,7 @@ public class force extends AppCompatActivity  {
                 break;
             }
         }
+        close_sql();
     }
 
     private void animatenextadan() {
@@ -2675,6 +2732,7 @@ public class force extends AppCompatActivity  {
         SQLSharing.mycursorslat.moveToNext();
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("no", ID);
+        close_sql();
     }
 
     private void dark_mode() {
@@ -2747,6 +2805,7 @@ public class force extends AppCompatActivity  {
         SQLSharing.mycursorslat.moveToPosition(1);
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("yes", ID);
+        close_sql();
     }
 
 
@@ -2770,6 +2829,7 @@ public class force extends AppCompatActivity  {
         check_state(4);
     }
 
+    private String currentdisplayeddaycomparable = "";
     public void backtotodayClicked(View view) {
 
         if(doublearrows.getVisibility()==VISIBLE) {
@@ -2779,6 +2839,8 @@ public class force extends AppCompatActivity  {
 
             Calendar cal = Calendar.getInstance(Locale.US);
             CurrentDisplayedDay = new Date(cal.getTimeInMillis());
+            String[] temptoday = CurrentDisplayedDay.toString().split(" ");
+            currentdisplayeddaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
             it_is_today = true;
             all_white = false;
             fill_all = false;
@@ -2815,6 +2877,8 @@ public class force extends AppCompatActivity  {
         gc = new GregorianCalendar(year, month-1, day);
         gc.add(Calendar.DATE, 1);
         CurrentDisplayedDay = gc.getTime();
+        String[] temptoday = CurrentDisplayedDay.toString().split(" ");
+        currentdisplayeddaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
         day = Integer.parseInt(todaysplittemparray[2]);
@@ -2874,6 +2938,8 @@ public class force extends AppCompatActivity  {
         month += 1;
         gc = new GregorianCalendar(year, month-1, day);
         CurrentDisplayedDay = gc.getTime();
+        String[] temptoday = CurrentDisplayedDay.toString().split(" ");
+        currentdisplayeddaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
 
         is_it_future_present_or_past(day, month, year);
 
@@ -2960,6 +3026,8 @@ public class force extends AppCompatActivity  {
         gc = new GregorianCalendar(year, month-1, day);
         gc.add(Calendar.DATE, -1);
         CurrentDisplayedDay = gc.getTime();
+        String[] temptoday = CurrentDisplayedDay.toString().split(" ");
+        currentdisplayeddaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
 
         todaysplittemparray = CurrentDisplayedDay.toString().split(" ");
         day = Integer.parseInt(todaysplittemparray[2]);

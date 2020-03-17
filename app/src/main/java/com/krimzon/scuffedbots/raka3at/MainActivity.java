@@ -3,6 +3,7 @@ package com.krimzon.scuffedbots.raka3at;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,10 +15,11 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.LocationManager;
+import android.hardware.Camera;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -25,10 +27,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -130,7 +134,9 @@ public class MainActivity extends AppCompatActivity {
                 openloginpage();
             }
         }
+
     }
+
 
 
     /*private void h(){
@@ -225,11 +231,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }*/
 
-    private LinearLayout rightsideelementsbackground;
+    private LinearLayout rightsideelementsbackground, rightsideelementsbackground2;
     private void light_mode() {
         darkmode = false;
         rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
         rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightmainactivityback));
+        rightsideelementsbackground2 = findViewById(R.id.rightsideelementsbackground2);
+        rightsideelementsbackground2.setBackground(resources.getDrawable(R.drawable.lightmainactivityback));
         view.setVisibility(View.GONE);
         view2.setVisibility(View.VISIBLE);
         full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
@@ -242,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
         SQLSharing.mycursorslat.moveToNext();
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("no", ID);
+        close_sql();
 
     }
 
@@ -249,15 +258,15 @@ public class MainActivity extends AppCompatActivity {
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mydbslat = SQL.getInstance(this);
                 SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mydbforce = SQL.getInstance(this);
                 SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mydbforce3 = SQL.getInstance(this);
                 SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
@@ -267,6 +276,8 @@ public class MainActivity extends AppCompatActivity {
         darkmode = true;
         rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
         rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.mainactivityback));
+        rightsideelementsbackground2 = findViewById(R.id.rightsideelementsbackground2);
+        rightsideelementsbackground2.setBackground(resources.getDrawable(R.drawable.mainactivityback));
         view.setVisibility(View.VISIBLE);
         view2.setVisibility(View.GONE);
         full.setBackground(resources.getDrawable(R.drawable.forcefull));
@@ -279,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
         SQLSharing.mycursorslat.moveToPosition(1);
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("yes", ID);
+        close_sql();
 
     }
 
@@ -300,6 +312,12 @@ public class MainActivity extends AppCompatActivity {
             Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
         } catch (Exception ignored) {
             nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
+        }
+        ImageView sharebutton = findViewById(R.id.sharebutton);
+        try {
+            Glide.with(this).load(R.drawable.shre).into(sharebutton);
+        } catch (Exception ignored) {
+            sharebutton.setImageDrawable(resources.getDrawable(R.drawable.shre));
         }
 
         try {
@@ -325,13 +343,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         load_service();
+
+        /*try {
+            NotificationManager notificationManager2 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            NotificationCompat.Builder notif = new NotificationCompat.Builder(this, "channel3");
+            notif.setLights(Color.MAGENTA, 100, 100)
+            .setPriority(Notification.PRIORITY_MAX)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Prayer done!");
+            notificationManager2.notify(5, notif.build());
+        } catch(Exception ignored){}*/
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        /*try {
+            NotificationManager notificationManager3 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager3.cancel(5);
+        } catch(Exception ignored){}*/
+
+        if(onComplete!=null)
+            unregisterReceiver(onComplete);
+
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     private void load_service() {
         // adan service
         if (Build.VERSION.SDK_INT < 28) {
             try {
-                close_service_sql();
                 close_sql();
                 sql("force");
                 if (SQLSharing.mycursorforce.getCount() > 0) {
@@ -347,16 +395,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    private void close_service_sql() {
-        if(SQLSharing.servicemydbforce!=null)
-            SQLSharing.servicemydbforce.close();
-        if(SQLSharing.servicemydbslat!=null)
-            SQLSharing.servicemydbslat.close();
-        if(SQLSharing.servicemydbforce3!=null)
-            SQLSharing.servicemydbforce3.close();
-    }
-
     private BroadcastReceiver onComplete;
     public void downloadMeSenpai(final Context context, String DISPLAY, String destinationDirectory, String url, final File imageplace) {
         DownloadManager downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -623,19 +661,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(onComplete!=null)
-            unregisterReceiver(onComplete);
-
-        if(SQLSharing.mydbforce!=null)
-            SQLSharing.mydbforce.close();
-        if(SQLSharing.mydbslat!=null)
-            SQLSharing.mydbslat.close();
-        if(SQLSharing.mydbforce3!=null)
-            SQLSharing.mydbforce3.close();
-    }
 
     @Override
     protected void onDestroy() {
@@ -684,7 +709,7 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO MUST KEEP
         /*SQLSharing.TABLE_NAME_INPUTER = "force";
-        SQLSharing.mydb = new SQL(this);
+        SQLSharing.mydb = SQL.getInstance(this);
         SQLSharing.mycursor = SQLSharing.mydb.getAllDate();
         if(SQLSharing.mycursor.getCount()!=1) // TODO always update this
             SQLSharing.mydb.delete(this);
@@ -723,6 +748,7 @@ public class MainActivity extends AppCompatActivity {
                     SQLSharing.mydbslat.insertData(""); // city
             }
         }
+        close_sql();
         sql("slat");
         if (SQLSharing.mycursorslat.getCount() <= 0) {
             SQLSharing.mydbslat.insertData("");
@@ -762,6 +788,7 @@ public class MainActivity extends AppCompatActivity {
             else
                 darkmode = true;
         }
+        close_sql();
 
     }
 
@@ -853,5 +880,24 @@ public class MainActivity extends AppCompatActivity {
         Intent backupandrestore = new Intent(this, backupandrestore.class);
         startActivity(backupandrestore);
         finish();
+    }
+
+    public void shareClicked(View view) {
+        if(language.equals("en")) {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType(getString(R.string.textplain));
+            String shareBody = getString(R.string.share) + getString(R.string.link);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.sharetitle_arabe));
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, getString(R.string.sharevia)));
+        } else if(language.equals("ar")){
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType(getString(R.string.textplain));
+            String shareBody = getString(R.string.share_arabe) + getString(R.string.link);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.sharetitle_arabe));
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, getString(R.string.sharevia_arabe)));
+
+        }
     }
 }

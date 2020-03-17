@@ -12,8 +12,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -45,8 +42,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import java.io.File;
-import java.util.Date;
-
 
 public class backupandrestore extends AppCompatActivity {
 
@@ -55,7 +50,6 @@ public class backupandrestore extends AppCompatActivity {
     private ProgressBar progressBar;
     private GoogleSignInClient mGoogleSignInClient;
     private int REQUEST_CODE = 1000;
-    private ImageView image;
     private TextView secureexplanation;
     private Resources resources;
     private Button dontlogin, nevershowagain, loginbutton;
@@ -69,7 +63,7 @@ public class backupandrestore extends AppCompatActivity {
         nevershowagain = findViewById(R.id.nevershowagain);
         dontlogin = findViewById(R.id.dontlogin);
         progressBar = findViewById(R.id.progress);
-        image = findViewById(R.id.displayer);
+        ImageView image = findViewById(R.id.displayer);
         secureexplanation = findViewById(R.id.secureexplanation);
         resources = getResources();
 
@@ -99,21 +93,22 @@ public class backupandrestore extends AppCompatActivity {
         sql("slat");
         SQLSharing.mycursorslat.moveToPosition(6);
         language = SQLSharing.mycursorslat.getString(1);
+        close_sql();
     }
 
     private void sql(final String table) {
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.mydbslat = new SQL(getApplicationContext());
+                SQLSharing.mydbslat = SQL.getInstance(getApplicationContext());
                 SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mydbforce = new SQL(getApplicationContext());
+                SQLSharing.mydbforce = SQL.getInstance(getApplicationContext());
                 SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mydbforce3 = new SQL(getApplicationContext());
+                SQLSharing.mydbforce3 = SQL.getInstance(getApplicationContext());
                 SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
@@ -241,7 +236,7 @@ public class backupandrestore extends AppCompatActivity {
     }
 
     public void dontloginClicked(View view) {
-        getout();
+        exit();
     }
 
 
@@ -288,128 +283,143 @@ public class backupandrestore extends AppCompatActivity {
         return null;
     }
 
-    private void sync_SQL_and_Firebase(String email, String uid) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        userRef = database.getReference("users").child(uid).child(email).child("p");
-        /*lastupdatedRef = database.getReference("users").child(email).child("lastupdated");*/
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void sync_SQL_and_Firebase(final String email, final String uid) {
+        Runnable r=new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //mostrecentrequest = String.valueOf(dataSnapshot.child("appside").child("mostrecentrequest").getValue());
-                close_sql();
-                sql("force3");
+            public void run() {
+                synchronized (this) {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    userRef = database.getReference("users").child(uid).child(email).child("p");
+                    /*lastupdatedRef = database.getReference("users").child(email).child("lastupdated");*/
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            //mostrecentrequest = String.valueOf(dataSnapshot.child("appside").child("mostrecentrequest").getValue());
 
-                if(SQLSharing.mycursorforce3.moveToFirst()) {
-                    do {
-                        boolean found = false;
-                        try {
-                            for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                if (child.child("D").getValue() != null) {
-                                    if (child.child("D").getValue().equals(SQLSharing.mycursorforce3.getString(1))) {
-                                        if (child.child("P").getValue() != null && child.child("V").getValue() != null && child.child("H").getValue() != null) {
+                            boolean newstuff = false;
+
+                            close_sql();
+                            sql(resources.getString(R.string.justforce3));
+
+                            if (SQLSharing.mycursorforce3.moveToFirst()) {
+                                do {
+                                    boolean found = false;
+                                    try {
+                                        if (dataSnapshot.getChildrenCount() != 0) {
+                                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                                if (!found) {
+                                                    if (child.child("D").getValue() != null) {
+                                                        String day = child.child("D").getValue().toString();
+                                                        if (day.equals(SQLSharing.mycursorforce3.getString(1))) {
+                                                            if (child.child("P").getValue() != null && child.child("V").getValue() != null && child.child("H").getValue() != null) {
 
 
-                                            if (child.getKey() != null) {
-                                                String yes = child.child("P").getValue().toString();
-                                                String yes2 = SQLSharing.mycursorforce3.getString(2);
-                                                StringBuilder yesser = new StringBuilder();
-                                                for (int i = 0; i < 5; i++) {
-                                                    if (String.valueOf(yes.charAt(i)).equals("1")) {
-                                                        yesser.append("1");
-                                                    } else if (String.valueOf(yes2.charAt(i)).equals("1")) {
-                                                        yesser.append("1");
-                                                    } else {
-                                                        yesser.append("0");
+                                                                if (child.getKey() != null) {
+                                                                    String prayedfb = child.child("P").getValue().toString();
+                                                                    String prayedsql = SQLSharing.mycursorforce3.getString(2);
+                                                                    String verifiedfb = child.child("V").getValue().toString();
+                                                                    String verifiedsql = SQLSharing.mycursorforce3.getString(3);
+                                                                    String homefb = child.child("H").getValue().toString();
+                                                                    String homesql = SQLSharing.mycursorforce3.getString(4);
+                                                                    StringBuilder yesser = new StringBuilder();
+                                                                    StringBuilder yesser3 = new StringBuilder();
+                                                                    StringBuilder yesser4 = new StringBuilder();
+                                                                    for (int i = 0; i < 5; i++) {
+                                                                        if (String.valueOf(prayedfb.charAt(i)).equals("1")) {
+                                                                            yesser.append("1");
+                                                                        } else if (String.valueOf(prayedsql.charAt(i)).equals("1")) {
+                                                                            yesser.append("1");
+                                                                        } else {
+                                                                            yesser.append("0");
+                                                                        }
+                                                                    }
+
+                                                                    for (int i = 0; i < 5; i++) {
+                                                                        if (String.valueOf(verifiedfb.charAt(i)).equals("1")) {
+                                                                            yesser3.append("1");
+                                                                        } else if (String.valueOf(verifiedsql.charAt(i)).equals("1")) {
+                                                                            yesser3.append("1");
+                                                                        } else {
+                                                                            yesser3.append("0");
+                                                                        }
+                                                                    }
+
+                                                                    for (int i = 0; i < 5; i++) {
+                                                                        if (String.valueOf(homefb.charAt(i)).equals("0")) {
+                                                                            yesser4.append("0");
+                                                                        } else if (String.valueOf(homesql.charAt(i)).equals("0")) {
+                                                                            yesser4.append("0");
+                                                                        } else {
+                                                                            yesser4.append("1");
+                                                                        }
+                                                                    }
+                                                                    userRef.child(child.getKey()).child("H").setValue(yesser4.toString());
+                                                                    userRef.child(child.getKey()).child("V").setValue(yesser3.toString());
+                                                                    userRef.child(child.getKey()).child("P").setValue(yesser.toString());
+                                                                    SQLSharing.mydbforce3.updatePrayed(day, yesser.toString(), yesser3.toString(), yesser4.toString());
+                                                                }
+                                                            }
+                                                            found = true;
+                                                        }
                                                     }
                                                 }
-                                                SQLSharing.mydbforce3.updatePrayed(child.child("D").getValue().toString(), yesser.toString(), SQLSharing.mycursorforce3.getString(3), SQLSharing.mycursorforce3.getString(4));
-                                                userRef.child(child.getKey()).child("P").setValue(yesser.toString());
-
-
-                                                yes = child.child("V").getValue().toString();
-                                                yes2 = SQLSharing.mycursorforce3.getString(3);
-                                                yesser = new StringBuilder();
-                                                for (int i = 0; i < 5; i++) {
-                                                    if (String.valueOf(yes.charAt(i)).equals("1")) {
-                                                        yesser.append("1");
-                                                    } else if (String.valueOf(yes2.charAt(i)).equals("1")) {
-                                                        yesser.append("1");
-                                                    } else {
-                                                        yesser.append("0");
-                                                    }
-                                                }
-                                                SQLSharing.mydbforce3.updatePrayed(child.child("D").getValue().toString(), SQLSharing.mycursorforce3.getString(2), yesser.toString(), SQLSharing.mycursorforce3.getString(4));
-                                                userRef.child(child.getKey()).child("V").setValue(yesser.toString());
-
-                                                yes = child.child("H").getValue().toString();
-                                                yes2 = SQLSharing.mycursorforce3.getString(4);
-                                                yesser = new StringBuilder();
-                                                for (int i = 0; i < 5; i++) {
-                                                    if (String.valueOf(yes.charAt(i)).equals("1")) {
-                                                        yesser.append("0");
-                                                    } else if (String.valueOf(yes2.charAt(i)).equals("1")) {
-                                                        yesser.append("0");
-                                                    } else {
-                                                        yesser.append("1");
-                                                    }
-                                                }
-                                                SQLSharing.mydbforce3.updatePrayed(child.child("D").getValue().toString(), SQLSharing.mycursorforce3.getString(2), SQLSharing.mycursorforce3.getString(3), yesser.toString());
-                                                userRef.child(child.getKey()).child("H").setValue(yesser.toString());
                                             }
-                                            found = true;
-                                            break;
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (!found) {
+                                        String ingredientKey = userRef.push().getKey();
+                                        if (ingredientKey != null) {
+                                            userRef.child(ingredientKey).child("D").setValue(SQLSharing.mycursorforce3.getString(1));
+                                            userRef.child(ingredientKey).child("P").setValue(SQLSharing.mycursorforce3.getString(2));
+                                            userRef.child(ingredientKey).child("V").setValue(SQLSharing.mycursorforce3.getString(3));
+                                            userRef.child(ingredientKey).child("H").setValue(SQLSharing.mycursorforce3.getString(4));
                                         }
                                     }
+                                } while (SQLSharing.mycursorforce3.moveToNext());
+                            }
+
+                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                boolean found = false;
+                                if (child.child("D").getValue() != null) {
+                                    String day = child.child("D").getValue().toString();
+                                    if (SQLSharing.mycursorforce3.moveToFirst()) {
+                                        do {
+                                            if (day.equals(SQLSharing.mycursorforce3.getString(1))) {
+                                                found = true;
+                                            }
+                                        } while (SQLSharing.mycursorforce3.moveToNext() && !found);
+                                    }
+                                }
+
+                                if (!found) {
+                                    SQLSharing.mydbforce3.insertPrayed(child.child("D").getValue().toString(), child.child("P").getValue().toString(), child.child("V").getValue().toString(), child.child("H").getValue().toString());
                                 }
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+                            close_sql();
+
+                            exit();
                         }
-                        if (!found) {
-                            String ingredientKey = userRef.push().getKey();
-                            if (ingredientKey != null) {
-                                userRef.child(ingredientKey).child("D").setValue(SQLSharing.mycursorforce3.getString(1));
-                                userRef.child(ingredientKey).child("P").setValue(SQLSharing.mycursorforce3.getString(2));
-                                userRef.child(ingredientKey).child("V").setValue(SQLSharing.mycursorforce3.getString(3));
-                                userRef.child(ingredientKey).child("H").setValue(SQLSharing.mycursorforce3.getString(4));
-                            }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //print("loading data failed");
+                            close_sql();
+                            exit();
                         }
-                    } while (SQLSharing.mycursorforce3.moveToNext());
+                    });
+
                 }
-
-                for(DataSnapshot child: dataSnapshot.getChildren()){
-                    boolean found = false;
-                    if(SQLSharing.mycursorforce3.moveToFirst()){
-                        do{
-                            if(child.child("D").getValue()!=null) {
-                                if (!child.child("D").getValue().toString().equals(SQLSharing.mycursorforce3.getString(1))) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                        }while(SQLSharing.mycursorforce3.moveToNext());
-                    }
-
-                    if(!found){
-                        SQLSharing.mydbforce3.insertPrayed(child.child("D").getValue().toString(), child.child("P").getValue().toString(), child.child("V").getValue().toString(), child.child("H").getValue().toString());
-                    }
-                }
-
-                exit();
-                    /*Date today = new Date();
-                    String[] temptoday = today.toString().split(" ");
-                    String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
-                    lastupdatedRef.setValue(todaycomparable);*/
             }
+        };
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                print("loading data failed");
-                exit();
-            }
-        });
+        //anti lag
+        Thread mythread = new Thread(r); //to thread the runnable object we launched
+        mythread.start();
     }
-    private DatabaseReference userRef, lastupdatedRef;
+    private DatabaseReference userRef;
 
 
     private void print(Object dumps) {

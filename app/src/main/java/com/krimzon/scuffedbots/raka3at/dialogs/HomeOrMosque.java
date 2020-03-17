@@ -32,7 +32,7 @@ public class HomeOrMosque extends Dialog {
     private boolean darkmode;
     private String language;
     private boolean found_prayed_history_in_sql = false;
-    private boolean all_day = true;
+    private boolean all_day;
 
     public HomeOrMosque(Activity a, boolean friday, String prayed, String todaycomparable, int prayerer, boolean darkmode, String language, String verified, String athome, boolean all_day) {
         super(a);
@@ -155,7 +155,7 @@ public class HomeOrMosque extends Dialog {
 
     private void sql() {
         SQLSharing.TABLE_NAME_INPUTER = "force3";
-        SQLSharing.mydbforce3 = new SQL(c);
+        SQLSharing.mydbforce3 = SQL.getInstance(c);
         SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
     }
 
@@ -178,6 +178,17 @@ public class HomeOrMosque extends Dialog {
             SQLSharing.mydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
         else
             SQLSharing.mydbforce3.insertPrayed(todaycomparable, temper, verified, athome);
+        close_sql();
+    }
+
+
+    private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     private void set_all_prayers() {
@@ -195,6 +206,7 @@ public class HomeOrMosque extends Dialog {
             SQLSharing.mydbforce3.updatePrayed(todaycomparable, "11111", verified, athome);
         else
             SQLSharing.mydbforce3.insertPrayed(todaycomparable, "11111", verified, athome);
+        close_sql();
     }
 
     private void check_if_prayed_exists_in_sql() {

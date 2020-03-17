@@ -218,7 +218,7 @@
     <string name="en">en</string>
     <string name="slat">slat</string>
     <string name="justforce">force</string>
-    <string name="justforce2">force3</string>
+    <string name="justforce3">force3</string>
     <string name="waytooearly">It\'s way too early to pray </string>
     <string name="waytooearly_arabe"> مُبكّر جدا لصلاة </string>
     <string name="didyoupray">did you pray </string>
@@ -372,5 +372,13 @@
     <string name="allgood">It\'s fine</string>
     <string name="allgood_arabe">سجّل الخروج</string>
     <string name="logoutsecurityalerttitle_arabe">إنذار تسجيل الخروج</string>
+    <string name="share_arabe">تطبيق لتعداد الركعات بإستعمال مستشعرات هاتفك! بالإضافة لمتابعة صلواتك اليومية لك و تذكيرك بها!</string>
+    <string name="link">\n\nplay.google.com/store/apps/details?id=com.krimzon.scuffedbots.raka3at</string>
+    <string name="textplain">text/plain</string>
+    <string name="share">This app counts your Raka\'at using your phone\'s sensors! it also watches your prayers along the day and reminds you to do them!</string>
+    <string name="sharetitle_arabe">شارك تطبيق ركعات</string>
+    <string name="sharetitle">Share Raka\'at!</string>
+    <string name="sharevia">Share via</string>
+    <string name="sharevia_arabe">شارك عن طريق</string>
 
 </resources>

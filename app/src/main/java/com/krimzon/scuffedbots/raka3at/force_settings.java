@@ -32,14 +32,13 @@ public class force_settings extends AppCompatActivity {
     private Button arrow;
     private View v;
     private String language = "ar", ID = "", adanSelections = "";
-    private boolean darkmode = true, once2 = true, once = true, audioisplaying = false;
+    private boolean darkmode = true, once2 = true, once = true;
     private String[] selections;
     private Resources resources;
-    private TextView adantitle, selectiontitle;
+    private TextView adantitle;
     private List<TextView> adans, titles;
     private List<ImageView> ringmodes;
     private List<FrameLayout> ringmodesbackground;
-    private int selectedadan = -1, currentlyplayingadan = 0;
 
     private void print(Object dumps) {
         Toast.makeText(this, String.valueOf(dumps), Toast.LENGTH_SHORT).show();
@@ -838,15 +837,15 @@ public class force_settings extends AppCompatActivity {
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mydbslat = SQL.getInstance(this);
                 SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mydbforce = SQL.getInstance(this);
                 SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mydbforce3 = SQL.getInstance(this);
                 SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
@@ -861,6 +860,7 @@ public class force_settings extends AppCompatActivity {
             SWITCHSETTINGID = SQLSharing.mycursorslat.getString(0);
         }
         SQLSharing.mydbslat.updateData(switch_setting, SWITCHSETTINGID);
+        close_sql();
     }
 
     private void protected_apps_request() {
@@ -989,11 +989,12 @@ public class force_settings extends AppCompatActivity {
 
     private void load_service() {
         // adan service
-        if (Build.VERSION.SDK_INT >= 28) {
+        if (Build.VERSION.SDK_INT < 28) {
             try {
                 close_sql();
                 sql("force");
                 if (SQLSharing.mycursorforce.getCount() > 0) {
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
                     } else {
@@ -1002,11 +1003,10 @@ public class force_settings extends AppCompatActivity {
                     }
                 }
                 close_sql();
-            } catch (Exception ignored) {
             }
+            catch(Exception ignored){}
         }
     }
-
     private boolean opening_selection = false;
     private void launch_selection(int prayertobemodified) {
         opening_selection = true;
@@ -1051,6 +1051,7 @@ public class force_settings extends AppCompatActivity {
         else
             five = "0";
         SQLSharing.mydbslat.updateData(fajrbeforecounter+","+fajraftercounter+","+one + " " + dhuhrbeforecounter+","+dhuhraftercounter+","+two + " " + asrbeforecounter+","+asraftercounter+","+three + " " + maghrebbeforecounter+","+maghrebaftercounter+","+four + " " + ishabeforecounter+","+ishaaftercounter+","+five ,ID);
+        close_sql();
     }
 
     private void rotate_sound_flags(int i) {
@@ -1285,6 +1286,7 @@ public class force_settings extends AppCompatActivity {
         boolean request_protected_menu = SQLSharing.mycursorslat.getString(1).equals("yes");
         SQLSharing.mycursorslat.moveToNext();
         delays = SQLSharing.mycursorslat.getString(1);
+        close_sql();
 
     }
 
@@ -1306,6 +1308,7 @@ public class force_settings extends AppCompatActivity {
             ID = SQLSharing.mycursorslat.getString(0);
         }
         SQLSharing.mydbslat.updateData(adanSelections, ID);
+        close_sql();
     }
 
     private Switch notiswitch;

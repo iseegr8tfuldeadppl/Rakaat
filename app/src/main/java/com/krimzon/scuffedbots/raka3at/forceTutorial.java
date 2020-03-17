@@ -3,7 +3,6 @@ package com.krimzon.scuffedbots.raka3at;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -21,31 +20,16 @@ import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 public class forceTutorial extends AppCompatActivity {
 
     private int page = 1;
-    private int totalpages = 2;
-    private ImageView display1, display2, display3, display4;
+    private ImageView display1, display4;
     private LinearLayout explanation1holder, explanation4holder;
-    private FrameLayout firstpagebackground, fourthpagebackground;
-    private TextView explanation1, explanation4;
+    private FrameLayout fourthpagebackground;
     private TextView next, previous;
-    private ImageView arrowleft, arrowright;
     private String language;
 
-    private void sql(final String table) {
-        SQLSharing.TABLE_NAME_INPUTER = table;
-        switch (table) {
-            case "slat":
-                SQLSharing.mydbslat = new SQL(this);
-                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
-                break;
-            case "force":
-                SQLSharing.mydbforce = new SQL(this);
-                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
-                break;
-            case "force3":
-                SQLSharing.mydbforce3 = new SQL(this);
-                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
-                break;
-        }
+    private void sql() {
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        SQLSharing.mydbslat = SQL.getInstance(this);
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
     }
 
     @Override
@@ -56,13 +40,12 @@ public class forceTutorial extends AppCompatActivity {
         next = findViewById(R.id.next);
         previous = findViewById(R.id.previous);
 
-        arrowleft = findViewById(R.id.arrowleft);
-        arrowright = findViewById(R.id.arrowright);
+        ImageView arrowleft = findViewById(R.id.arrowleft);
+        ImageView arrowright = findViewById(R.id.arrowright);
 
-        explanation1 = findViewById(R.id.explanation1);
-        explanation4 = findViewById(R.id.explanation4);
+        TextView explanation1 = findViewById(R.id.explanation1);
+        TextView explanation4 = findViewById(R.id.explanation4);
 
-        firstpagebackground = findViewById(R.id.firstpagebackground);
         fourthpagebackground = findViewById(R.id.fourthpagebackground);
 
         explanation1holder = findViewById(R.id.explanation1holder);
@@ -77,9 +60,10 @@ public class forceTutorial extends AppCompatActivity {
         next.setTypeface(arabic_typeface2);
         previous.setTypeface(arabic_typeface2);
 
-        sql("slat");
+        sql();
         SQLSharing.mycursorslat.moveToPosition(6);
         language = SQLSharing.mycursorslat.getString(1);
+        close_sql();
 
         if(language.equals("ar")){
             explanation1.setText(getResources().getString(R.string.explanation1force_arabe));
@@ -109,6 +93,14 @@ public class forceTutorial extends AppCompatActivity {
         mapActivity();
     }
 
+    private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
+    }
 
     private void mapActivity() {
         Intent dd = new Intent(this, MapActivity.class);
@@ -116,7 +108,8 @@ public class forceTutorial extends AppCompatActivity {
     }
 
     public void nextClicked(View view) {
-        if(page!=totalpages && !clicked) {
+        int totalpages = 2;
+        if(page!= totalpages && !clicked) {
             page++;
 
             if(language.equals("ar"))
@@ -131,10 +124,11 @@ public class forceTutorial extends AppCompatActivity {
             clicked = true;
             slide_page_one_out_to_left();
             slide_page_four_in_from_right();
-        } else if(page==totalpages){
-            sql("slat");
+        } else if(page== totalpages){
+            sql();
             SQLSharing.mycursorslat.moveToPosition(11);
             SQLSharing.mydbslat.updateData("1", SQLSharing.mycursorslat.getString(0));
+            close_sql();
 
 
             Intent forceer = new Intent(this, com.krimzon.scuffedbots.raka3at.force.class);

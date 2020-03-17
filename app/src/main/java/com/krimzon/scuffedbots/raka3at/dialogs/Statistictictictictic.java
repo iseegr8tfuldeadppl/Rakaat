@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
@@ -40,7 +38,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
     private void sql() {
         SQLSharing.TABLE_NAME_INPUTER = "force3";
-        SQLSharing.mydbforce3 = new SQL(c.getApplicationContext());
+        SQLSharing.mydbforce3 = SQL.getInstance(c.getApplicationContext());
         SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
     }
 
@@ -124,11 +122,13 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
         sql();
         count_prayed_prayers_today();
+        close_sql();
         display_prayed_prayers_today.setText(String.valueOf(prayed_prayers));
         prayed_prayers = 0;
 
         sql();
         count_prayed_prayers_of_all_time();
+        close_sql();
         display_of_prayed_prayers_of_all_time.setText(String.valueOf(prayed_prayers));
         prayed_prayers = 0;
 
@@ -163,6 +163,14 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
             title.setText(getContext().getString(R.string.yourprayers));
             dismiss.setText(c.getResources().getString(R.string.closenglish));
         }
+    }
+    private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     private void count_prayed_prayers_today() {
@@ -210,7 +218,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
 
         } else
             prayed_prayers = 0;
-
+        close_sql();
     }
 
 

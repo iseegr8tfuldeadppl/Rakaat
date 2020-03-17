@@ -141,7 +141,7 @@ public class slat_settings extends BottomSheetDialogFragment {
 
     private void sql_work() {
         SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydbslat = new SQL(getContext());
+        SQLSharing.mydbslat = SQL.getInstance(getContext());
         SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
         SQLSharing.mycursorslat.moveToFirst();
         SQLSharing.mycursorslat.moveToNext();
@@ -154,6 +154,17 @@ public class slat_settings extends BottomSheetDialogFragment {
         SQLSharing.mycursorslat.moveToNext();
         SQLSharing.mycursorslat.moveToNext();
         language = SQLSharing.mycursorslat.getString(1);
+        close_sql();
+    }
+
+
+    private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     private void update_brightness(int progress) {

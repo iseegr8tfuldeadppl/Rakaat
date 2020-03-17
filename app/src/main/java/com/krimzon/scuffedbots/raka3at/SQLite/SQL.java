@@ -54,6 +54,20 @@ public class SQL extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
+    private static SQL mInstance = null;
+
+
+    public static SQL getInstance(Context ctx) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (mInstance == null) {
+            mInstance = new SQL(ctx.getApplicationContext());
+        }
+        return mInstance;
+    }
+
     //inputting data
     public boolean insertData(String _SETTING){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();

@@ -64,5 +64,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="clocktextsize">28sp</dimen>
     <dimen name="clocksidepaddings">30dp</dimen>
     <dimen name="clocktoppadding">15dp</dimen>
+    <dimen name="mainnightmodebuttonsidemargins">15dp</dimen>
 
 </resources>

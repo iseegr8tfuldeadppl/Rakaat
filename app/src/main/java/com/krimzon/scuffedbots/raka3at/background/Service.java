@@ -127,9 +127,12 @@ public class Service extends android.app.Service {
         close_sql();
 
         sql("force");
-        if(SQLSharing.servicemycursorforce.getCount()>0)
+        if(SQLSharing.servicemycursorforce.getCount()>0){
+            close_sql();
             startTimer();
-        close_sql();
+        } else {
+            close_sql();
+        }
 
         launch_stop_adan_button_listener();
     }
@@ -161,23 +164,24 @@ public class Service extends android.app.Service {
                 openforce.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(openforce);
             } else if(action.equals("com.krimzon.scuffedbots.raka3at.background.iprayeditmate")){
+                check_unprayed_prayer_for_today();
                 if(most_recent_unprayed!=-1) {
-                    try {
-                        NotificationManager notificationManager3 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        notificationManager3.cancel(NOTIFICATION_ID2);
-                    } catch(Exception ignored){
-                    }
                     StringBuilder strinkbilder = new StringBuilder(prayed);
                     if(most_recent_unprayed>1)
                         strinkbilder.setCharAt(most_recent_unprayed-1, '1');
                     else
-                        strinkbilder.setCharAt(most_recent_unprayed, '1');
-                    String temper = String.valueOf(strinkbilder);
-                    SQLSharing.servicemydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
+                        strinkbilder.setCharAt(0, '1');
+                    String prayednew = strinkbilder.toString();
+                    sql(getResources().getString(R.string.justforce3));
+                    SQLSharing.servicemydbforce3.updatePrayed(todaycomparable, prayednew, verified, athome);
                     close_sql();
                 }
-
                 check_unprayed_prayer_for_today();
+
+                try {
+                    NotificationManager notificationManager3 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager3.cancel(NOTIFICATION_ID2);
+                } catch(Exception ignored){}
             }
         }
     };
@@ -250,15 +254,18 @@ public class Service extends android.app.Service {
         sql("slat");
         SQLSharing.servicemycursorslat.moveToPosition(8);
         main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+        close_sql();
 
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         load_service();
 
-        close_sql();
         sql("force");
-        if(SQLSharing.servicemycursorforce.getCount()>0)
+        if(SQLSharing.servicemycursorforce.getCount()>0){
+            close_sql();
             startTimer();
-        close_sql();
+        } else {
+            close_sql();
+        }
 
         // return start sticky so if it is killed by android, it will be restarted with Intent null
         return START_STICKY;
@@ -283,12 +290,12 @@ public class Service extends android.app.Service {
     }
 
     private void close_sql() {
-        if(SQLSharing.servicemydbforce!=null)
+        /*if(SQLSharing.servicemydbforce!=null)
             SQLSharing.servicemydbforce.close();
         if(SQLSharing.servicemydbslat!=null)
             SQLSharing.servicemydbslat.close();
         if(SQLSharing.servicemydbforce3!=null)
-            SQLSharing.servicemydbforce3.close();
+            SQLSharing.servicemydbforce3.close();*/
 
     }
 
@@ -358,11 +365,8 @@ public class Service extends android.app.Service {
                         calculate_negatifise_and_positifise();
                         //check_negatifise();
                         apply_mute_delays();
-                        if(rightnowcomparable_old!=rightnowcomparable) {
-                            check_unprayed_prayer_for_today();
-                            prepare_a_custom_reminder_notification_and_send_it();
-                            rightnowcomparable_old = rightnowcomparable;
-                        }
+                        check_unprayed_prayer_for_today();
+                        prepare_a_custom_reminder_notification_and_send_it();
                         apply_widget_update();
                     }
 
@@ -381,14 +385,25 @@ public class Service extends android.app.Service {
                                     else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                                         display_notification(true);
 
-                                    adan_exception = true;
-                                    already_unmuted = true;
-                                    unmuter();
-                                    playadan(pullselectedadanforthisprayerfromSQL(i));
-
                                     // set i to the next adan
                                     i++;
                                     if (i >= 6) i = 5;
+
+                                    sql("slat");
+                                    SQLSharing.mycursorslat.moveToPosition(7);
+                                    String selections = SQLSharing.mycursorslat.getString(1).split(" ")[i].split(",")[1];
+
+
+                                    if(selections.equals("2")){
+                                        adan_exception = true;
+                                        already_unmuted = true;
+                                        unmuter();
+                                        vibrate();
+                                        playadan(pullselectedadanforthisprayerfromSQL(i));
+                                    } else if(selections.equals("1")){
+                                        vibrate();
+                                    }
+
                                 }
                             } else {
                                 if (!recent_adan) {
@@ -655,7 +670,7 @@ public class Service extends android.app.Service {
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
     }
 
-    /*private void vibrate() {
+    private void vibrate() {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if(v==null)
             v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -665,7 +680,7 @@ public class Service extends android.app.Service {
         } else {
             v.vibrate(545);
         }
-    }*/
+    }
 
     private void check_unprayed_prayer_for_today() {
         boolean found = false;
@@ -674,11 +689,8 @@ public class Service extends android.app.Service {
         String[] temptoday = today.toString().split(" ");
         todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
 
-        prayed = "00000";
-        athome = "00000";
-        verified = "00000";
         close_sql();
-        sql(getResources().getString(R.string.justforce2));
+        sql(getResources().getString(R.string.justforce3));
         while(SQLSharing.servicemycursorforce3.moveToNext()) {
             if (todaycomparable.equals(SQLSharing.servicemycursorforce3.getString(1))){
                 prayed = SQLSharing.servicemycursorforce3.getString(2);
@@ -693,10 +705,12 @@ public class Service extends android.app.Service {
             SQLSharing.servicemydbforce3.insertPrayed(todaycomparable, "00000", "00000", "11111");
         } else {
             boolean unprayed = false;
-            for(int g=0; g<6; g++){
+            for(int g=0; g<5; g++){
                 if(String.valueOf(prayed.charAt(g)).equals("0")){
-                    if(g!=1) {
-                        most_recent_unprayed = g;
+                    if(g==0){
+                        most_recent_unprayed = 0;
+                    }else {
+                        most_recent_unprayed = g+1;
                         unprayed = true;
                         break;
                     }
@@ -709,7 +723,7 @@ public class Service extends android.app.Service {
     }
 
     private void prepare_a_custom_reminder_notification_and_send_it() {
-        if(((positifise>=15 && positifise <=25) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1 && most_recent_unprayed<i) {
+        if(((positifise>=15 && positifise <=25 && most_recent_unprayed<i) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1) {
             if(!already_notified_recent_adan) {
                 already_notified_recent_adan = true;
                 NotificationManager notificationManager2 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -844,6 +858,7 @@ public class Service extends android.app.Service {
         SQLSharing.servicemycursorforce.moveToFirst();
         double longitude = Double.parseDouble(SQLSharing.servicemycursorforce.getString(1));
         double latitude = Double.parseDouble(SQLSharing.servicemycursorforce.getString(2));
+        close_sql();
         use(longitude, latitude, date);
     }
 
@@ -1146,19 +1161,18 @@ public class Service extends android.app.Service {
     }
 
     private void sql(String table) {
-        close_sql();
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.servicemydbslat = new SQL(c);
+                SQLSharing.servicemydbslat = SQL.getInstance(c);
                 SQLSharing.servicemycursorslat = SQLSharing.servicemydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.servicemydbforce = new SQL(c);
+                SQLSharing.servicemydbforce = SQL.getInstance(c);
                 SQLSharing.servicemycursorforce = SQLSharing.servicemydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.servicemydbforce3 = new SQL(c);
+                SQLSharing.servicemydbforce3 = SQL.getInstance(c);
                 SQLSharing.servicemycursorforce3 = SQLSharing.servicemydbforce3.getAllDateforce3();
                 break;
         }

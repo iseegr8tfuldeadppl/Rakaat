@@ -56,7 +56,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private int delay_between_sajadat = 800; // default 600
     private int sajda_length_of_time = 850;
     private int delay_between_raka3at = 7500; // default 5000
-    private int delay_during_tahia = 10000; // default 10000
+    private int delay_during_tahia = 12500; // default 10000
     private int minimum_light = 5; // default
     private double sajda_darkness_percentage = 0.50; // default: percentage of light to accept it as a sajda
     private double percentage_of_light_to_count_as_a_c_bon_rak3a = 0.65; // default
@@ -313,6 +313,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         int soundstempint = Integer.parseInt(SQLSharing.mycursorslat.getString(1));
         SQLSharing.mycursorslat.moveToNext();
         language = SQLSharing.mycursorslat.getString(1);
+        close_sql();
 
         if(soundstempint ==1)
             sounds = true;
@@ -1076,7 +1077,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         blackground.setVisibility(GONE);
         donecover.setVisibility(VISIBLE);
 
-        sql("force3");
 
         StringBuilder strinkbilder = new StringBuilder(prayed);
         strinkbilder.setCharAt(prayer, '1');
@@ -1093,11 +1093,13 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             athome = String.valueOf(athome_stringbuilder);
         }
 
+        sql(resources.getString(R.string.justforce3));
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
             SQLSharing.mydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
         else
             SQLSharing.mydbforce3.insertPrayed(todaycomparable, temper, verified, athome);
+        close_sql();
 
         tam_page_visible = true;
         warn_tahia2();
@@ -1122,15 +1124,15 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mydbslat = SQL.getInstance(this);
                 SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mydbforce = SQL.getInstance(this);
                 SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mydbforce3 = SQL.getInstance(this);
                 SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
@@ -1199,13 +1201,12 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         three.setBackground(resources.getDrawable(R.drawable.buttons));
         four.setBackground(resources.getDrawable(R.drawable.buttons));
 
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydbslat = new SQL(this);
-        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
+        sql("slat");
         SQLSharing.mycursorslat.moveToFirst();
         SQLSharing.mycursorslat.moveToNext();
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("no", ID);
+        close_sql();
 
         if(five_second_before_actually_starting_was_finished)
             start.setBackground(null);
@@ -1270,12 +1271,11 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         three.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
         four.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
 
-        SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydbslat = new SQL(this);
-        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
+        sql("slat");
         SQLSharing.mycursorslat.moveToPosition(1);
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("yes", ID);
+        close_sql();
 
         if(five_second_before_actually_starting_was_finished)
             start.setBackground(null);
@@ -1386,7 +1386,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if(SQLSharing.mydbslat!=null)
             SQLSharing.mydbslat.close();
         if(SQLSharing.mydbforce3!=null)
-            SQLSharing.mydbforce3.close();
+            SQLSharing.mydbforce3.close();;
     }
 
 

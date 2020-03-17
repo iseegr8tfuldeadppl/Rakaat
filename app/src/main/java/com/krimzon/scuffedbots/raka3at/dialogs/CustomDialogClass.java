@@ -30,7 +30,7 @@ public class CustomDialogClass extends Dialog implements
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.customdialog);
-        yes = (Button) findViewById(R.id.btn_yes);
+        yes = findViewById(R.id.btn_yes);
         fixbig = findViewById(R.id.fixbig);
         fixsmall1 = findViewById(R.id.fixsmall1);
         fixsmall2 = findViewById(R.id.fixsmall2);

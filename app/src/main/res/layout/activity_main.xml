@@ -192,18 +192,21 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"/>
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:layout_height="wrap_content">
             <LinearLayout
-                android:layout_centerInParent="true"
+                android:layout_marginEnd="@dimen/mainnightmodebuttonsidemargins"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="top|end"
                 android:background="@drawable/mainactivityback"
-                android:id="@+id/rightsideelementsbackground">
+                android:id="@+id/rightsideelementsbackground"
+                android:layout_marginRight="@dimen/mainnightmodebuttonsidemargins">
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:clickable="true"
@@ -212,7 +215,7 @@
                     android:layout_height="wrap_content">
                     <ImageView
                         android:id="@+id/nightmodebutton"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="15dp"
                         android:layout_marginBottom="16dp"
                         android:layout_marginEnd="13dp"
                         android:clickable="true"
@@ -225,7 +228,34 @@
                         android:layout_marginLeft="16dp" />
                 </RelativeLayout>
             </LinearLayout>
-        </RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/mainactivityback"
+                android:id="@+id/rightsideelementsbackground2">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="shareClicked"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/sharebutton"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginEnd="14dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginTop="13dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:onClick="shareClicked"
+                        android:layout_marginRight="13dp"
+                        android:layout_marginLeft="16dp" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

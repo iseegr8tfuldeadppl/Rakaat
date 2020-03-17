@@ -6,11 +6,9 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,22 +68,10 @@ public class protected_apps_request extends Dialog {
 
 
 
-    private void sql(String table) {
-        SQLSharing.TABLE_NAME_INPUTER = table;
-        switch (table) {
-            case "slat":
-                SQLSharing.mydbslat = new SQL(getContext());
-                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
-                break;
-            case "force":
-                SQLSharing.mydbforce = new SQL(getContext());
-                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
-                break;
-            case "force3":
-                SQLSharing.mydbforce3 = new SQL(getContext());
-                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
-                break;
-        }
+    private void sql() {
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        SQLSharing.mydbslat = SQL.getInstance(getContext());
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
     }
 
 
@@ -111,7 +97,7 @@ public class protected_apps_request extends Dialog {
                 intent.setComponent(new ComponentName(c.getResources().getString(R.string.huaweisource), c.getResources().getString(R.string.huaweiactivity)));
                 c.startActivity(intent);}
                 catch(Exception ignored){
-                    sql("slat");
+                    sql();
                     SQLSharing.mycursorslat.moveToPosition(9);
                     SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));
                     close_sql();
@@ -121,7 +107,7 @@ public class protected_apps_request extends Dialog {
         idid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sql("slat");
+                sql();
                 SQLSharing.mycursorslat.moveToPosition(9);
                 SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));
                 close_sql();
@@ -148,6 +134,12 @@ public class protected_apps_request extends Dialog {
     }
 
     private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
 

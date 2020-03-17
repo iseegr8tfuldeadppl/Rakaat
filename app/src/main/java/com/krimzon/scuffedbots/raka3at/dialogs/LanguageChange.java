@@ -36,7 +36,7 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
 
     private void sql() {
         SQLSharing.TABLE_NAME_INPUTER = "slat";
-        SQLSharing.mydbslat = new SQL(c.getApplicationContext());
+        SQLSharing.mydbslat = SQL.getInstance(c.getApplicationContext());
         SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
     }
 
@@ -81,6 +81,14 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
         arabic.setBackground(buttons);
         english.setBackground(buttons2);
     }
+    private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
+    }
 
     @Override
     public void onClick(View v) {
@@ -92,6 +100,7 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
                     sql();
                     SQLSharing.mycursorslat.moveToPosition(6);
                     SQLSharing.mydbslat.updateData("en", SQLSharing.mycursorslat.getString(0));
+                    close_sql();
                     dismiss();
                     Intent main = new Intent(c.getApplicationContext(), MainActivity.class);
                     c.startActivity(main);
@@ -105,6 +114,7 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
                     sql();
                     SQLSharing.mycursorslat.moveToPosition(6);
                     SQLSharing.mydbslat.updateData("ar", SQLSharing.mycursorslat.getString(0));
+                    close_sql();
                     dismiss();
                     Intent mainer = new Intent(c.getApplicationContext(), MainActivity.class);
                     c.startActivity(mainer);

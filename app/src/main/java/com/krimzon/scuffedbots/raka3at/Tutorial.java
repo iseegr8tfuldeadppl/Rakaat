@@ -33,20 +33,8 @@ public class Tutorial extends AppCompatActivity {
 
     private void sql() {
         SQLSharing.TABLE_NAME_INPUTER = "slat";
-        switch ("slat") {
-            case "slat":
-                SQLSharing.mydbslat = new SQL(this);
-                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
-                break;
-            case "force":
-                SQLSharing.mydbforce = new SQL(this);
-                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
-                break;
-            case "force3":
-                SQLSharing.mydbforce3 = new SQL(this);
-                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
-                break;
-        }
+        SQLSharing.mydbslat = SQL.getInstance(this);
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
     }
 
     @Override
@@ -115,6 +103,7 @@ public class Tutorial extends AppCompatActivity {
         sql();
         SQLSharing.mycursorslat.moveToPosition(6);
         language = SQLSharing.mycursorslat.getString(1);
+        close_sql();
 
         if(language.equals("ar")){
             explanation1.setText(getResources().getString(R.string.explanation1_arabe));
@@ -156,6 +145,15 @@ public class Tutorial extends AppCompatActivity {
                 display4.setImageDrawable(getResources().getDrawable(R.drawable.oned)); }
         }
 
+    }
+
+    private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     public void nextClicked(View view) {
@@ -220,6 +218,7 @@ public class Tutorial extends AppCompatActivity {
             sql();
             SQLSharing.mycursorslat.moveToFirst();
             SQLSharing.mydbslat.updateData("1", SQLSharing.mycursorslat.getString(0));
+            close_sql();
 
             Intent slatter = new Intent(this, slat.class);
             slatter.putExtra("sender", "main");

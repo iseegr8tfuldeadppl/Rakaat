@@ -15,14 +15,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -37,7 +35,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.dialogs.CustomDialogClass;
-
 import java.util.Locale;
 
 public class kibla extends AppCompatActivity implements SensorEventListener {
@@ -103,7 +100,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         resources = getResources();
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        compass_img = (ImageView) findViewById(R.id.compass);
+        compass_img = findViewById(R.id.compass);
 
         work_on_language();
         start();
@@ -125,7 +122,17 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
             cdd.show();
             SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));
         }
+        close_sql();
 
+    }
+
+    private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     private void work_on_language(){
@@ -139,15 +146,15 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.mydbslat = new SQL(this);
+                SQLSharing.mydbslat = SQL.getInstance(this);
                 SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mydbforce = new SQL(this);
+                SQLSharing.mydbforce = SQL.getInstance(this);
                 SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mydbforce3 = new SQL(this);
+                SQLSharing.mydbforce3 = SQL.getInstance(this);
                 SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
                 break;
         }
@@ -159,6 +166,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         SQLSharing.mycursorslat.moveToFirst();
         SQLSharing.mycursorslat.moveToPosition(6);
         language = SQLSharing.mycursorslat.getString(1);
+        close_sql();
     }
 
     private void getStrings(){
@@ -175,7 +183,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         fix.setText(betterquality);
     }
 
-    private int higher, lower;
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
@@ -199,9 +206,9 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         mAzimuth = Math.round(mAzimuth);
         compass_img.setRotation(-mAzimuth);
 
-        higher = (int) qibla_angle + qibla_range;
-        lower = (int) qibla_angle - qibla_range;
-        if(higher>360) {
+        int higher = (int) qibla_angle + qibla_range;
+        int lower = (int) qibla_angle - qibla_range;
+        if(higher >360) {
             higher -= 360;
             if (higher <= mAzimuth && mAzimuth <= lower) { // they needed to be flipped here don't worry
                 try {
@@ -217,7 +224,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
                 }
             }
         }
-        else if(lower<0) {
+        else if(lower <0) {
             lower += 360;
             if (higher <= mAzimuth && mAzimuth <= lower) { // they needed to be flipped here don't worry
                 try {
@@ -270,6 +277,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
                 mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
                 haveSensor = mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
                 boolean haveSensor2 = mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+                // TODO use this ^
             }
         }
         else{
@@ -411,11 +419,14 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     protected Coordinates coordinates;
     private void wegotcoordsboiz(double longitude, double latitude){
 
+        sql("force");
         // update coordinates in sql folks
         if(new_coordinates)
             SQLSharing.mydbforce.insertMawa9it(String.valueOf(longitude), String.valueOf(latitude));
         else
             SQLSharing.mydbforce.updateMawa9it("1", String.valueOf(longitude), String.valueOf(latitude));
+
+        close_sql();
 
         coordinates = new Coordinates(latitude, longitude);
         qibla = new Qibla(coordinates);
@@ -428,6 +439,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         SQLSharing.mycursorforce.moveToFirst();
         longitude = Double.parseDouble(SQLSharing.mycursorforce.getString(1));
         latitude = Double.parseDouble(SQLSharing.mycursorforce.getString(2));
+        close_sql();
         wegotcoordsboiz(longitude, latitude);
     }
 
@@ -435,8 +447,11 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private void location_shit() {
         sql("force");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if(SQLSharing.mycursorforce.getCount()>0)
+        if(SQLSharing.mycursorforce.getCount()>0){
             if_theres_previous_info_load_it_n_display();
+        } else {
+            close_sql();
+        }
         if_first_launch_get_longitude_n_lattitude_n_ville_n_hijri_date();
     }
 
@@ -469,15 +484,15 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     }
 
 
-    int darkbackgroundcolor;
-    private void hideNavigationBar() {
+    /*int darkbackgroundcolor;*/
+    /*private void hideNavigationBar() {
         darkbackgroundcolor = resources.getColor(R.color.black);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             this.getWindow().setStatusBarColor(darkbackgroundcolor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-    }
+    }*/
 
     public void arrowbackClicked(View view) {
         exit();
@@ -524,6 +539,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         SQLSharing.mycursorslat.moveToNext();
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("yes", ID);
+        close_sql();
     }
 
 
@@ -559,6 +575,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         SQLSharing.mycursorslat.moveToPosition(1);
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("no", ID);
+        close_sql();
     }
 
 }

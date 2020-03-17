@@ -333,13 +333,14 @@ public class force_settings_adan_selection extends AppCompatActivity {
     private String ID;
     private boolean once = true;
     private void update_sql() {
-        sql("slat");
+        sql();
         if(once){
             once = false;
             SQLSharing.mycursorslat.moveToPosition(7);
             ID = SQLSharing.mycursorslat.getString(0);
         }
         SQLSharing.mydbslat.updateData(adanSelections, ID);
+        close_sql();
     }
 
     private void applyselectedadantoadanselections(int prayedtobemodified, int selectedmouadin) {
@@ -356,26 +357,14 @@ public class force_settings_adan_selection extends AppCompatActivity {
         adanSelections = temp.toString();
     }
 
-    private void sql(String table) {
-        SQLSharing.TABLE_NAME_INPUTER = table;
-        switch (table) {
-            case "slat":
-                SQLSharing.mydbslat = new SQL(this);
-                SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
-                break;
-            case "force":
-                SQLSharing.mydbforce = new SQL(this);
-                SQLSharing.mycursorforce = SQLSharing.mydbforce.getAllDateforce();
-                break;
-            case "force3":
-                SQLSharing.mydbforce3 = new SQL(this);
-                SQLSharing.mycursorforce3 = SQLSharing.mydbforce3.getAllDateforce3();
-                break;
-        }
+    private void sql() {
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        SQLSharing.mydbslat = SQL.getInstance(this);
+        SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
     }
 
     private void sql_work() {
-        sql("slat");
+        sql();
         SQLSharing.mycursorslat.moveToPosition(1);
         darkmode = SQLSharing.mycursorslat.getString(1).equals("yes");
         SQLSharing.mycursorslat.moveToPosition(6);

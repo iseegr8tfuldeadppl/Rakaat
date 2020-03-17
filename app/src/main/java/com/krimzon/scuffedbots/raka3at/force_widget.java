@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import com.batoulapps.adhan.CalculationMethod;
@@ -76,15 +75,19 @@ public class force_widget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if(intent.getAction()!=null){
+
+
             if (intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
-                close_sql();
                 sql("slat", context);
                 SQLSharing.mycursorslater.moveToPosition(1);
                 boolean darkmode = SQLSharing.mycursorslater.getString(1).equals("yes");
                 SQLSharing.mycursorslater.moveToPosition(6);
                 String language = SQLSharing.mycursorslater.getString(1);
                 SQLSharing.mycursorslater.moveToPosition(10);
-                close_sql();
+
+                if(SQLSharing.mydbslater!=null)
+                    SQLSharing.mydbslater.close();
 
                 launch_prayer_processing(context);
 
@@ -133,14 +136,16 @@ public class force_widget extends AppWidgetProvider {
                 }
 
 
-                if(praytimesregularform.size()==6) {
-                    widgetViews.setTextViewText(R.id.widgetfajrtime, praytimesregularform.get(0));
-                    widgetViews.setTextViewText(R.id.widgetrisetime, praytimesregularform.get(1));
-                    widgetViews.setTextViewText(R.id.widgetdhuhrtime, praytimesregularform.get(2));
-                    widgetViews.setTextViewText(R.id.widgetasrtime, praytimesregularform.get(3));
-                    widgetViews.setTextViewText(R.id.widgetmaghrebtime, praytimesregularform.get(4));
-                    widgetViews.setTextViewText(R.id.widgetishatime, praytimesregularform.get(5));
+                if(praytimesregularform!=null) {
+                    if (praytimesregularform.size() == 6) {
+                        widgetViews.setTextViewText(R.id.widgetfajrtime, praytimesregularform.get(0));
+                        widgetViews.setTextViewText(R.id.widgetrisetime, praytimesregularform.get(1));
+                        widgetViews.setTextViewText(R.id.widgetdhuhrtime, praytimesregularform.get(2));
+                        widgetViews.setTextViewText(R.id.widgetasrtime, praytimesregularform.get(3));
+                        widgetViews.setTextViewText(R.id.widgetmaghrebtime, praytimesregularform.get(4));
+                        widgetViews.setTextViewText(R.id.widgetishatime, praytimesregularform.get(5));
 
+                    }
                 }
 
                 find_next_adan();
@@ -256,6 +261,8 @@ public class force_widget extends AppWidgetProvider {
                 }
 
             }
+
+        }
         super.onReceive(context, intent);
     }
 
@@ -609,6 +616,7 @@ public class force_widget extends AppWidgetProvider {
 
             find_next_adan();
         }
+        close_sql();
     }
 
     private void location_shit(Date date, Context context) {
@@ -799,6 +807,7 @@ public class force_widget extends AppWidgetProvider {
         SQLSharing.mycursorforceer.moveToFirst();
         double longitude = Double.parseDouble(SQLSharing.mycursorforceer.getString(1));
         double latitude = Double.parseDouble(SQLSharing.mycursorforceer.getString(2));
+        close_sql();
         use(longitude, latitude, date, context);
     }
 
@@ -816,7 +825,7 @@ public class force_widget extends AppWidgetProvider {
     }
 
     private void if_change_needed_for_slider_apply_it() {
-        int lol = -3;
+        int lol;
         if(still_scoping_on_previous_adan) {
             if(i==0)
                 lol = 5;
@@ -900,8 +909,7 @@ public class force_widget extends AppWidgetProvider {
             if(i>=6){
                 i = 5;
                 end_of_day = true;
-            } else
-                end_of_day = false;
+            }
 
         } catch(Exception ignored){}
     }
@@ -910,15 +918,15 @@ public class force_widget extends AppWidgetProvider {
         SQLSharing.TABLE_NAME_INPUTER = table;
         switch (table) {
             case "slat":
-                SQLSharing.mydbslater = new SQL(context);
+                SQLSharing.mydbslater = SQL.getInstance(context);
                 SQLSharing.mycursorslater = SQLSharing.mydbslater.getAllDateslat();
                 break;
             case "force":
-                SQLSharing.mydbforceer = new SQL(context);
+                SQLSharing.mydbforceer = SQL.getInstance(context);
                 SQLSharing.mycursorforceer = SQLSharing.mydbforceer.getAllDateforce();
                 break;
             case "force3":
-                SQLSharing.mydbforce3er = new SQL(context);
+                SQLSharing.mydbforce3er = SQL.getInstance(context);
                 SQLSharing.mycursorforce3er = SQLSharing.mydbforce3er.getAllDateforce3();
                 break;
         }
