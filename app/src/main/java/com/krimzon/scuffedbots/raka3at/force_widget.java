@@ -133,13 +133,15 @@ public class force_widget extends AppWidgetProvider {
                 }
 
 
-                widgetViews.setTextViewText(R.id.widgetfajrtime, praytimesregularform.get(0));
-                widgetViews.setTextViewText(R.id.widgetrisetime, praytimesregularform.get(1));
-                widgetViews.setTextViewText(R.id.widgetdhuhrtime, praytimesregularform.get(2));
-                widgetViews.setTextViewText(R.id.widgetasrtime, praytimesregularform.get(3));
-                widgetViews.setTextViewText(R.id.widgetmaghrebtime, praytimesregularform.get(4));
-                widgetViews.setTextViewText(R.id.widgetishatime, praytimesregularform.get(5));
+                if(praytimesregularform.size()==6) {
+                    widgetViews.setTextViewText(R.id.widgetfajrtime, praytimesregularform.get(0));
+                    widgetViews.setTextViewText(R.id.widgetrisetime, praytimesregularform.get(1));
+                    widgetViews.setTextViewText(R.id.widgetdhuhrtime, praytimesregularform.get(2));
+                    widgetViews.setTextViewText(R.id.widgetasrtime, praytimesregularform.get(3));
+                    widgetViews.setTextViewText(R.id.widgetmaghrebtime, praytimesregularform.get(4));
+                    widgetViews.setTextViewText(R.id.widgetishatime, praytimesregularform.get(5));
 
+                }
 
                 find_next_adan();
                 if(i!=-1) {

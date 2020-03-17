@@ -191,14 +191,7 @@ public class force extends AppCompatActivity  {
         @Override
         public boolean handleMessage(@NonNull Message msg) { color_pray_buttons(); return true; }});
 
-    private Handler updateclock = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(@NonNull Message msg) {
-                clocktime = new Date();
-                clock.setText(clocktime.toString().split(" ")[3]);
-            return true; }});
 
-    private Date clocktime;
     private Handler checkonfajr = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) { if(positifise < SQLSharing.minute_limit_to_display_positifise){
@@ -303,8 +296,9 @@ public class force extends AppCompatActivity  {
         if (mAuth.getCurrentUser() != null) {
             FirebaseUser user = mAuth.getCurrentUser();
             String refinedemail = getUserEmail(user);
+            String uid = user.getUid();
             if(refinedemail!=null)
-                sync_SQL_and_Firebase(refinedemail);
+                sync_SQL_and_Firebase(refinedemail, uid);
         }
     }
 
@@ -318,9 +312,9 @@ public class force extends AppCompatActivity  {
         return null;
     }
 
-    private void sync_SQL_and_Firebase(String email) {
+    private void sync_SQL_and_Firebase(String email, String uid) {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            userRef = database.getReference("users").child(email).child("p");
+            userRef = database.getReference("users").child(uid).child(email).child("p");
             /*lastupdatedRef = database.getReference("users").child(email).child("lastupdated");*/
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -511,7 +505,6 @@ public class force extends AppCompatActivity  {
             while(running) {
 
                 wait_1_second();
-                updateclock.sendEmptyMessage(0);
                 if (it_is_today) {
 
                     calculate_rightnowcomparable();
@@ -687,11 +680,10 @@ public class force extends AppCompatActivity  {
         }
     }
 
-    private TextView prayedthisdaybefore, clock;
+    private TextView prayedthisdaybefore;
     private void variables_setup() {
 
         prayedthisdaybefore = findViewById(R.id.prayedthisdaybefore);
-        clock = findViewById(R.id.clock);
         ImageView arrowback = findViewById(R.id.arrowback);
         ImageView statslogo = findViewById(R.id.statslogo);
         ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
@@ -906,7 +898,6 @@ public class force extends AppCompatActivity  {
         Typeface arabic_typeface2 = Typeface.createFromAsset(getAssets(), "Tajawal-Regular.ttf");
 
         title.setTypeface(arabic_typeface);
-        clock.setTypeface(arabic_typeface);
         daterr.setTypeface(arabic_typeface);
         prayedthisdaybefore.setTypeface(arabic_typeface);
 
@@ -2646,7 +2637,6 @@ public class force extends AppCompatActivity  {
         full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
         doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.lightbacktotoday));
         title.setTextColor(WHITE);
-        clock.setTextColor(resources.getColor(R.color.lightelement));
         title.setBackgroundColor(resources.getColor(R.color.transparentblacker));
 
 
@@ -2717,7 +2707,6 @@ public class force extends AppCompatActivity  {
             praybutton.setTextColor(resources.getColor(R.color.grayerthanwhite));
         }
 
-        clock.setTextColor(WHITE);
         full.setBackground(resources.getDrawable(R.drawable.forcefull));
         doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.backtotoday));
         title.setTextColor(WHITE);

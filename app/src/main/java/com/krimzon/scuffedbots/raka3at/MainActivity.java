@@ -123,11 +123,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(shouldyouopenloginpage.equals("yes") && mAuth.getCurrentUser() == null){
             try{
-                if(getIntent().getStringExtra("senderr")!=null) {
                     if (!getIntent().getStringExtra("senderr").equals("dont")) {
                         openloginpage();
                     }
-                }
             } catch(Exception ignored){
                 openloginpage();
             }

@@ -266,9 +266,10 @@ public class backupandrestore extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             FirebaseUser user = mAuth.getCurrentUser();
+            String uid = user.getUid();
             String refinedemail = getUserEmail(user);
             if(refinedemail!=null)
-                sync_SQL_and_Firebase(refinedemail);
+                sync_SQL_and_Firebase(refinedemail, uid);
         }
     }
 
@@ -287,9 +288,9 @@ public class backupandrestore extends AppCompatActivity {
         return null;
     }
 
-    private void sync_SQL_and_Firebase(String email) {
+    private void sync_SQL_and_Firebase(String email, String uid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        userRef = database.getReference("users").child(email).child("p");
+        userRef = database.getReference("users").child(uid).child(email).child("p");
         /*lastupdatedRef = database.getReference("users").child(email).child("lastupdated");*/
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -394,18 +395,17 @@ public class backupandrestore extends AppCompatActivity {
                     }
                 }
 
-                /*Date today = new Date();
-                String[] temptoday = today.toString().split(" ");
-                String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
-                lastupdatedRef.setValue(todaycomparable);*/
-
                 exit();
+                    /*Date today = new Date();
+                    String[] temptoday = today.toString().split(" ");
+                    String todaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
+                    lastupdatedRef.setValue(todaycomparable);*/
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                print("No internet connection");
-                progressBar.setVisibility(View.INVISIBLE);
+                print("loading data failed");
+                exit();
             }
         });
     }
