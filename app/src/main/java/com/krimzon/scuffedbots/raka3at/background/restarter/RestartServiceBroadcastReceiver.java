@@ -12,6 +12,8 @@ import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Handler;
 import androidx.annotation.RequiresApi;
+
+import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.background.Globals;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
 
@@ -38,13 +40,21 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            scheduleJob(context);
-        } else {
-            registerRestarterReceiver(context);
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(context);
+        load_service(context);
+    }
+
+    private void load_service(Context context) {
+        // adan service
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                scheduleJob(context);
+            } else {
+                registerRestarterReceiver(context);
+                ProcessMainClass bck = new ProcessMainClass();
+                bck.launchService(context);
+            }
         }
+        catch(Exception ignored){}
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

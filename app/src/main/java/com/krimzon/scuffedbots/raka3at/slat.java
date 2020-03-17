@@ -185,8 +185,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
             am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
             //am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
         }
     }
 
@@ -195,16 +194,14 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         try{
             if (Build.VERSION.SDK_INT >= 23)
                 this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
         }
     }
     private void unmuter() {
         try{
             AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
             am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
         }
     }
     private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 6969;
@@ -395,6 +392,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         start.setTypeface(font);
         sajda_pre.setTypeface(font);
         donebutton.setTypeface(font);
+        tahia.setTypeface(font);
 
         //https://www.youtube.com/watch?v=ZL6s8TyHNOc
         //https://www.youtube.com/watch?v=ZL6s8TyHNOc
@@ -406,8 +404,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         try {
             light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
             light_sensor_works = true;
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
             light_sensor_works = false;
         }
         if(!light_sensor_works)
@@ -446,8 +443,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 } else
                     exit();
             }
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
         }
     }
 
@@ -912,8 +908,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 AudioManager audioManager;
                 audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 20, 0);
-            } catch(Exception e){
-                e.printStackTrace();
+            } catch(Exception ignored){
             }
         }
         if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 5000){
@@ -1386,6 +1381,12 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
     private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
 

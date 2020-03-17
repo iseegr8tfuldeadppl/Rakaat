@@ -173,6 +173,7 @@ public class HomeOrMosque extends Dialog {
         strinkbilder.setCharAt(prayerer, '1');
         String temper = String.valueOf(strinkbilder);
         check_if_prayed_exists_in_sql();
+
         if(found_prayed_history_in_sql)
             SQLSharing.mydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
         else

@@ -106,6 +106,13 @@ public class forceTutorial extends AppCompatActivity {
         } catch (Exception ignored) {
             display4.setImageDrawable(getResources().getDrawable(R.drawable.onea)); }
 
+        mapActivity();
+    }
+
+
+    private void mapActivity() {
+        Intent dd = new Intent(this, MapActivity.class);
+        startActivity(dd);
     }
 
     public void nextClicked(View view) {

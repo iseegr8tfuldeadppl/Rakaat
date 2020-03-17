@@ -117,6 +117,15 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         SQLSharing.mycursorslat.moveToPosition(1);
         if(SQLSharing.mycursorslat.getString(1).equals("no"))
             light_mode();
+
+        SQLSharing.mycursorslat.moveToPosition(12);
+        boolean show_calibration = SQLSharing.mycursorslat.getString(1).equals("yes");
+        if(show_calibration){
+            CustomDialogClass cdd=new CustomDialogClass(this, language);
+            cdd.show();
+            SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));
+        }
+
     }
 
     private void work_on_language(){
@@ -166,6 +175,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         fix.setText(betterquality);
     }
 
+    private int higher, lower;
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
@@ -189,19 +199,56 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         mAzimuth = Math.round(mAzimuth);
         compass_img.setRotation(-mAzimuth);
 
-        if(qibla_angle - qibla_range <= mAzimuth && mAzimuth <= qibla_angle + qibla_range) {
-            try {
-                Glide.with(this).load(R.drawable.compass).into(compass_img);
-            } catch (Exception ignored) {
-                compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
-            }
-        } else {
-            try {
-                Glide.with(this).load(R.drawable.compass2).into(compass_img);
-            } catch (Exception ignored) {
-                compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+        higher = (int) qibla_angle + qibla_range;
+        lower = (int) qibla_angle - qibla_range;
+        if(higher>360) {
+            higher -= 360;
+            if (higher <= mAzimuth && mAzimuth <= lower) { // they needed to be flipped here don't worry
+                try {
+                    Glide.with(this).load(R.drawable.compass).into(compass_img);
+                } catch (Exception ignored) {
+                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
+                }
+            } else {
+                try {
+                    Glide.with(this).load(R.drawable.compass2).into(compass_img);
+                } catch (Exception ignored) {
+                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+                }
             }
         }
+        else if(lower<0) {
+            lower += 360;
+            if (higher <= mAzimuth && mAzimuth <= lower) { // they needed to be flipped here don't worry
+                try {
+                    Glide.with(this).load(R.drawable.compass).into(compass_img);
+                } catch (Exception ignored) {
+                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
+                }
+            } else {
+                try {
+                    Glide.with(this).load(R.drawable.compass2).into(compass_img);
+                } catch (Exception ignored) {
+                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+                }
+            }
+        } else {
+            if (lower <= mAzimuth && mAzimuth <= higher) { // they needed to be flipped here don't worry
+                try {
+                    Glide.with(this).load(R.drawable.compass).into(compass_img);
+                } catch (Exception ignored) {
+                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
+                }
+            } else {
+                try {
+                    Glide.with(this).load(R.drawable.compass2).into(compass_img);
+                } catch (Exception ignored) {
+                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+                }
+            }
+        }
+
+
     }
 
     // TODO: make this range modifyable by user by the form of a seekbar
@@ -294,28 +341,43 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
     protected boolean an_alert_to_turn_location_on_was_displayed = false;
     private void showAlert() {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Enable Location")
-                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
-                        "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-
-                        an_alert_to_turn_location_on_was_displayed = true;
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Intent main = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(main);
-                        finish();
-                    }
-                });
-        dialog.show();
+        if(language.equals("ar")){
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle(R.string.enablelocation_arabe)
+                    .setMessage(getString(R.string.locationisoff_arabe))
+                    .setPositiveButton(R.string.locationsettings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(myIntent);
+                        }
+                    })
+                    .setNegativeButton(R.string.nothanks_arabe, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            exit();
+                        }
+                    });
+            dialog.show();
+        } else if(language.equals("en")){
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle(R.string.enablelocation)
+                    .setMessage(getString(R.string.locationisoff))
+                    .setPositiveButton(R.string.locationsettings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(myIntent);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            exit();
+                        }
+                    });
+            dialog.show();
+        }
     }
 
     protected LocationManager mLocationManager;

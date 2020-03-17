@@ -1,35 +1,63 @@
 package com.krimzon.scuffedbots.raka3at;
 
-import android.app.ActivityManager;
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
-import com.krimzon.scuffedbots.raka3at.background.Service;
 import com.krimzon.scuffedbots.raka3at.dialogs.LanguageChange;
 import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
-
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Locale;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -68,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         this.getResources().updateConfiguration(cfg, null);
 
         //set custom font
+        setup_the_stuff();
         variables();
         sql_work();
         set_fonts();
@@ -92,6 +121,17 @@ public class MainActivity extends AppCompatActivity {
 
         //showNavigationBar();
 
+        if(shouldyouopenloginpage.equals("yes") && mAuth.getCurrentUser() == null){
+            try{
+                if(getIntent().getStringExtra("senderr")!=null) {
+                    if (!getIntent().getStringExtra("senderr").equals("dont")) {
+                        openloginpage();
+                    }
+                }
+            } catch(Exception ignored){
+                openloginpage();
+            }
+        }
     }
 
 
@@ -187,8 +227,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }*/
 
+    private LinearLayout rightsideelementsbackground;
     private void light_mode() {
         darkmode = false;
+        rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
+        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightmainactivityback));
         view.setVisibility(View.GONE);
         view2.setVisibility(View.VISIBLE);
         full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
@@ -224,6 +267,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void dark_mode() {
         darkmode = true;
+        rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
+        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.mainactivityback));
         view.setVisibility(View.VISIBLE);
         view2.setVisibility(View.GONE);
         full.setBackground(resources.getDrawable(R.drawable.forcefull));
@@ -241,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void variables() {
 
-        ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
         ImageView languagebutton = findViewById(R.id.languagebutton);
         full = findViewById(R.id.full);
         view = findViewById(R.id.view);
@@ -250,16 +294,31 @@ public class MainActivity extends AppCompatActivity {
         slatjoin = findViewById(R.id.slatjoin);
         kiblajoin = findViewById(R.id.kiblajoin);
         forcejoin = findViewById(R.id.forcejoin);
+
         resources = getResources();
+
+        ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
         try {
-            Glide.with(this).load(R.drawable.blacknightmode).into(nightmodebutton);
+            Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
         } catch (Exception ignored) {
-            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.blacknightmode));
+            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
         }
+
         try {
             Glide.with(this).load(R.drawable.blacklanguage).into(languagebutton);
         } catch (Exception ignored) {
             languagebutton.setImageDrawable(resources.getDrawable(R.drawable.blacklanguage));
+        }
+
+        if (mAuth.getCurrentUser() == null) {
+            try {
+                Glide.with(this).load(R.drawable.zdzdzd).into(image);
+            } catch (Exception ignored) {
+                image.setImageDrawable(resources.getDrawable(R.drawable.zdzdzd));
+            }
+        } else {
+            FirebaseUser user = mAuth.getCurrentUser();
+            updateUI(user);
         }
 
     }
@@ -267,40 +326,261 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        load_service();
+    }
 
+    private void load_service() {
         // adan service
-        try {
-            close_sql();
-            sql("force");
-            if(SQLSharing.mycursorforce.getCount()>0) {
-                if(Build.VERSION.SDK_INT >= 28){
-                    final Context context = this;
-                    /*final Handler handler = new Handler();
-                    Runnable r = new Runnable(){
-                        public void run(){
-                            try{
-                                startService(new Intent(context, Service.class));}
-                            catch(Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    handler.postDelayed(r, 200);*/
+        if (Build.VERSION.SDK_INT < 28) {
+            try {
+                close_service_sql();
+                close_sql();
+                sql("force");
+                if (SQLSharing.mycursorforce.getCount() > 0) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                    } else {
+                        ProcessMainClass bck = new ProcessMainClass();
+                        bck.launchService(getApplicationContext());
+                    }
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-                } else {
-                    ProcessMainClass bck = new ProcessMainClass();
-                    bck.launchService(getApplicationContext());
-                }
+                close_sql();
+            } catch (Exception ignored) {
             }
-            close_sql();
         }
-        catch(Exception e){
+    }
+
+    private void close_service_sql() {
+        if(SQLSharing.servicemydbforce!=null)
+            SQLSharing.servicemydbforce.close();
+        if(SQLSharing.servicemydbslat!=null)
+            SQLSharing.servicemydbslat.close();
+        if(SQLSharing.servicemydbforce3!=null)
+            SQLSharing.servicemydbforce3.close();
+    }
+
+    private BroadcastReceiver onComplete;
+    public void downloadMeSenpai(final Context context, String DISPLAY, String destinationDirectory, String url, final File imageplace) {
+        DownloadManager downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
+        request.setDestinationInExternalFilesDir(context, destinationDirectory, DISPLAY);
+        try{
+            final long downloadID = downloadmanager.enqueue(request);
+
+            onComplete=new BroadcastReceiver() {
+                public void onReceive(Context ctxt, Intent intent) {
+                    long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                    if (downloadID == id) {
+                        getout(imageplace);
+                    }
+                }
+            };
+            registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        } catch(Exception e){
             e.printStackTrace();
         }
     }
 
+
+    private static final int GOOGLE_SIGN_IN = 123;
+    private FirebaseAuth mAuth;
+    private ProgressBar progressBar;
+    private GoogleSignInClient mGoogleSignInClient;
+    private int REQUEST_CODE = 1000;
+    private de.hdodenhof.circleimageview.CircleImageView image;
+
+    private void setup_the_stuff() {
+
+        progressBar = findViewById(R.id.progress);
+        image = findViewById(R.id.loginbutton);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+    }
+
+    private void updateUI(FirebaseUser user) {
+        if (user != null) {
+            String photo = String.valueOf(user.getPhotoUrl());
+
+            String email = user.getEmail();
+            if(email!=null){
+                String userer = email.replace(".", "").replace("@", "");
+                File profilpic = new File(Environment.getExternalStorageDirectory() + File.separator + "Android/data/com.krimzon.scuffedbots.raka3at/files/random/" + userer + ".png");
+                if(!profilpic.exists())
+                    downloadMeSenpai(this, userer + ".png", "random", photo, profilpic);
+                else
+                    getout(profilpic);
+            }
+        }
+    }
+
+    private void getout(File imageplace){
+        progressBar.setVisibility(View.INVISIBLE);
+        try{
+            FileInputStream inputStream = new FileInputStream(imageplace);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            Bitmap bitmap_mutable = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            Drawable profilpic = new BitmapDrawable(getResources(), bitmap_mutable);
+            try {
+                Glide.with(this).load(profilpic).into(image);
+            } catch (Exception ignored) {
+                image.setImageDrawable(profilpic);
+            }
+        } catch(Exception e){ e.printStackTrace(); }
+        /*Intent start = new Intent(this, MainActivity.class);
+        startActivity(start);
+        finish();*/
+    }
+
+    public void loginClicked(View view) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+        } else {
+            if (mAuth.getCurrentUser() != null) {
+                prompt_logout_confirmation();
+            } else {
+                SignInGoogle();
+            }
+        }
+    }
+
+    private void prompt_logout_confirmation() {
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        if(language.equals("en")){
+            alertDialog.setTitle(getString(R.string.logoutsecurityalerttitle));
+            alertDialog.setMessage(getString(R.string.logoutsecurityalerttext));
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(R.string.allgood),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            logout();
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        } else if(language.equals("ar")){
+            alertDialog.setTitle(getString(R.string.logoutsecurityalerttitle_arabe));
+            alertDialog.setMessage(getString(R.string.logoutsecurityalerttext_arabe));
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(R.string.allgood_arabe),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            logout();
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getString(R.string.back2_arabe),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        }
+        alertDialog.show();
+    }
+
+    private void logout() {
+
+        // set SQL back to display default login page
+        close_sql();
+        sql("slat");
+        SQLSharing.mycursorslat.moveToPosition(13);
+        SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));
+        close_sql();
+
+        // start loading
+        progressBar.setVisibility(View.VISIBLE);
+
+        // firebase sign out
+        mAuth.signOut();
+
+
+        // Google sign out
+        mGoogleSignInClient.signOut().addOnCompleteListener(this,
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+
+                        // stop loading
+                        progressBar.setVisibility(View.INVISIBLE);
+
+                        // redisplay Google logo there
+                        try {
+                            Glide.with(getApplicationContext()).load(R.drawable.zdzdzd).into(image);
+                        } catch (Exception ignored) {
+                            image.setImageDrawable(resources.getDrawable(R.drawable.zdzdzd));
+                        }
+                    }
+                });
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(REQUEST_CODE==requestCode && grantResults.length > 0){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                SignInGoogle();
+            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED){
+                if(language.equals("en"))
+                    print(resources.getString(R.string.permissiondenied));
+                else if(language.equals("ar"))
+                    print(resources.getString(R.string.permissiondenied_arabe));
+                progressBar.setVisibility(View.INVISIBLE);
+
+            }
+        }
+    }
+
+    public void SignInGoogle() {
+        progressBar.setVisibility(View.VISIBLE);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else
+                            updateUI(null);
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GOOGLE_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                if (account != null) firebaseAuthWithGoogle(account);
+            } catch (ApiException ignored) {}
+        } else if (requestCode == ON_DO_NOT_DISTURB_CALLBACK_CODE) {
+            this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
+        }
+    }
 
 
     private void muter() {
@@ -327,8 +607,7 @@ public class MainActivity extends AppCompatActivity {
                 AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
                 am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             }
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
         }
     }
     private void requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp() {
@@ -349,6 +628,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if(onComplete!=null)
+            unregisterReceiver(onComplete);
+
         if(SQLSharing.mydbforce!=null)
             SQLSharing.mydbforce.close();
         if(SQLSharing.mydbslat!=null)
@@ -360,6 +642,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if(onComplete!=null)
+         unregisterReceiver(onComplete);
+
         if(SQLSharing.mydbforce!=null)
             SQLSharing.mydbforce.close();
         if(SQLSharing.mydbslat!=null)
@@ -368,13 +654,6 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydbforce3.close();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ON_DO_NOT_DISTURB_CALLBACK_CODE) {
-            this.requestForDoNotDisturbPermissionOrSetDoNotDisturbForApi23AndUp();
-        }
-    }
 
 
     private void set_fonts() {
@@ -394,13 +673,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void close_sql() {
-        if(SQLSharing.servicemydbforce!=null)
-            SQLSharing.servicemydbforce.close();
-        if(SQLSharing.servicemydbslat!=null)
-            SQLSharing.servicemydbslat.close();
-        if(SQLSharing.servicemydbforce3!=null)
-            SQLSharing.servicemydbforce3.close();
-
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
     private void sql_work() {
@@ -419,8 +697,34 @@ public class MainActivity extends AppCompatActivity {
 
         // this is to avoid issues with added rows with google darkplay updates to avoid crashing users
         sql("slat");
-        if(SQLSharing.mycursorslat.getCount()<12)  // TODO always update this
+        int amount_of_parameters_in_slat = 15;
+        if(SQLSharing.mycursorslat.getCount()<5) { // this excludes any very old versions
             SQLSharing.mydbslat.delete(this);
+        }
+        if(SQLSharing.mycursorslat.getCount()<amount_of_parameters_in_slat) { // TODO always update this
+            switch(SQLSharing.mycursorslat.getCount()){
+                case 5: // you add the one numbered after it, say if there's 5 in sql settings you add thhe 6th, and then all of the others would get added too
+                    SQLSharing.mydbslat.insertData("1"); // sounds default: on
+                case 6:
+                    SQLSharing.mydbslat.insertData("ar"); // language
+                case 7:
+                    SQLSharing.mydbslat.insertData("1,2 1,1 1,2 1,2 1,2 1,2"); // 1,2 => default adan, adan sounds fully on (1 is for vibrte, 0 is for no sounds)
+                case 8:
+                    SQLSharing.mydbslat.insertData("yes"); // display the main app notification (essential for newer androids to keep app running
+                case 9:
+                    SQLSharing.mydbslat.insertData("yes"); // do i ask for protected apps on launch?
+                case 10:
+                    SQLSharing.mydbslat.insertData("5,35,1 5,35,1 5,35,1 5,20,1 5,35,1"); // delaysbeforeandafterdan to mute ringtones before adan/after adan/enabled or not
+                case 11:
+                    SQLSharing.mydbslat.insertData(""); // tutorial for force
+                case 12:
+                    SQLSharing.mydbslat.insertData("yes"); // onetimedisplayofqiblacalibrationwindow
+                case 13:
+                    SQLSharing.mydbslat.insertData("yes"); // should you send to the login page?
+                case 14:
+                    SQLSharing.mydbslat.insertData(""); // city
+            }
+        }
         sql("slat");
         if (SQLSharing.mycursorslat.getCount() <= 0) {
             SQLSharing.mydbslat.insertData("");
@@ -435,6 +739,9 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mydbslat.insertData("yes"); // do i ask for protected apps on launch?
             SQLSharing.mydbslat.insertData("5,35,1 5,35,1 5,35,1 5,20,1 5,35,1"); // delaysbeforeandafterdan to mute ringtones before adan/after adan/enabled or not
             SQLSharing.mydbslat.insertData(""); // tutorial for force
+            SQLSharing.mydbslat.insertData("yes"); // onetimedisplayofqiblacalibrationwindow
+            SQLSharing.mydbslat.insertData("yes"); // should you send to the login page?
+            SQLSharing.mydbslat.insertData(""); // city
             tutorial = true;
         } else {
             SQLSharing.mycursorslat.moveToPosition(0);
@@ -446,6 +753,11 @@ public class MainActivity extends AppCompatActivity {
             SQLSharing.mycursorslat.moveToPosition(11);
             forcetutorial = SQLSharing.mycursorslat.getString(1);
 
+            SQLSharing.mycursorslat.moveToNext();
+            SQLSharing.mycursorslat.moveToNext();
+
+            shouldyouopenloginpage = SQLSharing.mycursorslat.getString(1);
+
             SQLSharing.mycursorslat.moveToPosition(1);
             if(SQLSharing.mycursorslat.getString(1).equals("no"))
                 light_mode();
@@ -456,6 +768,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private String shouldyouopenloginpage = "yes";
     private String forcetutorial = "";
     @Override
     public void onBackPressed() {
@@ -502,6 +815,8 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+
+
     public void forceClicked(View view) {
         if(!forcetutorial.equals("1")){
             Intent forceIntent = new Intent(this, forceTutorial.class);
@@ -536,4 +851,9 @@ public class MainActivity extends AppCompatActivity {
             dark_mode();
     }
 
+    private void openloginpage() {
+        Intent backupandrestore = new Intent(this, backupandrestore.class);
+        startActivity(backupandrestore);
+        finish();
+    }
 }

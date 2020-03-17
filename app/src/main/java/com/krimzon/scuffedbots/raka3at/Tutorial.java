@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -24,15 +25,15 @@ public class Tutorial extends AppCompatActivity {
     private int totalpages = 4;
     private ImageView display1, display2, display3, display4;
     private LinearLayout explanation1holder, explanation2holder, explanation3holder, explanation4holder;
-    private FrameLayout secondpagebackground, firstpagebackground, thirdpagebackground, fourthpagebackground;
-    private TextView explanation1, explanation2, explanation3, explanation4;
+    private FrameLayout secondpagebackground;
+    private FrameLayout thirdpagebackground;
+    private FrameLayout fourthpagebackground;
     private TextView next, previous;
-    private ImageView arrowleft, arrowright;
     private String language;
 
-    private void sql(final String table) {
-        SQLSharing.TABLE_NAME_INPUTER = table;
-        switch (table) {
+    private void sql() {
+        SQLSharing.TABLE_NAME_INPUTER = "slat";
+        switch ("slat") {
             case "slat":
                 SQLSharing.mydbslat = new SQL(this);
                 SQLSharing.mycursorslat = SQLSharing.mydbslat.getAllDateslat();
@@ -80,15 +81,15 @@ public class Tutorial extends AppCompatActivity {
         next = findViewById(R.id.next);
         previous = findViewById(R.id.previous);
 
-        arrowleft = findViewById(R.id.arrowleft);
-        arrowright = findViewById(R.id.arrowright);
+        ImageView arrowleft = findViewById(R.id.arrowleft);
+        ImageView arrowright = findViewById(R.id.arrowright);
 
-        explanation1 = findViewById(R.id.explanation1);
-        explanation2 = findViewById(R.id.explanation2);
-        explanation3 = findViewById(R.id.explanation3);
-        explanation4 = findViewById(R.id.explanation4);
+        TextView explanation1 = findViewById(R.id.explanation1);
+        TextView explanation2 = findViewById(R.id.explanation2);
+        TextView explanation3 = findViewById(R.id.explanation3);
+        TextView explanation4 = findViewById(R.id.explanation4);
 
-        firstpagebackground = findViewById(R.id.firstpagebackground);
+        FrameLayout firstpagebackground = findViewById(R.id.firstpagebackground);
         secondpagebackground = findViewById(R.id.secondpagebackground);
         thirdpagebackground = findViewById(R.id.thirdpagebackground);
         fourthpagebackground = findViewById(R.id.fourthpagebackground);
@@ -111,7 +112,7 @@ public class Tutorial extends AppCompatActivity {
         next.setTypeface(arabic_typeface2);
         previous.setTypeface(arabic_typeface2);
 
-        sql("slat");
+        sql();
         SQLSharing.mycursorslat.moveToPosition(6);
         language = SQLSharing.mycursorslat.getString(1);
 
@@ -134,22 +135,26 @@ public class Tutorial extends AppCompatActivity {
         } catch (Exception ignored) {
             arrowleft.setImageDrawable(getResources().getDrawable(R.drawable.arrowleft)); }
 
+
         try {
             Glide.with(this).load(R.drawable.onef).into(display1);
         } catch (Exception ignored) {
             display1.setImageDrawable(getResources().getDrawable(R.drawable.onef)); }
-        try {
-            Glide.with(this).load(R.drawable.onec).into(display2);
-        } catch (Exception ignored) {
-            display2.setImageDrawable(getResources().getDrawable(R.drawable.onec)); }
-        try {
-            Glide.with(this).load(R.drawable.oneb).into(display3);
-        } catch (Exception ignored) {
-            display3.setImageDrawable(getResources().getDrawable(R.drawable.oneb)); }
-        try {
-            Glide.with(this).load(R.drawable.oned).into(display4);
-        } catch (Exception ignored) {
-            display4.setImageDrawable(getResources().getDrawable(R.drawable.oned)); }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            try {
+                Glide.with(this).load(R.drawable.onec).into(display2);
+            } catch (Exception ignored) {
+                display2.setImageDrawable(getResources().getDrawable(R.drawable.onec)); }
+            try {
+                Glide.with(this).load(R.drawable.oneb).into(display3);
+            } catch (Exception ignored) {
+                display3.setImageDrawable(getResources().getDrawable(R.drawable.oneb)); }
+            try {
+                Glide.with(this).load(R.drawable.oned).into(display4);
+            } catch (Exception ignored) {
+                display4.setImageDrawable(getResources().getDrawable(R.drawable.oned)); }
+        }
 
     }
 
@@ -159,6 +164,13 @@ public class Tutorial extends AppCompatActivity {
 
             switch (page) {
                 case 2:
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        try {
+                            Glide.with(this).load(R.drawable.onec).into(display2);
+                        } catch (Exception ignored) {
+                            display2.setImageDrawable(getResources().getDrawable(R.drawable.onec));
+                        }
+                    }
                     previous.setTextColor(Color.BLACK);
                     next.setTextColor(Color.BLACK);
                     clicked = true;
@@ -171,6 +183,13 @@ public class Tutorial extends AppCompatActivity {
                     slide_page_two_in_from_right();
                     break;
                 case 3:
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        try {
+                            Glide.with(this).load(R.drawable.oneb).into(display3);
+                        } catch (Exception ignored) {
+                            display3.setImageDrawable(getResources().getDrawable(R.drawable.oneb));
+                        }
+                    }
                     next.setTextColor(Color.WHITE);
                     previous.setTextColor(Color.WHITE);
                     clicked = true;
@@ -178,6 +197,14 @@ public class Tutorial extends AppCompatActivity {
                     slide_page_three_in_from_right();
                     break;
                 case 4:
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        try {
+                            Glide.with(this).load(R.drawable.oned).into(display4);
+                        } catch (Exception ignored) {
+                            display4.setImageDrawable(getResources().getDrawable(R.drawable.oned));
+                        }
+                    }
                     next.setTextColor(Color.BLACK);
                     previous.setTextColor(Color.BLACK);
                     if(language.equals("ar"))
@@ -190,7 +217,7 @@ public class Tutorial extends AppCompatActivity {
                     break;
             }
         } else if(page==totalpages){
-            sql("slat");
+            sql();
             SQLSharing.mycursorslat.moveToFirst();
             SQLSharing.mydbslat.updateData("1", SQLSharing.mycursorslat.getString(0));
 
@@ -216,8 +243,7 @@ public class Tutorial extends AppCompatActivity {
                 startActivity(slatter);
                 finish();
             }
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
             Intent MainActivityy = new Intent(this, MainActivity.class);
             startActivity(MainActivityy);
             finish();
@@ -243,6 +269,14 @@ public class Tutorial extends AppCompatActivity {
                     slide_page_one_in_from_left();
                     break;
                 case 2:
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        try {
+                            Glide.with(this).load(R.drawable.onec).into(display2);
+                        } catch (Exception ignored) {
+                            display2.setImageDrawable(getResources().getDrawable(R.drawable.onec));
+                        }
+                    }
                     next.setTextColor(Color.BLACK);
                     previous.setTextColor(Color.BLACK);
                     clicked = true;
@@ -250,6 +284,14 @@ public class Tutorial extends AppCompatActivity {
                     slide_page_two_in_from_left();
                     break;
                 case 3:
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        try {
+                            Glide.with(this).load(R.drawable.oneb).into(display3);
+                        } catch (Exception ignored) {
+                            display3.setImageDrawable(getResources().getDrawable(R.drawable.oneb));
+                        }
+                    }
                     previous.setTextColor(Color.WHITE);
                     next.setTextColor(Color.WHITE);
                     clicked = true;
@@ -275,8 +317,7 @@ public class Tutorial extends AppCompatActivity {
                     startActivity(slatter);
                     finish();
                 }
-            } catch(Exception e){
-                e.printStackTrace();
+            } catch(Exception ignored){
                 Intent MainActivityy = new Intent(this, MainActivity.class);
                 startActivity(MainActivityy);
                 finish();

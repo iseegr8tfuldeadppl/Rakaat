@@ -110,8 +110,7 @@ public class protected_apps_request extends Dialog {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(c.getResources().getString(R.string.huaweisource), c.getResources().getString(R.string.huaweiactivity)));
                 c.startActivity(intent);}
-                catch(Exception e){
-                    e.printStackTrace();
+                catch(Exception ignored){
                     sql("slat");
                     SQLSharing.mycursorslat.moveToPosition(9);
                     SQLSharing.mydbslat.updateData("no", SQLSharing.mycursorslat.getString(0));

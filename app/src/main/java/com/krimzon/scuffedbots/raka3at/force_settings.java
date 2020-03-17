@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -20,16 +19,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.background.ProcessMainClass;
@@ -47,8 +36,8 @@ public class force_settings extends AppCompatActivity {
     private String[] selections;
     private Resources resources;
     private TextView adantitle, selectiontitle;
-    private List<TextView> adans, titles, adansselection;
-    private List<ImageView> ringmodes, audioplayer;
+    private List<TextView> adans, titles;
+    private List<ImageView> ringmodes;
     private List<FrameLayout> ringmodesbackground;
     private int selectedadan = -1, currentlyplayingadan = 0;
 
@@ -77,19 +66,7 @@ public class force_settings extends AppCompatActivity {
 
 
         arrow.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            if(!mouadineselectionpageison){
                 dismiss();
-            } else {
-                mouadineselectionpageison = false;
-                adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectorresposive));
-                settingsmenu.setVisibility(View.VISIBLE);
-                selectionmenu.setVisibility(View.GONE);
-                apply_adanSelectionsshort();
-                if(language.equals("ar"))
-                    arrow.setText(resources.getString(R.string.save_arabe));
-                else if(language.equals("en"))
-                    arrow.setText(resources.getString(R.string.save));
-            }
         }});
     }
 
@@ -762,17 +739,6 @@ public class force_settings extends AppCompatActivity {
         dismiss();
     }
 
-    private void make_view_adaptively_longer(View viewer) {
-        try{
-            LinearLayout gestureLayout = viewer.findViewById(R.id.settings);
-            BottomSheetBehavior sheetBehavior = BottomSheetBehavior.from(viewer);
-            int height = gestureLayout.getMeasuredHeight();
-            sheetBehavior.setPeekHeight(height);
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
     private void apply_previous_settings() {
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             if (main_notification_sql.equals("yes")) {
@@ -795,11 +761,10 @@ public class force_settings extends AppCompatActivity {
         }
     }
 
-    private boolean mouadineselectionpageison = false;
     private void apply_selected_language() {
         if(language.equals("en")){
             fajrmutebeforeadantitle.setText(resources.getString(R.string.minutestomutebeforeadan));
-            fajrmutebeforeadantitle.setText(resources.getString(R.string.minutestomuteafteradan));
+            fajrmuteafteradantitle.setText(resources.getString(R.string.minutestomuteafteradan));
 
             dhuhrmutebeforeadantitle.setText(resources.getString(R.string.minutestomutebeforeadan));
             dhuhrafteradantitle.setText(resources.getString(R.string.minutestomuteafteradan));
@@ -905,8 +870,7 @@ public class force_settings extends AppCompatActivity {
                 request.show();
             }
         }
-        catch(Exception e){
-            e.printStackTrace();
+        catch(Exception ignored){
         }
     }
 
@@ -919,12 +883,7 @@ public class force_settings extends AppCompatActivity {
                     if (isChecked) {
                         update_switch_setting_in_sql("yes");
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                            RestartServiceBroadcastReceiver.scheduleJob(context);
-                        } else {
-                            ProcessMainClass bck = new ProcessMainClass();
-                            bck.launchService(context);
-                        }
+                        load_service();
 
                         protected_apps_request();
                     }else
@@ -1028,171 +987,41 @@ public class force_settings extends AppCompatActivity {
         });
     }
 
-    private void launch_selection(final int prayertobemodified) {
-        settingsmenu.setVisibility(View.GONE);
-        selectionmenu.setVisibility(View.VISIBLE);
-        mouadineselectionpageison = true;
-
-
-        if(language.equals("en")){
-            adansselection.get(0).setText(resources.getString(R.string.adan1));
-            adansselection.get(1).setText(resources.getString(R.string.adan2));
-            adansselection.get(2).setText(resources.getString(R.string.adan3));
-            adansselection.get(3).setText(resources.getString(R.string.adan4));
-            adansselection.get(4).setText(resources.getString(R.string.adan5));
-            adansselection.get(5).setText(resources.getString(R.string.adan6));
-            selectiontitle.setText(resources.getString(R.string.select_an_adan));
-        }
-
-        if(language.equals("ar"))
-            arrow.setText(resources.getString(R.string.back_arabe));
-        else if(language.equals("en"))
-            arrow.setText(resources.getString(R.string.back));
-
-        variables_of_selection();
-        apply_font_to_selection();
-        if(prayertobemodified>0)
-            apply_already_selected_mouadin(prayertobemodified+1);
-        else
-            apply_already_selected_mouadin(prayertobemodified);
-
-        adansselection.get(0).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { applyselectedadan(0, prayertobemodified); }});
-        adansselection.get(1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { applyselectedadan(1, prayertobemodified); }});
-        adansselection.get(2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { applyselectedadan(2, prayertobemodified); }});
-        adansselection.get(3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { applyselectedadan(3, prayertobemodified); }});
-        adansselection.get(4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { applyselectedadan(4, prayertobemodified); }});
-        adansselection.get(5).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { applyselectedadan(5, prayertobemodified); }});
-
-        audioplayer.get(0).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { playcorrespondingaudio(0);
-            }
-        });
-        audioplayer.get(1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { playcorrespondingaudio(1);
-            }
-        });
-        audioplayer.get(2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { playcorrespondingaudio(2);
-            }
-        });
-        audioplayer.get(3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { playcorrespondingaudio(3);
-            }
-        });
-        audioplayer.get(4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { playcorrespondingaudio(4);
-            }
-        });
-        audioplayer.get(5).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { playcorrespondingaudio(5);
-            }
-        });
-
-            apply_lightmode_if_found_to_play_buttons();
-    }
-
-    private void apply_lightmode_if_found_to_play_buttons() {
-        if(darkmode){
-            for (ImageView audioplayers : audioplayer) {
-                try {
-                    Glide.with(context).load(R.drawable.play).into(audioplayers);
-                } catch (Exception ignored) {
-                    audioplayers.setImageDrawable(resources.getDrawable(R.drawable.play));
+    private void load_service() {
+        // adan service
+        if (Build.VERSION.SDK_INT >= 28) {
+            try {
+                close_sql();
+                sql("force");
+                if (SQLSharing.mycursorforce.getCount() > 0) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                    } else {
+                        ProcessMainClass bck = new ProcessMainClass();
+                        bck.launchService(getApplicationContext());
+                    }
                 }
-            }
-        } else {
-            for (ImageView audioplayers : audioplayer) {
-                try {
-                    Glide.with(context).load(R.drawable.playlightmode).into(audioplayers);
-                } catch (Exception ignored) {
-                    audioplayers.setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
-                }
+                close_sql();
+            } catch (Exception ignored) {
             }
         }
     }
 
-    private void apply_already_selected_mouadin(int prayertobemodified) {
-        selectedadan = Integer.parseInt(selections[prayertobemodified].split(",")[0]) - 1;
-        adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
-    }
-
-    private void playcorrespondingaudio(int i){
-        if(!audioisplaying || currentlyplayingadan!=i){
-            audioisplaying = true;
-            if(darkmode) {
-                try {
-                    Glide.with(context).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
-                }
-                try {
-                    Glide.with(context).load(R.drawable.pause).into(audioplayer.get(i));
-                } catch (Exception ignored) {
-                    audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pause));
-                }
-            } else {
-                try {
-                    Glide.with(context).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
-                }
-                try {
-                    Glide.with(context).load(R.drawable.pauselightmode).into(audioplayer.get(i));
-                } catch (Exception ignored) {
-                    audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pauselightmode));
-                }
-            }
-            currentlyplayingadan = i;
-            playadan(currentlyplayingadan);
-        } else {
-            audioisplaying = false;
-            stopadan();
-            if(darkmode) {
-                try {
-                    Glide.with(context).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
-                }
-            } else {
-                try {
-                    Glide.with(context).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
-                }
-            }
-        }
+    private boolean opening_selection = false;
+    private void launch_selection(int prayertobemodified) {
+        opening_selection = true;
+        Intent openselectionforcurrentprayer = new Intent(context, force_settings_adan_selection.class);
+        openselectionforcurrentprayer.putExtra("prayertobemodified", String.valueOf(prayertobemodified));
+        startActivity(openselectionforcurrentprayer);
+        finish();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopadan();
         save_delays_of_changed();
 
-        if(SQLSharing.mydbforce!=null)
-            SQLSharing.mydbforce.close();
-        if(SQLSharing.mydbslat!=null)
-            SQLSharing.mydbslat.close();
-        if(SQLSharing.mydbforce3!=null)
-            SQLSharing.mydbforce3.close();
+        close_sql();
     }
 
 
@@ -1222,102 +1051,6 @@ public class force_settings extends AppCompatActivity {
         else
             five = "0";
         SQLSharing.mydbslat.updateData(fajrbeforecounter+","+fajraftercounter+","+one + " " + dhuhrbeforecounter+","+dhuhraftercounter+","+two + " " + asrbeforecounter+","+asraftercounter+","+three + " " + maghrebbeforecounter+","+maghrebaftercounter+","+four + " " + ishabeforecounter+","+ishaaftercounter+","+five ,ID);
-    }
-
-    private void stopadan(){
-        try{
-            simpleExoPlayer.stop();
-            simpleExoPlayer.release();
-        } catch(Exception ignored){}
-    }
-    private SimpleExoPlayer simpleExoPlayer;
-    private void playadan(int adantag) {
-        try{
-            simpleExoPlayer.stop();
-            simpleExoPlayer.release();
-        } catch(Exception ignored){}
-        String adan = "";
-        switch(adantag){
-            case 0:
-                adan = "amine.mp3";
-                break;
-            case 1:
-                adan = "altazi.mp3";
-                break;
-            case 2:
-                adan = "karim.mp3";
-                break;
-            case 3:
-                adan = "ismail.mp3";
-                break;
-            case 4:
-                adan = "afasi.mp3";
-                break;
-            case 5:
-                adan = "madani.mp3";
-        }
-        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
-                this,
-                null,
-                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
-        );
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
-                renderersFactory,
-                trackSelector
-        );
-        String userAgent = Util.getUserAgent(this, getResources().getString(R.string.adanner));
-        try {
-            ExtractorMediaSource mediaSource = new ExtractorMediaSource(
-                    Uri.parse(getResources().getString(R.string.idek) + adan), // file audio ada di folder assets
-                    new DefaultDataSourceFactory(this, userAgent),
-                    new DefaultExtractorsFactory(),
-                    null,
-                    null
-            );
-            simpleExoPlayer.prepare(mediaSource);
-            simpleExoPlayer.setPlayWhenReady(true);
-        } catch(Exception ignored){}
-    }
-
-    private void applyselectedadan(int i, int prayertobemodified) {
-        if(selectedadan!=i){
-            adansselection.get(i).setBackground(getResources().getDrawable(R.drawable.selectionreponsivereverse));
-            if(selectedadan!=-1)
-                adansselection.get(selectedadan).setBackground(getResources().getDrawable(R.drawable.selectorresposive));
-            selectedadan = i;
-            applyselectedadantoadanselections(prayertobemodified, selectedadan + 1);
-            update_sql();
-        }
-    }
-
-    private void apply_font_to_selection() {
-        try{
-            Typeface arabic_typeface = Typeface.createFromAsset(this.getAssets(), "Tajawal-Light.ttf");
-            selectiontitle.setTypeface(arabic_typeface);
-            for(int i=0; i<6; i++)
-                adansselection.get(i).setTypeface(arabic_typeface);
-        } catch(Exception ignored){ print("applying fonts failed"); }
-    }
-
-    private void variables_of_selection() {
-        adansselection = new ArrayList<>();
-        adansselection.add((TextView) findViewById(R.id.adan1));
-        adansselection.add((TextView) findViewById(R.id.adan2));
-        adansselection.add((TextView) findViewById(R.id.adan3));
-        adansselection.add((TextView) findViewById(R.id.adan4));
-        adansselection.add((TextView) findViewById(R.id.adan5));
-        adansselection.add((TextView) findViewById(R.id.adan6));
-
-        audioplayer = new ArrayList<>();
-        audioplayer.add((ImageView) findViewById(R.id.adan1audioplayer));
-        audioplayer.add((ImageView) findViewById(R.id.adan2audioplayer));
-        audioplayer.add((ImageView) findViewById(R.id.adan3audioplayer));
-        audioplayer.add((ImageView) findViewById(R.id.adan4audioplayer));
-        audioplayer.add((ImageView) findViewById(R.id.adan5audioplayer));
-        audioplayer.add((ImageView) findViewById(R.id.adan6audioplayer));
-
-        selectiontitle = findViewById(R.id.selectiontitle);
     }
 
     private void rotate_sound_flags(int i) {
@@ -1365,20 +1098,6 @@ public class force_settings extends AppCompatActivity {
 
         update_bitmap(i);
         update_sql();
-    }
-
-    private void applyselectedadantoadanselections(int prayedtobemodified, int selectedmouadin) {
-        String[] yes;
-        if(prayedtobemodified>0)
-            prayedtobemodified++;
-        yes = selections[prayedtobemodified].split(",");
-        selections[prayedtobemodified] = String.valueOf(selectedmouadin) + "," + yes[1];
-        StringBuilder temp = new StringBuilder();
-        for(int j=0; j<6; j++){
-            temp.append(selections[j]);
-            temp.append(" ");
-        }
-        adanSelections = temp.toString();
     }
 
     private void update_bitmap(int i) {
@@ -1563,16 +1282,21 @@ public class force_settings extends AppCompatActivity {
         main_notification_sql = SQLSharing.mycursorslat.getString(1);
 
         SQLSharing.mycursorslat.moveToNext();
-        request_protected_menu = SQLSharing.mycursorslat.getString(1).equals("yes");
+        boolean request_protected_menu = SQLSharing.mycursorslat.getString(1).equals("yes");
         SQLSharing.mycursorslat.moveToNext();
         delays = SQLSharing.mycursorslat.getString(1);
 
     }
 
     private void close_sql() {
+        if(SQLSharing.mydbforce!=null)
+            SQLSharing.mydbforce.close();
+        if(SQLSharing.mydbslat!=null)
+            SQLSharing.mydbslat.close();
+        if(SQLSharing.mydbforce3!=null)
+            SQLSharing.mydbforce3.close();
     }
 
-    private boolean request_protected_menu;
     private String main_notification_sql = "yes";
     private void update_sql() {
         sql("slat");
@@ -1584,7 +1308,6 @@ public class force_settings extends AppCompatActivity {
         SQLSharing.mydbslat.updateData(adanSelections, ID);
     }
 
-    private LinearLayout selectionmenu, settingsmenu;
     private Switch notiswitch;
     private TextView settingstitle, notitext, mutetitle;
     private Context context;
@@ -1632,8 +1355,6 @@ public class force_settings extends AppCompatActivity {
         ishaafteradantitle = findViewById(R.id.ishamuteafteradantitle);
 
         mutetitle = findViewById(R.id.mutetitle);
-        selectionmenu = findViewById(R.id.selectionmenu);
-        settingsmenu = findViewById(R.id.settingsmenu);
         arrow = findViewById(R.id.arrow);
         adantitle = findViewById(R.id.adantitle);
 
@@ -1687,22 +1408,17 @@ public class force_settings extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        stopadan();
         close_sql();
         save_delays_of_changed();
+
+        if(!opening_selection) {
+            if (language.equals("ar"))
+                Toast.makeText(this, getString(R.string.saved_arabe), Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
+        }
+
         close_sql();
-        if(language.equals("ar"))
-            Toast.makeText(this, getString(R.string.saved_arabe), Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
-
-
-        if(SQLSharing.mydbforce!=null)
-            SQLSharing.mydbforce.close();
-        if(SQLSharing.mydbslat!=null)
-            SQLSharing.mydbslat.close();
-        if(SQLSharing.mydbforce3!=null)
-            SQLSharing.mydbforce3.close();
     }
 
     private boolean fajrmuteenabled = true, dhuhrmuteenabled = true, asrmuteenabled = true, maghrebmuteenabled = true, ishamuteenabled = true;

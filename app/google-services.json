@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "482509557323",
+    "firebase_url": "https://rakaat-b9ef2.firebaseio.com",
+    "project_id": "rakaat-b9ef2",
+    "storage_bucket": "rakaat-b9ef2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482509557323:android:0df817d18818424ece47ce",
+        "android_client_info": {
+          "package_name": "com.krimzon.scuffedbots.raka3at"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482509557323-g386lj20vuantbf717465sonb7bg7762.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.krimzon.scuffedbots.raka3at",
+            "certificate_hash": "2da74d0d9ad4d41a5b8a3895574faf2efe785eec"
+          }
+        },
+        {
+          "client_id": "482509557323-sqqoab0fuqrrlvcmek9eaopljj49ashi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5GcLu8sNFtWF_rwALOYaxzWY2ZBRVx-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "482509557323-sqqoab0fuqrrlvcmek9eaopljj49ashi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/darksimpelbackground"
+    tools:context=".backupandrestore">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="2">
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/secureexplanation"
+                android:paddingStart="@dimen/sidesofsecureexplanation"
+                android:paddingEnd="@dimen/sidesofsecureexplanation"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/previousandnexttutorial2"
+                android:text="@string/secureexplanation_arabe"/>
+            <RelativeLayout
+                android:layout_width="100dp"
+                android:layout_centerInParent="true"
+                android:layout_height="100dp">
+                <ImageView
+                    android:id="@+id/displayer"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_width="match_parent"
+                    android:onClick="loginClicked"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/todo" />
+                <ProgressBar
+                    android:visibility="invisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progress"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="26dp"/>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loginbutton"
+                    android:background="@drawable/round_bg"
+                    android:layout_marginStart="26dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="26dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:textColor="#000"
+                    android:drawableEnd="@drawable/ic_google_logo"
+                    android:text="@string/login_with_google_arabe"
+                    android:drawableRight="@drawable/ic_google_logo"
+                    android:textSize="17sp"
+                    app:elevation="10dp"
+                    android:layout_marginLeft="26dp" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dontlogin"
+                    android:onClick="dontloginClicked"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:background="@drawable/round_bg"
+                    android:layout_marginStart="26dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="26dp"
+                    app:elevation="10dp"
+                    android:text="@string/dont_login_arabe"
+                    android:layout_marginLeft="26dp" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nevershowagain"
+                    android:background="@drawable/round_bg"
+                    android:layout_marginStart="26dp"
+                    android:onClick="nevershowagainClicked"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#000"
+                    app:elevation="10dp"
+                    android:layout_marginEnd="26dp"
+                    android:textSize="17sp"
+                    android:text="@string/noshow_arabe"
+                    android:layout_marginLeft="26dp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</FrameLayout>

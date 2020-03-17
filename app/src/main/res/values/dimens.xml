@@ -55,5 +55,10 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widgettitlesheight">93dp</dimen>
     <dimen name="widgetslidertextsize">13sp</dimen>
     <dimen name="widgettitlespaddingbottom">11dp</dimen>
+    <dimen name="loginbuttoncirclerotate">60dp</dimen>
+    <dimen name="sizeofloginbutton">60dp</dimen>
+    <dimen name="loginbuttonpaddingend">10dp</dimen>
+    <dimen name="previousandnexttutorial2">22sp</dimen>
+    <dimen name="sidesofsecureexplanation">35dp</dimen>
 
 </resources>

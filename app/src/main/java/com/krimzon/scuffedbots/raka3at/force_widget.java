@@ -673,51 +673,33 @@ public class force_widget extends AppWidgetProvider {
 
         praytimesregularform = new ArrayList<>();
 
-        if(fajr.split(" ")[1].equals("PM")) {
-            if(Integer.parseInt(fajr.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + fajr.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
+        if(fajr.split(" ")[1].equals("PM") && Integer.parseInt(fajr.split(" ")[0].split(":")[0])!=12) {
+            praytimesregularform.add(String.valueOf(Integer.parseInt(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(fajr.split(" ")[0]);
 
-        if(rise.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(rise.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + rise.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(rise.split(" ")[0].split(":")[0])+12) + ":" + rise.split(" ")[0].split(":")[1]);
+        if(rise.split(" ")[1].equals("PM") && Integer.parseInt(rise.split(" ")[0].split(":")[0])!=12) {
+            praytimesregularform.add(String.valueOf(Integer.parseInt(rise.split(" ")[0].split(":")[0]) + 12) + ":" + rise.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(rise.split(" ")[0]);
 
-        if(dhuhr.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + dhuhr.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
+        if(dhuhr.split(" ")[1].equals("PM") && Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(dhuhr.split(" ")[0]);
 
-        if(asr.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(asr.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
+        if(asr.split(" ")[1].equals("PM") && Integer.parseInt(asr.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(asr.split(" ")[0]);
 
-        if(maghrib.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + maghrib.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
+        if(maghrib.split(" ")[1].equals("PM") && Integer.parseInt(maghrib.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(maghrib.split(" ")[0]);
 
-        if(isha.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(isha.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + isha.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
+        if(isha.split(" ")[1].equals("PM") && Integer.parseInt(isha.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(isha.split(" ")[0]);
     }
@@ -751,6 +733,61 @@ public class force_widget extends AppWidgetProvider {
             }
             maghrib = fff + ":" + ff + " " + maghrib.split(" ")[1];
 
+
+            String[] temp = fajr.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                fajr = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        fajr.split(" ")[1];
+            }
+            temp = rise.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                rise = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        rise.split(" ")[1];
+            }
+            temp = dhuhr.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                dhuhr = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        dhuhr.split(" ")[1];
+            }
+            temp = asr.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                asr = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        asr.split(" ")[1];
+            }
+            temp = maghrib.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                maghrib = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        maghrib.split(" ")[1];
+            }
+            temp = isha.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                isha = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        isha.split(" ")[1];
+            }
         } catch(Exception ignored){}
 
     }
@@ -859,7 +896,7 @@ public class force_widget extends AppWidgetProvider {
             }
             end_of_day = false;
             if(i>=6){
-                i = 0;
+                i = 5;
                 end_of_day = true;
             } else
                 end_of_day = false;

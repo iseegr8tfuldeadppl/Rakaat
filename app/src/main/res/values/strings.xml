@@ -350,5 +350,27 @@
     <string name="prayallquestion_arabe">صليت هذا\nاليوم من قبل؟</string>
     <string name="wait">Wait..</string>
     <string name="wait_arabe">تحميل..</string>
+    <string name="enablelocation">Enable Location</string>
+    <string name="enablelocation_arabe">تشغيل خدمة المواقع</string>
+    <string name="locationisoff">Your Locations Settings is set to \'Off\'.\nPlease Enable Location to use this app.</string>
+    <string name="locationisoff_arabe">خدمة المواقع غير مشغلة، يرجى تشغيلها لإستعمال شرطي الصلاة.</string>
+    <string name="locationsettings">Location Settings</string>
+    <string name="locationsettings_arabe">تعديلات المواقع</string>
+    <string name="cancel">Cancel</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="login_with_google_arabe">تسجيل الدخول عبر غوغل</string>
+    <string name="dont_login">Don\'t login</string>
+    <string name="dont_login_arabe">لا تسجّل الدخول</string>
+    <string name="never_ask_again">Never ask me again</string>
+    <string name="permissiondenied_arabe">لا يمكن إتمام العملية بدون إذن</string>
+    <string name="permissiondenied">Permission denied</string>
+    <string name="secureexplanation">For us to save your prayers on the cloud all the time and automatically you need to login!</string>
+    <string name="secureexplanation_arabe">لحفظ صلواتك في سرفراتنا دومًا و تِلقائيّا ننصحك بتسجيل الدخول</string>
+    <string name="logoutsecurityalerttext">Logging out will cause your future prayers to not be saved</string>
+    <string name="logoutsecurityalerttext_arabe">تسجيل الخروج لن يمكننا من حِفظ صلواتك المُستقبليّة</string>
+    <string name="logoutsecurityalerttitle">Logout Confirmation</string>
+    <string name="allgood">It\'s fine</string>
+    <string name="allgood_arabe">سجّل الخروج</string>
+    <string name="logoutsecurityalerttitle_arabe">إنذار تسجيل الخروج</string>
 
 </resources>

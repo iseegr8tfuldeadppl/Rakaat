@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.RemoteViews;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -50,6 +51,7 @@ import java.util.TimerTask;
 import com.krimzon.scuffedbots.raka3at.R;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
+import com.krimzon.scuffedbots.raka3at.background.restarter.RestartServiceBroadcastReceiver;
 import com.krimzon.scuffedbots.raka3at.force;
 import com.krimzon.scuffedbots.raka3at.force_widget;
 
@@ -58,6 +60,7 @@ import static java.lang.Math.abs;
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
     protected static final int NOTIFICATION_ID2 = 1339;
+    protected static final int NOTIFICATION_ID3 = 1338;
     private static Service mCurrentService;
     private CalculationParameters params;
     private int i = 0;
@@ -151,8 +154,7 @@ public class Service extends android.app.Service {
                 try {
                     NotificationManager notificationManager3 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     notificationManager3.cancel(NOTIFICATION_ID2);
-                } catch(Exception e){
-                    e.printStackTrace();
+                } catch(Exception ignored){
                 }
                 check_unprayed_prayer_for_today();
                 Intent openforce = new Intent(c, force.class);
@@ -163,8 +165,7 @@ public class Service extends android.app.Service {
                     try {
                         NotificationManager notificationManager3 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         notificationManager3.cancel(NOTIFICATION_ID2);
-                    } catch(Exception e){
-                        e.printStackTrace();
+                    } catch(Exception ignored){
                     }
                     StringBuilder strinkbilder = new StringBuilder(prayed);
                     if(most_recent_unprayed>1)
@@ -251,17 +252,7 @@ public class Service extends android.app.Service {
         main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
 
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                restartForeground();
-            } else {
-                ProcessMainClass bck = new ProcessMainClass();
-                bck.launchService(getApplicationContext());
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-
+        load_service();
 
         close_sql();
         sql("force");
@@ -271,6 +262,24 @@ public class Service extends android.app.Service {
 
         // return start sticky so if it is killed by android, it will be restarted with Intent null
         return START_STICKY;
+    }
+
+    private void load_service() {
+        // adan service
+        try {
+            close_sql();
+            sql("force");
+            if(SQLSharing.mycursorforce.getCount()>0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                } else {
+                    ProcessMainClass bck = new ProcessMainClass();
+                    bck.launchService(getApplicationContext());
+                }
+            }
+            close_sql();
+        }
+        catch(Exception ignored){}
     }
 
     private void close_sql() {
@@ -290,8 +299,15 @@ public class Service extends android.app.Service {
     }
 
     public void restartForeground() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                display_notification(true);
+        if (Build.VERSION.SDK_INT >= 26){
+            //RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+            /*Notification.Builder mBuilder = new Notification.Builder(this, "0");
+            startForeground(NOTIFICATION_ID3,mBuilder
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Rakaat")
+                    .setContentText("Service activated").build());*/
+        }
+
     }
 
     @Override
@@ -372,7 +388,7 @@ public class Service extends android.app.Service {
 
                                     // set i to the next adan
                                     i++;
-                                    if (i >= 6) i = 0;
+                                    if (i >= 6) i = 5;
                                 }
                             } else {
                                 if (!recent_adan) {
@@ -395,7 +411,9 @@ public class Service extends android.app.Service {
                         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             if (once)
                                 display_notification(true);
-                            startForeground(NOTIFICATION_ID, notification);
+                            //
+                            notificationManager.notify(NOTIFICATION_ID, notification); // make sure notification is still displayed
+                            restartForeground();
                         } else
                             notificationManager.cancel(NOTIFICATION_ID);
                     } else {  // if adan is playing then make sure the adan notification is displayed
@@ -408,7 +426,7 @@ public class Service extends android.app.Service {
                             notificationManager.cancel(NOTIFICATION_ID);
                     }
 
-                } catch(Exception e){ e.printStackTrace(); }
+                } catch(Exception ignored){ }
             }
         };
     }
@@ -457,8 +475,7 @@ public class Service extends android.app.Service {
         try{
             AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
             am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
             already_muted = false;
             mute = false;
         }
@@ -493,19 +510,19 @@ public class Service extends android.app.Service {
             if (once && !playing)
                 update_notification_ui();
 
-            if(playing)// TODO add a button that appears in force and all activiteis that says adan is playing and a button to stop it
+            if (playing)// TODO add a button that appears in force and all activiteis that says adan is playing and a button to stop it
                 update_notification_ui_for_adan();
             else
                 slight_update_notification();
 
             notification = builder.build();
-            if(is_it_over_android_O)
-                startForeground(NOTIFICATION_ID, notification);
-            else
+            if (is_it_over_android_O) {
+                //restartForeground();
                 notificationManager.notify(NOTIFICATION_ID, notification);
+        } else
+            notificationManager.notify(NOTIFICATION_ID, notification);
 
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
         }
     }
 
@@ -518,8 +535,7 @@ public class Service extends android.app.Service {
             intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             sendBroadcast(intent);
 
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
         }
     }
 
@@ -767,8 +783,7 @@ public class Service extends android.app.Service {
 
                 try {
                     notificationManager2.notify(NOTIFICATION_ID2, builder2.build());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ignored) {
                 }
 
 
@@ -1011,51 +1026,33 @@ public class Service extends android.app.Service {
 
         praytimesregularform = new ArrayList<>();
 
-        if(fajr.split(" ")[1].equals("PM")) {
-            if(Integer.parseInt(fajr.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + fajr.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
+        if(fajr.split(" ")[1].equals("PM") && Integer.parseInt(fajr.split(" ")[0].split(":")[0])!=12) {
+            praytimesregularform.add(String.valueOf(Integer.parseInt(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(fajr.split(" ")[0]);
 
-        if(rise.split(" ")[1].equals("PM")) {
-            if(Integer.parseInt(rise.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + rise.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(rise.split(" ")[0].split(":")[0]) + 12) + ":" + rise.split(" ")[0].split(":")[1]);
+        if(rise.split(" ")[1].equals("PM") && Integer.parseInt(rise.split(" ")[0].split(":")[0])!=12) {
+            praytimesregularform.add(String.valueOf(Integer.parseInt(rise.split(" ")[0].split(":")[0]) + 12) + ":" + rise.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(rise.split(" ")[0]);
 
-        if(dhuhr.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + dhuhr.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
+        if(dhuhr.split(" ")[1].equals("PM") && Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(dhuhr.split(" ")[0]);
 
-        if(asr.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(asr.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + asr.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
+        if(asr.split(" ")[1].equals("PM") && Integer.parseInt(asr.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(asr.split(" ")[0]);
 
-        if(maghrib.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + maghrib.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
+        if(maghrib.split(" ")[1].equals("PM") && Integer.parseInt(maghrib.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(maghrib.split(" ")[0]);
 
-        if(isha.split(" ")[1].equals("PM")){
-            if(Integer.parseInt(isha.split(" ")[0].split(":")[0])==12)
-                praytimesregularform.add("00" + ":" + isha.split(" ")[0].split(":")[1]);
-            else
-                praytimesregularform.add(String.valueOf(Integer.parseInt(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
+        if(isha.split(" ")[1].equals("PM") && Integer.parseInt(isha.split(" ")[0].split(":")[0])!=12){
+            praytimesregularform.add(String.valueOf(Integer.parseInt(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
         } else
             praytimesregularform.add(isha.split(" ")[0]);
     }
@@ -1089,6 +1086,61 @@ public class Service extends android.app.Service {
             }
             maghrib = fff + ":" + ff + " " + maghrib.split(" ")[1];
 
+
+            String[] temp = fajr.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                fajr = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        fajr.split(" ")[1];
+            }
+            temp = rise.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                rise = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        rise.split(" ")[1];
+            }
+            temp = dhuhr.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                dhuhr = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        dhuhr.split(" ")[1];
+            }
+            temp = asr.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                asr = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        asr.split(" ")[1];
+            }
+            temp = maghrib.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                maghrib = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        maghrib.split(" ")[1];
+            }
+            temp = isha.split(" ")[0].split(":");
+            if(temp[1].length()==1){
+                isha = temp[0] +
+                        ":" +
+                        "0" +
+                        temp[1] +
+                        " " +
+                        isha.split(" ")[1];
+            }
         } catch(Exception ignored){}
 
     }
