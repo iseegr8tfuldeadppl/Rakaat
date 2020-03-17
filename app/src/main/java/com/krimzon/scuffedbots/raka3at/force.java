@@ -141,11 +141,12 @@ public class force extends AppCompatActivity  {
     private Handler displaycity = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
+            sql("slat");
+            SQLSharing.mycursorslat.moveToPosition(14);
             if(city!=null){
-                sql("slat");
                 SQLSharing.mydbslat.updateData(city, SQLSharing.mycursorslat.getString(0));
                 citydisplay.setText(city);
-            } else {
+            } else if(SQLSharing.mycursorslat.getString(1)!=null){
                 citydisplay.setText(SQLSharing.mycursorslat.getString(1));
             }
             return true;}});
