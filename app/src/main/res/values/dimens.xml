@@ -60,5 +60,9 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="loginbuttonpaddingend">10dp</dimen>
     <dimen name="previousandnexttutorial2">22sp</dimen>
     <dimen name="sidesofsecureexplanation">35dp</dimen>
+    <dimen name="forcetitletextsize">35sp</dimen>
+    <dimen name="clocktextsize">28sp</dimen>
+    <dimen name="clocksidepaddings">30dp</dimen>
+    <dimen name="clocktoppadding">17dp</dimen>
 
 </resources>

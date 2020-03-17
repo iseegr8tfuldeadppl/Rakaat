@@ -68,6 +68,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+
+import static android.graphics.Color.WHITE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -189,6 +191,14 @@ public class force extends AppCompatActivity  {
         @Override
         public boolean handleMessage(@NonNull Message msg) { color_pray_buttons(); return true; }});
 
+    private Handler updateclock = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+                clocktime = new Date();
+                clock.setText(clocktime.toString().split(" ")[3]);
+            return true; }});
+
+    private Date clocktime;
     private Handler checkonfajr = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) { if(positifise < SQLSharing.minute_limit_to_display_positifise){
@@ -501,6 +511,7 @@ public class force extends AppCompatActivity  {
             while(running) {
 
                 wait_1_second();
+                updateclock.sendEmptyMessage(0);
                 if (it_is_today) {
 
                     calculate_rightnowcomparable();
@@ -676,10 +687,11 @@ public class force extends AppCompatActivity  {
         }
     }
 
-    private TextView prayedthisdaybefore;
+    private TextView prayedthisdaybefore, clock;
     private void variables_setup() {
 
         prayedthisdaybefore = findViewById(R.id.prayedthisdaybefore);
+        clock = findViewById(R.id.clock);
         ImageView arrowback = findViewById(R.id.arrowback);
         ImageView statslogo = findViewById(R.id.statslogo);
         ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
@@ -894,6 +906,7 @@ public class force extends AppCompatActivity  {
         Typeface arabic_typeface2 = Typeface.createFromAsset(getAssets(), "Tajawal-Regular.ttf");
 
         title.setTypeface(arabic_typeface);
+        clock.setTypeface(arabic_typeface);
         daterr.setTypeface(arabic_typeface);
         prayedthisdaybefore.setTypeface(arabic_typeface);
 
@@ -2199,10 +2212,10 @@ public class force extends AppCompatActivity  {
                     praybuttonsdone = true;
                     for (int i = 0; i < 5; i++) {
                         if (String.valueOf(prayed.charAt(i)).equals("0")) {
-                            praybuttons.get(i).setTextColor(Color.WHITE);
+                            praybuttons.get(i).setTextColor(WHITE);
                             praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
                         } else {
-                            praybuttons.get(i).setTextColor(Color.WHITE);
+                            praybuttons.get(i).setTextColor(WHITE);
                             praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
                             praybuttons.get(i).setTextColor(Color.BLACK);
                         }
@@ -2222,10 +2235,10 @@ public class force extends AppCompatActivity  {
                         praybuttonsdone = true;
                         for (int i = 0; i < 5; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
-                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setTextColor(WHITE);
                                 praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
                             } else {
-                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setTextColor(WHITE);
                                 praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
                             }
@@ -2249,10 +2262,10 @@ public class force extends AppCompatActivity  {
                         praybuttonsdone = true;
                         for (int i = 0; i < next_adan; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
-                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setTextColor(WHITE);
                                 praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
                             } else {
-                                praybuttons.get(i).setTextColor(Color.WHITE);
+                                praybuttons.get(i).setTextColor(WHITE);
                                 praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
                             }
@@ -2627,26 +2640,27 @@ public class force extends AppCompatActivity  {
 
         for(TextView praybutton:praybuttons){
             praybutton.setBackground(resources.getDrawable(R.drawable.forcebuttons));
-            praybutton.setTextColor(Color.WHITE);
+            praybutton.setTextColor(WHITE);
         }
 
         full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
         doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.lightbacktotoday));
-        title.setTextColor(Color.WHITE);
+        title.setTextColor(WHITE);
+        clock.setTextColor(resources.getColor(R.color.lightelement));
         title.setBackgroundColor(resources.getColor(R.color.transparentblacker));
 
 
         if (fajrtitle.getCurrentTextColor() != Color.GREEN)
-            fajrtitle.setTextColor(Color.WHITE);
-        risetitle.setTextColor(Color.WHITE);
+            fajrtitle.setTextColor(WHITE);
+        risetitle.setTextColor(WHITE);
         if (dohrtitle.getCurrentTextColor() != Color.GREEN)
-            dohrtitle.setTextColor(Color.WHITE);
+            dohrtitle.setTextColor(WHITE);
         if (asrtitle.getCurrentTextColor() != Color.GREEN)
-            asrtitle.setTextColor(Color.WHITE);
+            asrtitle.setTextColor(WHITE);
         if (maghrebtitle.getCurrentTextColor() != Color.GREEN)
-            maghrebtitle.setTextColor(Color.WHITE);
+            maghrebtitle.setTextColor(WHITE);
         if (ishatitle.getCurrentTextColor() != Color.GREEN)
-            ishatitle.setTextColor(Color.WHITE);
+            ishatitle.setTextColor(WHITE);
 
         daterr.setBackground(resources.getDrawable(R.drawable.lightdate));
         fajrbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
@@ -2703,9 +2717,10 @@ public class force extends AppCompatActivity  {
             praybutton.setTextColor(resources.getColor(R.color.grayerthanwhite));
         }
 
+        clock.setTextColor(WHITE);
         full.setBackground(resources.getDrawable(R.drawable.forcefull));
         doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.backtotoday));
-        title.setTextColor(Color.WHITE);
+        title.setTextColor(WHITE);
         title.setBackground(null);
 
 
