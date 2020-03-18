@@ -704,11 +704,13 @@ public class Service extends android.app.Service {
         if(!found){
             SQLSharing.servicemydbforce3.insertPrayed(todaycomparable, "00000", "00000", "11111");
         } else {
-            boolean unprayed = false;
+            unprayed = false;
             for(int g=0; g<5; g++){
                 if(String.valueOf(prayed.charAt(g)).equals("0")){
                     if(g==0){
                         most_recent_unprayed = 0;
+                        unprayed = true;
+                        break;
                     }else {
                         most_recent_unprayed = g+1;
                         unprayed = true;
@@ -722,8 +724,9 @@ public class Service extends android.app.Service {
         close_sql();
     }
 
+    private boolean unprayed = false;
     private void prepare_a_custom_reminder_notification_and_send_it() {
-        if(((positifise>=15 && positifise <=25 && most_recent_unprayed<i) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1) {
+        if(((positifise>=15 && positifise <=25 && most_recent_unprayed<i) || (end_of_day && negatifise<=70 && negatifise>=45)) && most_recent_unprayed!=-1 && unprayed) {
             if(!already_notified_recent_adan) {
                 already_notified_recent_adan = true;
                 NotificationManager notificationManager2 = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

@@ -531,18 +531,11 @@ public class force extends AppCompatActivity  {
         }
     }
 
-    private int delay = 0;
     private void live_updates() {
         Runnable r=new Runnable() {@Override public void run() { try {
             while(running) {
 
                 wait_1_second();
-                if(delay<3){
-                    delay+=1;
-                } else if(delay==3){
-                    delay+=1;
-                    locationshett.sendEmptyMessage(0);
-                }
 
                 if (it_is_today) {
 
@@ -591,6 +584,7 @@ public class force extends AppCompatActivity  {
                             }
                         }
                     }
+
 
                 }
             }
@@ -650,15 +644,15 @@ public class force extends AppCompatActivity  {
                 temp_next_adan = 0;
                 break;
             }
-            if(rightnowcomparable>prayers.get(i)) {
-                temp_next_adan = i + 1;
+            if(rightnowcomparable<prayers.get(i)) {
+                temp_next_adan = i;
             }
         }
 
 
-        if(temp_next_adan>=5) {
+        if(temp_next_adan>4) {
             end_ofD = true;
-            temp_next_adan = 0;
+            temp_next_adan = 4;
         } else
             end_ofD = false;
 
@@ -1011,7 +1005,7 @@ public class force extends AppCompatActivity  {
 
     private void location_shit(final Date date) {
         sql(resources.getString(R.string.justforce));
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(force.this);
         if (SQLSharing.mycursorforce.getCount() > 0)
             if_theres_previous_info_load_it_n_display(date);
         else
@@ -2357,19 +2351,16 @@ public class force extends AppCompatActivity  {
         }
 
         /*int previous_adan = 0;*/
-        if(temp_next_adan==5) {
+        if(temp_next_adan>4) {
             end_ofD = true;
             temp_next_adan = 4;
             /*previous_adan = 0;*/
         } else
             end_ofD = false;
 
-        if(temp_next_adan<0) temp_next_adan = 0;
         if(temp_next_adan!=next_adan) {
             new_adan = true;
             next_adan = temp_next_adan;
-            if(next_adan>4)
-                next_adan = 0;
             //next_adan = 0;
             /*if (next_adan != 0) // so we don't assign -1 to previous_adan
                 previous_adan = next_adan - 1;*/
