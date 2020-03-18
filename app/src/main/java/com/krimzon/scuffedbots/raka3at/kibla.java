@@ -53,7 +53,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
     private boolean mLastAccelerometerSet = false;
     private boolean mLastMagnetometerSet = false;
     private TextView kiblatitle;
-    private String kibla, kiblatitleh, betterquality, backh;
+    private String kibla, kiblatitleh, betterquality;
     private TextView maintitle;
     private FrameLayout full;
     private RelativeLayout backarrowbackground;

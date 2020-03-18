@@ -310,10 +310,8 @@ public class force extends AppCompatActivity  {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             FirebaseUser user = mAuth.getCurrentUser();
-            String refinedemail = getUserEmail(user);
             String uid = user.getUid();
-            if(refinedemail!=null)
-                sync_SQL_and_Firebase(refinedemail, uid);
+            sync_SQL_and_Firebase(uid);
         }
     }
 
@@ -327,14 +325,14 @@ public class force extends AppCompatActivity  {
         return null;
     }
 
-    private void sync_SQL_and_Firebase(final String email, final String uid) {
+    private void sync_SQL_and_Firebase(final String uid) {
         Runnable r=new Runnable() {
             @Override
             public void run() {
                 synchronized (this) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    userRef = database.getReference("users").child(uid).child(email).child("p");
-                    /*lastupdatedRef = database.getReference("users").child(email).child("lastupdated");*/
+                    userRef = database.getReference("users").child(uid).child("p");
+                    /*lastupdatedRef = database.getReference("users").child(uid).child("lastupdated");*/
                     userRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
