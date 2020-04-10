@@ -250,11 +250,9 @@ public class force extends AppCompatActivity  {
         Configuration cfg = new Configuration();
         cfg.locale = new Locale(getResources().getString(R.string.en));
         this.getResources().updateConfiguration(cfg, null);
-
-        params = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
         params = CalculationMethod.EGYPTIAN.getParameters();
         params.madhab = Madhab.SHAFI; // SHAFI made 95% accuracy, HANAFI had 1hour different for l'3asr
-        params.adjustments.fajr = SQLSharing.params_adjustments_fajr; //2
+        //params.adjustments.fajr = SQLSharing.params_adjustments_fajr; //2
         params.fajrAngle = SQLSharing.fajrangle;
         params.ishaAngle = SQLSharing.ishaangle;
         //params.adjustments.isha = SQLSharing.params_adjustments_isha; //2
@@ -1673,25 +1671,6 @@ public class force extends AppCompatActivity  {
             asr = DateFormat.format(timeshape, new Date(prayerTimes.asr.getTime())).toString();
             maghrib = DateFormat.format(timeshape, new Date(prayerTimes.maghrib.getTime())).toString();
             isha = DateFormat.format(timeshape, new Date(prayerTimes.isha.getTime())).toString();
-            int gg = Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
-            int ggg =  Integer.parseInt(fajr.split(" ")[0].split(":")[0]);
-            gg -= 2;
-            if(gg<0) {
-                ggg -= 1;
-                gg = 60 + gg;
-            }
-            fajr = ggg + ":" + gg + " " + fajr.split(" ")[1];
-
-
-            int ff = Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
-            int fff =  Integer.parseInt(maghrib.split(" ")[0].split(":")[0]);
-            ff += 5;
-            if(ff>59) {
-                fff += 1;
-                ff = ff - 60;
-            }
-            maghrib = fff + ":" + ff + " " + maghrib.split(" ")[1];
-
 
             String[] temp = fajr.split(" ")[0].split(":");
             if(temp[1].length()==1){
