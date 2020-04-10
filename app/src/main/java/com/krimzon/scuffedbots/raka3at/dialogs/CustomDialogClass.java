@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.krimzon.scuffedbots.raka3at.R;
 
 public class CustomDialogClass extends Dialog implements
@@ -18,6 +21,7 @@ public class CustomDialogClass extends Dialog implements
     private Button yes;
     private TextView fixbig, fixsmall1, fixsmall2, fixsmall3;
     private String language;
+    private ImageView imageView;
 
     public CustomDialogClass(Activity a, String language) {
         super(a);
@@ -35,6 +39,7 @@ public class CustomDialogClass extends Dialog implements
         fixsmall1 = findViewById(R.id.fixsmall1);
         fixsmall2 = findViewById(R.id.fixsmall2);
         fixsmall3 = findViewById(R.id.fixsmall3);
+        imageView = findViewById(R.id.imageView);
 
         Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),  "Tajawal-Medium.ttf");
         yes.setTypeface(custom_font);
@@ -42,6 +47,13 @@ public class CustomDialogClass extends Dialog implements
         fixsmall1.setTypeface(custom_font);
         fixsmall2.setTypeface(custom_font);
         fixsmall3.setTypeface(custom_font);
+
+
+        try {
+            Glide.with(c.getApplicationContext()).load(R.drawable.orientation).into(imageView);
+        } catch (Exception ignored) {
+            imageView.setImageDrawable(c.getApplicationContext().getResources().getDrawable(R.drawable.orientation));
+        }
 
         yes.setOnClickListener(this);
 

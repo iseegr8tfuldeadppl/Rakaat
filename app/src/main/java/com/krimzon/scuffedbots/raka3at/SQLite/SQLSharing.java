@@ -30,6 +30,7 @@ public class SQLSharing {
     public static int params_adjustments_fajr = 0;
     public static double fajrangle = 18.1; // correct calculation for algeria
     public static double ishaangle = 17.1; // 17.2 for dar el beida
+    // https://www.islamicfinder.org/world/algeria/2507480/algiers-wilaya-d-alger-dz-prayer-times/?language=ar
 
     public static int minute_limit_to_display_positifise = 100;
     public static int minute_limit_to_display_negatifise = 30;

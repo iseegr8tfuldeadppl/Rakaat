@@ -61,8 +61,7 @@
             android:id="@+id/imageView"
             android:layout_width="304dp"
             android:layout_height="138dp"
-            android:layout_gravity="center"
-            app:srcCompat="@drawable/orientation" />
+            android:layout_gravity="center"/>
 
         <Button
             android:id="@+id/btn_yes"
