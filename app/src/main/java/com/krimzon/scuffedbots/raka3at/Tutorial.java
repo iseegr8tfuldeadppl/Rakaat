@@ -115,14 +115,8 @@ public class Tutorial extends AppCompatActivity {
             next.setText(getResources().getString(R.string.next_arabe));
         }
 
-        try {
-            Glide.with(this).load(R.drawable.arrowright).into(arrowright);
-        } catch (Exception ignored) {
-            arrowright.setImageDrawable(getResources().getDrawable(R.drawable.arrowright)); }
-        try {
-            Glide.with(this).load(R.drawable.arrowleft).into(arrowleft);
-        } catch (Exception ignored) {
-            arrowleft.setImageDrawable(getResources().getDrawable(R.drawable.arrowleft)); }
+            arrowright.setImageDrawable(getResources().getDrawable(R.drawable.arrowright));
+            arrowleft.setImageDrawable(getResources().getDrawable(R.drawable.arrowleft));
 
 
         try {

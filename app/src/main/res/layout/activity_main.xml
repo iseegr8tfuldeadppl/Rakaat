@@ -116,7 +116,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_gravity="center"
-                android:background="@drawable/yellaw">
+                android:background="@drawable/whitaw">
 
                 <RelativeLayout
                     android:onClick="loginClicked"
@@ -125,10 +125,13 @@
                     android:clickable="true"
                     android:focusable="true">
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:paddingEnd="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="2dp"
                         android:id="@+id/loginbutton"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:onClick="loginClicked"/>
+                        android:onClick="loginClicked" />
                 </RelativeLayout>
                 <ProgressBar
                     android:visibility="invisible"

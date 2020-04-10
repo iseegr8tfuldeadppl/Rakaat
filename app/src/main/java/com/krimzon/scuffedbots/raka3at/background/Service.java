@@ -60,7 +60,6 @@ import static java.lang.Math.abs;
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
     protected static final int NOTIFICATION_ID2 = 1339;
-    protected static final int NOTIFICATION_ID3 = 1338;
     private static Service mCurrentService;
     private CalculationParameters params;
     private int i = 0;
@@ -102,6 +101,7 @@ public class Service extends android.app.Service {
     private int most_recent_unprayed = -1;
     private boolean already_notified_recent_adan = false;
     //private boolean still_scoping_on_previous_adan = false;
+    private boolean started = false;
 
     public Service() {
         super();
@@ -112,29 +112,41 @@ public class Service extends android.app.Service {
         super.onCreate();
         mCurrentService = this;
 
-        c = getApplicationContext();
-        // check if switch for main notification is on
-        sql("slat");
-        SQLSharing.servicemycursorslat.moveToPosition(1);
-        darkmode = SQLSharing.servicemycursorslat.getString(1).equals("yes");
-        SQLSharing.servicemycursorslat.moveToPosition(6);
-        language = SQLSharing.servicemycursorslat.getString(1);
-        SQLSharing.servicemycursorslat.moveToPosition(8);
-        main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
-        SQLSharing.servicemycursorslat.moveToPosition(10);
-        String delays = SQLSharing.servicemycursorslat.getString(1);
-        delayssplit = delays.split(" ");
-        close_sql();
+        try{
+            if(!started){
+                started = true;
 
-        sql("force");
-        if(SQLSharing.servicemycursorforce.getCount()>0){
-            close_sql();
-            startTimer();
-        } else {
-            close_sql();
+                c = getApplicationContext();
+                // check if switch for main notification is on
+                sql("slat");
+                SQLSharing.servicemycursorslat.moveToPosition(1);
+                darkmode = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+                SQLSharing.servicemycursorslat.moveToPosition(6);
+                language = SQLSharing.servicemycursorslat.getString(1);
+                SQLSharing.servicemycursorslat.moveToPosition(8);
+                main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+                SQLSharing.servicemycursorslat.moveToPosition(10);
+                String delays = SQLSharing.servicemycursorslat.getString(1);
+                delayssplit = delays.split(" ");
+                close_sql();
+
+                // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
+                load_service();
+
+                sql("force");
+                if(SQLSharing.servicemycursorforce.getCount()>0){
+                    close_sql();
+                    startTimer();
+                } else {
+                    close_sql();
+                }
+
+                launch_stop_adan_button_listener();
+            }
+
+        } catch(Exception ignored){
+
         }
-
-        launch_stop_adan_button_listener();
     }
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -239,7 +251,7 @@ public class Service extends android.app.Service {
                 }
             }
             if(i>=6){
-                i = 0;
+                i = 5;
                 end_of_day = true;
             } else
                 end_of_day = false;
@@ -251,22 +263,36 @@ public class Service extends android.app.Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-        sql("slat");
-        SQLSharing.servicemycursorslat.moveToPosition(8);
-        main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
-        close_sql();
+        if(!started){
+            started = true;
 
-        // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
-        load_service();
+            c = getApplicationContext();
+            // check if switch for main notification is on
+            sql("slat");
+            SQLSharing.servicemycursorslat.moveToPosition(1);
+            darkmode = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+            SQLSharing.servicemycursorslat.moveToPosition(6);
+            language = SQLSharing.servicemycursorslat.getString(1);
+            SQLSharing.servicemycursorslat.moveToPosition(8);
+            main_notification_switch = SQLSharing.servicemycursorslat.getString(1).equals("yes");
+            SQLSharing.servicemycursorslat.moveToPosition(10);
+            String delays = SQLSharing.servicemycursorslat.getString(1);
+            delayssplit = delays.split(" ");
+            close_sql();
 
-        sql("force");
-        if(SQLSharing.servicemycursorforce.getCount()>0){
-            close_sql();
-            startTimer();
-        } else {
-            close_sql();
+            // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
+            load_service();
+
+            sql("force");
+            if(SQLSharing.servicemycursorforce.getCount()>0){
+                close_sql();
+                startTimer();
+            } else {
+                close_sql();
+            }
+
+            launch_stop_adan_button_listener();
         }
-
         // return start sticky so if it is killed by android, it will be restarted with Intent null
         return START_STICKY;
     }
@@ -320,17 +346,28 @@ public class Service extends android.app.Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
-        sendBroadcast(broadcastIntent);
-        stoptimertask();
-        unregisterReceiver(receiver);
+        closing_procedure_and_restart_request();
+    }
+
+    private void closing_procedure_and_restart_request() {
+        try{
+            unregisterReceiver(receiver);
+            stoptimertask();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        try{
+            Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
+            sendBroadcast(broadcastIntent);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
-        sendBroadcast(broadcastIntent);
+        closing_procedure_and_restart_request();
     }
 
     public void startTimer() {
@@ -370,7 +407,6 @@ public class Service extends android.app.Service {
                         apply_widget_update();
                     }
 
-
                     if(!end_of_day) {
                         // Check if we reached the adan, if so, then switch i to the next adan
                         if (prayers.get(i) == rightnowcomparable) {
@@ -385,34 +421,27 @@ public class Service extends android.app.Service {
                                     else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                                         display_notification(true);
 
-                                    // set i to the next adan
-                                    i++;
-                                    if (i >= 6) i = 5;
 
                                     sql("slat");
                                     SQLSharing.mycursorslat.moveToPosition(7);
-                                    String selections = SQLSharing.mycursorslat.getString(1).split(" ")[i].split(",")[1];
+                                    String[] selections = SQLSharing.mycursorslat.getString(1).split(" ")[i].split(",");
 
-
-                                    if(selections.equals("2")){
+                                    if(selections[1].equals("2")){
                                         adan_exception = true;
                                         already_unmuted = true;
                                         unmuter();
                                         vibrate();
-                                        playadan(pullselectedadanforthisprayerfromSQL(i));
-                                    } else if(selections.equals("1")){
+                                        playadan(Integer.parseInt(selections[0]));
+                                    } else if(selections[1].equals("1")){
                                         vibrate();
                                     }
+                                    find_next_adan();
 
                                 }
                             } else {
                                 if (!recent_adan) {
-                                    recent_adan = true;
-                                    current_adding_playing = i;
-
-                                    adan_exception = true;
                                     // set i to the next adan
-                                    i = 2;
+                                    find_next_adan();
                                 }
                             }
                         } else if(prayers.get(i) != rightnowcomparable) recent_adan = false;
@@ -480,8 +509,7 @@ public class Service extends android.app.Service {
         try{
             AudioManager am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
             am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch(Exception ignored){
             already_unmuted = false;
         }
     }

@@ -25,7 +25,6 @@
             android:text="@string/fajrtitle_arabe"/>
 
         <ImageView
-            android:padding="@dimen/arrowdownpadding"
             android:layout_weight="1"
             android:id="@+id/fajrarrow"
             android:layout_width="match_parent"
@@ -59,7 +58,6 @@
             android:text="@string/rise_arabe"/>
 
         <ImageView
-            android:padding="@dimen/arrowdownpadding"
             android:layout_weight="1"
             android:id="@+id/risearrow"
             android:layout_width="match_parent"
@@ -93,7 +91,6 @@
             android:text="@string/dohrtitle_arabe"/>
 
         <ImageView
-            android:padding="@dimen/arrowdownpadding"
             android:layout_weight="1"
             android:id="@+id/dhuhrarrow"
             android:layout_width="match_parent"
@@ -127,7 +124,6 @@
             android:text="@string/asrtitle_arabe"/>
 
         <ImageView
-            android:padding="@dimen/arrowdownpadding"
             android:layout_weight="1"
             android:id="@+id/asrarrow"
             android:layout_width="match_parent"
@@ -161,7 +157,6 @@
             android:text="@string/maghrebtitle_arabe"/>
 
         <ImageView
-            android:padding="@dimen/arrowdownpadding"
             android:layout_weight="1"
             android:id="@+id/maghrebarrow"
             android:layout_width="match_parent"
@@ -195,7 +190,6 @@
             android:text="@string/ishatitle_arabe"/>
 
         <ImageView
-            android:padding="@dimen/arrowdownpadding"
             android:layout_weight="1"
             android:id="@+id/ishaarrow"
             android:layout_width="match_parent"

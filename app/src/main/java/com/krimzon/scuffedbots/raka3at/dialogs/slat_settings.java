@@ -89,25 +89,25 @@ public class slat_settings extends BottomSheetDialogFragment {
 
 
     private void english(){
-        arrow.setText(resources.getString(R.string.save));
-        brightnesstitle.setText(resources.getString(R.string.setting1));
-        zero.setText(resources.getString(R.string.zeroseconds));
-        three.setText(resources.getString(R.string.threeseconds));
-        five.setText(resources.getString(R.string.fiveseconds));
-        delaytitle.setText(resources.getString(R.string.delaybeforecounting));
+        arrow.setText(getResources().getString(R.string.save));
+        brightnesstitle.setText(getResources().getString(R.string.setting1));
+        zero.setText(getResources().getString(R.string.zeroseconds));
+        three.setText(getResources().getString(R.string.threeseconds));
+        five.setText(getResources().getString(R.string.fiveseconds));
+        delaytitle.setText(getResources().getString(R.string.delaybeforecounting));
     }
 
     private void select_three() {
         delaybeforecounting = 3;
         SQLSharing.mydbslat.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
-            zero.setBackground(resources.getDrawable(R.drawable.darkzerodelayunselected));
-            three.setBackground(resources.getDrawable(R.drawable.darkthreedelayselected));
-            five.setBackground(resources.getDrawable(R.drawable.darkfivedelayunselected));
+            zero.setBackground(getResources().getDrawable(R.drawable.darkzerodelayunselected));
+            three.setBackground(getResources().getDrawable(R.drawable.darkthreedelayselected));
+            five.setBackground(getResources().getDrawable(R.drawable.darkfivedelayunselected));
         } else {
-            zero.setBackground(resources.getDrawable(R.drawable.zerodelayunselected));
-            three.setBackground(resources.getDrawable(R.drawable.threedelayselected));
-            five.setBackground(resources.getDrawable(R.drawable.fivedelayunselected));
+            zero.setBackground(getResources().getDrawable(R.drawable.zerodelayunselected));
+            three.setBackground(getResources().getDrawable(R.drawable.threedelayselected));
+            five.setBackground(getResources().getDrawable(R.drawable.fivedelayunselected));
         }
     }
 
@@ -115,13 +115,13 @@ public class slat_settings extends BottomSheetDialogFragment {
         delaybeforecounting = 5;
         SQLSharing.mydbslat.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
-            zero.setBackground(resources.getDrawable(R.drawable.darkzerodelayunselected));
-            three.setBackground(resources.getDrawable(R.drawable.darkthreedelayunselected));
-            five.setBackground(resources.getDrawable(R.drawable.darkfivedelayselected));
+            zero.setBackground(getResources().getDrawable(R.drawable.darkzerodelayunselected));
+            three.setBackground(getResources().getDrawable(R.drawable.darkthreedelayunselected));
+            five.setBackground(getResources().getDrawable(R.drawable.darkfivedelayselected));
         } else {
-            zero.setBackground(resources.getDrawable(R.drawable.zerodelayunselected));
-            three.setBackground(resources.getDrawable(R.drawable.threedelayunselected));
-            five.setBackground(resources.getDrawable(R.drawable.fivedelayselected));
+            zero.setBackground(getResources().getDrawable(R.drawable.zerodelayunselected));
+            three.setBackground(getResources().getDrawable(R.drawable.threedelayunselected));
+            five.setBackground(getResources().getDrawable(R.drawable.fivedelayselected));
         }
     }
 
@@ -129,13 +129,13 @@ public class slat_settings extends BottomSheetDialogFragment {
         delaybeforecounting = 0;
         SQLSharing.mydbslat.updateData(String.valueOf(delaybeforecounting), String.valueOf(5));
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
-            zero.setBackground(resources.getDrawable(R.drawable.darkzerodelayselected));
-            three.setBackground(resources.getDrawable(R.drawable.darkthreedelayunselected));
-            five.setBackground(resources.getDrawable(R.drawable.darkfivedelayunselected));
+            zero.setBackground(getResources().getDrawable(R.drawable.darkzerodelayselected));
+            three.setBackground(getResources().getDrawable(R.drawable.darkthreedelayunselected));
+            five.setBackground(getResources().getDrawable(R.drawable.darkfivedelayunselected));
         } else {
-            zero.setBackground(resources.getDrawable(R.drawable.zerodelayselected));
-            three.setBackground(resources.getDrawable(R.drawable.threedelayunselected));
-            five.setBackground(resources.getDrawable(R.drawable.fivedelayunselected));
+            zero.setBackground(getResources().getDrawable(R.drawable.zerodelayselected));
+            three.setBackground(getResources().getDrawable(R.drawable.threedelayunselected));
+            five.setBackground(getResources().getDrawable(R.drawable.fivedelayunselected));
         }
     }
 
@@ -170,16 +170,16 @@ public class slat_settings extends BottomSheetDialogFragment {
     private void update_brightness(int progress) {
         if(progress<=30){
             if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
-                brightness.setThumb(resources.getDrawable(R.drawable.darkest_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.darkest_volume_control));
+                brightness.setThumb(getResources().getDrawable(R.drawable.darkest_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.darkest_volume_control));
                 scheme = 0;
                 /*raka3at.setTextColor(darkest);
                 sajda.setTextColor(darkest);
                 brightnesstitle.setTextColor(darkest);*/
                 SQLSharing.mydbslat.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
-                brightness.setThumb(resources.getDrawable(R.drawable.dimmest_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimmest_volume_control));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dimmest_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dimmest_volume_control));
                 scheme_light_mode = 0;
                 /*raka3at.setTextColor(dimmest);
                 sajda.setTextColor(dimmest);
@@ -188,16 +188,16 @@ public class slat_settings extends BottomSheetDialogFragment {
             }
         } else if(progress<=69){
             if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement){
-                brightness.setThumb(resources.getDrawable(R.drawable.dark_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dark_volume_control));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dark_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dark_volume_control));
                 scheme = 1;
                 /*raka3at.setTextColor(dark);
                 sajda.setTextColor(dark);
                 brightnesstitle.setTextColor(dark);*/
                 SQLSharing.mydbslat.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
-                brightness.setThumb(resources.getDrawable(R.drawable.dimmer_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimmer_volume_control));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dimmer_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dimmer_volume_control));
                 scheme_light_mode = 1;
                 /*raka3at.setTextColor(dimmer);
                 sajda.setTextColor(dimmer);
@@ -206,16 +206,16 @@ public class slat_settings extends BottomSheetDialogFragment {
             }
         } else {
             if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
-                brightness.setThumb(resources.getDrawable(R.drawable.thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.volume_control));
+                brightness.setThumb(getResources().getDrawable(R.drawable.thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.volume_control));
                 scheme = 2;
                 /*raka3at.setTextColor(white);
                 sajda.setTextColor(white);
                 brightnesstitle.setTextColor(white);*/
                 SQLSharing.mydbslat.updateData(String.valueOf(scheme), SCHEME_ID);
             } else {
-                brightness.setThumb(resources.getDrawable(R.drawable.dimm_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimm_volume_control));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dimm_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dimm_volume_control));
                 scheme_light_mode = 2;
                 /*raka3at.setTextColor(dimm);
                 sajda.setTextColor(dimm);
@@ -228,23 +228,23 @@ public class slat_settings extends BottomSheetDialogFragment {
     private void load_previous_light_mode_settings() {
         if(getContext()!=null) {
             settings.setBackground(getContext().getResources().getDrawable(R.drawable.simpelbackground));
-            delaytitle.setTextColor(resources.getColor(R.color.dimmest));
-            arrow.setBackground(resources.getDrawable(R.drawable.arrowbutton));
+            delaytitle.setTextColor(getResources().getColor(R.color.dimmest));
+            arrow.setBackground(getResources().getDrawable(R.drawable.arrowbutton));
             if (scheme_light_mode == 0) {
                 brightness.setProgress(10);
-                brightness.setThumb(resources.getDrawable(R.drawable.dimmest_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimmest_volume_control));
-                brightnesstitle.setTextColor(resources.getColor(R.color.dimmest));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dimmest_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dimmest_volume_control));
+                brightnesstitle.setTextColor(getResources().getColor(R.color.dimmest));
             } else if (scheme_light_mode == 1) {
                 brightness.setProgress(50);
-                brightness.setThumb(resources.getDrawable(R.drawable.dimmer_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimmer_volume_control));
-                brightnesstitle.setTextColor(resources.getColor(R.color.dimmer));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dimmer_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dimmer_volume_control));
+                brightnesstitle.setTextColor(getResources().getColor(R.color.dimmer));
             } else {
                 brightness.setProgress(80);
-                brightness.setThumb(resources.getDrawable(R.drawable.dimm_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dimm_volume_control));
-                brightnesstitle.setTextColor(resources.getColor(R.color.dimm));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dimm_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dimm_volume_control));
+                brightnesstitle.setTextColor(getResources().getColor(R.color.dimm));
             }
         }
     }
@@ -253,28 +253,27 @@ public class slat_settings extends BottomSheetDialogFragment {
         if(getContext()!=null) {
             Drawable darksimpelbackground = getContext().getResources().getDrawable(R.drawable.darksimpelbackground);
             settings.setBackground(darksimpelbackground);
-            delaytitle.setTextColor(resources.getColor(R.color.white));
-            arrow.setBackground(resources.getDrawable(R.drawable.darkarrowbutton));
+            delaytitle.setTextColor(getResources().getColor(R.color.white));
+            arrow.setBackground(getResources().getDrawable(R.drawable.darkarrowbutton));
             if (scheme == 0) {
                 brightness.setProgress(10);
-                brightness.setThumb(resources.getDrawable(R.drawable.darkest_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.darkest_volume_control));
-                brightnesstitle.setTextColor(resources.getColor(R.color.darkest));
+                brightness.setThumb(getResources().getDrawable(R.drawable.darkest_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.darkest_volume_control));
+                brightnesstitle.setTextColor(getResources().getColor(R.color.darkest));
             } else if (scheme == 1) {
                 brightness.setProgress(50);
-                brightness.setThumb(resources.getDrawable(R.drawable.dark_thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.dark_volume_control));
-                brightnesstitle.setTextColor(resources.getColor(R.color.dark));
+                brightness.setThumb(getResources().getDrawable(R.drawable.dark_thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.dark_volume_control));
+                brightnesstitle.setTextColor(getResources().getColor(R.color.dark));
             } else {
                 brightness.setProgress(80);
-                brightness.setThumb(resources.getDrawable(R.drawable.thumb));
-                brightness.setProgressDrawable(resources.getDrawable(R.drawable.volume_control));
-                brightnesstitle.setTextColor(resources.getColor(R.color.white));
+                brightness.setThumb(getResources().getDrawable(R.drawable.thumb));
+                brightness.setProgressDrawable(getResources().getDrawable(R.drawable.volume_control));
+                brightnesstitle.setTextColor(getResources().getColor(R.color.white));
             }
         }
     }
 
-    private Resources resources;
     private void prepare_variables() {
         brightness = v.findViewById(R.id.brightness);
         five = v.findViewById(R.id.five);
@@ -305,7 +304,6 @@ public class slat_settings extends BottomSheetDialogFragment {
             }
         }
         settings = v.findViewById(R.id.settings);
-        resources = getResources();
     }
 
     @Override

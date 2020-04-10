@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     private Button forcejoin;
     private long backPressedTime;
     private Toast backToast;
-    private Resources resources;
     private String language = "ar";
     private boolean tutorial = false;
     private LinearLayout botton, botton2;
@@ -125,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
         //showNavigationBar();
 
-        if(shouldyouopenloginpage.equals("yes") && mAuth.getCurrentUser() == null){
+        /*if(shouldyouopenloginpage.equals("yes") && mAuth.getCurrentUser() == null){
             try{
                     if (!getIntent().getStringExtra("senderr").equals("dont")) {
                         openloginpage();
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             } catch(Exception ignored){
                 openloginpage();
             }
-        }
+        }*/
 
     }
 
@@ -235,17 +234,17 @@ public class MainActivity extends AppCompatActivity {
     private void light_mode() {
         darkmode = false;
         rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
-        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightmainactivityback));
+        rightsideelementsbackground.setBackground(getResources().getDrawable(R.drawable.lightmainactivityback));
         rightsideelementsbackground2 = findViewById(R.id.rightsideelementsbackground2);
-        rightsideelementsbackground2.setBackground(resources.getDrawable(R.drawable.lightmainactivityback));
+        rightsideelementsbackground2.setBackground(getResources().getDrawable(R.drawable.lightmainactivityback));
         view.setVisibility(View.GONE);
         view2.setVisibility(View.VISIBLE);
-        full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
-        kiblajoin.setBackground(resources.getDrawable(R.drawable.buttons));
-        slatjoin.setBackground(resources.getDrawable(R.drawable.buttons));
-        forcejoin.setBackground(resources.getDrawable(R.drawable.buttons));
-        maintitle.setTextColor(resources.getColor(R.color.black));
-        sql(resources.getString(R.string.slat));
+        full.setBackground(getResources().getDrawable(R.drawable.simpelbackground));
+        kiblajoin.setBackground(getResources().getDrawable(R.drawable.buttons));
+        slatjoin.setBackground(getResources().getDrawable(R.drawable.buttons));
+        forcejoin.setBackground(getResources().getDrawable(R.drawable.buttons));
+        maintitle.setTextColor(getResources().getColor(R.color.black));
+        sql(getResources().getString(R.string.slat));
         SQLSharing.mycursorslat.moveToFirst();
         SQLSharing.mycursorslat.moveToNext();
         ID = SQLSharing.mycursorslat.getString(0);
@@ -275,18 +274,18 @@ public class MainActivity extends AppCompatActivity {
     private void dark_mode() {
         darkmode = true;
         rightsideelementsbackground = findViewById(R.id.rightsideelementsbackground);
-        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.mainactivityback));
+        rightsideelementsbackground.setBackground(getResources().getDrawable(R.drawable.mainactivityback));
         rightsideelementsbackground2 = findViewById(R.id.rightsideelementsbackground2);
-        rightsideelementsbackground2.setBackground(resources.getDrawable(R.drawable.mainactivityback));
+        rightsideelementsbackground2.setBackground(getResources().getDrawable(R.drawable.mainactivityback));
         view.setVisibility(View.VISIBLE);
         view2.setVisibility(View.GONE);
-        full.setBackground(resources.getDrawable(R.drawable.forcefull));
-        kiblajoin.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
-        slatjoin.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
-        forcejoin.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
-        maintitle.setTextColor(resources.getColor(R.color.white));
+        full.setBackground(getResources().getDrawable(R.drawable.forcefull));
+        kiblajoin.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
+        slatjoin.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
+        forcejoin.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
+        maintitle.setTextColor(getResources().getColor(R.color.white));
 
-        sql(resources.getString(R.string.slat));
+        sql(getResources().getString(R.string.slat));
         SQLSharing.mycursorslat.moveToPosition(1);
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("yes", ID);
@@ -305,33 +304,20 @@ public class MainActivity extends AppCompatActivity {
         kiblajoin = findViewById(R.id.kiblajoin);
         forcejoin = findViewById(R.id.forcejoin);
 
-        resources = getResources();
 
         ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
-        try {
-            Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
-        } catch (Exception ignored) {
-            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
-        }
+            nightmodebutton.setImageDrawable(getResources().getDrawable(R.drawable.nightmodedark));
         ImageView sharebutton = findViewById(R.id.sharebutton);
-        try {
-            Glide.with(this).load(R.drawable.shre).into(sharebutton);
-        } catch (Exception ignored) {
-            sharebutton.setImageDrawable(resources.getDrawable(R.drawable.shre));
-        }
+            sharebutton.setImageDrawable(getResources().getDrawable(R.drawable.shre));
 
         try {
             Glide.with(this).load(R.drawable.blacklanguage).into(languagebutton);
         } catch (Exception ignored) {
-            languagebutton.setImageDrawable(resources.getDrawable(R.drawable.blacklanguage));
+            languagebutton.setImageDrawable(getResources().getDrawable(R.drawable.blacklanguage));
         }
 
         if (mAuth.getCurrentUser() == null) {
-            try {
-                Glide.with(this).load(R.drawable.zdzdzd).into(image);
-            } catch (Exception ignored) {
-                image.setImageDrawable(resources.getDrawable(R.drawable.zdzdzd));
-            }
+                image.setImageDrawable(getResources().getDrawable(R.drawable.ic_google_logo));
         } else {
             FirebaseUser user = mAuth.getCurrentUser();
             updateUI(user);
@@ -494,14 +480,14 @@ public class MainActivity extends AppCompatActivity {
         if(language.equals("en")){
             alertDialog.setTitle(getString(R.string.logoutsecurityalerttitle));
             alertDialog.setMessage(getString(R.string.logoutsecurityalerttext));
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(R.string.allgood),
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.allgood),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             logout();
                             dialog.dismiss();
                         }
                     });
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getString(R.string.cancel),
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -510,14 +496,14 @@ public class MainActivity extends AppCompatActivity {
         } else if(language.equals("ar")){
             alertDialog.setTitle(getString(R.string.logoutsecurityalerttitle_arabe));
             alertDialog.setMessage(getString(R.string.logoutsecurityalerttext_arabe));
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, resources.getString(R.string.allgood_arabe),
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.allgood_arabe),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             logout();
                             dialog.dismiss();
                         }
                     });
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, resources.getString(R.string.back2_arabe),
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.back2_arabe),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -554,11 +540,7 @@ public class MainActivity extends AppCompatActivity {
                         progressBar.setVisibility(View.INVISIBLE);
 
                         // redisplay Google logo there
-                        try {
-                            Glide.with(getApplicationContext()).load(R.drawable.zdzdzd).into(image);
-                        } catch (Exception ignored) {
-                            image.setImageDrawable(resources.getDrawable(R.drawable.zdzdzd));
-                        }
+                            image.setImageDrawable(getResources().getDrawable(R.drawable.ic_google_logo));
                     }
                 });
 
@@ -572,9 +554,9 @@ public class MainActivity extends AppCompatActivity {
                 SignInGoogle();
             } else if(grantResults[0] == PackageManager.PERMISSION_DENIED){
                 if(language.equals("en"))
-                    print(resources.getString(R.string.permissiondenied));
+                    print(getResources().getString(R.string.permissiondenied));
                 else if(language.equals("ar"))
-                    print(resources.getString(R.string.permissiondenied_arabe));
+                    print(getResources().getString(R.string.permissiondenied_arabe));
                 progressBar.setVisibility(View.INVISIBLE);
 
             }
@@ -689,10 +671,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void english() {
-        maintitle.setText(resources.getString(R.string.app_name2));
-        kiblajoin.setText(resources.getString(R.string.kibla));
-        forcejoin.setText(resources.getString(R.string.force));
-        slatjoin.setText(resources.getString(R.string.prayer));
+        maintitle.setText(getResources().getString(R.string.app_name2));
+        kiblajoin.setText(getResources().getString(R.string.kibla));
+        forcejoin.setText(getResources().getString(R.string.force));
+        slatjoin.setText(getResources().getString(R.string.prayer));
     }
 
     private void close_sql() {

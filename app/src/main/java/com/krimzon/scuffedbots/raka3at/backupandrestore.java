@@ -51,7 +51,6 @@ public class backupandrestore extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private int REQUEST_CODE = 1000;
     private TextView secureexplanation;
-    private Resources resources;
     private Button dontlogin, nevershowagain, loginbutton;
 
     @Override
@@ -65,7 +64,6 @@ public class backupandrestore extends AppCompatActivity {
         progressBar = findViewById(R.id.progress);
         ImageView image = findViewById(R.id.displayer);
         secureexplanation = findViewById(R.id.secureexplanation);
-        resources = getResources();
 
         font();
         sql_work();
@@ -116,10 +114,10 @@ public class backupandrestore extends AppCompatActivity {
 
     private void language() {
         if(language.equals("en")){
-            secureexplanation.setText(resources.getString(R.string.secureexplanation));
-            loginbutton.setText(resources.getString(R.string.login_with_google));
-            dontlogin.setText(resources.getString(R.string.dont_login_arabe));
-            nevershowagain.setText(resources.getString(R.string.noshow));
+            secureexplanation.setText(getResources().getString(R.string.secureexplanation));
+            loginbutton.setText(getResources().getString(R.string.login_with_google));
+            dontlogin.setText(getResources().getString(R.string.dont_login_arabe));
+            nevershowagain.setText(getResources().getString(R.string.noshow));
         }
     }
 

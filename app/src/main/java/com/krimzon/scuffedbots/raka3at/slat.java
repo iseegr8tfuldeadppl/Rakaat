@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -43,6 +44,7 @@ import com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import com.krimzon.scuffedbots.raka3at.dialogs.slat_settings;
+import java.util.Date;
 import java.util.Locale;
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -52,7 +54,7 @@ import static android.view.animation.AnimationUtils.*;
 public class slat extends AppCompatActivity implements SensorEventListener, slat_settings.BottomSheetListener {
 //https://www.youtube.com/watch?v=dfTeS41BbbI
 
-    // settingable
+    // settingable²
     private int delay_between_sajadat = 800; // default 600
     private int sajda_length_of_time = 850;
     private int delay_between_raka3at = 7500; // default 5000
@@ -103,7 +105,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private boolean doitposse = true;
     private boolean between_raka3at_delay_started = false;
-    private long animation_tracker_of_initial_five_seconds;
+    private int animation_tracker_of_initial_five_seconds;
     private boolean animation_of_initial_five_seconds_started = false;
     private LinearLayout donecover;
     private Button donebutton;
@@ -113,9 +115,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private NoPaddingTextView countdown;
     private int visibleSystemUiVisibility;
     private String ID;
-    private Resources resources;
     private boolean blackout = false;
-    private boolean five_secs = true, four_secs = true, three_secs = true, two_secs = true;
     private LinearLayout blackoutbuttonbackground, nightmodebuttonbackground, soundsbuttonbackground, settingsbuttonbackground;
     private Animation slide_in_from_right;
     private Animation slide_out_from_right;
@@ -139,6 +139,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private boolean entered_praying_process = false;
     private long futuretime4 = 0;
     private boolean found_prayed_history_in_sql = false;
+    private int saved_second;
 
     @Override
     protected void onDestroy() {
@@ -285,15 +286,15 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
     private void english(){
-        four.setText(resources.getString(R.string.four));
-        three.setText(resources.getString(R.string.three));
-        two.setText(resources.getString(R.string.two));
-        one.setText(resources.getString(R.string.one));
-        slattitle.setText(resources.getString(R.string.rakaat));
-        tahia.setText(resources.getString(R.string.tahia));
-        sajda_pre.setText(resources.getString(R.string.sajadat));
-        start.setText(resources.getString(R.string.start));
-        donebutton.setText(resources.getString(R.string.back2));
+        four.setText(getResources().getString(R.string.four));
+        three.setText(getResources().getString(R.string.three));
+        two.setText(getResources().getString(R.string.two));
+        one.setText(getResources().getString(R.string.one));
+        slattitle.setText(getResources().getString(R.string.rakaat));
+        tahia.setText(getResources().getString(R.string.tahia));
+        sajda_pre.setText(getResources().getString(R.string.sajadat));
+        start.setText(getResources().getString(R.string.start));
+        donebutton.setText(getResources().getString(R.string.back2));
     }
 
 
@@ -320,11 +321,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         else if(soundstempint ==0)
             sounds = false;
         if(!sounds) {
-            try {
-                Glide.with(this).load(R.drawable.soundsoff).into(soundsbutton);
-            } catch (Exception ignored) {
-                soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
-            }
+                soundsbutton.setImageDrawable(getResources().getDrawable(R.drawable.soundsoff));
         }
 
         if(is_it_dark_mode_in_sql.equals("no"))
@@ -335,7 +332,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
     private void resources(){
-        resources = getResources();
         slide_out_from_right = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
         slide_in_from_right = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
         slide_out_from_right2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
@@ -349,7 +345,16 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
+    private TextView tampageTahiaFader;
+    private ImageView questionmark;
     private void initialize_all_variables() {
+        questionmark = findViewById(R.id.questionmark);
+        try {
+            Glide.with(this).load(R.drawable.questionmark).into(questionmark);
+        } catch (Exception ignored) {
+            questionmark.setImageDrawable(getResources().getDrawable(R.drawable.questionmark));
+        }
+        tampageTahiaFader = findViewById(R.id.tampageTahiaFader);
         blackoutbuttonbackground = findViewById(R.id.blackoutbuttonbackground);
         backarrowbackground = findViewById(R.id.backarrowbackground);
         howtousebackground = findViewById(R.id.howtousebackground);
@@ -382,6 +387,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         Typeface font = Typeface.createFromAsset(getAssets(), "Tajawal-Light.ttf");
 
+        tampageTahiaFader.setTypeface(font);
         slattitle.setTypeface(font);
         start.setTypeface(font);
         sajda_pre.setTypeface(font);
@@ -474,7 +480,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private void showNavigationBar() {
         this.getWindow().getDecorView().setSystemUiVisibility(visibleSystemUiVisibility);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            this.getWindow().setStatusBarColor(resources.getColor(R.color.darkbackgroundcolor));
+            this.getWindow().setStatusBarColor(getResources().getColor(R.color.darkbackgroundcolor));
     }
 
     private void show_raka3at_selections(){
@@ -546,9 +552,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         else
             five_second_before_actually_starting_was_finished = true;
         if(language.equals("en"))
-            start.setText(resources.getString(R.string.stop));
+            start.setText(getResources().getString(R.string.stop));
         else
-            start.setText(resources.getString(R.string.stop_arabe));
+            start.setText(getResources().getString(R.string.stop_arabe));
         blackoutbutton.setVisibility(VISIBLE);
         sajda_pre.setVisibility(INVISIBLE);
         settings.setVisibility(View.GONE);
@@ -589,8 +595,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                         coverer.setVisibility(GONE);
                         not_clicked = false; // to not allow multiple selection clicks
                         startclicked = true;
-                        if(sounds && delaybeforecounting!=0)
-                            initExoPlayer(beep);
                         blackground.setVisibility(VISIBLE);
                         if(delaybeforecounting==0){
                             go_in();
@@ -634,7 +638,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-            boolean gg = tahia.getVisibility()==INVISIBLE;
             if(tam_page_visible)
                 warn_tahia2();
 
@@ -839,19 +842,19 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     private void warn_tahia2() {
-        if(tahia.getVisibility()==INVISIBLE) {
-            tahia.startAnimation(fade_in_tahia2);
+        if(tampageTahiaFader.getVisibility()==INVISIBLE) {
+            tampageTahiaFader.startAnimation(fade_in_tahia2);
             fade_in_tahia2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                 if(!tam_page_visible){
-                    tahia.setVisibility(INVISIBLE);
+                    tampageTahiaFader.setVisibility(INVISIBLE);
                 } else {
-                    tahia.setVisibility(VISIBLE);
+                    tampageTahiaFader.setVisibility(VISIBLE);
                 }
             }});
-        } else if(tahia.getVisibility()== VISIBLE) {
-            tahia.startAnimation(fade_out_tahia2);
+        } else if(tampageTahiaFader.getVisibility()== VISIBLE) {
+            tampageTahiaFader.startAnimation(fade_out_tahia2);
             fade_out_tahia2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
-                tahia.setVisibility(View.INVISIBLE);
+                tampageTahiaFader.setVisibility(View.INVISIBLE);
             }});
         }
     }
@@ -859,39 +862,16 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     private void execute_delay_if_asked() {
         if(!animation_of_initial_five_seconds_started) {
-            animation_tracker_of_initial_five_seconds = System.currentTimeMillis();
+            Date countdowndate = new Date();
+
+            animation_tracker_of_initial_five_seconds = Integer.parseInt(countdowndate.toString().split(" ")[3].split(":")[2]);
             animation_of_initial_five_seconds_started = true;
+            counter = delaybeforecounting;
         }
 
-        if(delaybeforecounting==5)
-            five_second_delay();
-        else if(delaybeforecounting==3)
-            three_second_delay();
+        initial_few_second_delay();
     }
 
-
-    private void three_second_delay() {
-        if (System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 3000){
-            go_in();
-        } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 2000) {
-            countdown.setText(String.valueOf(1));
-            if(sounds && two_secs) {
-                initExoPlayer(beep);
-                two_secs = false;
-            } else {
-                stopExoPlayer();
-            }
-        } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 1000) {
-            countdown.setText(String.valueOf(2));
-            soundsbutton.setVisibility(VISIBLE);
-            if(sounds && three_secs) {
-                initExoPlayer(beep);
-                three_secs = false;
-            } else {
-                stopExoPlayer();
-            }
-        }
-    }
 
     private void stopExoPlayer(){
         try{
@@ -900,51 +880,36 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         } catch(Exception ignored){}
     }
 
-    private boolean oncerr = true;
-    private void five_second_delay() {
-        if(sounds&&oncerr){
-            oncerr = false;
-            try {
-                // maximum  music audio to play this bitch
-                AudioManager audioManager;
-                audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    private int counter = 5;
+    private void initial_few_second_delay() {
+        if(sounds&&counter==delaybeforecounting){
+            // maximum  music audio to play this bitch
+            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            if (audioManager != null) {
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 20, 0);
-            } catch(Exception ignored){
             }
         }
-        if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 5000){
+
+
+        Date countdowndate = new Date();
+        int current_second = Integer.parseInt(countdowndate.toString().split(" ")[3].split(":")[2]);
+
+        if(counter==0){
+            // TODO add a cooler dingdong after countdown finish it will be right here
             go_in();
-        } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 4000) {
-            countdown.setText(String.valueOf(1));
-            if(sounds && two_secs) {
-                initExoPlayer(beep);
-                two_secs = false;
-            } else {
-                stopExoPlayer();
+        } else {
+            if(current_second!=animation_tracker_of_initial_five_seconds){
+                animation_tracker_of_initial_five_seconds = current_second;
+                countdown.setText(String.valueOf(counter));
+
+                if(sounds) {
+                    initExoPlayer(beep);
+                }
+
+                counter -= 1;
             }
-        } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 3000) {
-            countdown.setText(String.valueOf(2));
-            if(sounds && three_secs) {
-                initExoPlayer(beep);
-                three_secs = false;
-            } else {
-                stopExoPlayer();
-            }
-        } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 2000) {
-            countdown.setText(String.valueOf(3));
-            if(sounds && four_secs) {
-                initExoPlayer(beep);
-                four_secs = false;
-            } else {
-                stopExoPlayer();
-            }
-        } else if(System.currentTimeMillis() > animation_tracker_of_initial_five_seconds + 1000) {
-            countdown.setText(String.valueOf(4));
-            soundsbutton.setVisibility(VISIBLE);
-            if(sounds && five_secs) {
-                initExoPlayer(beep);
-                five_secs = false;
-            } else {
+
+            if(!sounds) {
                 stopExoPlayer();
             }
         }
@@ -992,7 +957,6 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         settings.setEnabled(true);
         nightmode.setEnabled(true);
 
-        oncerr = true;
         tam_page_visible = false;
         startclicked = false;
         start_was_just_clicked = false;
@@ -1033,13 +997,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         settingsbuttonbackground.setEnabled(true);
         settings.setVisibility(VISIBLE);
         blackoutbutton.setVisibility(GONE);
-        if(!two_secs) {
-            five_secs = true;
-            four_secs = true;
-            three_secs = true;
-            two_secs = true;
-        }
-        if(blackground.getDrawingCacheBackgroundColor()==resources.getColor(R.color.black))
+        if(blackground.getDrawingCacheBackgroundColor()==getResources().getColor(R.color.black))
             blackground.setBackground(null);
         blackoutbutton.setVisibility(GONE);
         tahia.setVisibility(INVISIBLE);
@@ -1053,9 +1011,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         animation_of_initial_five_seconds_started = false;
         five_second_before_actually_starting_was_finished = false;
         if(language.equals("en"))
-            start.setText(resources.getString(R.string.start));
+            start.setText(getResources().getString(R.string.start));
         else
-            start.setText(resources.getString(R.string.start_arabe));
+            start.setText(getResources().getString(R.string.start_arabe));
         original_light_saved = false;
         sajda_done = false;
         num_of_raka3at = 0;
@@ -1063,9 +1021,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         raka3at.setText(String.valueOf(num_of_raka3at));
         sajda.setText(String.valueOf(num_of_sajadat));
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement)
-            start.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
+            start.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
         else
-            start.setBackground(resources.getDrawable(R.drawable.buttons));
+            start.setBackground(getResources().getDrawable(R.drawable.buttons));
 
 
 
@@ -1093,7 +1051,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             athome = String.valueOf(athome_stringbuilder);
         }
 
-        sql(resources.getString(R.string.justforce3));
+        sql(getResources().getString(R.string.justforce3));
         check_if_prayed_exists_in_sql();
         if(found_prayed_history_in_sql)
             SQLSharing.mydbforce3.updatePrayed(todaycomparable, temper, verified, athome);
@@ -1164,7 +1122,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
 
     public void nightmodeClicked(View view) {
-        if(blackground.getDrawingCacheBackgroundColor()==resources.getColor(R.color.black))
+        if(blackground.getDrawingCacheBackgroundColor()==getResources().getColor(R.color.black))
             blackoutClickeroni();
         else
             switch_view_mode();
@@ -1183,23 +1141,24 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         update_dimmness();
 
         // top buttons backgrounds
-        backarrowbackground.setBackground(resources.getDrawable(R.drawable.lightbackback));
-        howtousebackground.setBackground(resources.getDrawable(R.drawable.lightstatsback));
+        backarrowbackground.setBackground(getResources().getDrawable(R.drawable.lightbackback));
+        howtousebackground.setBackground(getResources().getDrawable(R.drawable.lightstatsback));
 
         it_is_nightmode_since_lightmode_shines_and_ruins_measurement = false;
-        slattitle.setTextColor(resources.getColor(R.color.lightelement));
-        countdownbackground.setBackground(resources.getDrawable(R.drawable.simpelbackground));
-        full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
-        sajda_pre.setTextColor(resources.getColor(R.color.lightelement));
-        coverer.setBackground(resources.getDrawable(R.drawable.simpelbackground));
+        slattitle.setTextColor(getResources().getColor(R.color.lightelement));
+        tampageTahiaFader.setTextColor(getResources().getColor(R.color.lightelement));
+        countdownbackground.setBackground(getResources().getDrawable(R.drawable.simpelbackground));
+        full.setBackground(getResources().getDrawable(R.drawable.simpelbackground));
+        sajda_pre.setTextColor(getResources().getColor(R.color.lightelement));
+        coverer.setBackground(getResources().getDrawable(R.drawable.simpelbackground));
 
-        donecover.setBackground(resources.getDrawable(R.drawable.simpelbackground));
-        donebutton.setBackground(resources.getDrawable(R.drawable.buttons));
+        donecover.setBackground(getResources().getDrawable(R.drawable.simpelbackground));
+        donebutton.setBackground(getResources().getDrawable(R.drawable.buttons));
 
-        one.setBackground(resources.getDrawable(R.drawable.buttons));
-        two.setBackground(resources.getDrawable(R.drawable.buttons));
-        three.setBackground(resources.getDrawable(R.drawable.buttons));
-        four.setBackground(resources.getDrawable(R.drawable.buttons));
+        one.setBackground(getResources().getDrawable(R.drawable.buttons));
+        two.setBackground(getResources().getDrawable(R.drawable.buttons));
+        three.setBackground(getResources().getDrawable(R.drawable.buttons));
+        four.setBackground(getResources().getDrawable(R.drawable.buttons));
 
         sql("slat");
         SQLSharing.mycursorslat.moveToFirst();
@@ -1211,65 +1170,66 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if(five_second_before_actually_starting_was_finished)
             start.setBackground(null);
         else
-            start.setBackground(resources.getDrawable(R.drawable.buttons));
+            start.setBackground(getResources().getDrawable(R.drawable.buttons));
     }
 
 
     private void update_dimmness(){
         if (scheme_light_mode == 0) {
-            raka3at.setTextColor(resources.getColor(R.color.dimmest));
-            sajda.setTextColor(resources.getColor(R.color.dimmest));
-            countdown.setTextColor(resources.getColor(R.color.dimmest));
-            tahia.setTextColor(resources.getColor(R.color.dimmest));
+            raka3at.setTextColor(getResources().getColor(R.color.dimmest));
+            sajda.setTextColor(getResources().getColor(R.color.dimmest));
+            countdown.setTextColor(getResources().getColor(R.color.dimmest));
+            tahia.setTextColor(getResources().getColor(R.color.dimmest));
             if(startclicked)
-                start.setTextColor(resources.getColor(R.color.dimmest));
+                start.setTextColor(getResources().getColor(R.color.dimmest));
         } else if (scheme_light_mode == 1) {
-            raka3at.setTextColor(resources.getColor(R.color.dimmer));
-            sajda.setTextColor(resources.getColor(R.color.dimmer));
-            countdown.setTextColor(resources.getColor(R.color.dimmer));
-            tahia.setTextColor(resources.getColor(R.color.dimmer));
+            raka3at.setTextColor(getResources().getColor(R.color.dimmer));
+            sajda.setTextColor(getResources().getColor(R.color.dimmer));
+            countdown.setTextColor(getResources().getColor(R.color.dimmer));
+            tahia.setTextColor(getResources().getColor(R.color.dimmer));
             if(startclicked)
-                start.setTextColor(resources.getColor(R.color.dimmer));
+                start.setTextColor(getResources().getColor(R.color.dimmer));
         } else {
-            raka3at.setTextColor(resources.getColor(R.color.dimm));
-            sajda.setTextColor(resources.getColor(R.color.dimm));
-            countdown.setTextColor(resources.getColor(R.color.dimm));
-            tahia.setTextColor(resources.getColor(R.color.dimm));
+            raka3at.setTextColor(getResources().getColor(R.color.dimm));
+            sajda.setTextColor(getResources().getColor(R.color.dimm));
+            countdown.setTextColor(getResources().getColor(R.color.dimm));
+            tahia.setTextColor(getResources().getColor(R.color.dimm));
             if(startclicked)
-                start.setTextColor(resources.getColor(R.color.dimm));
+                start.setTextColor(getResources().getColor(R.color.dimm));
         }
     }
 
     private void dimm_start_button_text(){
         if (scheme_light_mode == 0)
-            start.setTextColor(resources.getColor(R.color.dimmest));
+            start.setTextColor(getResources().getColor(R.color.dimmest));
         else if (scheme_light_mode == 1)
-            start.setTextColor(resources.getColor(R.color.dimmer));
+            start.setTextColor(getResources().getColor(R.color.dimmer));
         else
-            start.setTextColor(resources.getColor(R.color.dimm));
+            start.setTextColor(getResources().getColor(R.color.dimm));
     }
 
 
     private void dark_mode(){
         update_darkness();
 
-        backarrowbackground.setBackground(resources.getDrawable(R.drawable.backback));
-        howtousebackground.setBackground(resources.getDrawable(R.drawable.statsback));
+        backarrowbackground.setBackground(getResources().getDrawable(R.drawable.backback));
+        howtousebackground.setBackground(getResources().getDrawable(R.drawable.statsback));
 
         it_is_nightmode_since_lightmode_shines_and_ruins_measurement = true;
-        slattitle.setTextColor(resources.getColor(R.color.white));
-        full.setBackground(resources.getDrawable(R.drawable.forcefull));
-        countdownbackground.setBackground(resources.getDrawable(R.drawable.forcefull));
-        sajda_pre.setTextColor(resources.getColor(R.color.white));
-        coverer.setBackground(resources.getDrawable(R.drawable.forcefull));
+        slattitle.setTextColor(getResources().getColor(R.color.white));
+        tampageTahiaFader.setTextColor(getResources().getColor(R.color.white));
+        full.setBackground(getResources().getDrawable(R.drawable.forcefull));
+        countdownbackground.setBackground(getResources().getDrawable(R.drawable.forcefull));
+        sajda_pre.setTextColor(getResources().getColor(R.color.white));
+        coverer.setBackground(getResources().getDrawable(R.drawable.forcefull));
 
-        donecover.setBackground(resources.getDrawable(R.drawable.forcefull));
-        donebutton.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
+        donecover.setBackground(getResources().getDrawable(R.drawable.forcefull));
+        donebutton.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
 
-        one.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
-        two.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
-        three.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
-        four.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
+        one.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
+        two.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
+        three.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
+        four.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
 
         sql("slat");
         SQLSharing.mycursorslat.moveToPosition(1);
@@ -1280,43 +1240,43 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         if(five_second_before_actually_starting_was_finished)
             start.setBackground(null);
         else
-            start.setBackground(resources.getDrawable(R.drawable.darkbuttons2));
+            start.setBackground(getResources().getDrawable(R.drawable.darkbuttons2));
     }
 
 
     private void update_darkness() {
         if(scheme==0) {
-            sajda.setTextColor(resources.getColor(R.color.darkest));
-            raka3at.setTextColor(resources.getColor(R.color.darkest));
-            countdown.setTextColor(resources.getColor(R.color.darkest));
-            tahia.setTextColor(resources.getColor(R.color.darkest));
+            sajda.setTextColor(getResources().getColor(R.color.darkest));
+            raka3at.setTextColor(getResources().getColor(R.color.darkest));
+            countdown.setTextColor(getResources().getColor(R.color.darkest));
+            tahia.setTextColor(getResources().getColor(R.color.darkest));
             if(startclicked)
-                start.setTextColor(resources.getColor(R.color.darkest));
+                start.setTextColor(getResources().getColor(R.color.darkest));
         } else if(scheme==1) {
-            sajda.setTextColor(resources.getColor(R.color.dark));
-            raka3at.setTextColor(resources.getColor(R.color.dark));
-            countdown.setTextColor(resources.getColor(R.color.dark));
-            tahia.setTextColor(resources.getColor(R.color.dark));
+            sajda.setTextColor(getResources().getColor(R.color.dark));
+            raka3at.setTextColor(getResources().getColor(R.color.dark));
+            countdown.setTextColor(getResources().getColor(R.color.dark));
+            tahia.setTextColor(getResources().getColor(R.color.dark));
             if(startclicked)
-                start.setTextColor(resources.getColor(R.color.dark));
+                start.setTextColor(getResources().getColor(R.color.dark));
         } else {
-            sajda.setTextColor(resources.getColor(R.color.white));
-            raka3at.setTextColor(resources.getColor(R.color.white));
-            countdown.setTextColor(resources.getColor(R.color.white));
-            tahia.setTextColor(resources.getColor(R.color.white));
+            sajda.setTextColor(getResources().getColor(R.color.white));
+            raka3at.setTextColor(getResources().getColor(R.color.white));
+            countdown.setTextColor(getResources().getColor(R.color.white));
+            tahia.setTextColor(getResources().getColor(R.color.white));
             if(startclicked)
-                start.setTextColor(resources.getColor(R.color.white));
+                start.setTextColor(getResources().getColor(R.color.white));
         }
     }
 
 
     private void darken_start_button() {
         if(scheme==0)
-            start.setTextColor(resources.getColor(R.color.darkest));
+            start.setTextColor(getResources().getColor(R.color.darkest));
         else if(scheme==1)
-            start.setTextColor(resources.getColor(R.color.dark));
+            start.setTextColor(getResources().getColor(R.color.dark));
         else
-            start.setTextColor(resources.getColor(R.color.white));
+            start.setTextColor(getResources().getColor(R.color.white));
     }
 
 
@@ -1415,7 +1375,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             blackground.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
                 blackoutClickeroni();
             }});
-            blackground.setBackgroundColor(resources.getColor(R.color.black));
+            blackground.setBackgroundColor(getResources().getColor(R.color.black));
             blackout = true;
             nightmode.setVisibility(View.GONE);
         } else {
@@ -1465,19 +1425,11 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
     public void soundsClicked(View view) {
         if(sounds){
-            try {
-                Glide.with(this).load(R.drawable.soundsoff).into(soundsbutton);
-            } catch (Exception ignored) {
-                soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
-            }
+                soundsbutton.setImageDrawable(getResources().getDrawable(R.drawable.soundsoff));
             sounds = false;
             SQLSharing.mydbslat.updateData("0", "6");
         } else {
-            try {
-                Glide.with(this).load(R.drawable.soundson).into(soundsbutton);
-            } catch (Exception ignored) {
-                soundsbutton.setImageDrawable(resources.getDrawable(R.drawable.soundson));
-            }
+                soundsbutton.setImageDrawable(getResources().getDrawable(R.drawable.soundson));
             sounds = true;
             SQLSharing.mydbslat.updateData("1", "6");
         }

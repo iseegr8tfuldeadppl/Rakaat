@@ -96,7 +96,6 @@ public class force extends AppCompatActivity  {
     private TextView title, citydisplay, daterr;
     private String language = "";
     private String hijri = "";
-    private Resources resources;
     private boolean darkmode = true;
     private TextView slider;
     private RelativeLayout doublearrowsbackground;
@@ -275,7 +274,7 @@ public class force extends AppCompatActivity  {
 
         fontAndy();
 
-        sql(resources.getString(R.string.slat));
+        sql(getResources().getString(R.string.slat));
 
         load_data_from_slat_sql();
 
@@ -342,7 +341,7 @@ public class force extends AppCompatActivity  {
 
                             try {
                             close_sql();
-                            sql(resources.getString(R.string.justforce3));
+                            sql(getResources().getString(R.string.justforce3));
 
                             if (SQLSharing.mycursorforce3.moveToFirst()) {
                                 do {
@@ -531,6 +530,10 @@ public class force extends AppCompatActivity  {
         }
     }
 
+    private void pprint(Object log){
+        Log.i("HH", String.valueOf(log));
+    }
+
     private void live_updates() {
         Runnable r=new Runnable() {@Override public void run() { try {
             while(running) {
@@ -540,8 +543,10 @@ public class force extends AppCompatActivity  {
                 if (it_is_today) {
 
                     calculate_rightnowcomparable();
-                    if (!praybuttonsdone)
+                    if (!praybuttonsdone){
+                        praybuttonsdone = true;
                         color_pray_buttonshandler.sendEmptyMessage(0);
+                    }
 
                     if (rightnowcomparable != rightnowcomparable_temp || (next_adan==0 && positifise > SQLSharing.minute_limit_to_display_positifise+1)){
                         if(next_adan!=-1)
@@ -553,6 +558,9 @@ public class force extends AppCompatActivity  {
                             hide_prayallbutton.sendEmptyMessage(0);
 
                         check_next_adan();
+                        if(changingD)
+                            new_adan = false;
+
                         if(next_adan!=-1){
                             // this check is to fix the glitch of changing time from 3AM to 11PM instantly, gets stuck on fajr
                             // TODO: might remove idk
@@ -578,7 +586,7 @@ public class force extends AppCompatActivity  {
                             display_neg_if_possible();
 
 
-                            if ((temp_positifise != positifise || changingD) && !still_scoping_on_previous_adan) {
+                            if ((temp_positifise != positifise) && !still_scoping_on_previous_adan) {
                                 positifise = temp_positifise;
                                 handler3.sendEmptyMessage(0);
                             }
@@ -628,13 +636,13 @@ public class force extends AppCompatActivity  {
 
         if(darkmode)
             for (int i = 0; i < 5; i++){
-                prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
             }
         else
             for (int i = 0; i < 5; i++) {
-                prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.white));
             }
     }
 
@@ -644,8 +652,8 @@ public class force extends AppCompatActivity  {
                 temp_next_adan = 0;
                 break;
             }
-            if(rightnowcomparable<prayers.get(i)) {
-                temp_next_adan = i;
+            if(rightnowcomparable>prayers.get(i)) {
+                temp_next_adan = i+1;
             }
         }
 
@@ -725,36 +733,16 @@ public class force extends AppCompatActivity  {
         ImageView arrowright = findViewById(R.id.arrowright);
         ImageView arrowleft = findViewById(R.id.arrowleft);
         settingsbutton = findViewById(R.id.settingsbutton);
-        try {
-            Glide.with(this).load(R.drawable.backarrowdark).into(arrowback);
-        } catch (Exception ignored) {
-            arrowback.setImageDrawable(resources.getDrawable(R.drawable.backarrowdark));
-        }
+            arrowback.setImageDrawable(getResources().getDrawable(R.drawable.backarrowdark));
         try {
             Glide.with(this).load(R.drawable.stats).into(statslogo);
         } catch (Exception ignored) {
-            statslogo.setImageDrawable(resources.getDrawable(R.drawable.stats));
+            statslogo.setImageDrawable(getResources().getDrawable(R.drawable.stats));
         }
-        try {
-            Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
-        } catch (Exception ignored) {
-            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
-        }
-        try {
-            Glide.with(this).load(R.drawable.settingsforce).into(settingsbutton);
-        } catch (Exception ignored) {
-            settingsbutton.setImageDrawable(resources.getDrawable(R.drawable.settingsforce));
-        }
-        try {
-            Glide.with(this).load(R.drawable.arrowright).into(arrowright);
-        } catch (Exception ignored) {
-            arrowright.setImageDrawable(resources.getDrawable(R.drawable.arrowright));
-        }
-        try {
-            Glide.with(this).load(R.drawable.arrowleft).into(arrowleft);
-        } catch (Exception ignored) {
-            arrowleft.setImageDrawable(resources.getDrawable(R.drawable.arrowleft));
-        }
+            nightmodebutton.setImageDrawable(getResources().getDrawable(R.drawable.nightmodedark));
+            settingsbutton.setImageDrawable(getResources().getDrawable(R.drawable.settings2));
+            arrowright.setImageDrawable(getResources().getDrawable(R.drawable.arrowright));
+            arrowleft.setImageDrawable(getResources().getDrawable(R.drawable.arrowleft));
 
         //praybuttons
         praybuttons = new ArrayList<>();
@@ -796,24 +784,23 @@ public class force extends AppCompatActivity  {
         prayerdisplayviews2 = new ArrayList<>();
         prayerdisplayviews.add(fajrtime);prayerdisplayviews.add(dhuhrtime);prayerdisplayviews.add(asrtime);prayerdisplayviews.add(maghribtime);prayerdisplayviews.add(ishatime);
         prayerdisplayviews2.add(fajrtitle);prayerdisplayviews2.add(dohrtitle);prayerdisplayviews2.add(asrtitle);prayerdisplayviews2.add(maghrebtitle);prayerdisplayviews2.add(ishatitle);
-        resources = getResources();
-        /*doublearrowleft = resources.getDrawable(R.drawable.doublearrowleftt);
-        doublearrowright = resources.getDrawable(R.drawable.doublearrowright);*/
+        /*doublearrowleft = getResources().getDrawable(R.drawable.doublearrowleftt);
+        doublearrowright = getResources().getDrawable(R.drawable.doublearrowright);*/
 
 
         prayernames = new ArrayList<>();
-        prayernames.add(resources.getString(R.string.fajrtitle));
-        prayernames.add(resources.getString(R.string.dohrtitle));
-        prayernames.add(resources.getString(R.string.asrtitle));
-        prayernames.add(resources.getString(R.string.maghrebtitle));
-        prayernames.add(resources.getString(R.string.ishatitle));
+        prayernames.add(getResources().getString(R.string.fajrtitle));
+        prayernames.add(getResources().getString(R.string.dohrtitle));
+        prayernames.add(getResources().getString(R.string.asrtitle));
+        prayernames.add(getResources().getString(R.string.maghrebtitle));
+        prayernames.add(getResources().getString(R.string.ishatitle));
 
         prayernames_arabe = new ArrayList<>();
-        prayernames_arabe.add(resources.getString(R.string.fajrtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.dohrtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.asrtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.maghrebtitle_arabe));
-        prayernames_arabe.add(resources.getString(R.string.ishatitle_arabe));
+        prayernames_arabe.add(getResources().getString(R.string.fajrtitle_arabe));
+        prayernames_arabe.add(getResources().getString(R.string.dohrtitle_arabe));
+        prayernames_arabe.add(getResources().getString(R.string.asrtitle_arabe));
+        prayernames_arabe.add(getResources().getString(R.string.maghrebtitle_arabe));
+        prayernames_arabe.add(getResources().getString(R.string.ishatitle_arabe));
     }
 
     private void hijri_date_setup() {
@@ -830,45 +817,45 @@ public class force extends AppCompatActivity  {
     }
 
     private void convert_hijri_to_cute() {
-        if(language.equals(resources.getString(R.string.ar))){
+        if(language.equals(getResources().getString(R.string.ar))){
             hijri = "";
             hijri += hijriD + " ";
             switch(hijri_month) {
                 case 1:
-                    hijri += resources.getString(R.string.muharram_arabe);
+                    hijri += getResources().getString(R.string.muharram_arabe);
                     break;
                 case 2:
-                    hijri += resources.getString(R.string.safar_arabe);
+                    hijri += getResources().getString(R.string.safar_arabe);
                     break;
                 case 3:
-                    hijri += resources.getString(R.string.rabialawwal_arabe);
+                    hijri += getResources().getString(R.string.rabialawwal_arabe);
                     break;
                 case 4:
-                    hijri += resources.getString(R.string.rabialthani_arabe);
+                    hijri += getResources().getString(R.string.rabialthani_arabe);
                     break;
                 case 5:
-                    hijri += resources.getString(R.string.jumadialawwal_arabe);
+                    hijri += getResources().getString(R.string.jumadialawwal_arabe);
                     break;
                 case 6:
-                    hijri += resources.getString(R.string.jumadialthani_arabe);
+                    hijri += getResources().getString(R.string.jumadialthani_arabe);
                     break;
                 case 7:
-                    hijri += resources.getString(R.string.rajab_arabe);
+                    hijri += getResources().getString(R.string.rajab_arabe);
                     break;
                 case 8:
-                    hijri += resources.getString(R.string.chaaban_arabe);
+                    hijri += getResources().getString(R.string.chaaban_arabe);
                     break;
                 case 9:
-                    hijri += resources.getString(R.string.ramadhan_arabe);
+                    hijri += getResources().getString(R.string.ramadhan_arabe);
                     break;
                 case 10:
-                    hijri += resources.getString(R.string.shawwal_arabe);
+                    hijri += getResources().getString(R.string.shawwal_arabe);
                     break;
                 case 11:
-                    hijri += resources.getString(R.string.dhualqaada_arabe);
+                    hijri += getResources().getString(R.string.dhualqaada_arabe);
                     break;
                 case 12:
-                    hijri += resources.getString(R.string.dhualhijja_arabe);
+                    hijri += getResources().getString(R.string.dhualhijja_arabe);
                     break;
             }
 
@@ -877,40 +864,40 @@ public class force extends AppCompatActivity  {
             hijri = "";
             switch(hijri_month) {
                 case 1:
-                    hijri += resources.getString(R.string.muharram);
+                    hijri += getResources().getString(R.string.muharram);
                     break;
                 case 2:
-                    hijri += resources.getString(R.string.safar);
+                    hijri += getResources().getString(R.string.safar);
                     break;
                 case 3:
-                    hijri += resources.getString(R.string.rabialawwal);
+                    hijri += getResources().getString(R.string.rabialawwal);
                     break;
                 case 4:
-                    hijri += resources.getString(R.string.rabialthani);
+                    hijri += getResources().getString(R.string.rabialthani);
                     break;
                 case 5:
-                    hijri += resources.getString(R.string.jumadialawwal);
+                    hijri += getResources().getString(R.string.jumadialawwal);
                     break;
                 case 6:
-                    hijri += resources.getString(R.string.jumadialthani);
+                    hijri += getResources().getString(R.string.jumadialthani);
                     break;
                 case 7:
-                    hijri += resources.getString(R.string.rajab);
+                    hijri += getResources().getString(R.string.rajab);
                     break;
                 case 8:
-                    hijri += resources.getString(R.string.chaaban);
+                    hijri += getResources().getString(R.string.chaaban);
                     break;
                 case 9:
-                    hijri += resources.getString(R.string.ramadhan);
+                    hijri += getResources().getString(R.string.ramadhan);
                     break;
                 case 10:
-                    hijri += resources.getString(R.string.shawwal);
+                    hijri += getResources().getString(R.string.shawwal);
                     break;
                 case 11:
-                    hijri += resources.getString(R.string.dhualqaada);
+                    hijri += getResources().getString(R.string.dhualqaada);
                     break;
                 case 12:
-                    hijri += resources.getString(R.string.dhualhijja);
+                    hijri += getResources().getString(R.string.dhualhijja);
                     break;
             }
 
@@ -952,17 +939,17 @@ public class force extends AppCompatActivity  {
     }
 
     private void languageshet() {
-        if(language.equals(resources.getString(R.string.en))) {
-            fajrtitle.setText(resources.getString(R.string.fajrtitle));
-            risetitle.setText(resources.getString(R.string.rise));
-            dohrtitle.setText(resources.getString(R.string.dohrtitle));
-            asrtitle.setText(resources.getString(R.string.asrtitle));
-            maghrebtitle.setText(resources.getString(R.string.maghrebtitle));
-            ishatitle.setText(resources.getString(R.string.ishatitle));
+        if(language.equals(getResources().getString(R.string.en))) {
+            fajrtitle.setText(getResources().getString(R.string.fajrtitle));
+            risetitle.setText(getResources().getString(R.string.rise));
+            dohrtitle.setText(getResources().getString(R.string.dohrtitle));
+            asrtitle.setText(getResources().getString(R.string.asrtitle));
+            maghrebtitle.setText(getResources().getString(R.string.maghrebtitle));
+            ishatitle.setText(getResources().getString(R.string.ishatitle));
             for(TextView praybutton:praybuttons)
-                praybutton.setText(resources.getString(R.string.joinprayer));
-            title.setText(resources.getString(R.string.force));
-            prayedthisdaybefore.setText(resources.getString(R.string.prayallquestion));
+                praybutton.setText(getResources().getString(R.string.joinprayer));
+            title.setText(getResources().getString(R.string.force));
+            prayedthisdaybefore.setText(getResources().getString(R.string.prayallquestion));
         }
     }
 
@@ -987,7 +974,7 @@ public class force extends AppCompatActivity  {
             try {
                 Glide.with(this).load(R.drawable.lmfao).into(lmfaoimage);
             } catch (Exception ignored) {
-                lmfaoimage.setImageDrawable(resources.getDrawable(R.drawable.lmfao));
+                lmfaoimage.setImageDrawable(getResources().getDrawable(R.drawable.lmfao));
             }
         }
     }
@@ -995,7 +982,7 @@ public class force extends AppCompatActivity  {
     private void low_light_alert() {
         try {
             if (getIntent().getStringExtra("light_alert").equals("yes")) {
-                if (language.equals(resources.getString(R.string.en)))
+                if (language.equals(getResources().getString(R.string.en)))
                     Snackbar.make(full, getString(R.string.low_light), Snackbar.LENGTH_LONG).show();
                 else
                     Snackbar.make(full, getString(R.string.low_light_arabe), Snackbar.LENGTH_LONG).show();
@@ -1004,7 +991,7 @@ public class force extends AppCompatActivity  {
     }
 
     private void location_shit(final Date date) {
-        sql(resources.getString(R.string.justforce));
+        sql(getResources().getString(R.string.justforce));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(force.this);
         if (SQLSharing.mycursorforce.getCount() > 0)
             if_theres_previous_info_load_it_n_display(date);
@@ -1292,8 +1279,8 @@ public class force extends AppCompatActivity  {
     private void pull_location(double longitude, double latitude) {
         Geocoder geocoder;
         List<Address> addresses = null;
-        Locale ar = new Locale(resources.getString(R.string.ar));
-        if(language.equals(resources.getString(R.string.en)))
+        Locale ar = new Locale(getResources().getString(R.string.ar));
+        if(language.equals(getResources().getString(R.string.en)))
             geocoder = new Geocoder(this, Locale.US);
         else
             geocoder = new Geocoder(this, ar);
@@ -1317,23 +1304,23 @@ public class force extends AppCompatActivity  {
     private String city = "";
     private void convert_prayertimes_into_seconds() {
 
-        String pm = resources.getString(R.string.pm);
+        String pm = getResources().getString(R.string.pm);
 
         int fajrtemp = Integer.parseInt(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
-        if(fajr.split(" ")[1].equals(resources.getString(R.string.pmer))|| fajr.split(" ")[1].equals(pm))
+        if(fajr.split(" ")[1].equals(getResources().getString(R.string.pmer))|| fajr.split(" ")[1].equals(pm))
             fajrtemp += 720; //12*60
         //Integer risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0])*3600 + Integer.parseInt(rise.split(" ")[0].split(":")[1])*60;
         int dhuhrtemp = Integer.parseInt(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(dhuhr.split(" ")[0].split(":")[1]);
-        if((dhuhr.split(" ")[1].equals(resources.getString(R.string.pmer)) || dhuhr.split(" ")[1].equals(pm)) && !dhuhr.split(":")[0].equals("12"))
+        if((dhuhr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || dhuhr.split(" ")[1].equals(pm)) && !dhuhr.split(":")[0].equals("12"))
             dhuhrtemp += 720; //12*60
         int asrtemp = Integer.parseInt(asr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(asr.split(" ")[0].split(":")[1]);
-        if(asr.split(" ")[1].equals(resources.getString(R.string.pmer)) || asr.split(" ")[1].equals(pm))
+        if(asr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || asr.split(" ")[1].equals(pm))
             asrtemp += 720; //12*60
         int maghribtemp = Integer.parseInt(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
-        if(maghrib.split(" ")[1].equals(resources.getString(R.string.pmer)) || maghrib.split(" ")[1].equals(pm))
+        if(maghrib.split(" ")[1].equals(getResources().getString(R.string.pmer)) || maghrib.split(" ")[1].equals(pm))
             maghribtemp += 720; //12*60
         int ishatemp = Integer.parseInt(isha.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(isha.split(" ")[0].split(":")[1]);
-        if(isha.split(" ")[1].equals(resources.getString(R.string.pmer)) || isha.split(" ")[1].equals(pm))
+        if(isha.split(" ")[1].equals(getResources().getString(R.string.pmer)) || isha.split(" ")[1].equals(pm))
             ishatemp += 720; //12*60
 
         prayers.add(fajrtemp);
@@ -1378,9 +1365,9 @@ public class force extends AppCompatActivity  {
                 fajrtime.startAnimation(to_right1);
                 to_right1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     fajrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         fajrtime.setText(fajr);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         fajrtime.setText(tfajr);
                     fajrtime.startAnimation(from_left1);
                     from_left1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1390,9 +1377,9 @@ public class force extends AppCompatActivity  {
                 risetime.startAnimation(to_right2);
                 to_right2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     risetime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         risetime.setText(rise);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         risetime.setText(trise);
                     risetime.startAnimation(from_left2);
                     from_left2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1402,9 +1389,9 @@ public class force extends AppCompatActivity  {
                 dhuhrtime.startAnimation(to_right12);
                 to_right12.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     dhuhrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         dhuhrtime.setText(dhuhr);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         dhuhrtime.setText(tdhuhr);
                     dhuhrtime.startAnimation(from_left3);
                     from_left3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1414,9 +1401,9 @@ public class force extends AppCompatActivity  {
                 asrtime.startAnimation(to_right3);
                 to_right3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     asrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         asrtime.setText(asr);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         asrtime.setText(tasr);
                     asrtime.startAnimation(from_left4);
                     from_left4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1426,9 +1413,9 @@ public class force extends AppCompatActivity  {
                 maghribtime.startAnimation(to_right4);
                 to_right4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     maghribtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         maghribtime.setText(maghrib);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         maghribtime.setText(tmaghrib);
                     maghribtime.startAnimation(from_left5);
                     from_left5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1438,9 +1425,9 @@ public class force extends AppCompatActivity  {
                 ishatime.startAnimation(to_right5);
                 to_right5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     ishatime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         ishatime.setText(isha);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         ishatime.setText(tisha);
                     ishatime.startAnimation(from_left6);
                     from_left6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1534,9 +1521,9 @@ public class force extends AppCompatActivity  {
                 fajrtime.startAnimation(toleft1);
                 toleft1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     fajrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         fajrtime.setText(fajr);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         fajrtime.setText(tfajr);
                     fajrtime.startAnimation(fromright1);
                     fromright1.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1546,9 +1533,9 @@ public class force extends AppCompatActivity  {
                 risetime.startAnimation(toleft2);
                 toleft2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     risetime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         risetime.setText(rise);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         risetime.setText(trise);
                     risetime.startAnimation(fromright2);
                     fromright2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1558,9 +1545,9 @@ public class force extends AppCompatActivity  {
                 dhuhrtime.startAnimation(toleft3);
                 toleft3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     dhuhrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         dhuhrtime.setText(dhuhr);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         dhuhrtime.setText(tdhuhr);
                     dhuhrtime.startAnimation(fromright3);
                     fromright3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1570,9 +1557,9 @@ public class force extends AppCompatActivity  {
                 asrtime.startAnimation(toleft5);
                 toleft5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     asrtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         asrtime.setText(asr);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         asrtime.setText(tasr);
                     asrtime.startAnimation(fromright4);
                     fromright4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1582,9 +1569,9 @@ public class force extends AppCompatActivity  {
                 maghribtime.startAnimation(toleft6);
                 toleft6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     maghribtime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         maghribtime.setText(maghrib);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         maghribtime.setText(tmaghrib);
                     maghribtime.startAnimation(fromright5);
                     fromright5.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1594,9 +1581,9 @@ public class force extends AppCompatActivity  {
                 ishatime.startAnimation(toleft7);
                 toleft7.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
                     ishatime.setVisibility(View.INVISIBLE);
-                    if(language.equals(resources.getString(R.string.en)))
+                    if(language.equals(getResources().getString(R.string.en)))
                         ishatime.setText(isha);
-                    else if(language.equals(resources.getString(R.string.ar)))
+                    else if(language.equals(getResources().getString(R.string.ar)))
                         ishatime.setText(tisha);
                     ishatime.startAnimation(fromright6);
                     fromright6.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
@@ -1657,7 +1644,7 @@ public class force extends AppCompatActivity  {
                 }});
             }
         } else {
-            if(language.equals(resources.getString(R.string.en))) {
+            if(language.equals(getResources().getString(R.string.en))) {
                 fajrtime.setText(fajr);
                 risetime.setText(rise);
                 dhuhrtime.setText(dhuhr);
@@ -1665,7 +1652,7 @@ public class force extends AppCompatActivity  {
                 maghribtime.setText(maghrib);
                 ishatime.setText(isha);
 
-            } else if(language.equals(resources.getString(R.string.ar))){ // the arabic am and pm
+            } else if(language.equals(getResources().getString(R.string.ar))){ // the arabic am and pm
                 fajrtime.setText(tfajr);
                 risetime.setText(trise);
                 dhuhrtime.setText(tdhuhr);
@@ -1763,9 +1750,9 @@ public class force extends AppCompatActivity  {
         } catch(Exception ignored){ }
 
 
-        if(language.equals(resources.getString(R.string.ar))){ // the arabic am and pm
-            String pm = resources.getString(R.string.pm);
-            String am = resources.getString(R.string.am);
+        if(language.equals(getResources().getString(R.string.ar))){ // the arabic am and pm
+            String pm = getResources().getString(R.string.pm);
+            String am = getResources().getString(R.string.am);
             if(fajr.split(" ")[1].equals("AM") || fajr.split(" ")[1].equals(am)) tfajr = fajr.split(" ")[0] + " " + am;
             else tfajr = fajr.split(" ")[0] + " " + pm;
             if(rise.split(" ")[1].equals("AM") || rise.split(" ")[1].equals(am)) trise = rise.split(" ")[0] + " " + am;
@@ -1801,44 +1788,44 @@ public class force extends AppCompatActivity  {
     private void work_on_date_n_display_it() {
         datin = "";
         String tempdatin;
-        if(language.equals(resources.getString(R.string.en))) {
+        if(language.equals(getResources().getString(R.string.en))) {
             tempdatin = temptoday[0];
 
 
-            if (tempdatin.equals(resources.getString(R.string.satu))) {
-                datin += resources.getString(R.string.sat);
+            if (tempdatin.equals(getResources().getString(R.string.satu))) {
+                datin += getResources().getString(R.string.sat);
                 friday = false;
-                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+                dohrtitle.setText(getResources().getString(R.string.dohrtitle));
             }
-            else if (tempdatin.equals(resources.getString(R.string.sunu))) {
-                datin += resources.getString(R.string.sun);
+            else if (tempdatin.equals(getResources().getString(R.string.sunu))) {
+                datin += getResources().getString(R.string.sun);
                 friday = false;
-                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+                dohrtitle.setText(getResources().getString(R.string.dohrtitle));
             }
-            else if (tempdatin.equals(resources.getString(R.string.monu))) {
-                datin += resources.getString(R.string.mon);
+            else if (tempdatin.equals(getResources().getString(R.string.monu))) {
+                datin += getResources().getString(R.string.mon);
                 friday = false;
-                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+                dohrtitle.setText(getResources().getString(R.string.dohrtitle));
             }
-            else if (tempdatin.equals(resources.getString(R.string.tueu))) {
-                datin += resources.getString(R.string.tue);
+            else if (tempdatin.equals(getResources().getString(R.string.tueu))) {
+                datin += getResources().getString(R.string.tue);
                 friday = false;
-                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+                dohrtitle.setText(getResources().getString(R.string.dohrtitle));
             }
-            else if (tempdatin.equals(resources.getString(R.string.wedu))) {
-                datin += resources.getString(R.string.wed);
+            else if (tempdatin.equals(getResources().getString(R.string.wedu))) {
+                datin += getResources().getString(R.string.wed);
                 friday = false;
-                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+                dohrtitle.setText(getResources().getString(R.string.dohrtitle));
             }
-            else if (tempdatin.equals(resources.getString(R.string.thuru))) {
-                datin += resources.getString(R.string.thu);
+            else if (tempdatin.equals(getResources().getString(R.string.thuru))) {
+                datin += getResources().getString(R.string.thu);
                 friday = false;
-                dohrtitle.setText(resources.getString(R.string.dohrtitle));
+                dohrtitle.setText(getResources().getString(R.string.dohrtitle));
             }
-            else if (tempdatin.equals(resources.getString(R.string.fridu))) {
-                datin += resources.getString(R.string.fri);
+            else if (tempdatin.equals(getResources().getString(R.string.fridu))) {
+                datin += getResources().getString(R.string.fri);
                 friday = true;
-                dohrtitle.setText(resources.getString(R.string.Jamo3a));
+                dohrtitle.setText(getResources().getString(R.string.Jamo3a));
             }
 
 
@@ -1847,108 +1834,108 @@ public class force extends AppCompatActivity  {
 
             datin += " ";
             tempdatin = temptoday[1];
-            if (tempdatin.equals(resources.getString(R.string.jan))) {
-                datin += resources.getString(R.string.january);
+            if (tempdatin.equals(getResources().getString(R.string.jan))) {
+                datin += getResources().getString(R.string.january);
                 miladi_month = 1;
             }
-            else if (tempdatin.equals(resources.getString(R.string.feb))) {
-                datin += resources.getString(R.string.february);
+            else if (tempdatin.equals(getResources().getString(R.string.feb))) {
+                datin += getResources().getString(R.string.february);
                 miladi_month = 2;
             }
-            else if (tempdatin.equals(resources.getString(R.string.mar))) {
-                datin += resources.getString(R.string.march);
+            else if (tempdatin.equals(getResources().getString(R.string.mar))) {
+                datin += getResources().getString(R.string.march);
                 miladi_month = 3;
             }
-            else if (tempdatin.equals(resources.getString(R.string.apr))) {
-                datin += resources.getString(R.string.april);
+            else if (tempdatin.equals(getResources().getString(R.string.apr))) {
+                datin += getResources().getString(R.string.april);
                 miladi_month = 4;
             }
-            else if (tempdatin.contains(resources.getString(R.string.mao))) {
-                datin += resources.getString(R.string.may);
+            else if (tempdatin.contains(getResources().getString(R.string.mao))) {
+                datin += getResources().getString(R.string.may);
                 miladi_month = 5;
             }
-            else if (tempdatin.contains(resources.getString(R.string.june))) {
-                datin += resources.getString(R.string.junee);
+            else if (tempdatin.contains(getResources().getString(R.string.june))) {
+                datin += getResources().getString(R.string.junee);
                 miladi_month = 6;
             }
-            else if (tempdatin.contains(resources.getString(R.string.july))) {
-                datin += resources.getString(R.string.julyy);
+            else if (tempdatin.contains(getResources().getString(R.string.july))) {
+                datin += getResources().getString(R.string.julyy);
 
                 miladi_month = 7;
             }
-            else if (tempdatin.equals(resources.getString(R.string.aug))) {
+            else if (tempdatin.equals(getResources().getString(R.string.aug))) {
                 miladi_month = 8;
-                datin += resources.getString(R.string.august);
+                datin += getResources().getString(R.string.august);
             }
             else if (tempdatin.equals("Sep")) {
                 miladi_month = 9;
-                datin += resources.getString(R.string.september);
+                datin += getResources().getString(R.string.september);
             }
             else if (tempdatin.equals("Oct")) {
                 miladi_month = 10;
-                datin += resources.getString(R.string.october);
+                datin += getResources().getString(R.string.october);
             }
             else if (tempdatin.equals("Nov")) {
                 miladi_month = 11;
-                datin += resources.getString(R.string.november);
+                datin += getResources().getString(R.string.november);
             }
             else if (tempdatin.equals("Dec")) {
                 miladi_month = 12;
-                datin += resources.getString(R.string.december);
+                datin += getResources().getString(R.string.december);
             }
 
             tempdatin = temptoday[2];
             int temper = Integer.parseInt(tempdatin);
             datin += " " + temper;
             if (temper==2 || temper==22)
-                datin += resources.getString(R.string.nd);
+                datin += getResources().getString(R.string.nd);
             else if (temper==3 || temper==23)
-                datin += resources.getString(R.string.rd);
+                datin += getResources().getString(R.string.rd);
             else if (temper==1 || temper==21)
-                datin += resources.getString(R.string.st);
+                datin += getResources().getString(R.string.st);
             else
-                datin += resources.getString(R.string.th);
+                datin += getResources().getString(R.string.th);
 
-        } else if(language.equals(resources.getString(R.string.ar))){
+        } else if(language.equals(getResources().getString(R.string.ar))){
             tempdatin = temptoday[0];
 
 
             switch (tempdatin) {
                 case "Sat":
-                    datin += resources.getString(R.string.satarabe);
+                    datin += getResources().getString(R.string.satarabe);
                     friday = false;
-                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
+                    dohrtitle.setText(getResources().getString(R.string.dohrtitle_arabe));
                     break;
                 case "Sun":
-                    datin += resources.getString(R.string.sunarabe);
+                    datin += getResources().getString(R.string.sunarabe);
                     friday = false;
-                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
+                    dohrtitle.setText(getResources().getString(R.string.dohrtitle_arabe));
                     break;
                 case "Mon":
-                    datin += resources.getString(R.string.monarabe);
+                    datin += getResources().getString(R.string.monarabe);
                     friday = false;
-                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
+                    dohrtitle.setText(getResources().getString(R.string.dohrtitle_arabe));
 
                     break;
                 case "Tue":
-                    datin += resources.getString(R.string.tuearabe);
+                    datin += getResources().getString(R.string.tuearabe);
                     friday = false;
-                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
+                    dohrtitle.setText(getResources().getString(R.string.dohrtitle_arabe));
                     break;
                 case "Wed":
-                    datin += resources.getString(R.string.wedarabe);
+                    datin += getResources().getString(R.string.wedarabe);
                     friday = false;
-                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
+                    dohrtitle.setText(getResources().getString(R.string.dohrtitle_arabe));
                     break;
                 case "Thu":
-                    datin += resources.getString(R.string.thurarabe);
+                    datin += getResources().getString(R.string.thurarabe);
                     friday = false;
-                    dohrtitle.setText(resources.getString(R.string.dohrtitle_arabe));
+                    dohrtitle.setText(getResources().getString(R.string.dohrtitle_arabe));
                     break;
                 case "Fri":
-                    datin += resources.getString(R.string.friarabe);
+                    datin += getResources().getString(R.string.friarabe);
                     friday = true;
-                    dohrtitle.setText(resources.getString(R.string.friarabe));
+                    dohrtitle.setText(getResources().getString(R.string.friarabe));
                     break;
             }
 
@@ -1962,51 +1949,51 @@ public class force extends AppCompatActivity  {
             tempdatin = temptoday[1];
             if (tempdatin.equals("Jan")) {
                 miladi_month = 1;
-                datin += resources.getString(R.string.janarabe);
+                datin += getResources().getString(R.string.janarabe);
             }
             else if (tempdatin.equals("Feb")) {
                 miladi_month = 2;
-                datin += resources.getString(R.string.febarabe);
+                datin += getResources().getString(R.string.febarabe);
             }
             else if (tempdatin.equals("Mar")) {
                 miladi_month = 3;
-                datin += resources.getString(R.string.mararabe);
+                datin += getResources().getString(R.string.mararabe);
             }
             else if (tempdatin.equals("Apr")) {
                 miladi_month = 4;
-                datin += resources.getString(R.string.aprarabe);
+                datin += getResources().getString(R.string.aprarabe);
             }
             else if (tempdatin.contains("Ma")) {
                 miladi_month = 5;
-                datin += resources.getString(R.string.maarabe);
+                datin += getResources().getString(R.string.maarabe);
             }
             else if (tempdatin.contains("Jun")) {
                 miladi_month = 6;
-                datin += resources.getString(R.string.junarabe);
+                datin += getResources().getString(R.string.junarabe);
             }
             else if (tempdatin.contains("Jul")) {
                 miladi_month = 7;
-                datin += resources.getString(R.string.jularabe);
+                datin += getResources().getString(R.string.jularabe);
             }
             else if (tempdatin.equals("Aug")) {
                 miladi_month = 8;
-                datin += resources.getString(R.string.augusarabe);
+                datin += getResources().getString(R.string.augusarabe);
             }
             else if (tempdatin.equals("Sep")) {
                 miladi_month = 9;
-                datin += resources.getString(R.string.separabe);
+                datin += getResources().getString(R.string.separabe);
             }
             else if (tempdatin.equals("Oct")) {
                 miladi_month = 10;
-                datin += resources.getString(R.string.octarabe);
+                datin += getResources().getString(R.string.octarabe);
             }
             else if (tempdatin.equals("Nov")) {
                 miladi_month = 11;
-                datin += resources.getString(R.string.novarabe);
+                datin += getResources().getString(R.string.novarabe);
             }
             else if (tempdatin.equals("Dec")) {
                 miladi_month = 12;
-                datin += resources.getString(R.string.decarabe);
+                datin += getResources().getString(R.string.decarabe);
             }
 
         }
@@ -2111,38 +2098,38 @@ public class force extends AppCompatActivity  {
 
     private void want_to_pray_this_again(int prayer) {
         if(language.equals("en"))
-            print3(resources.getString(R.string.wanttopraythisagain), resources.getString(R.string.yes), prayer);
+            print3(getResources().getString(R.string.wanttopraythisagain), getResources().getString(R.string.yes), prayer);
         else if(language.equals("ar"))
-            print3(resources.getString(R.string.wanttopraythisagain_arabe), resources.getString(R.string.yes_arabe), prayer);
+            print3(getResources().getString(R.string.wanttopraythisagain_arabe), getResources().getString(R.string.yes_arabe), prayer);
     }
 
     private void theres_still_until_this_prayer(int prayer) {
         if(language.equals("en"))
-            print3(resources.getString(R.string.theresstill) + positifise + resources.getString(R.string.minutesuntilthisprayer), resources.getString(R.string.joinprayer), prayer);
+            print3(getResources().getString(R.string.theresstill) + positifise + getResources().getString(R.string.minutesuntilthisprayer), getResources().getString(R.string.joinprayer), prayer);
         else if(language.equals("ar")){
             String lmao = " " + positifise + " ";
-            print3(resources.getString(R.string.theresstill_arabe) + lmao + resources.getString(R.string.minutesuntilthisprayer_arabe), resources.getString(R.string.joinprayer_arabic), prayer);
+            print3(getResources().getString(R.string.theresstill_arabe) + lmao + getResources().getString(R.string.minutesuntilthisprayer_arabe), getResources().getString(R.string.joinprayer_arabic), prayer);
         }
     }
 
     private void cannot_pray_futures() {
-        if(language.equals(resources.getString(R.string.en)))
-            print2(resources.getString(R.string.cannot));
-        else if(language.equals(resources.getString(R.string.ar)))
-            print2(resources.getString(R.string.cannot_arabe));
+        if(language.equals(getResources().getString(R.string.en)))
+            print2(getResources().getString(R.string.cannot));
+        else if(language.equals(getResources().getString(R.string.ar)))
+            print2(getResources().getString(R.string.cannot_arabe));
     }
 
     private void did_you_pray_this_previous_prayer(int prayer) {
-        if (language.equals(resources.getString(R.string.en)))
-            print2(resources.getString(R.string.didyoupray) + " " + prayernames.get(prayer - 1) + resources.getString(R.string.questionmark));
-        else if (language.equals(resources.getString(R.string.ar)))
-            print2(getString(R.string.didyoupray_arabe) + " " + prayernames_arabe.get(prayer - 1) + resources.getString(R.string.questionmark_arabe));
+        if (language.equals(getResources().getString(R.string.en)))
+            print2(getResources().getString(R.string.didyoupray) + " " + prayernames.get(prayer - 1) + getResources().getString(R.string.questionmark));
+        else if (language.equals(getResources().getString(R.string.ar)))
+            print2(getString(R.string.didyoupray_arabe) + " " + prayernames_arabe.get(prayer - 1) + getResources().getString(R.string.questionmark_arabe));
     }
 
     private void too_early(int prayer) {
-        if (language.equals(resources.getString(R.string.en)))
+        if (language.equals(getResources().getString(R.string.en)))
             print2(getString(R.string.waytooearly) + " " + prayernames.get(prayer));
-        else if (language.equals(resources.getString(R.string.ar)))
+        else if (language.equals(getResources().getString(R.string.ar)))
             print2(getString(R.string.waytooearly_arabe) + " " + prayernames_arabe.get(prayer));
     }
 
@@ -2195,18 +2182,14 @@ public class force extends AppCompatActivity  {
     private void retrieveAndy(){
 
         // if theres smt in sql then  look up  prayed
-        sql(resources.getString(R.string.justforce3));
+        sql(getResources().getString(R.string.justforce3));
         if (SQLSharing.mycursorforce3.getCount() > 0) {
             pullP_one_hot_encoding_from_sql();
             check_ifP_orV_are_empty();
             for (int i = 0; i < 5; i++) {
                 if (String.valueOf(verified.charAt(i)).equals("1")) {
                     checkmarks.get(i).setVisibility(VISIBLE);
-                    try {
-                        Glide.with(getApplicationContext()).load(R.drawable.checkmark).into(checkmarks.get(i));
-                    } catch (Exception ignored) {
-                        checkmarks.get(i).setImageDrawable(resources.getDrawable(R.drawable.checkmark));
-                    }
+                        checkmarks.get(i).setImageDrawable(getResources().getDrawable(R.drawable.checkmark));
                 } else
                     checkmarks.get(i).setVisibility(GONE);
             }
@@ -2243,7 +2226,7 @@ public class force extends AppCompatActivity  {
                     praybuttonsdone = true;
                     for (int i = 0; i < 5; i++) {
                         if (String.valueOf(prayed.charAt(i)).equals("0")){
-                            praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                            praybuttons.get(i).setTextColor(getResources().getColor(R.color.lighterred));
                         }else
                             praybuttons.get(i).setTextColor(Color.GREEN);
                     }
@@ -2252,10 +2235,10 @@ public class force extends AppCompatActivity  {
                     for (int i = 0; i < 5; i++) {
                         if (String.valueOf(prayed.charAt(i)).equals("0")) {
                             praybuttons.get(i).setTextColor(WHITE);
-                            praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
+                            praybuttons.get(i).setBackground(getResources().getDrawable(R.drawable.lightforcebuttons));
                         } else {
                             praybuttons.get(i).setTextColor(WHITE);
-                            praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
+                            praybuttons.get(i).setBackground(getResources().getDrawable(R.drawable.lightforcebuttonsgreen));
                             praybuttons.get(i).setTextColor(Color.BLACK);
                         }
                     }
@@ -2266,7 +2249,7 @@ public class force extends AppCompatActivity  {
                         praybuttonsdone = true;
                         for (int i = 0; i < 5; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0"))
-                                praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                                praybuttons.get(i).setTextColor(getResources().getColor(R.color.lighterred));
                             else
                                 praybuttons.get(i).setTextColor(Color.GREEN);
                         }
@@ -2275,10 +2258,10 @@ public class force extends AppCompatActivity  {
                         for (int i = 0; i < 5; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
                                 praybuttons.get(i).setTextColor(WHITE);
-                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
+                                praybuttons.get(i).setBackground(getResources().getDrawable(R.drawable.lightforcebuttons));
                             } else {
                                 praybuttons.get(i).setTextColor(WHITE);
-                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
+                                praybuttons.get(i).setBackground(getResources().getDrawable(R.drawable.lightforcebuttonsgreen));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
                             }
                         }
@@ -2288,13 +2271,13 @@ public class force extends AppCompatActivity  {
                         praybuttonsdone = true;
                         for (int i = 0; i < next_adan; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0"))
-                                praybuttons.get(i).setTextColor(resources.getColor(R.color.lighterred));
+                                praybuttons.get(i).setTextColor(getResources().getColor(R.color.lighterred));
                             else
                                 praybuttons.get(i).setTextColor(Color.GREEN);
                         }
 
                         for (int i = next_adan; i < 5; i++) {
-                            praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                            praybuttons.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
                         }
 
                     } else if(next_adan!=-1){
@@ -2302,17 +2285,17 @@ public class force extends AppCompatActivity  {
                         for (int i = 0; i < next_adan; i++) {
                             if (String.valueOf(prayed.charAt(i)).equals("0")) {
                                 praybuttons.get(i).setTextColor(WHITE);
-                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttons));
+                                praybuttons.get(i).setBackground(getResources().getDrawable(R.drawable.lightforcebuttons));
                             } else {
                                 praybuttons.get(i).setTextColor(WHITE);
-                                praybuttons.get(i).setBackground(resources.getDrawable(R.drawable.lightforcebuttonsgreen));
+                                praybuttons.get(i).setBackground(getResources().getDrawable(R.drawable.lightforcebuttonsgreen));
                                 praybuttons.get(i).setTextColor(Color.BLACK);
                             }
                         }
 
 
                         for (int i = next_adan; i < 5; i++) {
-                            praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                            praybuttons.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
                             praybuttons.get(i).setBackground(null);
                         }
                     }
@@ -2323,12 +2306,12 @@ public class force extends AppCompatActivity  {
         } else {
             if(darkmode) {
                 for (int i = 0; i < 5; i++) {
-                    praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    praybuttons.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
                 }
             }
             else {
                 for (int i = 0; i < 5; i++) {
-                    praybuttons.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                    praybuttons.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
                     praybuttons.get(i).setBackground(null);
                 }
             }
@@ -2384,7 +2367,7 @@ public class force extends AppCompatActivity  {
     }
 
     private void pullP_one_hot_encoding_from_sql() {
-        sql(resources.getString(R.string.justforce3));
+        sql(getResources().getString(R.string.justforce3));
         prayed = "00000";
         verified = "00000";
         athome = "11111";
@@ -2425,7 +2408,7 @@ public class force extends AppCompatActivity  {
                     find_slider(next_adan, false);
                     if(slider!=null)
                         if(negatifise!=0){
-                            lol = resources.getString(R.string.plusser) + negatifise;
+                            lol = getResources().getString(R.string.plusser) + negatifise;
                             slider.setText(lol); // for sm ass reason it's over by 1 min
                             if(can_find_in)
                                 handler5.sendEmptyMessage(0);
@@ -2441,7 +2424,7 @@ public class force extends AppCompatActivity  {
                     find_slider(next_adan, false);
                     if(slider!=null)
                         if(positifise!=0){
-                            lol = resources.getString(R.string.minuser) + positifise;
+                            lol = getResources().getString(R.string.minuser) + positifise;
                             slider.setText(lol); // for sm ass reason it's over by 1 min
                             if(can_find_in)
                                 handler5.sendEmptyMessage(0);
@@ -2676,14 +2659,14 @@ public class force extends AppCompatActivity  {
         }
 
         for(TextView praybutton:praybuttons){
-            praybutton.setBackground(resources.getDrawable(R.drawable.forcebuttons));
+            praybutton.setBackground(getResources().getDrawable(R.drawable.forcebuttons));
             praybutton.setTextColor(WHITE);
         }
 
-        full.setBackground(resources.getDrawable(R.drawable.simpelbackground));
-        doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.lightbacktotoday));
+        full.setBackground(getResources().getDrawable(R.drawable.simpelbackground));
+        doublearrowsbackground.setBackground(getResources().getDrawable(R.drawable.lightbacktotoday));
         title.setTextColor(WHITE);
-        title.setBackgroundColor(resources.getColor(R.color.transparentblacker));
+        title.setBackgroundColor(getResources().getColor(R.color.transparentblacker));
 
 
         if (fajrtitle.getCurrentTextColor() != Color.GREEN)
@@ -2698,25 +2681,25 @@ public class force extends AppCompatActivity  {
         if (ishatitle.getCurrentTextColor() != Color.GREEN)
             ishatitle.setTextColor(WHITE);
 
-        daterr.setBackground(resources.getDrawable(R.drawable.lightdate));
-        fajrbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
-        risebackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
-        dhuhrbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
-        asrbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
-        maghribbackground.setBackground(resources.getDrawable(R.drawable.lightmultipledayselectionbackground));
-        ishabackground.setBackground(resources.getDrawable(R.drawable.lightcity));
-        yesterdayarrowbackground.setBackground(resources.getDrawable(R.drawable.lighttmrandyst));
-        tommorowarrowbackground.setBackground(resources.getDrawable(R.drawable.lighttmrandyst));
+        daterr.setBackground(getResources().getDrawable(R.drawable.lightdate));
+        fajrbackground.setBackground(getResources().getDrawable(R.drawable.lightmultipledayselectionbackground));
+        risebackground.setBackground(getResources().getDrawable(R.drawable.lightmultipledayselectionbackground));
+        dhuhrbackground.setBackground(getResources().getDrawable(R.drawable.lightmultipledayselectionbackground));
+        asrbackground.setBackground(getResources().getDrawable(R.drawable.lightmultipledayselectionbackground));
+        maghribbackground.setBackground(getResources().getDrawable(R.drawable.lightmultipledayselectionbackground));
+        ishabackground.setBackground(getResources().getDrawable(R.drawable.lightcity));
+        yesterdayarrowbackground.setBackground(getResources().getDrawable(R.drawable.lighttmrandyst));
+        tommorowarrowbackground.setBackground(getResources().getDrawable(R.drawable.lighttmrandyst));
 
-        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightstatsback));
-        leftsideelementsbackground.setBackground(resources.getDrawable(R.drawable.lightbackback));
+        rightsideelementsbackground.setBackground(getResources().getDrawable(R.drawable.lightstatsback));
+        leftsideelementsbackground.setBackground(getResources().getDrawable(R.drawable.lightbackback));
         try {
             Glide.with(this).load(R.drawable.lightlmfao).into(lmfaoimage);
         } catch (Exception ignored) {
-            lmfaoimage.setImageDrawable(resources.getDrawable(R.drawable.lightlmfao));
+            lmfaoimage.setImageDrawable(getResources().getDrawable(R.drawable.lightlmfao));
         }
 
-        sql(resources.getString(R.string.slat));
+        sql(getResources().getString(R.string.slat));
         SQLSharing.mycursorslat.moveToFirst();
         SQLSharing.mycursorslat.moveToNext();
         ID = SQLSharing.mycursorslat.getString(0);
@@ -2741,56 +2724,56 @@ public class force extends AppCompatActivity  {
             leftsideelementsbackground = findViewById(R.id.leftsideelementsbackground);
         }
 
-        try{ slider.setTextColor(resources.getColor(R.color.grayerthanwhite));}catch(Exception ignored){}
+        try{ slider.setTextColor(getResources().getColor(R.color.grayerthanwhite));}catch(Exception ignored){}
 
         try {
             Glide.with(this).load(R.drawable.lmfao).into(lmfaoimage);
         } catch (Exception ignored) {
-            lmfaoimage.setImageDrawable(resources.getDrawable(R.drawable.lmfao));
+            lmfaoimage.setImageDrawable(getResources().getDrawable(R.drawable.lmfao));
         }
 
         for(TextView praybutton:praybuttons) {
-            praybutton.setBackground(resources.getDrawable(R.drawable.darkbuttons));
-            praybutton.setTextColor(resources.getColor(R.color.grayerthanwhite));
+            praybutton.setBackground(getResources().getDrawable(R.drawable.darkbuttons));
+            praybutton.setTextColor(getResources().getColor(R.color.grayerthanwhite));
         }
 
-        full.setBackground(resources.getDrawable(R.drawable.forcefull));
-        doublearrowsbackground.setBackground(resources.getDrawable(R.drawable.backtotoday));
+        full.setBackground(getResources().getDrawable(R.drawable.forcefull));
+        doublearrowsbackground.setBackground(getResources().getDrawable(R.drawable.backtotoday));
         title.setTextColor(WHITE);
         title.setBackground(null);
 
 
         if (fajrtitle.getCurrentTextColor() != Color.GREEN)
-            fajrtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
-        risetitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
+            fajrtitle.setTextColor(getResources().getColor(R.color.grayerthanwhite));
+        risetitle.setTextColor(getResources().getColor(R.color.grayerthanwhite));
         if (dohrtitle.getCurrentTextColor() != Color.GREEN)
-            dohrtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
+            dohrtitle.setTextColor(getResources().getColor(R.color.grayerthanwhite));
         if (asrtitle.getCurrentTextColor() != Color.GREEN)
-            asrtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
+            asrtitle.setTextColor(getResources().getColor(R.color.grayerthanwhite));
         if (maghrebtitle.getCurrentTextColor() != Color.GREEN)
-            maghrebtitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
+            maghrebtitle.setTextColor(getResources().getColor(R.color.grayerthanwhite));
         if (ishatitle.getCurrentTextColor() != Color.GREEN)
-            ishatitle.setTextColor(resources.getColor(R.color.grayerthanwhite));
+            ishatitle.setTextColor(getResources().getColor(R.color.grayerthanwhite));
 
-        yesterdayarrowbackground.setBackground(resources.getDrawable(R.drawable.tmrandyst));
-        tommorowarrowbackground.setBackground(resources.getDrawable(R.drawable.tmrandyst));
-        daterr.setBackground(resources.getDrawable(R.drawable.date));
-        fajrbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
-        risebackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
-        dhuhrbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
-        asrbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
-        maghribbackground.setBackground(resources.getDrawable(R.drawable.multipledayselectionbackground));
-        ishabackground.setBackground(resources.getDrawable(R.drawable.city));
+        yesterdayarrowbackground.setBackground(getResources().getDrawable(R.drawable.tmrandyst));
+        tommorowarrowbackground.setBackground(getResources().getDrawable(R.drawable.tmrandyst));
+        daterr.setBackground(getResources().getDrawable(R.drawable.date));
+        fajrbackground.setBackground(getResources().getDrawable(R.drawable.multipledayselectionbackground));
+        risebackground.setBackground(getResources().getDrawable(R.drawable.multipledayselectionbackground));
+        dhuhrbackground.setBackground(getResources().getDrawable(R.drawable.multipledayselectionbackground));
+        asrbackground.setBackground(getResources().getDrawable(R.drawable.multipledayselectionbackground));
+        maghribbackground.setBackground(getResources().getDrawable(R.drawable.multipledayselectionbackground));
+        ishabackground.setBackground(getResources().getDrawable(R.drawable.city));
 
-        rightsideelementsbackground.setBackground(resources.getDrawable(R.drawable.statsback));
-        leftsideelementsbackground.setBackground(resources.getDrawable(R.drawable.backback));
+        rightsideelementsbackground.setBackground(getResources().getDrawable(R.drawable.statsback));
+        leftsideelementsbackground.setBackground(getResources().getDrawable(R.drawable.backback));
         try {
             Glide.with(this).load(R.drawable.lmfao).into(lmfaoimage);
         } catch (Exception ignored) {
-            lmfaoimage.setImageDrawable(resources.getDrawable(R.drawable.lmfao));
+            lmfaoimage.setImageDrawable(getResources().getDrawable(R.drawable.lmfao));
         }
 
-        sql(resources.getString(R.string.slat));
+        sql(getResources().getString(R.string.slat));
         SQLSharing.mycursorslat.moveToPosition(1);
         ID = SQLSharing.mycursorslat.getString(0);
         SQLSharing.mydbslat.updateData("yes", ID);
@@ -2888,11 +2871,11 @@ public class force extends AppCompatActivity  {
             for (int i = 0; i < 5; i++) {
                 if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
                     if(darkmode) {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                        prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
                     } else {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.white));
                     }
                 }
             }
@@ -2903,13 +2886,13 @@ public class force extends AppCompatActivity  {
                 try {
                     Glide.with(this).load(R.drawable.doublearrowright).into(doublearrows);
                 } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowright));
+                    doublearrows.setImageDrawable(getResources().getDrawable(R.drawable.doublearrowright));
                 }
             } if(all_white) {
                 try {
                     Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
                 } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
+                    doublearrows.setImageDrawable(getResources().getDrawable(R.drawable.doublearrowleftt));
                 }
             }
         } else {
@@ -2964,11 +2947,11 @@ public class force extends AppCompatActivity  {
             for (int i = 0; i < 5; i++) {
                 if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
                     if(darkmode) {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                        prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
                     } else {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.white));
                     }
                 }
             }
@@ -2979,13 +2962,13 @@ public class force extends AppCompatActivity  {
                 try {
                     Glide.with(this).load(R.drawable.doublearrowright).into(doublearrows);
                 } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowright));
+                    doublearrows.setImageDrawable(getResources().getDrawable(R.drawable.doublearrowright));
                 }
             } if(all_white) {
                 try {
                     Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
                 } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
+                    doublearrows.setImageDrawable(getResources().getDrawable(R.drawable.doublearrowleftt));
                 }
             }
         } else {
@@ -3037,11 +3020,11 @@ public class force extends AppCompatActivity  {
             for (int i = 0; i < 5; i++) {
                 if (prayerdisplayviews.get(i).getCurrentTextColor() == Color.GREEN) {
                     if(darkmode) {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.grayerthanwhite));
+                        prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.grayerthanwhite));
                     } else {
-                        prayerdisplayviews.get(i).setTextColor(resources.getColor(R.color.white));
-                        prayerdisplayviews2.get(i).setTextColor(resources.getColor(R.color.white));
+                        prayerdisplayviews.get(i).setTextColor(getResources().getColor(R.color.white));
+                        prayerdisplayviews2.get(i).setTextColor(getResources().getColor(R.color.white));
                     }
                 }
             }
@@ -3053,13 +3036,13 @@ public class force extends AppCompatActivity  {
                 try {
                     Glide.with(this).load(R.drawable.doublearrowright).into(doublearrows);
                 } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowright));
+                    doublearrows.setImageDrawable(getResources().getDrawable(R.drawable.doublearrowright));
                 }
             } if(all_white) {
                 try {
                     Glide.with(this).load(R.drawable.doublearrowleftt).into(doublearrows);
                 } catch (Exception ignored) {
-                    doublearrows.setImageDrawable(resources.getDrawable(R.drawable.doublearrowleftt));
+                    doublearrows.setImageDrawable(getResources().getDrawable(R.drawable.doublearrowleftt));
                 }
             }
         } else {

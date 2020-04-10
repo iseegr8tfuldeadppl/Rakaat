@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/min_widget_height"
     android:id="@+id/main"
     android:clickable="true"
     android:focusable="true"
@@ -146,7 +146,6 @@
     </FrameLayout>
     <LinearLayout
         android:weightSum="6"
-        android:paddingBottom="7dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -154,7 +153,7 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <TextView
                 android:gravity="center"
                 android:id="@+id/widgetfajrtitle"

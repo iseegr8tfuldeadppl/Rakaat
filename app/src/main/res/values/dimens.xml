@@ -29,16 +29,12 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="biglollers">15dp</dimen>
     <dimen name="distancebetweenadanselections">5dp</dimen>
     <dimen name="tabrightpadding">11dp</dimen>
-    <dimen name="soundimagesize">10dp</dimen>
+    <dimen name="soundimagesize">4dp</dimen>
     <dimen name="playbuttonsize">7dp</dimen>
     <dimen name="playbuttonheight">52dp</dimen>
     <dimen name="notification_height">64dp</dimen>
     <dimen name="arrowdownpadding">4dp</dimen>
     <dimen name="notitextsize">12sp</dimen>
-    <dimen name="widgetbigtextsize">43sp</dimen>
-    <dimen name="widgettextsize">13sp</dimen>
-    <dimen name="widgetsmallitemsheight">30dp</dimen>
-    <dimen name="widgetsmallimageheight">10dp</dimen>
     <dimen name="prayertitlepaddingbottom">7dp</dimen>
     <dimen name="paddingstartandendofsliderer">10dp</dimen>
     <dimen name="innertextsidepaddings">8dp</dimen>
@@ -52,7 +48,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widgetdatesidepaddings">10dp</dimen>
     <dimen name="widgetdatetopnbottompaddings">2dp</dimen>
     <dimen name="widgettitlespaddingtop">12dp</dimen>
-    <dimen name="widgettitlesheight">93dp</dimen>
     <dimen name="widgetslidertextsize">13sp</dimen>
     <dimen name="widgettitlespaddingbottom">11dp</dimen>
     <dimen name="loginbuttoncirclerotate">60dp</dimen>
@@ -65,5 +60,15 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="clocksidepaddings">30dp</dimen>
     <dimen name="clocktoppadding">15dp</dimen>
     <dimen name="mainnightmodebuttonsidemargins">15dp</dimen>
+
+
+    <!--Widget-->
+    <dimen name="widgetsmallitemsheight">30dp</dimen>
+    <dimen name="widgetsmallimageheight">10dp</dimen>
+    <dimen name="widgetbigtextsize">43sp</dimen>
+    <dimen name="widgettextsize">14sp</dimen>
+    <dimen name="widgettitlesheight">110dp</dimen> <!--was 93dp-->
+    <dimen name="min_widget_height">180dp</dimen> <!--was 110dp-->
+    <dimen name="min_widget_width">250dp</dimen>
 
 </resources>

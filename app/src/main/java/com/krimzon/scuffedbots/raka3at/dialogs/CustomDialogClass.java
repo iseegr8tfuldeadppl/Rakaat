@@ -50,12 +50,11 @@ public class CustomDialogClass extends Dialog implements
     }
 
     private void english() {
-        Resources resources = c.getResources();
-        String lmfao = resources.getString(R.string.lmfao);
-        String lol = resources.getString(R.string.lol);
-        String yesoyes = resources.getString(R.string.yesoyes);
-        String cbon = resources.getString(R.string.cbon);
-        String done = resources.getString(R.string.done);
+        String lmfao = c.getApplicationContext().getResources().getString(R.string.lmfao);
+        String lol = c.getApplicationContext().getResources().getString(R.string.lol);
+        String yesoyes = c.getApplicationContext().getResources().getString(R.string.yesoyes);
+        String cbon = c.getApplicationContext().getResources().getString(R.string.cbon);
+        String done = c.getApplicationContext().getResources().getString(R.string.done);
 
         fixbig.setText(lmfao);
         fixsmall1.setText(lol);

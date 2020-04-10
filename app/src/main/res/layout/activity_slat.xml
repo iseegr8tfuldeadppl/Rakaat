@@ -403,8 +403,8 @@
             android:focusable="true"
             android:layout_marginTop="13dp"
             android:layout_width="30dp"
+            android:id="@+id/questionmark"
             android:layout_height="30dp"
-            android:src="@drawable/questionmark"
             android:onClick="howtouseClicked"
             android:layout_marginRight="13dp"
             android:layout_marginLeft="16dp"
@@ -438,6 +438,7 @@
 
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -445,8 +446,7 @@
         android:weightSum="1"
         android:clickable="true"
         android:focusable="true"
-        android:id="@+id/donecover"
-        android:visibility="gone">
+        android:id="@+id/donecover">
         <LinearLayout
             android:clickable="true"
             android:focusable="true"
@@ -455,10 +455,16 @@
             android:layout_weight=".5"
             android:gravity="center">
             <TextView
-                android:clickable="true"
-                android:focusable="true"
+                android:id="@+id/tampageTahiaFader"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="@string/tahia_arabe"
+                android:paddingBottom="0px"
+                android:paddingTop="0px"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="@color/white"
+                android:textSize="50sp" />
         </LinearLayout>
         <LinearLayout
             android:clickable="true"

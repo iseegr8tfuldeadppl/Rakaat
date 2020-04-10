@@ -67,16 +67,8 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
         ImageView arrowback = findViewById(R.id.arrowback);
         ImageView nightmodebutton = findViewById(R.id.nightmodebutton);
-        try {
-            Glide.with(this).load(R.drawable.backarrowdark).into(arrowback);
-        } catch (Exception ignored) {
-            arrowback.setImageDrawable(resources.getDrawable(R.drawable.backarrowdark));
-        }
-        try {
-            Glide.with(this).load(R.drawable.nightmodedark).into(nightmodebutton);
-        } catch (Exception ignored) {
-            nightmodebutton.setImageDrawable(resources.getDrawable(R.drawable.nightmodedark));
-        }
+            arrowback.setImageDrawable(getResources().getDrawable(R.drawable.backarrowdark));
+            nightmodebutton.setImageDrawable(getResources().getDrawable(R.drawable.nightmodedark));
 
         // override system locale
         Configuration cfg = new Configuration();
@@ -97,7 +89,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
         maintitle.setTypeface(custom_font);
 
 
-        resources = getResources();
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         compass_img = findViewById(R.id.compass);
@@ -214,13 +205,13 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
                 try {
                     Glide.with(this).load(R.drawable.compass).into(compass_img);
                 } catch (Exception ignored) {
-                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
+                    compass_img.setImageDrawable(getResources().getDrawable(R.drawable.compass));
                 }
             } else {
                 try {
                     Glide.with(this).load(R.drawable.compass2).into(compass_img);
                 } catch (Exception ignored) {
-                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+                    compass_img.setImageDrawable(getResources().getDrawable(R.drawable.compass2));
                 }
             }
         }
@@ -230,13 +221,13 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
                 try {
                     Glide.with(this).load(R.drawable.compass).into(compass_img);
                 } catch (Exception ignored) {
-                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
+                    compass_img.setImageDrawable(getResources().getDrawable(R.drawable.compass));
                 }
             } else {
                 try {
                     Glide.with(this).load(R.drawable.compass2).into(compass_img);
                 } catch (Exception ignored) {
-                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+                    compass_img.setImageDrawable(getResources().getDrawable(R.drawable.compass2));
                 }
             }
         } else {
@@ -244,13 +235,13 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
                 try {
                     Glide.with(this).load(R.drawable.compass).into(compass_img);
                 } catch (Exception ignored) {
-                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass));
+                    compass_img.setImageDrawable(getResources().getDrawable(R.drawable.compass));
                 }
             } else {
                 try {
                     Glide.with(this).load(R.drawable.compass2).into(compass_img);
                 } catch (Exception ignored) {
-                    compass_img.setImageDrawable(resources.getDrawable(R.drawable.compass2));
+                    compass_img.setImageDrawable(getResources().getDrawable(R.drawable.compass2));
                 }
             }
         }
@@ -486,7 +477,7 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
     /*int darkbackgroundcolor;*/
     /*private void hideNavigationBar() {
-        darkbackgroundcolor = resources.getColor(R.color.black);
+        darkbackgroundcolor = getResources().getColor(R.color.black);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             this.getWindow().setStatusBarColor(darkbackgroundcolor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -520,11 +511,11 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
         if(once2) {
             once2 = false;
-            white = resources.getColor(R.color.white);
-            darkbuttons2 = resources.getDrawable(R.drawable.darkbuttons2);
-            forcefull = resources.getDrawable(R.drawable.forcefull);
-            backback = resources.getDrawable(R.drawable.backback);
-            statsback = resources.getDrawable(R.drawable.statsback);
+            white = getResources().getColor(R.color.white);
+            darkbuttons2 = getResources().getDrawable(R.drawable.darkbuttons2);
+            forcefull = getResources().getDrawable(R.drawable.forcefull);
+            backback = getResources().getDrawable(R.drawable.backback);
+            statsback = getResources().getDrawable(R.drawable.statsback);
         }
 
         backarrowbackground.setBackground(backback);
@@ -544,7 +535,6 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
 
     int lightelement;
-    Resources resources;
     boolean once = true;
     Drawable buttons;
     Drawable simpelbackground;
@@ -556,12 +546,12 @@ public class kibla extends AppCompatActivity implements SensorEventListener {
 
         if(once) {
             once = false;
-            lightelement = resources.getColor(R.color.lightelement);
-            buttons = resources.getDrawable(R.drawable.buttons);
-            simpelbackground = resources.getDrawable(R.drawable.simpelbackground);
-            lightbackback = resources.getDrawable(R.drawable.lightbackback);
-            lightstatsback = resources.getDrawable(R.drawable.lightstatsback);
-            black = resources.getColor(R.color.black);
+            lightelement = getResources().getColor(R.color.lightelement);
+            buttons = getResources().getDrawable(R.drawable.buttons);
+            simpelbackground = getResources().getDrawable(R.drawable.simpelbackground);
+            lightbackback = getResources().getDrawable(R.drawable.lightbackback);
+            lightstatsback = getResources().getDrawable(R.drawable.lightstatsback);
+            black = getResources().getColor(R.color.black);
         }
 
         nightmodebackground.setBackground(lightstatsback);

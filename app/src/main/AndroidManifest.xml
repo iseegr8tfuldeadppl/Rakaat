@@ -22,24 +22,20 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:screenOrientation="portrait"
+        android:configChanges="orientation" >
         <activity android:name=".MapActivity" />
         <activity
-            android:name=".backupandrestore"
-            android:screenOrientation="portrait" />
+            android:name=".backupandrestore"/>
         <activity
-            android:name=".force_settings_adan_selection"
-            android:screenOrientation="portrait" />
+            android:name=".force_settings_adan_selection"/>
         <activity
-            android:name=".forceTutorial"
-            android:screenOrientation="portrait" />
+            android:name=".forceTutorial" />
         <activity
-            android:name=".Tutorial"
-            android:screenOrientation="portrait" />
+            android:name=".Tutorial"/>
         <activity
-            android:name=".force_settings"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:name=".force_settings"/>
 
         <receiver android:name=".force_widget">
             <intent-filter>
@@ -52,21 +48,13 @@
         </receiver>
 
         <activity
-            android:name=".force"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:name=".force" />
         <activity
-            android:name=".kibla"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:name=".kibla" />
         <activity
-            android:name=".slat"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:name=".slat"/>
         <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />

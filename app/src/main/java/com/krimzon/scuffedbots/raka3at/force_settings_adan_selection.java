@@ -34,7 +34,6 @@ public class force_settings_adan_selection extends AppCompatActivity {
     private List<ImageView> audioplayer;
     private TextView selectiontitle;
     private String language;
-    private Resources resources;
     private boolean darkmode;
     private String adanSelections;
     private String[] selections;
@@ -90,19 +89,11 @@ public class force_settings_adan_selection extends AppCompatActivity {
     private void apply_lightmode_if_found_to_play_buttons() {
         if(darkmode){
             for (ImageView audioplayers : audioplayer) {
-                try {
-                    Glide.with(this).load(R.drawable.play).into(audioplayers);
-                } catch (Exception ignored) {
-                    audioplayers.setImageDrawable(resources.getDrawable(R.drawable.play));
-                }
+                    audioplayers.setImageDrawable(getResources().getDrawable(R.drawable.play));
             }
         } else {
             for (ImageView audioplayers : audioplayer) {
-                try {
-                    Glide.with(this).load(R.drawable.playlightmode).into(audioplayers);
-                } catch (Exception ignored) {
-                    audioplayers.setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
-                }
+                    audioplayers.setImageDrawable(getResources().getDrawable(R.drawable.playlightmode));
             }
         }
     }
@@ -187,27 +178,11 @@ public class force_settings_adan_selection extends AppCompatActivity {
         if(!audioisplaying || currentlyplayingadan!=i){
             audioisplaying = true;
             if(darkmode) {
-                try {
-                    Glide.with(this).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
-                }
-                try {
-                    Glide.with(this).load(R.drawable.pause).into(audioplayer.get(i));
-                } catch (Exception ignored) {
-                    audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pause));
-                }
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(getResources().getDrawable(R.drawable.play));
+                    audioplayer.get(i).setImageDrawable(getResources().getDrawable(R.drawable.pause));
             } else {
-                try {
-                    Glide.with(this).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
-                }
-                try {
-                    Glide.with(this).load(R.drawable.pauselightmode).into(audioplayer.get(i));
-                } catch (Exception ignored) {
-                    audioplayer.get(i).setImageDrawable(resources.getDrawable(R.drawable.pauselightmode));
-                }
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(getResources().getDrawable(R.drawable.playlightmode));
+                    audioplayer.get(i).setImageDrawable(getResources().getDrawable(R.drawable.pauselightmode));
             }
             currentlyplayingadan = i;
             playadan(currentlyplayingadan);
@@ -215,17 +190,9 @@ public class force_settings_adan_selection extends AppCompatActivity {
             audioisplaying = false;
             stopadan();
             if(darkmode) {
-                try {
-                    Glide.with(this).load(R.drawable.play).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.play));
-                }
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(getResources().getDrawable(R.drawable.play));
             } else {
-                try {
-                    Glide.with(this).load(R.drawable.playlightmode).into(audioplayer.get(currentlyplayingadan));
-                } catch (Exception ignored) {
-                    audioplayer.get(currentlyplayingadan).setImageDrawable(resources.getDrawable(R.drawable.playlightmode));
-                }
+                    audioplayer.get(currentlyplayingadan).setImageDrawable(getResources().getDrawable(R.drawable.playlightmode));
             }
         }
     }
@@ -387,14 +354,14 @@ public class force_settings_adan_selection extends AppCompatActivity {
 
     private void apply_english_if_possible() {
         if(language.equals("en")){
-            arrow.setText(resources.getString(R.string.back));
-            adansselection.get(0).setText(resources.getString(R.string.adan1));
-            adansselection.get(1).setText(resources.getString(R.string.adan2));
-            adansselection.get(2).setText(resources.getString(R.string.adan3));
-            adansselection.get(3).setText(resources.getString(R.string.adan4));
-            adansselection.get(4).setText(resources.getString(R.string.adan5));
-            adansselection.get(5).setText(resources.getString(R.string.adan6));
-            selectiontitle.setText(resources.getString(R.string.select_an_adan));
+            arrow.setText(getResources().getString(R.string.back));
+            adansselection.get(0).setText(getResources().getString(R.string.adan1));
+            adansselection.get(1).setText(getResources().getString(R.string.adan2));
+            adansselection.get(2).setText(getResources().getString(R.string.adan3));
+            adansselection.get(3).setText(getResources().getString(R.string.adan4));
+            adansselection.get(4).setText(getResources().getString(R.string.adan5));
+            adansselection.get(5).setText(getResources().getString(R.string.adan6));
+            selectiontitle.setText(getResources().getString(R.string.select_an_adan));
         }
     }
 
@@ -417,7 +384,6 @@ public class force_settings_adan_selection extends AppCompatActivity {
 
         arrow = findViewById(R.id.arrow);
 
-        resources = getResources();
 
         adansselection = new ArrayList<>();
         adansselection.add((TextView) findViewById(R.id.adan1));

@@ -52,11 +52,7 @@ public class Statistictictictictic extends Dialog implements android.view.View.O
         setContentView(R.layout.statistictictictictic);
 
         ImageView statslogo = findViewById(R.id.statslogo);
-        try {
-            Glide.with(getContext()).load(R.drawable.stats).into(statslogo);
-        } catch (Exception ignored) {
             statslogo.setImageDrawable(getContext().getResources().getDrawable(R.drawable.stats));
-        }
 
         TextView display_of_prayed_prayers_of_all_time = findViewById(R.id.prayed_prayers_of_all_time);
         title_prayed_prayers_of_all_time = findViewById(R.id.title_prayed_prayers_of_all_time);

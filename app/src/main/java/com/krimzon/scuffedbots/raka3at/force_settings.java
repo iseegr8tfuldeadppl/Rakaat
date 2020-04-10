@@ -34,7 +34,6 @@ public class force_settings extends AppCompatActivity {
     private String language = "ar", ID = "", adanSelections = "";
     private boolean darkmode = true, once2 = true, once = true;
     private String[] selections;
-    private Resources resources;
     private TextView adantitle;
     private List<TextView> adans, titles;
     private List<ImageView> ringmodes;
@@ -590,139 +589,48 @@ public class force_settings extends AppCompatActivity {
     }
 
     private void load_plusminusbitmaps() {
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.fajrbeforeplus));
-        } catch (Exception ignored) {
             ImageView h = findViewById(R.id.fajrbeforeplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.fajrafterplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.fajrafterplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.fajrbeforeminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.fajrbeforeminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.fajrafterminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.fajrafterminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.fajrafterplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.fajrbeforeminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+            h = findViewById(R.id.fajrafterminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+            h = findViewById(R.id.dhuhrbeforeplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.dhuhrafterplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.dhuhrbeforeminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+            h = findViewById(R.id.dhuhrafterminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
 
+            h = findViewById(R.id.asrbeforeplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.asrafterplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.asrbeforeminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+            h = findViewById(R.id.asrafterminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+            h = findViewById(R.id.maghrebbeforeplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.maghrebafterplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.maghrebbeforeminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+            h = findViewById(R.id.maghrebafterminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
 
-
-
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.dhuhrbeforeplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.dhuhrbeforeplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.dhuhrafterplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.dhuhrafterplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.dhuhrbeforeminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.dhuhrbeforeminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.dhuhrafterminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.dhuhrafterminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-
-
-
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.asrbeforeplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.asrbeforeplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.asrafterplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.asrafterplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.asrbeforeminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.asrbeforeminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.asrafterminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.asrafterminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-
-
-
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.maghrebbeforeplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.maghrebbeforeplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.maghrebafterplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.maghrebafterplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.maghrebbeforeminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.maghrebbeforeminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.maghrebafterminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.maghrebafterminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-
-
-
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.ishabeforeplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.ishabeforeplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.plus).into((ImageView) findViewById(R.id.ishaafterplus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.ishaafterplus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.plus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.ishabeforeminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.ishabeforeminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
-        try {
-            Glide.with(context).load(R.drawable.minus).into((ImageView) findViewById(R.id.ishaafterminus));
-        } catch (Exception ignored) {
-            ImageView h = findViewById(R.id.ishaafterminus);
-            h.setImageDrawable(resources.getDrawable(R.drawable.minus));
-        }
+            h = findViewById(R.id.ishabeforeplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.ishaafterplus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.plus));
+            h = findViewById(R.id.ishabeforeminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
+            h = findViewById(R.id.ishaafterminus);
+            h.setImageDrawable(getResources().getDrawable(R.drawable.minus));
     }
 
     private void dismiss() {
@@ -762,33 +670,33 @@ public class force_settings extends AppCompatActivity {
 
     private void apply_selected_language() {
         if(language.equals("en")){
-            fajrmutebeforeadantitle.setText(resources.getString(R.string.minutestomutebeforeadan));
-            fajrmuteafteradantitle.setText(resources.getString(R.string.minutestomuteafteradan));
+            fajrmutebeforeadantitle.setText(getResources().getString(R.string.minutestomutebeforeadan));
+            fajrmuteafteradantitle.setText(getResources().getString(R.string.minutestomuteafteradan));
 
-            dhuhrmutebeforeadantitle.setText(resources.getString(R.string.minutestomutebeforeadan));
-            dhuhrafteradantitle.setText(resources.getString(R.string.minutestomuteafteradan));
+            dhuhrmutebeforeadantitle.setText(getResources().getString(R.string.minutestomutebeforeadan));
+            dhuhrafteradantitle.setText(getResources().getString(R.string.minutestomuteafteradan));
 
-            asrbeforeadantitle.setText(resources.getString(R.string.minutestomutebeforeadan));
-            asrafteradantitle.setText(resources.getString(R.string.minutestomuteafteradan));
+            asrbeforeadantitle.setText(getResources().getString(R.string.minutestomutebeforeadan));
+            asrafteradantitle.setText(getResources().getString(R.string.minutestomuteafteradan));
 
-            maghrebbeforeadantitle.setText(resources.getString(R.string.minutestomutebeforeadan));
-            maghrebafteradantitle.setText(resources.getString(R.string.minutestomuteafteradan));
+            maghrebbeforeadantitle.setText(getResources().getString(R.string.minutestomutebeforeadan));
+            maghrebafteradantitle.setText(getResources().getString(R.string.minutestomuteafteradan));
 
-            ishabeforeadantitle.setText(resources.getString(R.string.minutestomutebeforeadan));
-            ishaafteradantitle.setText(resources.getString(R.string.minutestomuteafteradan));
+            ishabeforeadantitle.setText(getResources().getString(R.string.minutestomutebeforeadan));
+            ishaafteradantitle.setText(getResources().getString(R.string.minutestomuteafteradan));
 
-            titles.get(0).setText(resources.getString(R.string.fajrtitle));
-            titles.get(1).setText(resources.getString(R.string.rise));
-            titles.get(2).setText(resources.getString(R.string.dohrtitle));
-            titles.get(3).setText(resources.getString(R.string.asrtitle));
-            titles.get(4).setText(resources.getString(R.string.maghrebtitle));
-            titles.get(5).setText(resources.getString(R.string.ishatitle));
-            arrow.setText(resources.getString(R.string.save));
-            adantitle.setText(resources.getString(R.string.adan));
-            mutetitle.setText(resources.getString(R.string.mutephonetitle));
+            titles.get(0).setText(getResources().getString(R.string.fajrtitle));
+            titles.get(1).setText(getResources().getString(R.string.rise));
+            titles.get(2).setText(getResources().getString(R.string.dohrtitle));
+            titles.get(3).setText(getResources().getString(R.string.asrtitle));
+            titles.get(4).setText(getResources().getString(R.string.maghrebtitle));
+            titles.get(5).setText(getResources().getString(R.string.ishatitle));
+            arrow.setText(getResources().getString(R.string.save));
+            adantitle.setText(getResources().getString(R.string.adan));
+            mutetitle.setText(getResources().getString(R.string.mutephonetitle));
             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                settingstitle.setText(resources.getString(R.string.settings));
-                notitext.setText(resources.getString(R.string.main_noti));
+                settingstitle.setText(getResources().getString(R.string.settings));
+                notitext.setText(getResources().getString(R.string.main_noti));
             }
         }
 
@@ -1109,51 +1017,27 @@ public class force_settings extends AppCompatActivity {
                 case "0":
                     // no ring no vibrate
                     if(darkmode) {
-                        try {
-                            Glide.with(this).load(R.drawable.soundsoff).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
-                        }
+                        ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundsoff));
                     } else {
-                        try {
-                            Glide.with(this).load(R.drawable.soundsofflightmode).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsofflightmode));
-                        }
+                        ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundsofflightmode));
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "1":
                     // vibrate only
                     if(darkmode){
-                        try {
-                            Glide.with(this).load(R.drawable.vibrate).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.vibrate));
                     } else {
-                        try {
-                            Glide.with(this).load(R.drawable.vibratelightmode).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibratelightmode));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.vibratelightmode));
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "2":
                     // ring only
                     if(darkmode){
-                        try {
-                            Glide.with(this).load(R.drawable.soundson).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundson));
                     }else {
-                        try {
-                            Glide.with(this).load(R.drawable.soundsonlightmode).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsonlightmode));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundsonlightmode));
                     }
             }
         } else {
@@ -1161,51 +1045,27 @@ public class force_settings extends AppCompatActivity {
                 case "0":
                     // no ring no vibrate
                     if(darkmode) {
-                        try {
-                            Glide.with(this).load(R.drawable.soundsoff).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsoff));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundsoff));
                     } else {
-                        try {
-                            Glide.with(this).load(R.drawable.soundsofflightmode).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsofflightmode));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundsofflightmode));
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "1":
                     // vibrate only
                     if(darkmode){
-                        try {
-                            Glide.with(this).load(R.drawable.vibrate).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibrate));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.vibrate));
                     } else {
-                        try {
-                            Glide.with(this).load(R.drawable.vibratelightmode).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.vibratelightmode));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.vibratelightmode));
                     }
                     adans.get(i).setVisibility(View.INVISIBLE);
                     break;
                 case "2":
                     // ring only
                     if(darkmode){
-                        try {
-                            Glide.with(this).load(R.drawable.soundson).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundson));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundson));
                     }else {
-                        try {
-                            Glide.with(this).load(R.drawable.soundsonlightmode).into(ringmodes.get(i));
-                        } catch (Exception ignored) {
-                            ringmodes.get(i).setImageDrawable(resources.getDrawable(R.drawable.soundsonlightmode));
-                        }
+                            ringmodes.get(i).setImageDrawable(getResources().getDrawable(R.drawable.soundsonlightmode));
                     }
             }
         }
@@ -1232,39 +1092,39 @@ public class force_settings extends AppCompatActivity {
             switch (yes[0]) {
                 case "1":
                     if(language.equals("ar"))
-                        adans.get(i).setText(resources.getString(R.string.adan1_arabe));
+                        adans.get(i).setText(getResources().getString(R.string.adan1_arabe));
                     else if(language.equals("en"))
-                        adans.get(i).setText(resources.getString(R.string.adan1));
+                        adans.get(i).setText(getResources().getString(R.string.adan1));
                     break;
                 case "2":
                     if(language.equals("ar"))
-                        adans.get(i).setText(resources.getString(R.string.adan2_arabe));
+                        adans.get(i).setText(getResources().getString(R.string.adan2_arabe));
                     else if(language.equals("en"))
-                        adans.get(i).setText(resources.getString(R.string.adan2));
+                        adans.get(i).setText(getResources().getString(R.string.adan2));
                     break;
                 case "3":
                     if(language.equals("ar"))
-                        adans.get(i).setText(resources.getString(R.string.adan3_arabe));
+                        adans.get(i).setText(getResources().getString(R.string.adan3_arabe));
                     else if(language.equals("en"))
-                        adans.get(i).setText(resources.getString(R.string.adan3));
+                        adans.get(i).setText(getResources().getString(R.string.adan3));
                     break;
                 case "4":
                     if(language.equals("ar"))
-                        adans.get(i).setText(resources.getString(R.string.adan4_arabe));
+                        adans.get(i).setText(getResources().getString(R.string.adan4_arabe));
                     else if(language.equals("en"))
-                        adans.get(i).setText(resources.getString(R.string.adan4));
+                        adans.get(i).setText(getResources().getString(R.string.adan4));
                     break;
                 case "5":
                     if(language.equals("ar"))
-                        adans.get(i).setText(resources.getString(R.string.adan5_arabe));
+                        adans.get(i).setText(getResources().getString(R.string.adan5_arabe));
                     else if(language.equals("en"))
-                        adans.get(i).setText(resources.getString(R.string.adan5));
+                        adans.get(i).setText(getResources().getString(R.string.adan5));
                     break;
                 case "6":
                     if(language.equals("ar"))
-                        adans.get(i).setText(resources.getString(R.string.adan6_arabe));
+                        adans.get(i).setText(getResources().getString(R.string.adan6_arabe));
                     else if(language.equals("en"))
-                        adans.get(i).setText(resources.getString(R.string.adan6));
+                        adans.get(i).setText(getResources().getString(R.string.adan6));
             }
         }
     }
@@ -1403,7 +1263,6 @@ public class force_settings extends AppCompatActivity {
         ringmodesbackground.add((FrameLayout) findViewById(R.id.maghribringmodebackground));
         ringmodesbackground.add((FrameLayout) findViewById(R.id.isharingmodebackground));
 
-        resources = getResources();
 
     }
 
