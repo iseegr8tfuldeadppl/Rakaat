@@ -12,6 +12,7 @@ public class BootUpReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
+        broadcastIntent.setPackage(context.getPackageName());
         context.sendBroadcast(broadcastIntent);
     }
 

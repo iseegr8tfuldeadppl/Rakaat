@@ -15,14 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
 import java.util.ArrayList;
@@ -236,11 +232,13 @@ public class force_settings_adan_selection extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show();
     }
 
-    private SimpleExoPlayer simpleExoPlayer;
+    private ExoPlayer simpleExoPlayer;
     private void playadan(int adantag) {
         try{
-            simpleExoPlayer.stop();
-            simpleExoPlayer.release();
+            if (simpleExoPlayer != null) {
+                simpleExoPlayer.stop();
+                simpleExoPlayer.release();
+            }
         } catch(Exception ignored){}
         String adan = "";
         switch(adantag){
@@ -262,26 +260,16 @@ public class force_settings_adan_selection extends AppCompatActivity {
             case 5:
                 adan = "madani.mp3";
         }
-        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
-                this,
-                null,
-                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
-        );
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
-                renderersFactory,
-                trackSelector
-        );
-        String userAgent = Util.getUserAgent(this, getResources().getString(R.string.adanner));
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this)
+                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+        TrackSelector trackSelector = new DefaultTrackSelector(this);
+        simpleExoPlayer = new ExoPlayer.Builder(this, renderersFactory)
+                .setTrackSelector(trackSelector)
+                .build();
         try {
-            ExtractorMediaSource mediaSource = new ExtractorMediaSource(
-                    Uri.parse(getResources().getString(R.string.idek) + adan), // file audio ada di folder assets
-                    new DefaultDataSourceFactory(this, userAgent),
-                    new DefaultExtractorsFactory(),
-                    null,
-                    null
-            );
-            simpleExoPlayer.prepare(mediaSource);
+            MediaItem mediaItem = MediaItem.fromUri(Uri.parse(getResources().getString(R.string.idek) + adan));
+            simpleExoPlayer.setMediaItem(mediaItem);
+            simpleExoPlayer.prepare();
             simpleExoPlayer.setPlayWhenReady(true);
         } catch(Exception ignored){}
     }

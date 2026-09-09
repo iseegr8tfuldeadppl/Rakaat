@@ -41,7 +41,6 @@ import com.batoulapps.adhan.Madhab;
 import com.batoulapps.adhan.PrayerTimes;
 import com.batoulapps.adhan.data.DateComponents;
 import com.bumptech.glide.Glide;
-import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -180,7 +179,7 @@ public class force extends AppCompatActivity  {
         public boolean handleMessage(@NonNull Message msg) { find_slider(next_adan, false);return true; }});
     private Handler handler6 = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(@NonNull Message msg) { for(int i = 0; i<5; i++) { find_slider(i, true);slider.setVisibility(View.GONE); }find_slider(next_adan, false); return true;}});
+        public boolean handleMessage(@NonNull Message msg) { for(int i = 0; i<5; i++) { find_slider(i, true);slider.setVisibility(GONE); }find_slider(next_adan, false); return true;}});
     private Handler handler5 = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) { switch_to_next_adan();return true; }
@@ -218,7 +217,7 @@ public class force extends AppCompatActivity  {
 
                 for(int i=0; i<5; i++) {
                     find_slider(i, true);
-                    slider.setVisibility(View.GONE);
+                    slider.setVisibility(GONE);
                 }
 
                 find_slider(next_adan, false);
@@ -483,12 +482,13 @@ public class force extends AppCompatActivity  {
     private void if_sent_from_slat_after_prayer_check_whichD_we_were_praying_and_display_that() {
         try {
             String gtodaycomparable = getIntent().getStringExtra("todaycomparable");
-            assert gtodaycomparable != null;
-            String[] todaycomparablesplit = gtodaycomparable.split(" ");
-            if(todaycomparablesplit.length==3) {
-                gotoday(Integer.parseInt(todaycomparablesplit[1]), get_month2(todaycomparablesplit[0]), Integer.parseInt(todaycomparablesplit[2]));
-            } else {
-                mapActivity();
+            if (gtodaycomparable != null) {
+                String[] todaycomparablesplit = gtodaycomparable.split(" ");
+                if (todaycomparablesplit.length == 3) {
+                    gotoday(Integer.parseInt(todaycomparablesplit[1]), get_month2(todaycomparablesplit[0]), Integer.parseInt(todaycomparablesplit[2]));
+                } else {
+                    mapActivity();
+                }
             }
         } catch(Exception ignored){
             mapActivity();
@@ -498,7 +498,7 @@ public class force extends AppCompatActivity  {
         // TODO remove when fixed
         if(Build.VERSION.SDK_INT < stoppableandroid) {
             try {
-                if ("huawei".equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
+                if ("huawei".equalsIgnoreCase(Build.MANUFACTURER)) {
                     protected_apps_request request = new protected_apps_request(this, darkmode, language);
                     request.show();
                 }
@@ -605,7 +605,7 @@ public class force extends AppCompatActivity  {
 
         for(int i=0; i<5; i++) {
             find_slider(i, true);
-            slider.setVisibility(View.GONE);
+            slider.setVisibility(GONE);
         }
 
         find_slider(next_adan, false);
@@ -689,12 +689,16 @@ public class force extends AppCompatActivity  {
         }
     }
 
-    private int rightnowcomparable_temp=-1;
+    private int rightnowcomparable_temp = -1;
     private void calculate_rightnowcomparable() {
 
-        Calendar cal = Calendar.getInstance(Locale.US);
-        Date todayos = new Date(cal.getTimeInMillis());
-        if(!String.valueOf(todayos).split(" ")[2].equals(String.valueOf(CurrentDisplayedDay).split(" ")[2]) || rightnowcomparable==0 || next_adan == -1) {
+        Calendar cal = Calendar.getInstance();
+        Date todayos = cal.getTime();
+        
+        Calendar displayedCal = Calendar.getInstance();
+        displayedCal.setTime(CurrentDisplayedDay);
+        
+        if(cal.get(Calendar.DAY_OF_YEAR) != displayedCal.get(Calendar.DAY_OF_YEAR) || cal.get(Calendar.YEAR) != displayedCal.get(Calendar.YEAR) || rightnowcomparable==0 || next_adan == -1) {
             CurrentDisplayedDay = todayos;
             String[] temptoday = CurrentDisplayedDay.toString().split(" ");
             currentdisplayeddaycomparable = temptoday[1] + " " + temptoday[2] + " " + temptoday[5];
@@ -702,9 +706,8 @@ public class force extends AppCompatActivity  {
             /*no_newDs = false;*/
             calluse.sendEmptyMessage(0);
         }
-        String temptime = String.valueOf(todayos).split(" ")[3];
         rightnowcomparable_temp = rightnowcomparable;
-        rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
+        rightnowcomparable = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     }
 
     private ImageView settingsbutton;
@@ -1150,7 +1153,11 @@ public class force extends AppCompatActivity  {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.krimzon.scuffedbots.raka3at.background.iprayeditmate"); //further more
-        registerReceiver(receiver, filter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(receiver, filter);
+        }
 /*
 
         // this is to update the slider as it's weirdly not updating instantly after onresuming
@@ -1301,31 +1308,20 @@ public class force extends AppCompatActivity  {
 
     private String city = "";
     private void convert_prayertimes_into_seconds() {
+        PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, params);
+        prayers = new ArrayList<>();
+        
+        prayers.add(getMinuteOfDay(prayerTimes.fajr));
+        prayers.add(getMinuteOfDay(prayerTimes.dhuhr));
+        prayers.add(getMinuteOfDay(prayerTimes.asr));
+        prayers.add(getMinuteOfDay(prayerTimes.maghrib));
+        prayers.add(getMinuteOfDay(prayerTimes.isha));
+    }
 
-        String pm = getResources().getString(R.string.pm);
-
-        int fajrtemp = Integer.parseInt(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
-        if(fajr.split(" ")[1].equals(getResources().getString(R.string.pmer))|| fajr.split(" ")[1].equals(pm))
-            fajrtemp += 720; //12*60
-        //Integer risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0])*3600 + Integer.parseInt(rise.split(" ")[0].split(":")[1])*60;
-        int dhuhrtemp = Integer.parseInt(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(dhuhr.split(" ")[0].split(":")[1]);
-        if((dhuhr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || dhuhr.split(" ")[1].equals(pm)) && !dhuhr.split(":")[0].equals("12"))
-            dhuhrtemp += 720; //12*60
-        int asrtemp = Integer.parseInt(asr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(asr.split(" ")[0].split(":")[1]);
-        if(asr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || asr.split(" ")[1].equals(pm))
-            asrtemp += 720; //12*60
-        int maghribtemp = Integer.parseInt(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
-        if(maghrib.split(" ")[1].equals(getResources().getString(R.string.pmer)) || maghrib.split(" ")[1].equals(pm))
-            maghribtemp += 720; //12*60
-        int ishatemp = Integer.parseInt(isha.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(isha.split(" ")[0].split(":")[1]);
-        if(isha.split(" ")[1].equals(getResources().getString(R.string.pmer)) || isha.split(" ")[1].equals(pm))
-            ishatemp += 720; //12*60
-
-        prayers.add(fajrtemp);
-        prayers.add(dhuhrtemp);
-        prayers.add(asrtemp);
-        prayers.add(maghribtemp);
-        prayers.add(ishatemp);
+    private int getMinuteOfDay(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     }
 
     private void display_prayer_times() {
@@ -2002,20 +1998,15 @@ public class force extends AppCompatActivity  {
     }
 
     private void print3(String s, String s2, final int prayer){
-        //https://stackoverflow.com/questions/33033157/adding-button-to-snackbar-android
-        final SnackBar mSnackBar = new SnackBar.Builder(this)
-                .withMessage(s)
-                .withActionMessage(s2)
-                .withStyle(SnackBar.Style.DEFAULT)
+        Snackbar.make(full, s, Snackbar.LENGTH_LONG)
+                .setAction(s2, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        display_selection(prayer);
+                    }
+                })
+                .setActionTextColor(Color.GREEN)
                 .show();
-
-        TextView snackButton = mSnackBar.getContainerView().findViewById(R.id.snackButton);
-        snackButton.setTextColor(Color.GREEN);
-        snackButton.setTextSize(16);
-        snackButton.setOnClickListener(new View.OnClickListener() {@Override public void onClick(View v) {
-            display_selection(prayer);
-            mSnackBar.hide();
-        }});
     }
 
     private void check_state(int prayer) {
@@ -2299,9 +2290,8 @@ public class force extends AppCompatActivity  {
     }
 
     private void what_is_soon_adan_and_one_before_it() {
-        Calendar cal = Calendar.getInstance(Locale.US);
-        String temptime = String.valueOf(new Date(cal.getTimeInMillis())).split(" ")[3];
-        rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
+        Calendar cal = Calendar.getInstance();
+        rightnowcomparable = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
 
         for(int i=0;i<prayers.size();i++){
             if(rightnowcomparable<prayers.get(0)) {

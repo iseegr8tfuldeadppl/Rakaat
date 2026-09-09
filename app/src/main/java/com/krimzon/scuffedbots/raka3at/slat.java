@@ -32,14 +32,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.krimzon.scuffedbots.raka3at.CustomElements.NoPaddingTextView;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQL;
 import com.krimzon.scuffedbots.raka3at.SQLite.SQLSharing;
@@ -332,14 +328,14 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
     private void resources(){
-        slide_out_from_right = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
-        slide_in_from_right = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
-        slide_out_from_right2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
-        slide_in_from_right2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
-        slide_out_from_right3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
-        slide_in_from_right3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
-        slide_out_from_right4 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
-        slide_in_from_right4 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
+        slide_out_from_right = loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
+        slide_in_from_right = loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
+        slide_out_from_right2 = loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
+        slide_in_from_right2 = loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
+        slide_out_from_right3 = loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
+        slide_in_from_right3 = loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
+        slide_out_from_right4 = loadAnimation(getApplicationContext(), R.anim.slide_out_from_right);
+        slide_in_from_right4 = loadAnimation(getApplicationContext(), R.anim.slide_in_from_right);
 
 
     }
@@ -495,8 +491,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         }
 
         // Step 0: hide back & questionmarkbuttons
-        backarrowbackground.setVisibility(View.GONE);
-        howtousebackground.setVisibility(View.GONE);
+        backarrowbackground.setVisibility(GONE);
+        howtousebackground.setVisibility(GONE);
 
         blackground.setVisibility(GONE);
         prepare_selection_and_countdown_things();
@@ -510,16 +506,16 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
 
         one.startAnimation(slide_in_from_right);
         slide_in_from_right.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-            one.setVisibility(View.VISIBLE);
+            one.setVisibility(VISIBLE);
             two.startAnimation(slide_in_from_right2);
             slide_in_from_right2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                two.setVisibility(View.VISIBLE);
+                two.setVisibility(VISIBLE);
                 three.startAnimation(slide_in_from_right3);
                 slide_in_from_right3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                    three.setVisibility(View.VISIBLE);
+                    three.setVisibility(VISIBLE);
                     four.startAnimation(slide_in_from_right4);
                     slide_in_from_right4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
-                        four.setVisibility(View.VISIBLE);
+                        four.setVisibility(VISIBLE);
                         if(receiveandy!=null) {
                             if (receiveandy.equals("force")) {
                                 if (prayer == 0)
@@ -557,7 +553,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             start.setText(getResources().getString(R.string.stop_arabe));
         blackoutbutton.setVisibility(VISIBLE);
         sajda_pre.setVisibility(INVISIBLE);
-        settings.setVisibility(View.GONE);
+        settings.setVisibility(GONE);
         slattitle.setVisibility(GONE);
 
         if(it_is_nightmode_since_lightmode_shines_and_ruins_measurement) {
@@ -578,20 +574,20 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     private void hide_raka3at_selections(){
         four.startAnimation(slide_out_from_right);
         slide_out_from_right.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-            four.setVisibility(View.INVISIBLE);
+            four.setVisibility(INVISIBLE);
             three.startAnimation(slide_out_from_right2);
             slide_out_from_right2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                three.setVisibility(View.INVISIBLE);
+                three.setVisibility(INVISIBLE);
                 two.startAnimation(slide_out_from_right3);
                 slide_out_from_right3.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) {}@Override public void onAnimationEnd(Animation animation) {
-                    two.setVisibility(View.INVISIBLE);
+                    two.setVisibility(INVISIBLE);
                     one.startAnimation(slide_out_from_right4);
                     slide_out_from_right4.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationRepeat(Animation animation) {}@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
                         if(!it_is_nightmode_since_lightmode_shines_and_ruins_measurement)
                             dimm_start_button_text();
                         else
                             darken_start_button();
-                        one.setVisibility(View.INVISIBLE);
+                        one.setVisibility(INVISIBLE);
                         coverer.setVisibility(GONE);
                         not_clicked = false; // to not allow multiple selection clicks
                         startclicked = true;
@@ -599,9 +595,9 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                         if(delaybeforecounting==0){
                             go_in();
                         } else {
-                            nightmode.setVisibility(View.GONE);
+                            nightmode.setVisibility(GONE);
                             blackoutbutton.setVisibility(GONE);
-                            settings.setVisibility(View.GONE);
+                            settings.setVisibility(GONE);
                         }
                     }});
                 }});
@@ -832,7 +828,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
                 tahia_fading_started = true;
                 tahia.startAnimation(fade_out_tahia);
                 fade_out_tahia.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
-                    tahia.setVisibility(View.INVISIBLE);
+                    tahia.setVisibility(INVISIBLE);
                     tahia_fading_started = false;
                 }});
             }
@@ -854,7 +850,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         } else if(tampageTahiaFader.getVisibility()== VISIBLE) {
             tampageTahiaFader.startAnimation(fade_out_tahia2);
             fade_out_tahia2.setAnimationListener(new Animation.AnimationListener() {@Override public void onAnimationStart(Animation animation) { }@Override public void onAnimationRepeat(Animation animation) { }@Override public void onAnimationEnd(Animation animation) {
-                tampageTahiaFader.setVisibility(View.INVISIBLE);
+                tampageTahiaFader.setVisibility(INVISIBLE);
             }});
         }
     }
@@ -921,7 +917,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         countdownbackground.setVisibility(GONE);
         blackground.setVisibility(VISIBLE);
         blackoutbutton.setVisibility(VISIBLE);
-        settings.setVisibility(View.GONE);
+        settings.setVisibility(GONE);
         nightmode.setEnabled(true);
         nightmodebuttonbackground.setEnabled(true);
         blackoutbutton.setEnabled(true);
@@ -929,7 +925,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         nightmode.setVisibility(VISIBLE);
         soundsbutton.setEnabled(false);
         soundsbuttonbackground.setEnabled(false);
-        soundsbutton.setVisibility(View.GONE);
+        soundsbutton.setVisibility(GONE);
     }
 
 
@@ -978,8 +974,8 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         coverer.setVisibility(GONE);
 
         // show back & questionmarkbuttons
-        backarrowbackground.setVisibility(View.VISIBLE);
-        howtousebackground.setVisibility(View.VISIBLE);
+        backarrowbackground.setVisibility(VISIBLE);
+        howtousebackground.setVisibility(VISIBLE);
 
         start.setTextColor(Color.WHITE);
         not_clicked = true;
@@ -992,7 +988,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
         soundsbutton.setEnabled(true);
         soundsbuttonbackground.setEnabled(true);
         nightmode.setVisibility(VISIBLE);
-        soundsbutton.setVisibility(View.VISIBLE);
+        soundsbutton.setVisibility(VISIBLE);
         settings.setEnabled(true);
         settingsbuttonbackground.setEnabled(true);
         settings.setVisibility(VISIBLE);
@@ -1377,7 +1373,7 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
             }});
             blackground.setBackgroundColor(getResources().getColor(R.color.black));
             blackout = true;
-            nightmode.setVisibility(View.GONE);
+            nightmode.setVisibility(GONE);
         } else {
             blackground.setOnClickListener(null);
             blackground.setClickable(false);
@@ -1395,27 +1391,17 @@ public class slat extends AppCompatActivity implements SensorEventListener, slat
     }
 
 
-    private SimpleExoPlayer simpleExoPlayer;
+    private ExoPlayer simpleExoPlayer;
     private void initExoPlayer(String lol) {
-        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
-                this,
-                null,
-                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
-        );
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
-                renderersFactory,
-                trackSelector
-        );
-        String userAgent = Util.getUserAgent(this, "Play Audio");
-        ExtractorMediaSource mediaSource = new ExtractorMediaSource(
-                Uri.parse("asset:///" + lol), // file audio ada di folder assets
-                new DefaultDataSourceFactory(this, userAgent),
-                new DefaultExtractorsFactory(),
-                null,
-                null
-        );
-        simpleExoPlayer.prepare(mediaSource);
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this)
+                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+        TrackSelector trackSelector = new DefaultTrackSelector(this);
+        simpleExoPlayer = new ExoPlayer.Builder(this, renderersFactory)
+                .setTrackSelector(trackSelector)
+                .build();
+        MediaItem mediaItem = MediaItem.fromUri(Uri.parse("asset:///" + lol));
+        simpleExoPlayer.setMediaItem(mediaItem);
+        simpleExoPlayer.prepare();
         simpleExoPlayer.setPlayWhenReady(true);
     }
     /*private void releaseExoPlayer() {

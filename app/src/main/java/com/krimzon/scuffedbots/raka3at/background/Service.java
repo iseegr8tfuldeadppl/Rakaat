@@ -27,20 +27,18 @@ import com.batoulapps.adhan.Madhab;
 import com.batoulapps.adhan.PrayerTimes;
 import com.batoulapps.adhan.data.DateComponents;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -78,7 +76,7 @@ public class Service extends android.app.Service {
     private static TimerTask timerTask;
     private boolean end_of_day = false;
     private boolean main_notification_switch = true;
-    private SimpleExoPlayer simpleExoPlayer;
+    private ExoPlayer simpleExoPlayer;
     private String language = "en";
     private int current_adding_playing = 0;
     private boolean darkmode = true;
@@ -157,7 +155,7 @@ public class Service extends android.app.Service {
             if(action.equals("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener")){
                 try{
                     /*if(playing)
-                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));*/
+                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener").setPackage(getPackageName()));*/
                     simpleExoPlayer.stop();
                     simpleExoPlayer.release();
                     playing = false;
@@ -205,7 +203,11 @@ public class Service extends android.app.Service {
         filter.addAction("com.krimzon.scuffedbots.raka3at.background.gopraymate"); //further more
         filter.addAction("com.krimzon.scuffedbots.raka3at.background.iprayeditmate"); //further more
 
-        registerReceiver(receiver, filter);
+        if (Build.VERSION.SDK_INT >= 33) {
+            registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(receiver, filter);
+        }
     }
 
     private void launch_prayer_processing() {
@@ -235,9 +237,9 @@ public class Service extends android.app.Service {
 
     private void find_next_adan() {
         try {
-            String temptime = String.valueOf(old_date).split(" ")[3];
+            Calendar cal = Calendar.getInstance();
             rightnowcomparable_old = rightnowcomparable;
-            rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 60 + Integer.parseInt(temptime.split(":")[1]);
+            rightnowcomparable = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
 
             for (int j = 0; j < 6; j++) {
                 if(rightnowcomparable<prayers.get(0)) {
@@ -356,6 +358,7 @@ public class Service extends android.app.Service {
         }
         try{
             Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
+            broadcastIntent.setPackage(getPackageName());
             sendBroadcast(broadcastIntent);
         } catch(Exception e){
             e.printStackTrace();
@@ -390,9 +393,13 @@ public class Service extends android.app.Service {
                 try {
 
                     // Check if we are still in the same day, if not then calculate new day's prayertimes
-                    Calendar cal = Calendar.getInstance(Locale.US);
-                    new_date = new Date(cal.getTimeInMillis());
-                    if(!String.valueOf(old_date).split(" ")[2].equals(String.valueOf(new_date).split(" ")[2]))
+                    Calendar cal = Calendar.getInstance();
+                    new_date = cal.getTime();
+                    
+                    Calendar oldCal = Calendar.getInstance();
+                    oldCal.setTime(old_date);
+                    
+                    if(cal.get(Calendar.DAY_OF_YEAR) != oldCal.get(Calendar.DAY_OF_YEAR) || cal.get(Calendar.YEAR) != oldCal.get(Calendar.YEAR))
                         location_shit(new_date);
                     old_date = new_date;
                     find_next_adan();
@@ -685,12 +692,12 @@ public class Service extends android.app.Service {
             remoteViews.setTextViewText(R.id.cancelbutton, stop_it);
         }
 
-        Intent button_intent = new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener");
+        Intent button_intent = new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener").setPackage(getPackageName());
         //button_intent.putExtra("id",NOTIFICATION_ID);
-        PendingIntent button_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID, button_intent,0);
+        PendingIntent button_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID, button_intent, PendingIntent.FLAG_IMMUTABLE);
         remoteViews.setOnClickPendingIntent(R.id.cancelbutton,button_pending_event);
         Intent notification_intent = new Intent(c, force.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, PendingIntent.FLAG_IMMUTABLE);
         builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
@@ -805,18 +812,18 @@ public class Service extends android.app.Service {
                     }
                 }
 
-                Intent goprayintent = new Intent("com.krimzon.scuffedbots.raka3at.background.gopraymate");
+                Intent goprayintent = new Intent("com.krimzon.scuffedbots.raka3at.background.gopraymate").setPackage(getPackageName());
                 //button_intent.putExtra("id",NOTIFICATION_ID2);
-                PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID2, goprayintent,0);
+                PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID2, goprayintent, PendingIntent.FLAG_IMMUTABLE);
                 remoteViews2.setOnClickPendingIntent(R.id.gopray,goprayintent_pending_event);
 
-                Intent iprayeditintent = new Intent("com.krimzon.scuffedbots.raka3at.background.iprayeditmate");
+                Intent iprayeditintent = new Intent("com.krimzon.scuffedbots.raka3at.background.iprayeditmate").setPackage(getPackageName());
                 //button_intent.putExtra("id",NOTIFICATION_ID2);
-                PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID2, iprayeditintent,0);
+                PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(c,NOTIFICATION_ID2, iprayeditintent, PendingIntent.FLAG_IMMUTABLE);
                 remoteViews2.setOnClickPendingIntent(R.id.iprayedit,iprayedit_pending_event);
 
                 Intent notification_intent = new Intent(c, force.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, PendingIntent.FLAG_IMMUTABLE);
                 builder2
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(pendingIntent)
@@ -863,7 +870,7 @@ public class Service extends android.app.Service {
         }
 
         Intent notification_intent = new Intent(c, force.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, notification_intent, PendingIntent.FLAG_IMMUTABLE);
         builder.setSmallIcon(R.mipmap.ic_launcher).setOngoing(true).setContentIntent(pendingIntent).setCustomContentView(remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
@@ -917,8 +924,10 @@ public class Service extends android.app.Service {
             audioManager = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 20, 0);
 
-            simpleExoPlayer.stop();
-            simpleExoPlayer.release();
+            if (simpleExoPlayer != null) {
+                simpleExoPlayer.stop();
+                simpleExoPlayer.release();
+            }
         } catch(Exception ignored){}
         String adan = "";
         switch(adantag){
@@ -942,163 +951,59 @@ public class Service extends android.app.Service {
         }
 
 
-        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(
-                c,
-                null,
-                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
-        );
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
-                renderersFactory,
-                trackSelector
-        );
-        String userAgent = Util.getUserAgent(c, c.getResources().getString(R.string.adanner));
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(c)
+                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+        TrackSelector trackSelector = new DefaultTrackSelector(c);
+        simpleExoPlayer = new ExoPlayer.Builder(c, renderersFactory)
+                .setTrackSelector(trackSelector)
+                .build();
         try {
-            ExtractorMediaSource mediaSource = new ExtractorMediaSource(
-                    Uri.parse(c.getResources().getString(R.string.idek) + adan), // file audio ada di folder assets
-                    new DefaultDataSourceFactory(c, userAgent),
-                    new DefaultExtractorsFactory(),
-                    null,
-                    null
-            );
+            MediaItem mediaItem = MediaItem.fromUri(Uri.parse(c.getResources().getString(R.string.idek) + adan));
             playing = true;
 
-            simpleExoPlayer.addListener(new Player.EventListener() {
-
+            simpleExoPlayer.addListener(new Player.Listener() {
                 @Override
-                public void onTimelineChanged(Timeline timeline, Object manifest) {
-
-                }
-
-                @Override
-                public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-                }
-
-                @Override
-                public void onLoadingChanged(boolean isLoading) {
-
-                }
-
-                @Override
-                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                public void onPlaybackStateChanged(int playbackState) {
                     if (playbackState == Player.STATE_ENDED) {
                         playing = false;
                         adan_exception = false;
                         once = true;
                         apply_mute_delays();
-                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener"));
+                        sendBroadcast(new Intent("com.krimzon.scuffedbots.raka3at.background.stop_adan_finish_listener").setPackage(getPackageName()));
                     }
                 }
-
-                @Override
-                public void onRepeatModeChanged(int repeatMode) {
-
-                }
-
-                @Override
-                public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-                }
-
-                @Override
-                public void onPlayerError(ExoPlaybackException error) {
-
-                }
-
-                @Override
-                public void onPositionDiscontinuity(int reason) {
-
-                }
-
-                @Override
-                public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
-                }
-
-                @Override
-                public void onSeekProcessed() {
-
-                }
             });
-            simpleExoPlayer.prepare(mediaSource);
+            simpleExoPlayer.setMediaItem(mediaItem);
+            simpleExoPlayer.prepare();
             simpleExoPlayer.setPlayWhenReady(true);
             } catch(Exception ignored){}
     }
 
     private void convert_prayertimes_into_milliseconds() {
-
-
-        String pm = getResources().getString(R.string.pm);
-
-        int fajrtemp = Integer.parseInt(fajr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(fajr.split(" ")[0].split(":")[1]);
-        if(fajr.split(" ")[1].equals(getResources().getString(R.string.pmer))|| fajr.split(" ")[1].equals(pm))
-            fajrtemp += 720; //12*60
-        int risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(rise.split(" ")[0].split(":")[1]);
-        if(rise.split(" ")[1].equals("PM") || rise.split(" ")[1].equals(pm))
-            risetemp += 720; //12*60
-        //Integer risetemp = Integer.parseInt(rise.split(" ")[0].split(":")[0])*3600 + Integer.parseInt(rise.split(" ")[0].split(":")[1])*60;
-        int dhuhrtemp = Integer.parseInt(dhuhr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(dhuhr.split(" ")[0].split(":")[1]);
-        if((dhuhr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || dhuhr.split(" ")[1].equals(pm)) && !dhuhr.split(":")[0].equals("12"))
-            dhuhrtemp += 720; //12*60
-        int asrtemp = Integer.parseInt(asr.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(asr.split(" ")[0].split(":")[1]);
-        if(asr.split(" ")[1].equals(getResources().getString(R.string.pmer)) || asr.split(" ")[1].equals(pm))
-            asrtemp += 720; //12*60
-        int maghribtemp = Integer.parseInt(maghrib.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(maghrib.split(" ")[0].split(":")[1]);
-        if(maghrib.split(" ")[1].equals(getResources().getString(R.string.pmer)) || maghrib.split(" ")[1].equals(pm))
-            maghribtemp += 720; //12*60
-        int ishatemp = Integer.parseInt(isha.split(" ")[0].split(":")[0]) * 60 + Integer.parseInt(isha.split(" ")[0].split(":")[1]);
-        if(isha.split(" ")[1].equals(getResources().getString(R.string.pmer)) || isha.split(" ")[1].equals(pm))
-            ishatemp += 720; //12*60
-
-
-
-        /*// TODO:  for testing purposes
-        temptime = String.valueOf(old_date).split(" ")[3];
-        rightnowcomparable = Integer.parseInt(temptime.split(":")[0]) * 3600 + Integer.parseInt(temptime.split(":")[1]) * 60 + Integer.parseInt(temptime.split(":")[2]);
-        fajrtemp = rightnowcomparable + 10;*/
-
-
-        prayers.add(fajrtemp);
-        prayers.add(risetemp);
-        prayers.add(dhuhrtemp);
-        prayers.add(asrtemp);
-        prayers.add(maghribtemp);
-        prayers.add(ishatemp);
-
-
+        PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, params);
+        prayers = new ArrayList<>();
+        
+        prayers.add(getMinuteOfDay(prayerTimes.fajr));
+        prayers.add(getMinuteOfDay(prayerTimes.sunrise));
+        prayers.add(getMinuteOfDay(prayerTimes.dhuhr));
+        prayers.add(getMinuteOfDay(prayerTimes.asr));
+        prayers.add(getMinuteOfDay(prayerTimes.maghrib));
+        prayers.add(getMinuteOfDay(prayerTimes.isha));
 
         praytimesregularform = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+        praytimesregularform.add(sdf.format(prayerTimes.fajr));
+        praytimesregularform.add(sdf.format(prayerTimes.sunrise));
+        praytimesregularform.add(sdf.format(prayerTimes.dhuhr));
+        praytimesregularform.add(sdf.format(prayerTimes.asr));
+        praytimesregularform.add(sdf.format(prayerTimes.maghrib));
+        praytimesregularform.add(sdf.format(prayerTimes.isha));
+    }
 
-        if(fajr.split(" ")[1].equals("PM") && Integer.parseInt(fajr.split(" ")[0].split(":")[0])!=12) {
-            praytimesregularform.add(String.valueOf(Integer.parseInt(fajr.split(" ")[0].split(":")[0]) + 12) + ":" + fajr.split(" ")[0].split(":")[1]);
-        } else
-            praytimesregularform.add(fajr.split(" ")[0]);
-
-        if(rise.split(" ")[1].equals("PM") && Integer.parseInt(rise.split(" ")[0].split(":")[0])!=12) {
-            praytimesregularform.add(String.valueOf(Integer.parseInt(rise.split(" ")[0].split(":")[0]) + 12) + ":" + rise.split(" ")[0].split(":")[1]);
-        } else
-            praytimesregularform.add(rise.split(" ")[0]);
-
-        if(dhuhr.split(" ")[1].equals("PM") && Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])!=12){
-            praytimesregularform.add(String.valueOf(Integer.parseInt(dhuhr.split(" ")[0].split(":")[0])+12) + ":" + dhuhr.split(" ")[0].split(":")[1]);
-        } else
-            praytimesregularform.add(dhuhr.split(" ")[0]);
-
-        if(asr.split(" ")[1].equals("PM") && Integer.parseInt(asr.split(" ")[0].split(":")[0])!=12){
-            praytimesregularform.add(String.valueOf(Integer.parseInt(asr.split(" ")[0].split(":")[0])+12) + ":" + asr.split(" ")[0].split(":")[1]);
-        } else
-            praytimesregularform.add(asr.split(" ")[0]);
-
-        if(maghrib.split(" ")[1].equals("PM") && Integer.parseInt(maghrib.split(" ")[0].split(":")[0])!=12){
-            praytimesregularform.add(String.valueOf(Integer.parseInt(maghrib.split(" ")[0].split(":")[0])+12) + ":" + maghrib.split(" ")[0].split(":")[1]);
-        } else
-            praytimesregularform.add(maghrib.split(" ")[0]);
-
-        if(isha.split(" ")[1].equals("PM") && Integer.parseInt(isha.split(" ")[0].split(":")[0])!=12){
-            praytimesregularform.add(String.valueOf(Integer.parseInt(isha.split(" ")[0].split(":")[0])+12) + ":" + isha.split(" ")[0].split(":")[1]);
-        } else
-            praytimesregularform.add(isha.split(" ")[0]);
+    private int getMinuteOfDay(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     }
 
     private void pull_prayer_times_and_shape_them() {

@@ -53,26 +53,23 @@ public class JobService extends android.app.job.JobService {
                 filter.addAction(Globals.RESTART_INTENT);
                 try{
                     unregisterReceiver(restartSensorServiceReceiver);
-                    try {
+                } catch(Exception ignored){}
+
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        registerReceiver(restartSensorServiceReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+                    } else {
                         registerReceiver(restartSensorServiceReceiver, filter);
-                    } catch (Exception e) {
-                        try {
-                            getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
-                        } catch (Exception ignored) {
-
-                        }
                     }
-                } catch(Exception e){
+                } catch (Exception e) {
                     try {
-                        registerReceiver(restartSensorServiceReceiver, filter);
-                    } catch (Exception ee) {
-                        try {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+                        } else {
                             getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
-                        } catch (Exception ignored) {
-
                         }
+                    } catch (Exception ignored) {
                     }
-
                 }
             }
         }, 1000);
@@ -82,6 +79,7 @@ public class JobService extends android.app.job.JobService {
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
+        broadcastIntent.setPackage(getPackageName());
         sendBroadcast(broadcastIntent);
         // give the time to run
         new Handler().postDelayed(new Runnable() {

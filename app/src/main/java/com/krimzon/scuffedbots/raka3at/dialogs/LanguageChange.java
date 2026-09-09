@@ -92,37 +92,33 @@ public class LanguageChange extends Dialog implements android.view.View.OnClickL
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.english:
-                if(language.equals("en"))
-                    dismiss();
-                else {
-                    sql();
-                    SQLSharing.mycursorslat.moveToPosition(6);
-                    SQLSharing.mydbslat.updateData("en", SQLSharing.mycursorslat.getString(0));
-                    close_sql();
-                    dismiss();
-                    Intent main = new Intent(c.getApplicationContext(), MainActivity.class);
-                    c.startActivity(main);
-                    c.finish();
-                }
-                break;
-            case R.id.arabe:
-                if(language.equals("ar"))
-                    dismiss();
-                else {
-                    sql();
-                    SQLSharing.mycursorslat.moveToPosition(6);
-                    SQLSharing.mydbslat.updateData("ar", SQLSharing.mycursorslat.getString(0));
-                    close_sql();
-                    dismiss();
-                    Intent mainer = new Intent(c.getApplicationContext(), MainActivity.class);
-                    c.startActivity(mainer);
-                    c.finish();
-                }
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.english) {
+            if (language.equals("en"))
+                dismiss();
+            else {
+                sql();
+                SQLSharing.mycursorslat.moveToPosition(6);
+                SQLSharing.mydbslat.updateData("en", SQLSharing.mycursorslat.getString(0));
+                close_sql();
+                dismiss();
+                Intent main = new Intent(c.getApplicationContext(), MainActivity.class);
+                c.startActivity(main);
+                c.finish();
+            }
+        } else if (id == R.id.arabe) {
+            if (language.equals("ar"))
+                dismiss();
+            else {
+                sql();
+                SQLSharing.mycursorslat.moveToPosition(6);
+                SQLSharing.mydbslat.updateData("ar", SQLSharing.mycursorslat.getString(0));
+                close_sql();
+                dismiss();
+                Intent mainer = new Intent(c.getApplicationContext(), MainActivity.class);
+                c.startActivity(mainer);
+                c.finish();
+            }
         }
     }
 

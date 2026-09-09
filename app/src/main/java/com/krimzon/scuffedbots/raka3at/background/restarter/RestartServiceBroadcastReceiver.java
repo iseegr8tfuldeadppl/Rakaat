@@ -77,6 +77,7 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
     public static void reStartTracker(Context context) {
         // restart the never ending service
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
+        broadcastIntent.setPackage(context.getPackageName());
         context.sendBroadcast(broadcastIntent);
     }
 
@@ -103,10 +104,18 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
                 IntentFilter filter = new IntentFilter();
                 filter.addAction(Globals.RESTART_INTENT);
                 try {
-                    context.registerReceiver(restartSensorServiceReceiver, filter);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        context.registerReceiver(restartSensorServiceReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+                    } else {
+                        context.registerReceiver(restartSensorServiceReceiver, filter);
+                    }
                 } catch (Exception e) {
                     try {
-                        context.getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            context.getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+                        } else {
+                            context.getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
+                        }
                     } catch (Exception ignored) {
 
                     }
