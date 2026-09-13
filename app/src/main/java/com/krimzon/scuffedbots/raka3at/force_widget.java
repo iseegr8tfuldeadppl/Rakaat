@@ -104,7 +104,7 @@ public class force_widget extends AppWidgetProvider {
                 }
 
                 Intent launchingforce = new Intent(context, force.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchingforce, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchingforce, PendingIntent.FLAG_IMMUTABLE);
                 widgetViews.setOnClickPendingIntent(R.id.main, pendingIntent);
 
                 prepare_and_apply_hijri_date(language, context);
@@ -877,12 +877,9 @@ public class force_widget extends AppWidgetProvider {
             //if(rightnowcomparable_old!=rightnowcomparable)
             // displayed rightnowcomparable
             for (int j = 0; j < 6; j++) {
-                if(rightnowcomparable<prayers.get(0)) {
-                    i = 0;
+                if (rightnowcomparable < prayers.get(j)) {
+                    i = j;
                     break;
-                }
-                if (rightnowcomparable > prayers.get(j)){
-                    i = j + 1;
                 }
             }
             end_of_day = false;

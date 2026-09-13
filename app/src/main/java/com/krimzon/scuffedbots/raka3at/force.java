@@ -289,13 +289,8 @@ public class force extends AppCompatActivity  {
         low_light_alert();
         if_sent_from_slat_after_prayer_check_whichD_we_were_praying_and_display_that();
 
-        //longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
+        // longitude = 30;latitude = 30;use(longitude, latitude, true, new Date());
 
-
-        // TODO remove when fixed
-        if(Build.VERSION.SDK_INT > stoppableandroid){
-            settingsbutton.setVisibility(GONE);
-        }
 
         check_firebase_if_updated_today();
 
@@ -495,37 +490,32 @@ public class force extends AppCompatActivity  {
         }
     }
     private void protected_apps_request() {
-        // TODO remove when fixed
-        if(Build.VERSION.SDK_INT < stoppableandroid) {
-            try {
-                if ("huawei".equalsIgnoreCase(Build.MANUFACTURER)) {
-                    protected_apps_request request = new protected_apps_request(this, darkmode, language);
-                    request.show();
-                }
-            } catch (Exception ignored) {
+        try {
+            if ("huawei".equalsIgnoreCase(Build.MANUFACTURER)) {
+                protected_apps_request request = new protected_apps_request(this, darkmode, language);
+                request.show();
             }
+        } catch (Exception ignored) {
         }
     }
 
     private void load_service() {
         // adan service
-        if (Build.VERSION.SDK_INT < 28) {
-            try {
-                close_sql();
-                sql("force");
-                if (SQLSharing.mycursorforce.getCount() > 0) {
+        try {
+            close_sql();
+            sql("force");
+            if (SQLSharing.mycursorforce.getCount() > 0) {
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-                } else {
-                    ProcessMainClass bck = new ProcessMainClass();
-                    bck.launchService(getApplicationContext());
-                }
-                }
-                close_sql();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+            } else {
+                ProcessMainClass bck = new ProcessMainClass();
+                bck.launchService(getApplicationContext());
             }
-            catch(Exception ignored){}
+            }
+            close_sql();
         }
+        catch(Exception ignored){}
     }
 
     private void pprint(Object log){
@@ -3041,11 +3031,8 @@ public class force extends AppCompatActivity  {
     }
 
     public void settingsClicked(View view) {
-        // TODO remove when fixed
-        if(Build.VERSION.SDK_INT < stoppableandroid) {
-            Intent open_settings = new Intent(this, force_settings.class);
-            startActivity(open_settings);
-        }
+        Intent open_settings = new Intent(this, force_settings.class);
+        startActivity(open_settings);
     }
 
     public void prayedthisdaybeforeClicked(View view) {

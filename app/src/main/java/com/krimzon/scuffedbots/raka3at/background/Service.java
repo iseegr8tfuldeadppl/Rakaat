@@ -1,6 +1,8 @@
 package com.krimzon.scuffedbots.raka3at.background;
 
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -8,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -105,8 +108,32 @@ public class Service extends android.app.Service {
         super();
     }
 
+    private void startForegroundSafe() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager != null) {
+                NotificationChannel channel = new NotificationChannel("channel", "Prayer Times Service", NotificationManager.IMPORTANCE_LOW);
+                manager.createNotificationChannel(channel);
+
+                Notification notification = new NotificationCompat.Builder(this, "channel")
+                        .setContentTitle("Rakaat")
+                        .setContentText("Service is running")
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
+                        .build();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+                } else {
+                    startForeground(NOTIFICATION_ID, notification);
+                }
+            }
+        }
+    }
+
     @Override
     public void onCreate() {
+        startForegroundSafe();
         super.onCreate();
         mCurrentService = this;
 
@@ -242,12 +269,9 @@ public class Service extends android.app.Service {
             rightnowcomparable = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
 
             for (int j = 0; j < 6; j++) {
-                if(rightnowcomparable<prayers.get(0)) {
-                    i = 0;
+                if (rightnowcomparable < prayers.get(j)) {
+                    i = j;
                     break;
-                }
-                if (rightnowcomparable > prayers.get(j)){
-                    i = j + 1;
                 }
             }
             if(i>=6){
@@ -255,12 +279,67 @@ public class Service extends android.app.Service {
                 end_of_day = true;
             } else
                 end_of_day = false;
-            
+
+            scheduleNextAdhanAlarm();
+
         } catch(Exception ignored){}
+    }
+
+    private void scheduleNextAdhanAlarm() {
+        if (prayers == null || i < 0 || i >= prayers.size()) return;
+
+        long nextPrayerTimeMillis = getPrayerTimeMillis(i);
+        if (nextPrayerTimeMillis <= System.currentTimeMillis()) {
+            return;
+        }
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, Service.class);
+        intent.setAction("ACTION_TRIGGER_ADHAN");
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        if (alarmManager != null) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextPrayerTimeMillis, pendingIntent);
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextPrayerTimeMillis, pendingIntent);
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextPrayerTimeMillis, pendingIntent);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextPrayerTimeMillis, pendingIntent);
+                } else {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, nextPrayerTimeMillis, pendingIntent);
+                }
+            } catch (SecurityException e) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextPrayerTimeMillis, pendingIntent);
+                } else {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, nextPrayerTimeMillis, pendingIntent);
+                }
+            }
+        }
+    }
+
+    private long getPrayerTimeMillis(int prayerIndex) {
+        Calendar calendar = Calendar.getInstance();
+        int prayerTimeMinutes = prayers.get(prayerIndex);
+        calendar.set(Calendar.HOUR_OF_DAY, prayerTimeMinutes / 60);
+        calendar.set(Calendar.MINUTE, prayerTimeMinutes % 60);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && "ACTION_TRIGGER_ADHAN".equals(intent.getAction())) {
+            find_next_adan();
+        }
+        
+        startForegroundSafe();
         super.onStartCommand(intent, flags, startId);
 
         if(!started){
@@ -564,11 +643,15 @@ public class Service extends android.app.Service {
                 slight_update_notification();
 
             notification = builder.build();
-            if (is_it_over_android_O) {
-                //restartForeground();
+            if (is_it_over_android_O && Build.VERSION.SDK_INT >= 26) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+                } else {
+                    startForeground(NOTIFICATION_ID, notification);
+                }
+            } else {
                 notificationManager.notify(NOTIFICATION_ID, notification);
-        } else
-            notificationManager.notify(NOTIFICATION_ID, notification);
+            }
 
         } catch(Exception ignored){
         }
@@ -847,6 +930,14 @@ public class Service extends android.app.Service {
 
     private void update_notification_ui() {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                "channel",
+                "Prayer Times Service",
+                NotificationManager.IMPORTANCE_LOW
+            );
+            notificationManager.createNotificationChannel(channel);
+        }
         builder = new NotificationCompat.Builder(c, "channel");
 
         if(darkmode)

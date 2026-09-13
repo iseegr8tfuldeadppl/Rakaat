@@ -897,23 +897,21 @@ public class force_settings extends AppCompatActivity {
 
     private void load_service() {
         // adan service
-        if (Build.VERSION.SDK_INT < 28) {
-            try {
-                close_sql();
-                sql("force");
-                if (SQLSharing.mycursorforce.getCount() > 0) {
+        try {
+            close_sql();
+            sql("force");
+            if (SQLSharing.mycursorforce.getCount() > 0) {
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-                    } else {
-                        ProcessMainClass bck = new ProcessMainClass();
-                        bck.launchService(getApplicationContext());
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                } else {
+                    ProcessMainClass bck = new ProcessMainClass();
+                    bck.launchService(getApplicationContext());
                 }
-                close_sql();
             }
-            catch(Exception ignored){}
+            close_sql();
         }
+        catch(Exception ignored){}
     }
     private boolean opening_selection = false;
     private void launch_selection(int prayertobemodified) {

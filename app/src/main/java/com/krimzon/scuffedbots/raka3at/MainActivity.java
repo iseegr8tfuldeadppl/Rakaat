@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import android.hardware.Camera;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.PowerManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -106,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
         if(language.equals("en"))
             english();
 
+        checkBatteryOptimizations();
+
         // slidein nightmode button
         botton = findViewById(R.id.botton);
         Animation diagonal = loadAnimation(getApplicationContext(), R.anim.diagonalslide);
@@ -134,6 +138,27 @@ public class MainActivity extends AppCompatActivity {
             }
         }*/
 
+    }
+
+    private void checkBatteryOptimizations() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Battery Optimization")
+                        .setMessage("To ensure the Adhan sounds on time and the widget updates correctly, please disable battery optimization for Rakaat.")
+                        .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                                intent.setData(Uri.parse("package:" + getPackageName()));
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        }
     }
 
 
@@ -194,13 +219,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent goprayintent = new Intent("com.krimzon.scuffedbots.raka3at.background.gopraymate");
-        PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(getApplicationContext(),NOTIFICATION_ID2, goprayintent,0);
+        PendingIntent goprayintent_pending_event = PendingIntent.getBroadcast(getApplicationContext(),NOTIFICATION_ID2, goprayintent,PendingIntent.FLAG_IMMUTABLE);
 
         Intent iprayeditintent = new Intent("com.krimzon.scuffedbots.raka3at.background.iprayeditmate");
-        PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(getApplicationContext(),NOTIFICATION_ID2, iprayeditintent,0);
+        PendingIntent iprayedit_pending_event = PendingIntent.getBroadcast(getApplicationContext(),NOTIFICATION_ID2, iprayeditintent,PendingIntent.FLAG_IMMUTABLE);
 
         Intent notification_intent = new Intent(getApplicationContext(), force.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notification_intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notification_intent, PendingIntent.FLAG_IMMUTABLE);
         Notification noti = new Notification.Builder(this)
                 .setContentTitle(didyoupray)
                 .setContentText(expandmefortext).setSmallIcon(R.mipmap.ic_launcher)
@@ -364,21 +389,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void load_service() {
         // adan service
-        if (Build.VERSION.SDK_INT < 28) {
-            try {
-                close_sql();
-                sql("force");
-                if (SQLSharing.mycursorforce.getCount() > 0) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
-                    } else {
-                        ProcessMainClass bck = new ProcessMainClass();
-                        bck.launchService(getApplicationContext());
-                    }
+        try {
+            close_sql();
+            sql("force");
+            if (SQLSharing.mycursorforce.getCount() > 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                } else {
+                    ProcessMainClass bck = new ProcessMainClass();
+                    bck.launchService(getApplicationContext());
                 }
-                close_sql();
-            } catch (Exception ignored) {
             }
+            close_sql();
+        } catch (Exception ignored) {
         }
     }
     private BroadcastReceiver onComplete;
